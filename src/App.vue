@@ -1,26 +1,39 @@
 <template>
   <v-app>
-    <v-content>
-      <!-- <Dashboard/> -->
-      <Login />
+    <sidebar v-if="user.isLoggedIn" />
+    <v-content id="page-wrap">
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import store from "store";
+import Layouts from "layouts";
+import { mapGetters } from "vuex";
 
 export default {
   name: "App",
-
+  store,
   components: {
-    // Dashboard,
-    Login
+    ...Layouts
   },
-
-  data: () => ({
-    //
-  })
+  store,
+  computed: {
+    ...mapGetters(["user"])
+  },
+  async created() {
+    if (localStorage.getItem("isUserLogin") !== null) {
+      // testing
+      this.$store.commit({
+        type: "setUser",
+        name: "admin"
+      });
+    }
+  }
 };
 </script>
+
+<style lang="scss">
+@import "styles/main";
+</style>

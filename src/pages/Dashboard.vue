@@ -1,6 +1,6 @@
 <template>
-  <div>
-    Dashboard
+  <div class="body">
+    dasdasd
   </div>
 </template>
 
@@ -8,4 +8,8 @@
 export default {};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.body {
+  padding: 40px;
+}
+</style>

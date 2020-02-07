@@ -1,0 +1,16 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px white inset !important;
+}
+
+#page-wrap {
+  background-color: rgba(203, 203, 210, 0.15);
+}
+
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}

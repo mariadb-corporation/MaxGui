@@ -16,7 +16,6 @@
           </v-avatar>
           <h3 class="title">MariaDB MaxScale</h3>
         </div>
-
         <v-form
           ref="form"
           v-model="isValid"
@@ -33,7 +32,7 @@
             autocomplete="username"
             name="username"
             autofocus
-            height="36"
+            dense
             single-line
             outlined
             rounded
@@ -51,8 +50,8 @@
             :type="isPwdVisible ? 'text' : 'password'"
             @click:append="isPwdVisible = !isPwdVisible"
             name="password"
-            height="36"
             single-line
+            dense
             outlined
             rounded
             required
@@ -62,14 +61,26 @@
             label="Remember Me"
             color="primary"
           ></v-checkbox>
-          <v-btn
-            @click="handleSubmit()"
-            :disabled="!isValid"
-            block
-            color="primary"
-            depressed
-            >Login</v-btn
-          >
+          <v-card-actions class="pt-0 pb-12">
+            <div class="mx-auto text-center" style="width: 50%;">
+              <v-progress-circular
+                v-if="isLoading"
+                :size="40"
+                :width="5"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+              <v-btn
+                v-else
+                @click="handleSubmit()"
+                :disabled="!isValid"
+                block
+                color="primary"
+                depressed
+                >Login</v-btn
+              >
+            </div>
+          </v-card-actions>
         </v-form>
       </v-col>
     </v-row>
@@ -78,9 +89,11 @@
 
 <script>
 export default {
+  name: "Login",
   data() {
     return {
-      isValid: true,
+      isValid: false,
+      isLoading: false,
       isPwdVisible: false,
       rememberMe: false,
       login: {
@@ -99,22 +112,21 @@ export default {
       if (!this.$refs.form.validate()) {
         return;
       }
+      this.isLoading = true;
       try {
-        // console.log("process.env.VUE_APP_API", process.env.VUE_APP_API);
-        // await this.axios.get(`http://127.0.0.1:8989/v1/servers`, {
-        //   auth: this.login
-        // });
-        let headers = new Headers();
-        headers.append(
-          "Authorization",
-          "Basic" + btoa(`${this.login.username}:${this.login.password}`)
-        );
-        await fetch("http://127.0.0.1:8989/v1/servers", {
-          method: "GET",
-          headers: headers
+        await this.axios.get(`${process.env.VUE_APP_API}/maxscale`, {
+          auth: this.login
         });
+        // temporary user's name, it is using username for name
+        this.$store.commit({
+          type: "setUser",
+          name: this.login.username
+        });
+        this.isLoading = false;
+        this.$router.push("dashboard");
       } catch (e) {
-        console.log("e", e);
+        this.errorMessage = e.toString();
+        this.isLoading = false;
       }
     }
   }
