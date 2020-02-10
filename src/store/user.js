@@ -1,31 +1,41 @@
 export default {
   state: {
-    isLoggedIn: false,
-    name: null
+    username: null,
+    password: null,
+    token: null
   },
   mutations: {
     setUser(state, userObj) {
-      console.log("userObj", userObj);
-      state.isLoggedIn = true;
-      state.name = userObj && userObj.name;
-      localStorage.setItem("isUserLogin", state.isLoggedIn);
+      state.username = userObj && userObj.username;
+      state.password = userObj && userObj.password;
+      // for now, testing purpose
+      localStorage.setItem(
+        "credentials",
+        JSON.stringify({
+          username: userObj.username,
+          password: userObj.password,
+          token: userObj.token
+        })
+      );
     }
   },
   actions: {
-    async fetchUser({ commit }) {
-      // testing
-      console.log("should run");
+    fetchUser({ commit }) {
+      // for testing purpose, a jwt should be stored instead
+      console.log("vfetchUser");
       commit({
         type: "setUser",
-        name: "admin"
+        username: "admin",
+        password: "mariadb",
+        token: "fakeToken"
       });
     }
   },
   getters: {
     user: state => {
-      const { isLoggedIn, name } = state;
+      const { token, username, password } = state;
 
-      return { isLoggedIn, name };
+      return { token, username, password };
     }
   }
 };

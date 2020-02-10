@@ -14,3 +14,8 @@ input:-webkit-autofill:active {
 :before {
   box-sizing: border-box;
 }
+
+#app,
+#page-wrap {
+  height: 100%;
+}

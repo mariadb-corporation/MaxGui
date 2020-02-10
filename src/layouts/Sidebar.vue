@@ -1,45 +1,37 @@
 <template>
-  <PushRotate width="200">
-    <div class="nav-username">{{ user.name }}</div>
+  <Reveal width="200">
+    <div class="nav-username">{{ user.username }}</div>
     <div class="nav-username_divider" />
     <ul>
-      <li
-        v-if="route.isSideBar"
-        v-for="route in routes"
-        v-bind:key="route.path"
-      >
-        <router-link to="/dashboard">
-          <span v-html="route.icon"></span>
+      <li v-for="route in renderNavRoute" v-bind:key="route.path">
+        <router-link :to="route.path">
+          <v-icon large color="primary">{{ route.icon }}</v-icon>
           <p>{{ route.name }}</p>
         </router-link>
       </li>
     </ul>
-  </PushRotate>
+  </Reveal>
 </template>
 <script>
-import { PushRotate } from "vue-burger-menu";
+import { Reveal } from "vue-burger-menu";
 import { mapGetters } from "vuex";
 import { routes } from "../router/routes";
 
 export default {
   components: {
-    PushRotate
+    Reveal
   },
   computed: {
-    ...mapGetters(["user"])
+    ...mapGetters(["user"]),
+    renderNavRoute: function() {
+      let navRoute = routes.filter(route => route.isSideBar);
+      return navRoute;
+    }
   },
   data() {
     return {
       routes: routes
     };
-  },
-  methods: {
-    handleOpenMenu() {
-      this.isOpen = !isOpen;
-    },
-    handleCloseMenu() {
-      this.isOpen = !isOpen;
-    }
   }
 };
 </script>
@@ -51,18 +43,21 @@ export default {
   font-size: 1.167em;
   text-align: center;
   padding: 15px 0px;
-
+  display: flex;
+  justify-content: center;
+  text-transform: capitalize;
   &_divider {
     width: 100%;
     height: 1px;
     background-color: rgba(255, 255, 255, 0.2);
+    padding: 0px;
   }
 }
 
 /* Position and sizing of burger button */
 .bm-burger-button {
   position: fixed;
-  top: 21px;
+  top: 14px;
   left: 16px;
   width: 20px;
   height: 20px;
@@ -114,84 +109,77 @@ export default {
 }
 .bm-item-list {
   color: #b8b7ad;
-  margin-left: 10%;
+  margin-left: 0px;
   font-size: 20px;
-  .bm-item {
-    margin-top: 0px;
-    padding: 0px;
-    height: 100%;
 
-    ul {
-      margin: 0px;
-      padding: 20px 0px;
+  ul {
+    margin: 0px;
+    padding: 20px 0px !important;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    li {
+      text-align: left !important;
+      position: relative;
+      display: block;
+      padding: 0px;
 
       &:focus {
         outline: 0;
       }
 
-      li {
-        text-align: left !important;
-        position: relative;
-        display: block;
-        padding: 0px;
-
+      a {
+        margin: 5px 0px;
+        border-radius: 4px;
+        padding: 8px 16px;
+        transition: 0.5s;
+        display: flex;
+        text-decoration: none;
         &:focus {
           outline: 0;
         }
 
-        a {
-          margin: 5px 15px;
-          border-radius: 4px;
-          padding: 0px 16px;
-          transition: 0.5s;
+        i {
           display: flex;
-
-          &:focus {
-            outline: 0;
-          }
-
-          svg {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-          }
-
-          p {
-            display: flex;
-            align-items: center;
-            margin: 0px 0px 0px 10px;
-            font-weight: 600;
-            font-size: 12px;
-            color: #ffffff;
-            opacity: 0.72;
-            padding: 0px;
-          }
+          justify-content: flex-start;
+          align-items: center;
+          font-size: 32px;
         }
 
-        &:hover > a {
-          margin: 5px 15px;
-          border-radius: 4px;
-          background-color: rgba(255, 255, 255, 0.13);
+        p {
+          display: flex;
+          align-items: center;
+          margin: 0px 0px 0px 10px;
+          font-weight: 600;
+          font-size: 18px;
+          color: #ffffff;
+          opacity: 0.72;
+          padding: 0px;
+        }
+      }
 
-          p {
-            opacity: 1;
-          }
+      &:hover > a {
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.13);
 
-          .nav-icon {
-            opacity: 1;
-          }
+        p {
+          opacity: 1;
         }
 
-        &.active > a {
-          background-color: rgba(255, 255, 255, 0.23);
+        .nav-icon {
+          opacity: 1;
+        }
+      }
 
-          p {
-            opacity: 1;
-          }
+      &.active > a {
+        background-color: rgba(255, 255, 255, 0.23);
 
-          .nav-icon {
-            opacity: 1;
-          }
+        p {
+          opacity: 1;
+        }
+
+        .nav-icon {
+          opacity: 1;
         }
       }
     }

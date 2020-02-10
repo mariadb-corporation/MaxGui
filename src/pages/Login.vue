@@ -114,13 +114,15 @@ export default {
       }
       this.isLoading = true;
       try {
-        await this.axios.get(`${process.env.VUE_APP_API}/maxscale`, {
+        await this.axios.get(`/maxscale`, {
           auth: this.login
         });
         // temporary user's name, it is using username for name
         this.$store.commit({
           type: "setUser",
-          name: this.login.username
+          username: this.login.username,
+          password: this.login.password,
+          token: "fakeToken" // fake token received from server
         });
         this.isLoading = false;
         this.$router.push("dashboard");

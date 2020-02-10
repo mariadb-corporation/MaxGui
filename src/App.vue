@@ -1,35 +1,36 @@
 <template>
-  <v-app>
-    <sidebar v-if="user.isLoggedIn" />
-    <v-content id="page-wrap">
-      <router-view></router-view>
-    </v-content>
+  <v-app id="vue-app">
+    <div id="app">
+      <sidebar v-if="token" />
+      <v-content id="page-wrap">
+        <appbar />
+        <router-view></router-view>
+      </v-content>
+    </div>
   </v-app>
 </template>
 
 <script>
 import store from "store";
 import Layouts from "layouts";
-import { mapGetters } from "vuex";
+import { Fragment } from "vue-fragment";
 
 export default {
   name: "App",
   store,
   components: {
-    ...Layouts
+    ...Layouts,
+    Fragment
   },
   store,
-  computed: {
-    ...mapGetters(["user"])
+  data() {
+    return {
+      token: null
+    };
   },
-  async created() {
-    if (localStorage.getItem("isUserLogin") !== null) {
-      // testing
-      this.$store.commit({
-        type: "setUser",
-        name: "admin"
-      });
-    }
+  mounted() {
+    let credentials = JSON.parse(localStorage.getItem("credentials"));
+    this.token = credentials.token;
   }
 };
 </script>
