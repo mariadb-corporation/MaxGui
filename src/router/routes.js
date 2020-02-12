@@ -1,6 +1,6 @@
 import Dashboard from "../pages/Dashboard";
 import Login from "pages/Login";
-import ServerView from "pages/ServerView";
+import Servers from "pages/Servers";
 import { mdiViewDashboard, mdiEqualizer } from "@mdi/js";
 
 export const routes = [
@@ -20,7 +20,7 @@ export const routes = [
   },
   {
     path: "/server/:id",
-    component: ServerView,
+    component: Servers,
     meta: {
       requiresAuth: true
     },

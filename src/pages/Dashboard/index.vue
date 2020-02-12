@@ -45,7 +45,7 @@ export default {
       .get(`/v1/servers`, {
         auth: credentials
       })
-      .then(res => ((this.serversData = res.data), console.log(res.data)));
+      .then(res => (this.serversData = res.data));
   }
 };
 </script>

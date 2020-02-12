@@ -1,4 +1,5 @@
 import Vue from "vue";
+import 'utils/helpers'
 import "plugins/vuex";
 import "plugins/axios";
 import App from "./App.vue";

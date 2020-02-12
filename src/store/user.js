@@ -22,7 +22,7 @@ export default {
   actions: {
     fetchUser({ commit }) {
       // for testing purpose, a jwt should be stored instead
-      console.log("vfetchUser");
+      // console.log("vfetchUser");
       commit({
         type: "setUser",
         username: "admin",
