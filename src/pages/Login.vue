@@ -125,7 +125,7 @@ export default {
           token: "fakeToken" // fake token received from server
         });
         this.isLoading = false;
-        this.$router.push("dashboard");
+        this.$router.push("server");
       } catch (e) {
         this.errorMessage = e.toString();
         this.isLoading = false;

@@ -1,29 +1,20 @@
 <template>
-  <v-container v-if="currentServer" class="pa-6 attTable-padding">
-    <h3>{{ this.$route.params.id }} Attributes</h3>
-    <v-row align="center" justify="center">
-      <v-col cols="12" lg="6">
-        <recursive-nested-collapse
-          v-for="(value, propertyName) in currentServer.attributes"
-          :readOnlyVal="!hasChild(value)"
-          :key="propertyName"
-          :propertyName="propertyName"
-          :value="handleNull(value)"
-          :child="!hasChild(value) ? {} : value"
-        />
-      </v-col>
-    </v-row>
-    <br />
-    <h3>{{ this.$route.params.id }} Relationships</h3>
-    <v-row align="center" justify="center">
-      <v-col cols="12" lg="6">
-        <recursive-nested-collapse
-          v-for="(value, propertyName) in currentServer.relationships"
-          :readOnlyVal="!hasChild(value)"
-          :key="propertyName"
-          :propertyName="propertyName"
-          :value="handleNull(value)"
-          :child="!hasChild(value) ? {} : value"
+  <v-container class="server-padding">
+    <v-row v-if="serversData" class="p-12 servers-list">
+      <v-col
+        :md="4"
+        :sm="6"
+        class="d-sm-flex"
+        v-for="item in serversData.data"
+        :key="item.id"
+      >
+        <server-card
+          :overline="`Type: ${item.type}`"
+          :headline="item.id"
+          :link="`URL: ${item.links.self}`"
+          icon='<i class="material-icons">dashboard</i>'
+          :path="`/server/${item.id}`"
+          btnText="click"
         />
       </v-col>
     </v-row>
@@ -31,33 +22,36 @@
 </template>
 
 <script>
-import RecursiveNestedCollapse from "components/RecursiveNestedCollapse";
+import { mapGetters } from "vuex";
+import ServerCard from "./ServerCard";
 
 export default {
   name: "Servers",
   components: {
-    "recursive-nested-collapse": RecursiveNestedCollapse
+    "server-card": ServerCard
+  },
+  computed: {
+    ...mapGetters(["user"])
   },
   data() {
     return {
-      currentServer: null,
-      hasChild: this.$help.hasChild,
-      handleNull: this.$help.handleNull
+      serversData: null
     };
   },
+
   mounted() {
     let credentials = JSON.parse(localStorage.getItem("credentials"));
     this.axios
-      .get(`/v1/servers/${this.$route.params.id}`, {
+      .get(`/v1/servers`, {
         auth: credentials
       })
-      .then(res => (this.currentServer = res.data.data));
+      .then(res => (this.serversData = res.data));
   }
 };
 </script>
 
 <style lang="scss" scoped>
-h3 {
-  text-align: center;
+.server-padding {
+  padding-top: 70px;
 }
 </style>

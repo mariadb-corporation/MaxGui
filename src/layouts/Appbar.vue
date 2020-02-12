@@ -10,26 +10,42 @@ import { Fragment } from "vue-fragment";
 
 export default {
   components: { Fragment },
+  created: function() {
+    this.generateBreadcrumbs();
+  },
+
+  watch: {
+    $route: "generateBreadcrumbs"
+  },
+  methods: {
+    generateBreadcrumbs() {
+      let pathNames = this.$router.currentRoute.fullPath
+        .split("/")
+        .filter(x => x);
+      console.log("pathNames", pathNames);
+      let items = [];
+      for (let i = 0; i < pathNames.length; i++) {
+        const last = i === pathNames.length - 1;
+        const toPath = `/${pathNames.slice(0, i + 1).join("/")}`;
+        let item = {
+          text: pathNames[i].toUpperCase(),
+          href: toPath,
+          disabled: false
+        };
+        items.push(item);
+        this.items = items;
+      }
+    }
+  },
   data() {
     return {
-      items: [
-        {
-          text: "Dashboard",
-          disabled: false,
-          href: "breadcrumbs_dashboard"
-        },
-        {
-          text: "Link 1",
-          disabled: false,
-          href: "breadcrumbs_link_1"
-        },
-        {
-          text: "Link 2",
-          disabled: true,
-          href: "breadcrumbs_link_2"
-        }
-      ]
+      items: []
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.generateBreadcrumbs();
+    });
   }
 };
 </script>

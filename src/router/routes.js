@@ -1,26 +1,26 @@
-import Dashboard from "../pages/Dashboard";
-import Login from "pages/Login";
 import Servers from "pages/Servers";
+import Login from "pages/Login";
+import Server from "pages/Server";
 import { mdiViewDashboard, mdiEqualizer } from "@mdi/js";
 
 export const routes = [
   {
     path: "/",
-    redirect: "/dashboard"
+    redirect: "/server"
   },
   {
-    path: "/dashboard",
-    component: Dashboard,
+    path: "/server",
+    component: Servers,
     meta: {
       requiresAuth: true
     },
-    name: "Dashboard",
+    name: "Servers",
     icon: mdiViewDashboard,
     isSideBar: true
   },
   {
     path: "/server/:id",
-    component: Servers,
+    component: Server,
     meta: {
       requiresAuth: true
     },
@@ -28,7 +28,7 @@ export const routes = [
   },
   {
     path: "/statistics",
-    component: Dashboard,
+    component: Servers,
     meta: {
       requiresAuth: true
     },

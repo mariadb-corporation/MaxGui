@@ -9,7 +9,7 @@ module.exports = {
   plugins: ["vue"],
   extends: ["prettier", "prettier/vue"],
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? 2 : 1,
+    // "no-console": process.env.NODE_ENV === "production" ? 2 : 1,
     "no-unused-vars": 0
   }
 };
