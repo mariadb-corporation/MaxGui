@@ -22,7 +22,6 @@ export default {
       let pathNames = this.$router.currentRoute.fullPath
         .split("/")
         .filter(x => x);
-      console.log("pathNames", pathNames);
       let items = [];
       for (let i = 0; i < pathNames.length; i++) {
         const last = i === pathNames.length - 1;
