@@ -12,6 +12,7 @@
     "chart.js": "^2.9.3",
     "core-js": "^3.4.4",
     "eslint-config-prettier": "^6.10.0",
+    "immutability-helper": "^3.0.1",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-burger-menu": "^2.0.3",
