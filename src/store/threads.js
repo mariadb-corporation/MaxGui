@@ -1,5 +1,4 @@
 import Vue from "vue";
-import update from "immutability-helper";
 
 function delay(t, v) {
   return new Promise(function(resolve) {
@@ -12,10 +11,16 @@ function dynamicColors() {
   let b = Math.floor(Math.random() * 255);
   return "rgb(" + r + "," + g + "," + b + ")";
 }
+
 export default {
   state: {
+    isDestroyed: false,
     threads: [],
-    threadsChartData: {},
+    updateCount: 1,
+    chartdata: {
+      labels: [],
+      datasets: []
+    },
     credentials: JSON.parse(localStorage.getItem("credentials"))
   },
   mutations: {
@@ -23,9 +28,13 @@ export default {
       state.threads = payload;
     },
     setThreadsChartData(state, payload) {
-      state.threadsChartData = update(state.threadsChartData, {
-        $set: payload
-      });
+      state.chartdata = payload;
+    },
+    updateCount(state) {
+      state.updateCount += 1;
+    },
+    updateDestroyState(state) {
+      state.isDestroyed = true;
     }
   },
   actions: {
@@ -34,33 +43,44 @@ export default {
         let res = await Vue.axios.get(`/v1/maxscale/threads`, {
           auth: state.credentials
         });
-
+        //set threads
         await commit("setThreads", res.data.data);
+        // only generate DataSet Schema once
+        if (state.chartdata.datasets.length === 0) {
+          await dispatch("genDataSetSchema");
+        } else {
+          await commit("updateCount");
+        }
+
+        // LOOP polling
+
+        !state.isDestroyed &&
+          (await delay(2000).then(() => {
+            return dispatch("fetchThreadsAsync");
+          }));
       } catch (error) {
         console.log("error", error);
+        !state.isDestroyed &&
+          (await delay(5000).then(() => {
+            return dispatch("fetchThreadsAsync");
+          }));
       }
-      await dispatch("genThreadsChartSchema");
-      await delay(5000).then(() => {
-        return dispatch("fetchThreadsAsync");
-      });
     },
 
-    genThreadsChartSchema({ commit, state }) {
+    genDataSetSchema({ commit, state }) {
       const { threads } = state;
       if (threads) {
         let arr = [];
         let lineColors = [];
         let pointColors = [];
-        for (let i = 0; i < threads.length /** */; i++) {
-          lineColors.push(dynamicColors(i, threads.length));
-          pointColors.push(dynamicColors(i, threads.length));
+        for (let i = 0; i < threads.length; i++) {
+          lineColors.push(dynamicColors());
+          pointColors.push(dynamicColors());
           let obj = {
             id: `THREAD ID - ${threads[i].id}`,
-
             type: "line",
             label: `THREAD ID - ${threads[i].id}`,
-
-            backgroundColor: lineColors[i], // background of the line
+            backgroundColor: "rgba(0,0,0,0)", // background of the line
             borderColor: lineColors[i], //theme.palette.primary.main, // line color
             borderWidth: 2,
             lineTension: 0.25,
@@ -72,33 +92,12 @@ export default {
           datasets: arr,
           labels: [new Date().toLocaleTimeString()]
         };
-
         commit("setThreadsChartData", threadsChartDataSchema);
       }
     }
   },
   getters: {
-    threadsChartData: state => state.threadsChartData
+    chartdata: state => state.chartdata,
+    updateCount: state => state.updateCount
   }
 };
-
-// updateThreadsChartData(state, payload) {
-//   let newThreadsChartData = state.threadsChartData.slice();
-//   let timestamp = new Date().getTime();
-//   for (let i = 0; i < 3 /*newThreadsChartData.length*/; i++) {
-//     newThreadsChartData = update(newThreadsChartData, {
-//       [i]: {
-//         data: payload.isReset
-//           ? {
-//               $set: []
-//             }
-//           : {
-//               $push: [[timestamp, Math.floor(Math.random() * 100)]]
-//             }
-//       }
-//     });
-//   }
-//   state.threadsChartData = newThreadsChartData;
-//   //   console.log("state", state);
-//   //   console.log("payload", payload);
-// }
