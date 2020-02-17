@@ -52,16 +52,10 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["updateDestroyState"]),
-    ...mapActions([
-      "fetchThreadsAsync" // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
-    ])
+    ...mapMutations(["updateDestroyState"])
   },
   computed: {
     ...mapGetters(["chartdata", "updateCount"])
-  },
-  async mounted() {
-    this.fetchThreadsAsync();
   },
   // // update chartData
   watch: {

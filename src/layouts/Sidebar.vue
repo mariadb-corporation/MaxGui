@@ -1,5 +1,5 @@
 <template>
-  <Reveal width="200">
+  <Push width="200">
     <div class="nav-username">{{ user.username }}</div>
     <div class="nav-username_divider" />
     <ul>
@@ -9,17 +9,28 @@
           <p>{{ route.name }}</p>
         </router-link>
       </li>
+      <v-btn
+        :loading="loading"
+        :disabled="loading"
+        color=""
+        class="ma-2 white--text"
+        fab
+        @click="loader"
+      >
+        <v-icon color="red">{{ mdiPower }}</v-icon>
+      </v-btn>
     </ul>
-  </Reveal>
+  </Push>
 </template>
 <script>
-import { Reveal } from "vue-burger-menu";
+import { Push } from "vue-burger-menu";
 import { mapGetters } from "vuex";
 import { routes } from "../router/routes";
+import { mdiPower } from "@mdi/js";
 
 export default {
   components: {
-    Reveal
+    Push
   },
   computed: {
     ...mapGetters(["user"]),
@@ -30,8 +41,13 @@ export default {
   },
   data() {
     return {
-      routes: routes
+      routes: routes,
+      mdiPower: mdiPower,
+      loading: false
     };
+  },
+  watch: {
+    loader() {}
   }
 };
 </script>

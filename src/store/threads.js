@@ -44,7 +44,7 @@ export default {
           auth: state.credentials
         });
         //set threads
-        await commit("setThreads", res.data.data);
+        commit("setThreads", res.data.data);
         // only generate DataSet Schema once
         if (state.chartdata.datasets.length === 0) {
           await dispatch("genDataSetSchema");

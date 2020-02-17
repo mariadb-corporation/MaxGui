@@ -13,14 +13,12 @@
 <script>
 import store from "store";
 import Layouts from "layouts";
-import { Fragment } from "vue-fragment";
 
 export default {
   name: "App",
   store,
   components: {
-    ...Layouts,
-    Fragment
+    ...Layouts
   },
   store,
   data() {
@@ -37,4 +35,5 @@ export default {
 
 <style lang="scss">
 @import "styles/main";
+@import "styles/font.css";
 </style>
