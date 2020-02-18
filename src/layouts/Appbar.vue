@@ -1,7 +1,8 @@
 <template>
   <fragment>
-    <v-app-bar dense max-height="48px" color="primary"> </v-app-bar>
-    <v-breadcrumbs :items="items" large>
+    <v-app-bar fixed dense max-height="48px" color="primary">
+    </v-app-bar>
+    <v-breadcrumbs class="mt-12" :items="items" large>
       <template v-slot:item="{ item }">
         <v-breadcrumbs-item>
           <router-link style="text-decoration:none" :to="item.href">

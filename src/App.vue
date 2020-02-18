@@ -5,7 +5,6 @@
       <v-content id="page-wrap">
         <appbar v-if="user.token" />
         <router-view>
-
         </router-view>
       </v-content>
     </div>

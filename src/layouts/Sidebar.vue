@@ -10,9 +10,14 @@
         </router-link>
       </li>
     </ul>
-    <v-btn class="logout-btn white--text" @click="logoutHandle">
-      <v-icon color="red">{{ mdiLogout }}</v-icon>
-    </v-btn>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" class="logout-btn white--text" @click="logoutHandle">
+          <v-icon color="red">{{ mdiLogout }}</v-icon>
+        </v-btn>
+      </template>
+      <span>Sign out</span>
+    </v-tooltip>
   </Push>
 </template>
 <script>
@@ -84,133 +89,120 @@ export default {
 
   /* Position and sizing of burger button */
   .bm-burger-button {
-    position: fixed;
-    top: 14px;
-    left: 16px;
-    width: 20px;
-    height: 20px;
-    z-index: 1;
+    position: fixed !important;
+    top: 14px !important;
+    left: 16px !important;
+    width: 20px !important;
+    height: 20px !important;
+    z-index: 6 !important; // appbar z-index is 5
     .bm-burger-bars {
-      background-color: rgba(0, 0, 0, 0.8);
-      margin: auto;
+      background-color: rgba(0, 0, 0, 0.8) !important;
+      margin: auto !important;
     }
     &:hover {
       .bm-burger-bars {
         opacity: 1 !important;
-        background-color: rgba(0, 0, 0, 1);
+        background-color: rgba(0, 0, 0, 1) !important;
       }
     }
   }
-  .line-style {
-    position: absolute;
-    height: 20%;
-    left: 0;
-    right: 0;
-  }
+
   .cross-style {
-    position: absolute;
-    top: 12px;
-    right: 2px;
-    cursor: pointer;
+    position: absolute !important;
+    top: 12px !important;
+    right: 2px !important;
+    cursor: pointer !important;
   }
   .bm-cross {
-    background: #bdc3c7;
+    background: #bdc3c7 !important;
   }
   .bm-cross-button {
-    height: 24px;
-    width: 24px;
+    height: 24px !important;
+    width: 24px !important;
   }
   .bm-menu {
-    height: 100%; /* 100% Full-height */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Stay on top */
-    top: 0;
-    left: 0;
-    padding-top: 0px;
-    background-color: #00255b;
-    overflow-x: hidden; /* Disable horizontal scroll */
-    transition: 0.5s; /*0.5 second transition effect to slide in the sidenav*/
+    height: 100% !important; /* 100% Full-height */
+    position: fixed !important; /* Stay in place */
+    z-index: 1000 !important; /* Stay on top */
+    top: 0 !important;
+    left: 0 !important;
+    padding-top: 0px !important;
+    background-color: #00255b !important;
+    overflow-x: hidden !important; /* Disable horizontal scroll */
+    transition: 0.5s !important; /*0.5 second transition effect to slide in the sidenav*/
   }
 
   .bm-overlay {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.3) !important;
   }
   .bm-item-list > * > span {
-    margin-left: unset;
+    margin-left: unset !important;
   }
   .bm-item-list {
-    color: #b8b7ad;
-    margin-left: 0px;
-    font-size: 20px;
+    color: #b8b7ad !important;
+    margin-left: 0px !important;
+    font-size: 20px !important;
 
     ul {
-      margin: 0px;
+      margin: 0px !important;
       padding: 20px 0px !important;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
+      display: flex !important;
+      justify-content: center !important;
+      flex-direction: column !important;
       li {
         text-align: left !important;
-        position: relative;
-        display: block;
-        padding: 0px;
-
-        &:focus {
-          outline: 0;
-        }
+        position: relative !important;
+        display: block !important;
+        padding: 0px !important;
 
         a {
-          margin: 5px 0px;
-          border-radius: 4px;
-          padding: 8px 16px;
-          transition: 0.5s;
-          display: flex;
-          text-decoration: none;
-          &:focus {
-            outline: 0;
-          }
+          margin: 5px 0px !important;
+          border-radius: 4px !important;
+          padding: 8px 16px !important;
+          transition: 0.5s !important;
+          display: flex !important;
+          text-decoration: none !important;
 
           i {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            font-size: 32px;
+            display: flex !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            font-size: 32px !important;
           }
 
           p {
-            display: flex;
-            align-items: center;
-            margin: 0px 0px 0px 10px;
-            font-weight: 600;
-            font-size: 18px;
-            color: #ffffff;
-            opacity: 0.72;
-            padding: 0px;
+            display: flex !important;
+            align-items: center !important;
+            margin: 0px 0px 0px 10px !important;
+            font-weight: 600 !important;
+            font-size: 18px !important;
+            color: #ffffff !important;
+            opacity: 0.72 !important;
+            padding: 0px !important;
           }
         }
 
         &:hover > a {
-          border-radius: 4px;
-          background-color: rgba(255, 255, 255, 0.13);
-
+          border-radius: 4px !important;
+          background-color: rgba(255, 255, 255, 0.13) !important;
           p {
-            opacity: 1;
+            opacity: 1 !important;
           }
 
           .nav-icon {
-            opacity: 1;
+            opacity: 1 !important;
           }
         }
 
         &.active > a {
-          background-color: rgba(255, 255, 255, 0.23);
+          background-color: rgba(255, 255, 255, 0.23) !important;
 
           p {
-            opacity: 1;
+            opacity: 1 !important;
           }
 
           .nav-icon {
-            opacity: 1;
+            opacity: 1 !important;
           }
         }
       }
