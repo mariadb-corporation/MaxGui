@@ -31,6 +31,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "styles/main";
+@import "styles/main.scss";
 @import "styles/font.css";
 </style>

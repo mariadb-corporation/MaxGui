@@ -1,7 +1,15 @@
 <template>
   <fragment>
     <v-app-bar dense max-height="48px" color="primary"> </v-app-bar>
-    <v-breadcrumbs :items="items" large></v-breadcrumbs>
+    <v-breadcrumbs :items="items" large>
+      <template v-slot:item="{ item }">
+        <v-breadcrumbs-item>
+          <router-link style="text-decoration:none" :to="item.href">
+            {{ item.text.toUpperCase() }}
+          </router-link>
+        </v-breadcrumbs-item>
+      </template>
+    </v-breadcrumbs>
   </fragment>
 </template>
 
