@@ -1,5 +1,5 @@
 <template>
-  <Push width="200">
+  <Push :burgerIcon="isVisible" width="200">
     <div class="nav-username">{{ user.username }}</div>
     <div class="nav-username_divider" />
     <ul>
@@ -9,24 +9,17 @@
           <p>{{ route.name }}</p>
         </router-link>
       </li>
-      <v-btn
-        :loading="loading"
-        :disabled="loading"
-        color=""
-        class="ma-2 white--text"
-        fab
-        @click="loader"
-      >
-        <v-icon color="red">{{ mdiPower }}</v-icon>
+      <v-btn class="ma-2 white--text" @click="logoutHandle">
+        <v-icon color="red">{{ mdiLogout }}</v-icon>
       </v-btn>
     </ul>
   </Push>
 </template>
 <script>
 import { Push } from "vue-burger-menu";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { routes } from "../router/routes";
-import { mdiPower } from "@mdi/js";
+import { mdiLogout } from "@mdi/js";
 
 export default {
   components: {
@@ -39,15 +32,24 @@ export default {
       return navRoute;
     }
   },
+  methods: {
+    ...mapMutations(["logout"]),
+    logoutHandle() {
+      this.logout();
+      this.$router.push("login");
+    }
+  },
   data() {
     return {
       routes: routes,
-      mdiPower: mdiPower,
-      loading: false
+      mdiLogout: mdiLogout,
+      isVisible: true
     };
   },
   watch: {
-    loader() {}
+    user: function(newVal, oldVal) {
+      this.isVisible = newVal.token ? true : false;
+    }
   }
 };
 </script>
