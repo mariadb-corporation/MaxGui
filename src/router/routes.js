@@ -5,6 +5,10 @@ import { mdiViewDashboard, mdiEqualizer } from "@mdi/js";
 
 export const routes = [
   {
+    path: "*",
+    redirect: "/server"
+  },
+  {
     path: "/",
     redirect: "/server"
   },
