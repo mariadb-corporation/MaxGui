@@ -8,6 +8,7 @@ export default {
     setUser(state, userObj) {
       state.username = userObj && userObj.username;
       state.password = userObj && userObj.password;
+      state.token = userObj && userObj.token;
       // for now, testing purpose
       localStorage.setItem(
         "credentials",
@@ -17,6 +18,12 @@ export default {
           token: userObj.token
         })
       );
+    },
+    logout(state) {
+      state.username = null;
+      state.password = null;
+      state.token = null;
+      // localStorage.removeItem("credentials");
     }
   },
   actions: {

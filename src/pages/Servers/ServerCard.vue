@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined>
+  <v-card width="100%" outlined>
     <v-list-item three-line>
       <v-list-item-content>
         <div class="overline mb-4">{{ overline }}</div>

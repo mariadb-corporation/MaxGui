@@ -3,16 +3,14 @@
     <v-row no-gutters>
       <v-col :md="8" :sm="4" class="d-none d-sm-flex">
         <v-img
-          :src="
-            ' https://mariadb.com/wp-content/uploads/2018/08/home-hero-background.jpg'
-          "
+          src="../assets/img/home-hero-background.jpg"
           height="100vh"
         ></v-img>
       </v-col>
       <v-col :md="4" :sm="8" :xs="12">
         <div class="pt-12 d-flex flex-column align-center justify-center">
           <v-avatar class="ma-2" color="primary" size="48">
-            <i class="material-icons">lock</i>
+            <v-icon size="24" color="white">{{ mdiLock }}</v-icon>
           </v-avatar>
           <h3 class="title">MariaDB MaxScale</h3>
         </div>
@@ -50,6 +48,7 @@
             :type="isPwdVisible ? 'text' : 'password'"
             @click:append="isPwdVisible = !isPwdVisible"
             name="password"
+            autocomplete
             single-line
             dense
             outlined
@@ -88,10 +87,12 @@
 </template>
 
 <script>
+import { mdiLock } from "@mdi/js";
 export default {
   name: "Login",
   data() {
     return {
+      mdiLock: mdiLock,
       isValid: false,
       isLoading: false,
       isPwdVisible: false,
@@ -125,7 +126,7 @@ export default {
           token: "fakeToken" // fake token received from server
         });
         this.isLoading = false;
-        this.$router.push("dashboard");
+        this.$router.push("server");
       } catch (e) {
         this.errorMessage = e.toString();
         this.isLoading = false;

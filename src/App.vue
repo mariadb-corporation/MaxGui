@@ -1,10 +1,12 @@
 <template>
   <v-app id="vue-app">
     <div id="app">
-      <sidebar v-if="token" />
+      <sidebar />
       <v-content id="page-wrap">
-        <appbar />
-        <router-view></router-view>
+        <appbar v-if="user.token" />
+        <router-view>
+
+        </router-view>
       </v-content>
     </div>
   </v-app>
@@ -13,28 +15,22 @@
 <script>
 import store from "store";
 import Layouts from "layouts";
-import { Fragment } from "vue-fragment";
+import { mapGetters } from "vuex";
 
 export default {
   name: "App",
   store,
   components: {
-    ...Layouts,
-    Fragment
+    ...Layouts
   },
   store,
-  data() {
-    return {
-      token: null
-    };
-  },
-  mounted() {
-    let credentials = JSON.parse(localStorage.getItem("credentials"));
-    this.token = credentials.token;
+  computed: {
+    ...mapGetters(["user"])
   }
 };
 </script>
 
 <style lang="scss">
 @import "styles/main";
+@import "styles/font.css";
 </style>

@@ -19,13 +19,20 @@ export function handleNull(val) {
     return val;
   }
 }
+export function dynamicColors() {
+  let r = Math.floor(Math.random() * 255);
+  let g = Math.floor(Math.random() * 255);
+  let b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+}
 
 Object.defineProperties(Vue.prototype, {
   $help: {
     get() {
       return {
         hasChild,
-        handleNull
+        handleNull,
+        dynamicColors
       };
     }
   }

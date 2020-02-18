@@ -1,5 +1,5 @@
 <template>
-  <Reveal width="200">
+  <Push :burgerIcon="isVisible" width="200">
     <div class="nav-username">{{ user.username }}</div>
     <div class="nav-username_divider" />
     <ul>
@@ -9,17 +9,21 @@
           <p>{{ route.name }}</p>
         </router-link>
       </li>
+      <v-btn class="ma-2 white--text" @click="logoutHandle">
+        <v-icon color="red">{{ mdiLogout }}</v-icon>
+      </v-btn>
     </ul>
-  </Reveal>
+  </Push>
 </template>
 <script>
-import { Reveal } from "vue-burger-menu";
-import { mapGetters } from "vuex";
+import { Push } from "vue-burger-menu";
+import { mapGetters, mapMutations } from "vuex";
 import { routes } from "../router/routes";
+import { mdiLogout } from "@mdi/js";
 
 export default {
   components: {
-    Reveal
+    Push
   },
   computed: {
     ...mapGetters(["user"]),
@@ -28,10 +32,24 @@ export default {
       return navRoute;
     }
   },
+  methods: {
+    ...mapMutations(["logout"]),
+    logoutHandle() {
+      this.logout();
+      this.$router.push("login");
+    }
+  },
   data() {
     return {
-      routes: routes
+      routes: routes,
+      mdiLogout: mdiLogout,
+      isVisible: true
     };
+  },
+  watch: {
+    user: function(newVal, oldVal) {
+      this.isVisible = newVal.token ? true : false;
+    }
   }
 };
 </script>
