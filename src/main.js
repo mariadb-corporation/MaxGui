@@ -1,5 +1,5 @@
 import Vue from "vue";
-import 'utils/helpers'
+import "utils/helpers";
 import "plugins/vuex";
 import "plugins/axios";
 import App from "./App.vue";
@@ -11,7 +11,7 @@ Vue.config.productionTip = false;
 Vue.use(Fragment.Plugin);
 
 new Vue({
-  vuetify,
-  router,
-  render: h => h(App)
+    vuetify,
+    router,
+    render: h => h(App)
 }).$mount("#vue-app");

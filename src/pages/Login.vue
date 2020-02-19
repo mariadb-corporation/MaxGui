@@ -73,7 +73,7 @@
                             ></v-progress-circular>
                             <v-btn
                                 v-else
-                                @click="handleSubmit()"
+                                @click="handleSubmit"
                                 :disabled="!isValid"
                                 block
                                 color="primary"

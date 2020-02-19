@@ -6,10 +6,18 @@
                 <v-list-item-title class="headline mb-1">
                     {{ headline }}
                 </v-list-item-title>
-                <v-list-item-subtitle>{{ link }}</v-list-item-subtitle>
+                <v-list-item-subtitle>
+                    State: {{ attributes.state }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                    Url:
+                    <a target="_blank" rel="noopener" :href="link">
+                        {{ link }}</a
+                    >
+                </v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-icon x-large>{{ mdiToolbox }}</v-icon>
+            <v-icon x-large>{{ mdiServer }}</v-icon>
         </v-list-item>
 
         <v-card-actions
@@ -21,13 +29,14 @@
 </template>
 
 <script>
-import { mdiViewDashboard, mdiToolbox } from "@mdi/js";
+import { mdiViewDashboard, mdiServer } from "@mdi/js";
 
 export default {
     name: "server-card",
     props: {
         overline: String,
         headline: String,
+        attributes: Object,
         link: String,
         icon: String,
         path: String,
@@ -35,7 +44,7 @@ export default {
     },
     data() {
         return {
-            mdiToolbox: mdiToolbox
+            mdiServer: mdiServer
         };
     }
 };

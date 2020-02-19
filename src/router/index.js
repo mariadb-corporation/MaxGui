@@ -13,23 +13,26 @@ let router = new Router({
     // mode: "history",
     routes: routes
 });
-
 router.beforeEach(async (to, from, next) => {
+    // Check if user is logged in
+    const cookies = JSON.parse(localStorage.getItem("credentials"));
+    const token = cookies ? cookies.token : null;
+
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        // Check if user is logged in
-        console.log("localStorage", localStorage.getItem("credentials"));
-        if (JSON.parse(localStorage.getItem("credentials")) == null) {
+        if (token === null) {
             next({
                 path: "/login",
                 params: { nextUrl: to.fullPath }
             });
         } else {
+            console.log("user is authenticated", to);
             next();
             await store.dispatch("fetchUser");
         }
     } else {
-        next();
+        console.log("public route", to);
+        // If user is already authenticated redirect to dashboard
+        token ? next("/dashboard") : next();
     }
 });
-
 export default router;

@@ -34,18 +34,14 @@ export default {
                 scales: {
                     xAxes: [
                         {
-                            display: true,
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 15
-                            }
+                            display: true
                         }
                     ],
                     yAxes: [
                         {
                             display: true,
                             ticks: {
-                                beginAtZero: true,
+                                // beginAtZero: true,
                                 max: 100,
                                 min: 0
                             }

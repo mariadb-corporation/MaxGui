@@ -14,7 +14,8 @@
                             <server-card
                                 :overline="`Type: ${item.type}`"
                                 :headline="item.id"
-                                :link="`URL: ${item.links.self}`"
+                                :attributes="item.attributes"
+                                :link="`${item.links.self}`"
                                 icon='<i class="material-icons">dashboard</i>'
                                 :path="`/dashboard/${item.id}`"
                                 btnText="More Info"
@@ -67,7 +68,7 @@ import ThreadsChartContainer from "./ThreadsChartContainer";
 export default {
     name: "Dashboard",
     components: {
-        "server-card": ServerCard,
+        ServerCard,
         ThreadsChartContainer,
         Fragment
     },
@@ -82,7 +83,6 @@ export default {
         ...mapMutations(["resetDestroyState"])
     },
     created() {
-        console.log("call?");
         this.resetDestroyState();
         this.fetchServersAsync();
         this.fetchThreadsAsync();

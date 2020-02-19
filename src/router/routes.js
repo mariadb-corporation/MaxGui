@@ -9,10 +9,6 @@ export const routes = [
         redirect: "/dashboard"
     },
     {
-        path: "/",
-        redirect: "/dashboard"
-    },
-    {
         path: "/dashboard",
         component: Dashboard,
         meta: {
@@ -45,6 +41,7 @@ export const routes = [
         name: "login",
         component: Login,
         meta: {
+            requiresAuth: false,
             guest: true
         }
     }
