@@ -67,7 +67,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "styles/constants";
 .logout-btn {
     position: absolute;
     bottom: 50px;
@@ -165,8 +164,8 @@ export default {
                 padding: 0px !important;
 
                 a {
-                    margin: 5px 0px !important;
-                    border-radius: 4px !important;
+                    margin: 5px 18px !important;
+                    border-radius: 0px !important;
                     padding: 8px 16px !important;
                     transition: 0.5s !important;
                     display: flex !important;
@@ -190,28 +189,17 @@ export default {
                         padding: 0px !important;
                     }
                 }
-
-                &:hover > a {
-                    border-radius: 4px !important;
-                    background-color: rgba(255, 255, 255, 0.13) !important;
-                    p {
-                        opacity: 1 !important;
-                    }
-
-                    .nav-icon {
-                        opacity: 1 !important;
+                .router-link-exact-active {
+                    background-color: $navigation;
+                    & > * {
+                        color: white !important;
                     }
                 }
 
-                &.active > a {
-                    background-color: rgba(255, 255, 255, 0.23) !important;
-
-                    p {
-                        opacity: 1 !important;
-                    }
-
-                    .nav-icon {
-                        opacity: 1 !important;
+                &:hover > a {
+                    background-color: $navigation;
+                    & > * {
+                        color: white !important;
                     }
                 }
             }

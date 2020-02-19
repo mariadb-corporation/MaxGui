@@ -15,7 +15,7 @@
                     class="v-expansion-panel-content__scrollable"
                     v-if="hasChild(child)"
                 >
-                    <fragment v-if="childIsObj(child)">
+                    <template v-if="childIsObj(child)">
                         <recursive-nested-collapse
                             v-for="(childValue, childPropertyName) in child"
                             :readOnlyVal="!hasChild(childValue)"
@@ -24,10 +24,10 @@
                             :value="handleNull(childValue)"
                             :child="!hasChild(childValue) ? {} : childValue"
                         />
-                    </fragment>
-                    <fragment v-else>
+                    </template>
+                    <template v-else>
                         <styled-table :data="child"></styled-table>
-                    </fragment>
+                    </template>
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { Fragment } from "vue-fragment";
 import StyledTable from "components/StyledTable";
 
 export default {
@@ -46,7 +45,7 @@ export default {
         child: [Object, Array],
         readOnlyVal: Boolean
     },
-    components: { Fragment, "styled-table": StyledTable },
+    components: { "styled-table": StyledTable },
 
     data() {
         return {

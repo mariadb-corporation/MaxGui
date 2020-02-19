@@ -3,7 +3,7 @@
         <v-row justify="center">
             <v-col class="pt-0" :lg="6" :md="12" :sm="12">
                 <v-row class="servers-list">
-                    <fragment v-if="serversData">
+                    <template v-if="serversData">
                         <v-col
                             :md="6"
                             :lg="6"
@@ -21,8 +21,8 @@
                                 btnText="More Info"
                             />
                         </v-col>
-                    </fragment>
-                    <fragment v-else>
+                    </template>
+                    <template v-else>
                         <v-col :sm="12">
                             <v-card width="100%" outlined class="pa-6">
                                 <p>Loading servers data</p>
@@ -34,7 +34,7 @@
                                 ></v-progress-linear>
                             </v-card>
                         </v-col>
-                    </fragment>
+                    </template>
                 </v-row>
             </v-col>
 
@@ -61,7 +61,6 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import ServerCard from "./ServerCard";
-import { Fragment } from "vue-fragment";
 
 import ThreadsChartContainer from "./ThreadsChartContainer";
 
@@ -69,8 +68,7 @@ export default {
     name: "Dashboard",
     components: {
         ServerCard,
-        ThreadsChartContainer,
-        Fragment
+        ThreadsChartContainer
     },
     computed: {
         ...mapGetters(["serversData", "chartdata"])

@@ -3,11 +3,24 @@ const path = require("path");
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
 module.exports = {
+    chainWebpack: config => {
+        const types = ["vue-modules", "vue", "normal-modules", "normal"];
+        types.forEach(type =>
+            addStyleResource(config.module.rule("scss").oneOf(type))
+        );
+    },
     configureWebpack: {
         resolve: {
             modules: [path.resolve("./src"), path.resolve("./node_modules")]
         },
-        devServer: { proxy: "http://127.0.0.1:8989", port: 8000 }
+        devServer: { port: 8000 }
     },
     transpileDependencies: ["vuetify"]
 };
+function addStyleResource(rule) {
+    rule.use("style-resource")
+        .loader("style-resources-loader")
+        .options({
+            patterns: [path.resolve(__dirname, "./src/styles/constants.scss")]
+        });
+}

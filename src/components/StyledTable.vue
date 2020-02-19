@@ -1,28 +1,23 @@
-<template>
-    <fragment v-if="data">
-        {{ test }}
-        <v-data-table
-            dense
-            hide-default-footer
-            fixed-header
-            :headers="headersArr"
-            :items="itemsArr"
-            item-key="name"
-        >
-        </v-data-table>
-    </fragment>
+<template v-if="data">
+    <v-data-table
+        dense
+        hide-default-footer
+        fixed-header
+        :headers="headersArr"
+        :items="itemsArr"
+        item-key="name"
+    >
+    </v-data-table>
 </template>
 
 <script>
-import { Fragment } from "vue-fragment";
 export default {
     name: "styled-table",
     props: {
         data: Array
     },
-    components: { Fragment },
     computed: {
-        test: function() {
+        genTableData: function() {
             if (this.data) {
                 const { data } = this;
                 console.log("data", data);
@@ -44,6 +39,9 @@ export default {
                 this.itemsArr = itemsArr;
             }
         }
+    },
+    mounted() {
+        this.genTableData;
     },
     data() {
         return {

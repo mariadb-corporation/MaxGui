@@ -1,8 +1,8 @@
 <template>
     <v-container v-if="currentServer" class="pa-6 attTable-padding">
-        <h3>{{ this.$route.params.id }} Attributes</h3>
-        <v-row align="center" justify="center">
+        <v-row justify="center">
             <v-col cols="12" lg="6">
+                <h2>Attributes</h2>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in currentServer.attributes"
                     :readOnlyVal="!hasChild(value)"
@@ -12,11 +12,8 @@
                     :child="!hasChild(value) ? {} : value"
                 />
             </v-col>
-        </v-row>
-        <br />
-        <h3>{{ this.$route.params.id }} Relationships</h3>
-        <v-row align="center" justify="center">
             <v-col cols="12" lg="6">
+                <h2>Relationships</h2>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in currentServer.relationships"
                     :readOnlyVal="!hasChild(value)"
@@ -57,7 +54,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h3 {
+h2 {
     text-align: center;
+    margin-bottom: 20px;
 }
 </style>

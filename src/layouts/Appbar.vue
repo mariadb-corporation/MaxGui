@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <v-app-bar fixed dense max-height="48px" color="primary"> </v-app-bar>
         <v-breadcrumbs class="mt-12" :items="items" large>
             <template v-slot:item="{ item }">
@@ -10,14 +10,11 @@
                 </v-breadcrumbs-item>
             </template>
         </v-breadcrumbs>
-    </fragment>
+    </div>
 </template>
 
 <script>
-import { Fragment } from "vue-fragment";
-
 export default {
-    components: { Fragment },
     created: function() {
         this.generateBreadcrumbs();
     },
@@ -56,5 +53,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss" scoped></style>

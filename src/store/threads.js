@@ -32,7 +32,7 @@ export default {
                 datasets: []
             };
             state.threads = [];
-            state.updateCount = 0;
+            state.updateCount = 1;
         }
     },
     actions: {
