@@ -6,25 +6,30 @@ import store from "store";
 Vue.use(Router);
 
 let router = new Router({
-  mode: "history",
-  routes: routes
+    /* 
+    To use history mode, the web server needs to configure to serve it
+    https://router.vuejs.org/guide/essentials/history-mode.html
+   */
+    // mode: "history",
+    routes: routes
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Check if user is logged in
-    if (JSON.parse(localStorage.getItem("credentials")) == null) {
-      next({
-        path: "/login",
-        params: { nextUrl: to.fullPath }
-      });
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        // Check if user is logged in
+        console.log("localStorage", localStorage.getItem("credentials"));
+        if (JSON.parse(localStorage.getItem("credentials")) == null) {
+            next({
+                path: "/login",
+                params: { nextUrl: to.fullPath }
+            });
+        } else {
+            next();
+            await store.dispatch("fetchUser");
+        }
     } else {
-      next();
-      await store.dispatch("fetchUser");
+        next();
     }
-  } else {
-    next();
-  }
 });
 
 export default router;
