@@ -38,7 +38,7 @@ export default {
         },
         async createServer({ dispatch, state }, obj) {
             try {
-                await Vue.axios.post(
+                let res = await Vue.axios.post(
                     `/v1/servers/`,
                     {
                         data: {
@@ -56,7 +56,19 @@ export default {
                         auth: state.credentials
                     }
                 );
-                await dispatch("fetchServers");
+                // response ok
+                res.status === 204 && (await dispatch("fetchServers"));
+            } catch (error) {
+                console.log("createServer error", error);
+            }
+        },
+        async deleteServerById({ dispatch, state }, id) {
+            try {
+                let res = await Vue.axios.delete(`/v1/servers/${id}`, {
+                    auth: state.credentials
+                });
+                // response ok
+                res.status === 204 && (await dispatch("fetchServers"));
             } catch (error) {
                 console.log("createServer error", error);
             }

@@ -1,20 +1,17 @@
 <template>
-    <v-container class="server-padding">
-        <v-row justify="center">
+    <v-container fluid class="server-padding">
+        <v-row class="server-add" justify="center">
             <v-col cols="12" class="pt-0" :xs="12" :lg="6">
-                <v-row class="servers-list">
+                <v-row>
                     <template v-if="serversData">
                         <v-col
                             cols="12"
                             :xs="12"
-                            :sm="6"
+                            :sm="4"
                             v-for="item in serversData"
                             :key="item.id"
                         >
                             <server-card :item="item" />
-                        </v-col>
-                        <v-col cols="12" :xs="12" :sm="6">
-                            <server-card-add />
                         </v-col>
                     </template>
                     <template v-else>
@@ -30,6 +27,9 @@
                             </v-card>
                         </v-col>
                     </template>
+                    <v-col lass="mt-0 pt-0" cols="12" :xs="12" :sm="4">
+                        <server-card-add />
+                    </v-col>
                 </v-row>
             </v-col>
 
@@ -86,9 +86,9 @@ export default {
 
 <style lang="scss" scoped>
 .server-padding {
-    padding-top: 40px;
+    padding: 40px 50px 0px;
 }
-.servers-list {
+.server-add {
     margin-bottom: 60px;
 }
 </style>

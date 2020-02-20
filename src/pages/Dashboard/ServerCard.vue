@@ -10,6 +10,9 @@
                     State: {{ item.attributes.state }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
+                    Port: {{ item.attributes.parameters.port }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
                     Url:
                     <a target="_blank" rel="noopener" :href="item.links.self">
                         {{ item.links.self }}</a
@@ -22,28 +25,45 @@
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <router-link :to="`/dashboard/${item.id}`">
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-hover v-slot:default="{ hover }" open-delay="200">
-                            <v-icon
-                                v-on="on"
-                                :class="{ iconHovered: hover }"
-                                :color="hover ? '#074e61' : 'primary'"
-                                large
-                                >{{ mdiMore }}</v-icon
-                            >
-                        </v-hover>
-                    </template>
-                    <span>View More</span>
-                </v-tooltip>
-            </router-link>
+
+            <v-menu bottom origin="center center" transition="scale-transition">
+                <template v-slot:activator="{ on }">
+                    <v-hover v-slot:default="{ hover }" open-delay="200">
+                        <v-icon
+                            v-on="on"
+                            :class="{ iconHovered: hover }"
+                            :color="hover ? '#074e61' : 'primary'"
+                            large
+                            >{{ mdiDotsHorizontal }}</v-icon
+                        >
+                    </v-hover>
+                </template>
+
+                <v-list>
+                    <v-list-item @click="$router.push(`/dashboard/${item.id}`)">
+                        <v-list-item-title>
+                            View Details
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="$router.push(`/dashboard/${item.id}`)">
+                        <v-list-item-title>
+                            Edit
+                        </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="handleDelete(item.id)">
+                        <v-list-item-title>
+                            Delete
+                        </v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
-import { mdiServer, mdiMore } from "@mdi/js";
+import { mdiServer, mdiMore, mdiDotsHorizontal, mdiDelete } from "@mdi/js";
+import { mapActions } from "vuex";
 
 export default {
     name: "server-card",
@@ -53,8 +73,16 @@ export default {
     data() {
         return {
             mdiServer: mdiServer,
-            mdiMore: mdiMore
+            mdiMore: mdiMore,
+            mdiDotsHorizontal: mdiDotsHorizontal,
+            mdiDelete: mdiDelete
         };
+    },
+    methods: {
+        ...mapActions(["deleteServerById"]),
+        handleDelete(id) {
+            this.deleteServerById(id);
+        }
     }
 };
 </script>
