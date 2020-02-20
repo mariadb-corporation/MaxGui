@@ -10,7 +10,7 @@ export default {
             state.password = userObj && userObj.password;
             state.token = userObj && userObj.token;
             // for now, testing purpose
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "credentials",
                 JSON.stringify({
                     username: userObj.username,
@@ -23,7 +23,7 @@ export default {
             state.username = null;
             state.password = null;
             state.token = null;
-            localStorage.removeItem("credentials");
+            sessionStorage.removeItem("credentials");
         }
     },
     actions: {

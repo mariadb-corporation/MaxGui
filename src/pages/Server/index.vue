@@ -5,22 +5,22 @@
                 <h2>Attributes</h2>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in currentServer.attributes"
-                    :readOnlyVal="!hasChild(value)"
+                    :readOnlyVal="!$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
-                    :value="handleNull(value)"
-                    :child="!hasChild(value) ? {} : value"
+                    :value="$help.handleNull(value)"
+                    :child="!$help.hasChild(value) ? {} : value"
                 />
             </v-col>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="6" v-if="!isEmpty(currentServer.relationships)">
                 <h2>Relationships</h2>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in currentServer.relationships"
-                    :readOnlyVal="!hasChild(value)"
+                    :readOnlyVal="!$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
-                    :value="handleNull(value)"
-                    :child="!hasChild(value) ? {} : value"
+                    :value="$help.handleNull(value)"
+                    :child="!$help.hasChild(value) ? {} : value"
                 />
             </v-col>
         </v-row>
@@ -29,26 +29,26 @@
 
 <script>
 import RecursiveNestedCollapse from "components/RecursiveNestedCollapse";
+import { mapGetters, mapActions, mapMutations } from "vuex";
+import { isEmpty } from "lodash";
 
 export default {
     name: "Server",
     components: {
         "recursive-nested-collapse": RecursiveNestedCollapse
     },
-    data() {
-        return {
-            currentServer: null,
-            hasChild: this.$help.hasChild,
-            handleNull: this.$help.handleNull
-        };
+
+    computed: {
+        ...mapGetters(["currentServer"])
     },
-    mounted() {
-        let credentials = JSON.parse(localStorage.getItem("credentials"));
-        this.axios
-            .get(`/v1/servers/${this.$route.params.id}`, {
-                auth: credentials
-            })
-            .then(res => (this.currentServer = res.data.data));
+    methods: {
+        ...mapActions(["fetchServerById"]),
+        isEmpty(obj) {
+            return isEmpty(obj);
+        }
+    },
+    created() {
+        this.fetchServerById(this.$route.params.id);
     }
 };
 </script>

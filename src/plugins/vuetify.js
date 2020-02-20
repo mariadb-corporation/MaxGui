@@ -11,8 +11,13 @@ export default new Vuetify({
             light: {
                 primary: "#0e9bc0",
                 secondary: "#E6EEF1",
-                accent:"#2f99a3"
-            },
+                accent: "#2f99a3",
+                error: "#eb5757",
+                success: "#7dd012",
+                warning: "#f59d34",
+                info: "#1c9dd6",
+                anchor: "#2d9cdb"
+            }
             // dark: {
             //     primary: "#000031",
             //     secondary: "#3b4c89",
@@ -21,6 +26,3 @@ export default new Vuetify({
         }
     }
 });
-// primary: "#0e9bc0",
-// secondary: "#E6EEF1",
-// accent: "#F49831"

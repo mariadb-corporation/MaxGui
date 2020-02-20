@@ -10,7 +10,6 @@
 
 <script>
 import LineChart from "components/LineChart.vue";
-import update from "immutability-helper";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -23,10 +22,10 @@ export default {
             options: {
                 showLines: true,
                 responsive: true,
-                animation: {
-                    duration: 250 * 1.5,
-                    easing: "linear"
-                },
+                // animation: {
+                //     duration: 250 * 1.5,
+                //     easing: "linear"
+                // },
                 maintainAspectRatio: false,
                 tooltips: {
                     enabled: true
@@ -60,6 +59,7 @@ export default {
     // // update chartData
     watch: {
         // add new data every updateCount changes
+        // this prevents parent component rerender
         updateCount: function(newVal, oldVal) {
             /*Check Docs for syntax to access chartjs instance 
       https://vue-chartjs.org/api/#renderchart and 
@@ -72,7 +72,7 @@ export default {
                 dataset.data.push(Math.floor(Math.random() * 101));
             });
             // remove data when updateCount's value is more than 4
-            if (newVal > 4) {
+            if (newVal > 10) {
                 chart.data.labels.shift();
                 chart.data.datasets.forEach(dataset => {
                     dataset.data.shift();

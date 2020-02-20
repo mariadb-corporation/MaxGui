@@ -103,13 +103,13 @@ export default {
         z-index: 6 !important; // appbar z-index is 5
         .bm-burger-bars {
             opacity: 0.8 !important;
-            background-color: rgba(0, 0, 0, 0.8) !important;
+            background-color: rgb(255, 255, 255) !important;
             margin: auto !important;
         }
         &:hover {
             .bm-burger-bars {
                 opacity: 1 !important;
-                background-color: rgba(0, 0, 0, 1) !important;
+                background-color: rgb(255, 255, 255) !important;
             }
         }
     }
@@ -128,7 +128,10 @@ export default {
         width: 24px !important;
     }
     .bm-menu {
-        box-shadow: 6px 6px 6px #6c7c7b;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+            0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+            0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+
         height: 100% !important; /* 100% Full-height */
         position: fixed !important; /* Stay in place */
         z-index: 1000 !important; /* Stay on top */
@@ -170,7 +173,16 @@ export default {
                     transition: 0.5s !important;
                     display: flex !important;
                     text-decoration: none !important;
-
+                    clip-path: polygon(
+                        50% 3%,
+                        100% 0,
+                        99% 50%,
+                        100% 100%,
+                        50% 97%,
+                        0 100%,
+                        1% 50%,
+                        0 0
+                    );
                     i {
                         display: flex !important;
                         justify-content: flex-start !important;
@@ -191,6 +203,16 @@ export default {
                 }
                 .router-link-exact-active {
                     background-color: $navigation;
+                    clip-path: polygon(
+                        50% 3%,
+                        100% 0,
+                        99% 50%,
+                        100% 100%,
+                        50% 97%,
+                        0 100%,
+                        1% 50%,
+                        0 0
+                    );
                     & > * {
                         color: white !important;
                     }
@@ -198,6 +220,16 @@ export default {
 
                 &:hover > a {
                     background-color: $navigation;
+                    clip-path: polygon(
+                        50% 3%,
+                        100% 0,
+                        99% 50%,
+                        100% 100%,
+                        50% 97%,
+                        0 100%,
+                        1% 50%,
+                        0 0
+                    );
                     & > * {
                         color: white !important;
                     }

@@ -1,29 +1,24 @@
 <template>
     <v-container class="server-padding">
         <v-row justify="center">
-            <v-col class="pt-0" :lg="6" :md="12" :sm="12">
+            <v-col cols="12" class="pt-0" :xs="12" :lg="6">
                 <v-row class="servers-list">
                     <template v-if="serversData">
                         <v-col
-                            :md="6"
-                            :lg="6"
-                            :sm="12"
+                            cols="12"
+                            :xs="12"
+                            :sm="6"
                             v-for="item in serversData"
                             :key="item.id"
                         >
-                            <server-card
-                                :overline="`Type: ${item.type}`"
-                                :headline="item.id"
-                                :attributes="item.attributes"
-                                :link="`${item.links.self}`"
-                                icon='<i class="material-icons">dashboard</i>'
-                                :path="`/dashboard/${item.id}`"
-                                btnText="More Info"
-                            />
+                            <server-card :item="item" />
+                        </v-col>
+                        <v-col cols="12" :xs="12" :sm="6">
+                            <server-card-add />
                         </v-col>
                     </template>
                     <template v-else>
-                        <v-col :sm="12">
+                        <v-col>
                             <v-card width="100%" outlined class="pa-6">
                                 <p>Loading servers data</p>
                                 <v-progress-linear
@@ -38,7 +33,7 @@
                 </v-row>
             </v-col>
 
-            <v-col :lg="6" :md="12" :sm="12" align="center" justify="center">
+            <v-col cols="12" :xs="12" :lg="6" align="center" justify="center">
                 <v-card width="100%" class="pa-6">
                     <h2 style="text-align:center">Last two second threads</h2>
                     <br />
@@ -61,12 +56,13 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import ServerCard from "./ServerCard";
-
+import ServerCardAdd from "./ServerCardAdd";
 import ThreadsChartContainer from "./ThreadsChartContainer";
 
 export default {
     name: "Dashboard",
     components: {
+        ServerCardAdd,
         ServerCard,
         ThreadsChartContainer
     },
@@ -75,14 +71,14 @@ export default {
     },
     methods: {
         ...mapActions([
-            "fetchServersAsync",
+            "fetchServers",
             "fetchThreadsAsync" // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
         ]),
         ...mapMutations(["resetDestroyState"])
     },
     created() {
         this.resetDestroyState();
-        this.fetchServersAsync();
+        this.fetchServers();
         this.fetchThreadsAsync();
     }
 };

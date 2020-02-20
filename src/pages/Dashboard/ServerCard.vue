@@ -1,18 +1,18 @@
 <template>
-    <v-card width="100%">
+    <v-card elevation="2" width="100%">
         <v-list-item three-line>
             <v-list-item-content>
-                <div class="overline mb-4">{{ overline }}</div>
+                <div class="overline mb-4">{{ item.type }}</div>
                 <v-list-item-title class="headline mb-1">
-                    {{ headline }}
+                    {{ item.id }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                    State: {{ attributes.state }}
+                    State: {{ item.attributes.state }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                     Url:
-                    <a target="_blank" rel="noopener" :href="link">
-                        {{ link }}</a
+                    <a target="_blank" rel="noopener" :href="item.links.self">
+                        {{ item.links.self }}</a
                     >
                 </v-list-item-subtitle>
             </v-list-item-content>
@@ -20,32 +20,43 @@
             <v-icon x-large>{{ mdiServer }}</v-icon>
         </v-list-item>
 
-        <v-card-actions
-            ><router-link :to="path">
-                <v-btn dark color="primary" depressed>{{ btnText }} </v-btn>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <router-link :to="`/dashboard/${item.id}`">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-hover v-slot:default="{ hover }" open-delay="200">
+                            <v-icon
+                                v-on="on"
+                                :class="{ iconHovered: hover }"
+                                :color="hover ? '#074e61' : 'primary'"
+                                large
+                                >{{ mdiMore }}</v-icon
+                            >
+                        </v-hover>
+                    </template>
+                    <span>View More</span>
+                </v-tooltip>
             </router-link>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
-import { mdiViewDashboard, mdiServer } from "@mdi/js";
+import { mdiServer, mdiMore } from "@mdi/js";
 
 export default {
     name: "server-card",
     props: {
-        overline: String,
-        headline: String,
-        attributes: Object,
-        link: String,
-        icon: String,
-        path: String,
-        btnText: String
+        item: Object
     },
     data() {
         return {
-            mdiServer: mdiServer
+            mdiServer: mdiServer,
+            mdiMore: mdiMore
         };
     }
 };
 </script>
+
+<style lang="scss" scoped></style>

@@ -18,9 +18,8 @@ export default {
     },
     computed: {
         genTableData: function() {
-            if (this.data) {
-                const { data } = this;
-                console.log("data", data);
+            const { data } = this;
+            if (data) {
                 let itemsArr = [];
                 for (let n = 0; n < data.length; n++) {
                     let keyNames = Object.keys(data[n]);

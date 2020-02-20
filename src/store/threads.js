@@ -10,7 +10,7 @@ export default {
             labels: [],
             datasets: []
         },
-        credentials: JSON.parse(localStorage.getItem("credentials"))
+        credentials: JSON.parse(sessionStorage.getItem("credentials"))
     },
     mutations: {
         setThreads(state, payload) {
@@ -41,19 +41,23 @@ export default {
                 let res = await Vue.axios.get(`/v1/maxscale/threads`, {
                     auth: state.credentials
                 });
-                //set threads
-                commit("setThreads", res.data.data);
-                // only generate DataSet Schema once
-                if (state.chartdata.datasets.length === 0) {
+                // console.log("state.threads", state.threads.length);
+                // console.log("res.data.data", res.data.data.length);
+                if (state.threads.length !== res.data.data.length) {
+                    //set threads
+                    commit("setThreads", res.data.data);
+                    //  generate DataSet Schema
                     await dispatch("genDataSetSchema");
                 } else {
+                    //set threads
+                    commit("setThreads", res.data.data);
                     await commit("updateCount");
                 }
 
                 // LOOP polling
 
                 !state.isDestroyed &&
-                    (await delay(2000).then(() => {
+                    (await delay(1000).then(() => {
                         return dispatch("fetchThreadsAsync");
                     }));
             } catch (error) {

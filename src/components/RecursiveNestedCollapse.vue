@@ -1,43 +1,46 @@
 <template>
-    <div>
-        <v-expansion-panels :readonly="readOnlyVal" accordion tile>
-            <v-expansion-panel>
-                <v-expansion-panel-header>
-                    <b>{{ propertyName }}</b>
-                    {{ value }}
-                    <template v-slot:actions>
-                        <v-icon color="primary">{{
-                            readOnlyVal ? "" : "$expand"
-                        }}</v-icon>
-                    </template>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content
-                    class="v-expansion-panel-content__scrollable"
-                    v-if="hasChild(child)"
-                >
-                    <template v-if="childIsObj(child)">
-                        <recursive-nested-collapse
-                            v-for="(childValue, childPropertyName) in child"
-                            :readOnlyVal="!hasChild(childValue)"
-                            :key="childPropertyName"
-                            :propertyName="childPropertyName"
-                            :value="handleNull(childValue)"
-                            :child="!hasChild(childValue) ? {} : childValue"
-                        />
-                    </template>
-                    <template v-else>
-                        <styled-table :data="child"></styled-table>
-                    </template>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
-        </v-expansion-panels>
-    </div>
+    <v-expansion-panels :readonly="readOnlyVal" accordion tile>
+        <v-expansion-panel>
+            <v-expansion-panel-header ripple>
+                <b>{{ propertyName }}</b>
+                {{ value }}
+                <template v-slot:actions>
+                    <v-icon color="primary">{{
+                        readOnlyVal ? "" : "$expand"
+                    }}</v-icon>
+                </template>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content
+                class="v-expansion-panel-content__scrollable"
+                v-if="hasChild(child)"
+            >
+                <template v-if="childIsObj(child)">
+                    <recursive-nested-collapse
+                        v-for="(childValue, childPropertyName) in child"
+                        :readOnlyVal="!hasChild(childValue)"
+                        :key="childPropertyName"
+                        :propertyName="childPropertyName"
+                        :value="handleNull(childValue)"
+                        :child="!hasChild(childValue) ? {} : childValue"
+                    />
+                </template>
+                <template v-else>
+                    <styled-table :data="child"></styled-table>
+                </template>
+            </v-expansion-panel-content>
+        </v-expansion-panel>
+    </v-expansion-panels>
 </template>
 
 <script>
 import StyledTable from "components/StyledTable";
 
 export default {
+    /* This component intends to render nested objects. First level will be rendered first
+    by providing propertyName props then value props
+    The child props will detect whether render nested component or not
+    */
     name: "RecursiveNestedCollapse",
     props: {
         propertyName: [String, Number, Boolean],
