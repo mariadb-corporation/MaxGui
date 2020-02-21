@@ -4,13 +4,7 @@
             <v-col cols="12" class="pt-0" :xs="12" :lg="6">
                 <v-row>
                     <template v-if="serversData">
-                        <v-col
-                            cols="12"
-                            :xs="12"
-                            :sm="4"
-                            v-for="item in serversData"
-                            :key="item.id"
-                        >
+                        <v-col cols="12" :xs="12" :sm="4" v-for="item in serversData" :key="item.id">
                             <server-card :item="item" />
                         </v-col>
                     </template>
@@ -54,33 +48,33 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import ServerCard from "./ServerCard";
-import ServerCardAdd from "./ServerCardAdd";
-import ThreadsChartContainer from "./ThreadsChartContainer";
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import ServerCard from './ServerCard';
+import ServerCardAdd from './ServerCardAdd';
+import ThreadsChartContainer from './ThreadsChartContainer';
 
 export default {
-    name: "Dashboard",
+    name: 'Dashboard',
     components: {
         ServerCardAdd,
         ServerCard,
-        ThreadsChartContainer
+        ThreadsChartContainer,
     },
     computed: {
-        ...mapGetters(["serversData", "chartdata"])
+        ...mapGetters(['serversData', 'chartdata']),
     },
     methods: {
         ...mapActions([
-            "fetchServers",
-            "fetchThreadsAsync" // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
+            'fetchServers',
+            'fetchThreadsAsync', // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
         ]),
-        ...mapMutations(["resetDestroyState"])
+        ...mapMutations(['resetDestroyState']),
     },
     created() {
         this.resetDestroyState();
         this.fetchServers();
         this.fetchThreadsAsync();
-    }
+    },
 };
 </script>
 

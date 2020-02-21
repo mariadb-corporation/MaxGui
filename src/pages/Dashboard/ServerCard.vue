@@ -6,17 +6,11 @@
                 <v-list-item-title class="headline mb-1">
                     {{ item.id }}
                 </v-list-item-title>
-                <v-list-item-subtitle>
-                    State: {{ item.attributes.state }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle>
-                    Port: {{ item.attributes.parameters.port }}
-                </v-list-item-subtitle>
+                <v-list-item-subtitle> State: {{ item.attributes.state }} </v-list-item-subtitle>
+                <v-list-item-subtitle> Port: {{ item.attributes.parameters.port }} </v-list-item-subtitle>
                 <v-list-item-subtitle>
                     Url:
-                    <a target="_blank" rel="noopener" :href="item.links.self">
-                        {{ item.links.self }}</a
-                    >
+                    <a target="_blank" rel="noopener" :href="item.links.self"> {{ item.links.self }}</a>
                 </v-list-item-subtitle>
             </v-list-item-content>
 
@@ -50,11 +44,31 @@
                             Edit
                         </v-list-item-title>
                     </v-list-item>
-                    <v-list-item @click="handleDelete(item.id)">
-                        <v-list-item-title>
-                            Delete
-                        </v-list-item-title>
-                    </v-list-item>
+                    <v-dialog v-model="dialog" max-width="400px">
+                        <template v-slot:activator="{ on }">
+                            <v-list-item v-on="on">
+                                <v-list-item-title>
+                                    Delete
+                                </v-list-item-title>
+                            </v-list-item>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">Delete server</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <p>
+                                    Are you sure you want to delete
+                                    {{ item.id }} ?
+                                </p>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
+                                <v-btn color="red" text @click="handleDelete(item.id)">Delete</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </v-list>
             </v-menu>
         </v-card-actions>
@@ -62,28 +76,29 @@
 </template>
 
 <script>
-import { mdiServer, mdiMore, mdiDotsHorizontal, mdiDelete } from "@mdi/js";
-import { mapActions } from "vuex";
+import { mdiServer, mdiMore, mdiDotsHorizontal, mdiDelete } from '@mdi/js';
+import { mapActions, mapMutations } from 'vuex';
 
 export default {
-    name: "server-card",
+    name: 'server-card',
     props: {
-        item: Object
+        item: Object,
     },
     data() {
         return {
             mdiServer: mdiServer,
             mdiMore: mdiMore,
             mdiDotsHorizontal: mdiDotsHorizontal,
-            mdiDelete: mdiDelete
+            mdiDelete: mdiDelete,
+            dialog: false,
         };
     },
     methods: {
-        ...mapActions(["deleteServerById"]),
+        ...mapActions(['deleteServerById']),
         handleDelete(id) {
             this.deleteServerById(id);
-        }
-    }
+        },
+    },
 };
 </script>
 

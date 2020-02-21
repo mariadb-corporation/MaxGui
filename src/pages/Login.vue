@@ -2,26 +2,16 @@
     <v-container fluid class="pa-0">
         <v-row no-gutters>
             <v-col :md="8" :sm="4" class="d-none d-sm-flex">
-                <v-img
-                    src="../assets/img/home-hero-background.jpg"
-                    height="100vh"
-                ></v-img>
+                <v-img src="../assets/img/home-hero-background.jpg" height="100vh"></v-img>
             </v-col>
             <v-col :md="4" :sm="8" :xs="12">
-                <div
-                    class="pt-12 d-flex flex-column align-center justify-center"
-                >
+                <div class="pt-12 d-flex flex-column align-center justify-center">
                     <v-avatar class="ma-2" color="primary" size="48">
                         <v-icon size="24" color="white">{{ mdiLock }}</v-icon>
                     </v-avatar>
                     <h3 class="title">MariaDB MaxScale</h3>
                 </div>
-                <v-form
-                    ref="form"
-                    v-model="isValid"
-                    @keyup.native.enter="isValid && handleSubmit()"
-                    class="py-12 px-8"
-                >
+                <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleSubmit()" class="py-12 px-8">
                     <v-label>Username</v-label>
                     <v-text-field
                         id="username"
@@ -57,11 +47,7 @@
                         rounded
                         required
                     ></v-text-field>
-                    <v-checkbox
-                        v-model="rememberMe"
-                        label="Remember Me"
-                        color="primary"
-                    ></v-checkbox>
+                    <v-checkbox v-model="rememberMe" label="Remember Me" color="primary"></v-checkbox>
                     <v-card-actions class="pt-0 pb-12">
                         <div class="mx-auto text-center" style="width: 50%;">
                             <v-progress-circular
@@ -71,13 +57,7 @@
                                 color="primary"
                                 indeterminate
                             ></v-progress-circular>
-                            <v-btn
-                                v-else
-                                @click="handleSubmit"
-                                :disabled="!isValid"
-                                block
-                                color="primary"
-                                depressed
+                            <v-btn v-else @click="handleSubmit" :disabled="!isValid" block color="primary" depressed
                                 >Login</v-btn
                             >
                         </div>
@@ -89,9 +69,9 @@
 </template>
 
 <script>
-import { mdiLock } from "@mdi/js";
+import { mdiLock } from '@mdi/js';
 export default {
-    name: "Login",
+    name: 'Login',
     data() {
         return {
             mdiLock: mdiLock,
@@ -100,14 +80,14 @@ export default {
             isPwdVisible: false,
             rememberMe: false,
             login: {
-                username: "",
-                password: ""
+                username: '',
+                password: '',
             },
-            errorMessage: "",
+            errorMessage: '',
             rules: {
-                username: [val => !!val || "Username is required"],
-                password: [val => !!val || "Password is required"]
-            }
+                username: [val => !!val || 'Username is required'],
+                password: [val => !!val || 'Password is required'],
+            },
         };
     },
     methods: {
@@ -118,22 +98,22 @@ export default {
             this.isLoading = true;
             try {
                 await this.axios.get(`/maxscale`, {
-                    auth: this.login
+                    auth: this.login,
                 });
                 // temporary user's name, it is using username for name
                 this.$store.commit({
-                    type: "setUser",
+                    type: 'setUser',
                     username: this.login.username,
                     password: this.login.password,
-                    token: "fakeToken" // fake token received from server
+                    token: 'fakeToken', // fake token received from server
                 });
                 this.isLoading = false;
-                this.$router.push("server");
+                this.$router.push('server');
             } catch (e) {
                 this.errorMessage = e.toString();
                 this.isLoading = false;
             }
-        }
-    }
+        },
+    },
 };
 </script>

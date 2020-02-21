@@ -1,10 +1,10 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 export default {
     state: {
         serversData: [],
-        credentials: JSON.parse(sessionStorage.getItem("credentials")),
-        currentServer: {}
+        credentials: JSON.parse(sessionStorage.getItem('credentials')),
+        currentServer: {},
     },
     mutations: {
         setServers(state, payload) {
@@ -12,70 +12,90 @@ export default {
         },
         setCurrentServer(state, payload) {
             state.currentServer = payload;
-        }
+        },
     },
     actions: {
         async fetchServers({ commit, state }) {
             try {
                 let res = await Vue.axios.get(`/v1/servers`, {
-                    auth: state.credentials
+                    auth: state.credentials,
                 });
-                console.log("fetchServers", res.data.data);
-                commit("setServers", res.data.data);
+                await commit('setServers', res.data.data);
             } catch (error) {
-                console.log("fetchServers error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
         },
         async fetchServerById({ commit, state }, id) {
             try {
                 let res = await Vue.axios.get(`/v1/servers/${id}`, {
-                    auth: state.credentials
+                    auth: state.credentials,
                 });
-                commit("setCurrentServer", res.data.data);
+                commit('setCurrentServer', res.data.data);
             } catch (error) {
-                console.log("fetchServerById error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
         },
-        async createServer({ dispatch, state }, obj) {
+        async createServer({ commit, dispatch, state }, serverData) {
             try {
                 let res = await Vue.axios.post(
                     `/v1/servers/`,
                     {
                         data: {
-                            id: "row_server_8",
-                            type: "servers",
+                            id: serverData.id,
+                            type: 'servers',
                             attributes: {
-                                parameters: {
-                                    address: "127.0.0.1",
-                                    port: 8989
-                                }
-                            }
-                        }
+                                parameters: serverData.parameters,
+                            },
+                        },
                     },
                     {
-                        auth: state.credentials
+                        auth: state.credentials,
                     }
                 );
                 // response ok
-                res.status === 204 && (await dispatch("fetchServers"));
+                if (res.status === 204) {
+                    await dispatch('fetchServers');
+                    await commit('showMessage', {
+                        text: 'Server Created',
+                        type: 'success',
+                    });
+                }
             } catch (error) {
-                console.log("createServer error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
         },
-        async deleteServerById({ dispatch, state }, id) {
+        async deleteServerById({ dispatch, commit, state }, id) {
             try {
                 let res = await Vue.axios.delete(`/v1/servers/${id}`, {
-                    auth: state.credentials
+                    auth: state.credentials,
                 });
                 // response ok
-                res.status === 204 && (await dispatch("fetchServers"));
+                if (res.status === 204) {
+                    await dispatch('fetchServers');
+                    await commit('showMessage', {
+                        text: 'Server Deleted',
+                        type: 'success',
+                    });
+                }
             } catch (error) {
-                console.log("createServer error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
-        }
+        },
     },
     getters: {
         serversData: state => state.serversData,
-        currentServer: state => state.currentServer
-    }
+        currentServer: state => state.currentServer,
+    },
 };

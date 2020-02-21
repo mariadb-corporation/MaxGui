@@ -2,7 +2,7 @@ export default {
     state: {
         username: null,
         password: null,
-        token: null
+        token: null,
     },
     mutations: {
         setUser(state, userObj) {
@@ -11,11 +11,11 @@ export default {
             state.token = userObj && userObj.token;
             // for now, testing purpose
             sessionStorage.setItem(
-                "credentials",
+                'credentials',
                 JSON.stringify({
                     username: userObj.username,
                     password: userObj.password,
-                    token: userObj.token
+                    token: userObj.token,
                 })
             );
         },
@@ -23,25 +23,25 @@ export default {
             state.username = null;
             state.password = null;
             state.token = null;
-            sessionStorage.removeItem("credentials");
-        }
+            sessionStorage.removeItem('credentials');
+        },
     },
     actions: {
         fetchUser({ commit }) {
             // for testing purpose, a jwt should be stored instead
             commit({
-                type: "setUser",
-                username: "admin",
-                password: "mariadb",
-                token: "fakeToken"
+                type: 'setUser',
+                username: 'admin',
+                password: 'mariadb',
+                token: 'fakeToken',
             });
-        }
+        },
     },
     getters: {
         user: state => {
             const { token, username, password } = state;
 
             return { token, username, password };
-        }
-    }
+        },
+    },
 };

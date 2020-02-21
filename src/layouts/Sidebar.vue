@@ -12,11 +12,7 @@
         </ul>
         <v-tooltip top>
             <template v-slot:activator="{ on }">
-                <v-btn
-                    v-on="on"
-                    class="logout-btn white--text"
-                    @click="logoutHandle"
-                >
+                <v-btn v-on="on" class="logout-btn white--text" @click="logoutHandle">
                     <v-icon color="red">{{ mdiLogout }}</v-icon>
                 </v-btn>
             </template>
@@ -25,34 +21,34 @@
     </Push>
 </template>
 <script>
-import { Push } from "vue-burger-menu";
-import { mapGetters, mapMutations } from "vuex";
-import { routes } from "../router/routes";
-import { mdiLogout } from "@mdi/js";
+import { Push } from 'vue-burger-menu';
+import { mapGetters, mapMutations } from 'vuex';
+import { routes } from '../router/routes';
+import { mdiLogout } from '@mdi/js';
 
 export default {
     components: {
-        Push
+        Push,
     },
     computed: {
-        ...mapGetters(["user"]),
+        ...mapGetters(['user']),
         renderNavRoute: function() {
             let navRoute = routes.filter(route => route.isSideBar);
             return navRoute;
-        }
+        },
     },
     methods: {
-        ...mapMutations(["logout"]),
+        ...mapMutations(['logout']),
         logoutHandle() {
             this.logout();
-            this.$router.push("login");
-        }
+            this.$router.push('login');
+        },
     },
     data() {
         return {
             routes: routes,
             mdiLogout: mdiLogout,
-            isVisible: true
+            isVisible: true,
         };
     },
     mounted() {
@@ -61,8 +57,8 @@ export default {
     watch: {
         user: function(newVal, oldVal) {
             this.isVisible = newVal.token ? true : false;
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -128,8 +124,7 @@ export default {
         width: 24px !important;
     }
     .bm-menu {
-        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-            0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
             0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
 
         height: 100% !important; /* 100% Full-height */
@@ -173,16 +168,7 @@ export default {
                     transition: 0.5s !important;
                     display: flex !important;
                     text-decoration: none !important;
-                    clip-path: polygon(
-                        50% 3%,
-                        100% 0,
-                        99% 50%,
-                        100% 100%,
-                        50% 97%,
-                        0 100%,
-                        1% 50%,
-                        0 0
-                    );
+                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     i {
                         display: flex !important;
                         justify-content: flex-start !important;
@@ -203,16 +189,7 @@ export default {
                 }
                 .router-link-exact-active {
                     background-color: $navigation;
-                    clip-path: polygon(
-                        50% 3%,
-                        100% 0,
-                        99% 50%,
-                        100% 100%,
-                        50% 97%,
-                        0 100%,
-                        1% 50%,
-                        0 0
-                    );
+                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
                         color: white !important;
                     }
@@ -220,16 +197,7 @@ export default {
 
                 &:hover > a {
                     background-color: $navigation;
-                    clip-path: polygon(
-                        50% 3%,
-                        100% 0,
-                        99% 50%,
-                        100% 100%,
-                        50% 97%,
-                        0 100%,
-                        1% 50%,
-                        0 0
-                    );
+                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
                         color: white !important;
                     }
