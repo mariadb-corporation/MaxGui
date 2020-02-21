@@ -19,3 +19,80 @@ input:-webkit-autofill:active {
 #page-wrap {
     height: 100%;
 }
+
+.data-table-full {
+    a:hover {
+        text-decoration: underline;
+    }
+    // table {
+    //     th {
+    //         padding: 0 24px;
+    //         background-color: $table-border;
+    //         text-transform: uppercase;
+    //         &:last-child {
+    //             border-radius: 0 5px 0 0;
+    //         }
+    //         &:first-child {
+    //             border-radius: 5px 0 0 0;
+    //         }
+    //         .toggle-icon {
+    //             color: inherit;
+    //         }
+    //     }
+    //     tbody {
+    //         tr {
+    //             td {
+    //                 padding: 0 24px;
+    //                 border-bottom: 1px solid $table-border;
+    //                 &:last-child {
+    //                     border-right: 1px solid $table-border;
+    //                 }
+    //                 &:first-child {
+    //                     border-left: 1px solid $table-border;
+    //                 }
+    //                 .cell-accent {
+    //                     height: 100%;
+    //                     padding: 0 24px;
+    //                     margin-left: -24px;
+    //                     display: flex;
+    //                     border-left: 8px solid #828282;
+    //                     &.info-accent {
+    //                         border-color: $accent;
+    //                     }
+    //                     &.success-accent {
+    //                         border-color: $success;
+    //                     }
+    //                     &.error-accent {
+    //                         border-color: $error;
+    //                     }
+    //                     &.warning-accent {
+    //                         border-color: $warning;
+    //                     }
+    //                 }
+    //                 &.actions {
+    //                     text-align: right;
+
+    //                     button {
+    //                         opacity: 0;
+    //                     }
+    //                 }
+    //             }
+    //             &:hover {
+    //                 td.actions button {
+    //                     opacity: 1;
+    //                 }
+    //             }
+    //             &.last-row {
+    //                 td {
+    //                     &:last-child {
+    //                         border-radius: 0 0 5px 0;
+    //                     }
+    //                     &:first-child {
+    //                         border-radius: 0 0 0 5px;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+}

@@ -188,18 +188,18 @@ export default {
                     }
                 }
                 .router-link-exact-active {
-                    background-color: $navigation;
+                    background-color: #e7eef1;
                     clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
-                        color: white !important;
+                        color: black !important;
                     }
                 }
 
                 &:hover > a {
-                    background-color: $navigation;
+                    background-color: #e7eef1;
                     clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
-                        color: white !important;
+                        color: black !important;
                     }
                 }
             }
