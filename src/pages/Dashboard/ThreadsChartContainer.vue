@@ -1,21 +1,17 @@
 <template>
     <div style="width:80%">
-        <line-chart
-            ref="threadsChart"
-            :chartData="chartdata"
-            :options="options"
-        />
+        <line-chart ref="threadsChart" :chartData="chartdata" :options="options" />
     </div>
 </template>
 
 <script>
-import LineChart from "components/LineChart.vue";
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import LineChart from 'components/LineChart.vue';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
-    name: "threads-chart-container",
+    name: 'threads-chart-container',
     components: {
-        "line-chart": LineChart
+        'line-chart': LineChart,
     },
     data() {
         return {
@@ -28,13 +24,13 @@ export default {
                 // },
                 maintainAspectRatio: false,
                 tooltips: {
-                    enabled: true
+                    enabled: true,
                 },
                 scales: {
                     xAxes: [
                         {
-                            display: true
-                        }
+                            display: true,
+                        },
                     ],
                     yAxes: [
                         {
@@ -42,19 +38,19 @@ export default {
                             ticks: {
                                 // beginAtZero: true,
                                 max: 100,
-                                min: 0
-                            }
-                        }
-                    ]
-                }
-            }
+                                min: 0,
+                            },
+                        },
+                    ],
+                },
+            },
         };
     },
     methods: {
-        ...mapMutations(["clearState"])
+        ...mapMutations(['clearState']),
     },
     computed: {
-        ...mapGetters(["chartdata", "updateCount"])
+        ...mapGetters(['chartdata', 'updateCount']),
     },
     // // update chartData
     watch: {
@@ -79,7 +75,7 @@ export default {
                 });
             }
             chart.update();
-        }
+        },
     },
     beforeDestroy() {
         let chart = this.$refs.threadsChart.$data._chart;
@@ -87,6 +83,6 @@ export default {
         chart.data.datasets = [];
         chart.destroy();
         this.clearState();
-    }
+    },
 };
 </script>

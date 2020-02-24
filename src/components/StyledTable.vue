@@ -1,20 +1,13 @@
 <template v-if="data">
-    <v-data-table
-        dense
-        hide-default-footer
-        fixed-header
-        :headers="headersArr"
-        :items="itemsArr"
-        item-key="name"
-    >
+    <v-data-table dense hide-default-footer fixed-header :headers="headersArr" :items="itemsArr" item-key="name">
     </v-data-table>
 </template>
 
 <script>
 export default {
-    name: "styled-table",
+    name: 'styled-table',
     props: {
-        data: Array
+        data: Array,
     },
     computed: {
         genTableData: function() {
@@ -27,7 +20,7 @@ export default {
                     let headersArr = [];
                     for (let i = 0; i < keyNames.length; i++) {
                         // create headerObj and assign its value
-                        let headersObj = { align: "left" };
+                        let headersObj = { align: 'left' };
                         headersObj.text = keyNames[i];
                         headersObj.value = keyNames[i];
                         headersArr.push(headersObj);
@@ -37,7 +30,7 @@ export default {
                 }
                 this.itemsArr = itemsArr;
             }
-        }
+        },
     },
     mounted() {
         this.genTableData;
@@ -45,8 +38,8 @@ export default {
     data() {
         return {
             headersArr: [],
-            itemsArr: []
+            itemsArr: [],
         };
-    }
+    },
 };
 </script>

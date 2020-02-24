@@ -1,39 +1,11 @@
 <template>
-    <v-container class="server-padding">
-        <v-row justify="center">
-            <v-col cols="12" class="pt-0" :xs="12" :lg="6">
-                <v-row class="servers-list">
-                    <template v-if="serversData">
-                        <v-col
-                            cols="12"
-                            :xs="12"
-                            :sm="6"
-                            v-for="item in serversData"
-                            :key="item.id"
-                        >
-                            <server-card :item="item" />
-                        </v-col>
-                        <v-col cols="12" :xs="12" :sm="6">
-                            <server-card-add />
-                        </v-col>
-                    </template>
-                    <template v-else>
-                        <v-col>
-                            <v-card width="100%" outlined class="pa-6">
-                                <p>Loading servers data</p>
-                                <v-progress-linear
-                                    color="primary accent-4"
-                                    indeterminate
-                                    rounded
-                                    height="6"
-                                ></v-progress-linear>
-                            </v-card>
-                        </v-col>
-                    </template>
-                </v-row>
+    <v-container fluid class="server-padding">
+        <v-row class="server-add" align="center" justify="center">
+            <v-col cols="12" class="pt-0" :xs="12" :xl="7">
+                <servers-table :generateTableRows="generateTableRows" />
             </v-col>
 
-            <v-col cols="12" :xs="12" :lg="6" align="center" justify="center">
+            <v-col cols="12" :xs="12" :xl="5" align="center" justify="center">
                 <v-card width="100%" class="pa-6">
                     <h2 style="text-align:center">Last two second threads</h2>
                     <br />
@@ -54,41 +26,52 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import ServerCard from "./ServerCard";
-import ServerCardAdd from "./ServerCardAdd";
-import ThreadsChartContainer from "./ThreadsChartContainer";
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import ThreadsChartContainer from './ThreadsChartContainer';
+import ServersTable from './ServersTable';
 
 export default {
-    name: "Dashboard",
+    name: 'Dashboard',
     components: {
-        ServerCardAdd,
-        ServerCard,
-        ThreadsChartContainer
+        ThreadsChartContainer,
+        ServersTable,
     },
     computed: {
-        ...mapGetters(["serversData", "chartdata"])
+        ...mapGetters(['serversData', 'chartdata']),
+        generateTableRows: function() {
+            let itemsArr = [];
+            for (let n = 0; n < this.serversData.length; n++) {
+                let row = {
+                    id: this.serversData[n].id,
+                    state: this.serversData[n].attributes.state,
+                    port: this.serversData[n].attributes.parameters.port,
+                    address: this.serversData[n].attributes.parameters.address,
+                };
+                itemsArr.push(row);
+            }
+            return itemsArr;
+        },
     },
     methods: {
         ...mapActions([
-            "fetchServers",
-            "fetchThreadsAsync" // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
+            'fetchServers',
+            'fetchThreadsAsync', // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
         ]),
-        ...mapMutations(["resetDestroyState"])
+        ...mapMutations(['resetDestroyState']),
     },
     created() {
         this.resetDestroyState();
         this.fetchServers();
-        this.fetchThreadsAsync();
-    }
+        // this.fetchThreadsAsync();
+    },
 };
 </script>
 
 <style lang="scss" scoped>
 .server-padding {
-    padding-top: 40px;
+    padding: 40px 50px 0px;
 }
-.servers-list {
+.server-add {
     margin-bottom: 60px;
 }
 </style>

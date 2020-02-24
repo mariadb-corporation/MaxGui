@@ -28,28 +28,28 @@
 </template>
 
 <script>
-import RecursiveNestedCollapse from "components/RecursiveNestedCollapse";
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import { isEmpty } from "lodash";
+import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { isEmpty } from 'lodash';
 
 export default {
-    name: "Server",
+    name: 'Server',
     components: {
-        "recursive-nested-collapse": RecursiveNestedCollapse
+        'recursive-nested-collapse': RecursiveNestedCollapse,
     },
 
     computed: {
-        ...mapGetters(["currentServer"])
+        ...mapGetters(['currentServer']),
     },
     methods: {
-        ...mapActions(["fetchServerById"]),
+        ...mapActions(['fetchServerById']),
         isEmpty(obj) {
             return isEmpty(obj);
-        }
+        },
     },
     created() {
         this.fetchServerById(this.$route.params.id);
-    }
+    },
 };
 </script>
 

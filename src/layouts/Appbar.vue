@@ -20,36 +20,34 @@ export default {
     },
 
     watch: {
-        $route: "generateBreadcrumbs"
+        $route: 'generateBreadcrumbs',
     },
     methods: {
         generateBreadcrumbs() {
-            let pathNames = this.$router.currentRoute.fullPath
-                .split("/")
-                .filter(x => x);
+            let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
             let items = [];
             for (let i = 0; i < pathNames.length; i++) {
                 const last = i === pathNames.length - 1;
-                const toPath = `/${pathNames.slice(0, i + 1).join("/")}`;
+                const toPath = `/${pathNames.slice(0, i + 1).join('/')}`;
                 let item = {
                     text: pathNames[i].toUpperCase(),
                     href: toPath,
-                    disabled: false
+                    disabled: false,
                 };
                 items.push(item);
                 this.items = items;
             }
-        }
+        },
     },
     data() {
         return {
-            items: []
+            items: [],
         };
     },
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.generateBreadcrumbs();
         });
-    }
+    },
 };
 </script>

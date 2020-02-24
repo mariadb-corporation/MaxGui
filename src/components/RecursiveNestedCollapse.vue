@@ -5,24 +5,19 @@
                 <b>{{ propertyName }}</b>
                 {{ value }}
                 <template v-slot:actions>
-                    <v-icon color="primary">{{
-                        readOnlyVal ? "" : "$expand"
-                    }}</v-icon>
+                    <v-icon color="primary">{{ readOnlyVal ? '' : '$expand' }}</v-icon>
                 </template>
             </v-expansion-panel-header>
 
-            <v-expansion-panel-content
-                class="v-expansion-panel-content__scrollable"
-                v-if="hasChild(child)"
-            >
+            <v-expansion-panel-content class="v-expansion-panel-content__scrollable" v-if="$help.hasChild(child)">
                 <template v-if="childIsObj(child)">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
-                        :readOnlyVal="!hasChild(childValue)"
+                        :readOnlyVal="!$help.hasChild(childValue)"
                         :key="childPropertyName"
                         :propertyName="childPropertyName"
-                        :value="handleNull(childValue)"
-                        :child="!hasChild(childValue) ? {} : childValue"
+                        :value="$help.handleNull(childValue)"
+                        :child="!$help.hasChild(childValue) ? {} : childValue"
                     />
                 </template>
                 <template v-else>
@@ -34,36 +29,30 @@
 </template>
 
 <script>
-import StyledTable from "components/StyledTable";
+import StyledTable from 'components/StyledTable';
 
 export default {
     /* This component intends to render nested objects. First level will be rendered first
     by providing propertyName props then value props
     The child props will detect whether render nested component or not
     */
-    name: "RecursiveNestedCollapse",
+    name: 'RecursiveNestedCollapse',
     props: {
         propertyName: [String, Number, Boolean],
         value: [String, Number, Boolean], // null object value has been handle by handleNull
         child: [Object, Array],
-        readOnlyVal: Boolean
+        readOnlyVal: Boolean,
     },
-    components: { "styled-table": StyledTable },
+    components: { 'styled-table': StyledTable },
 
-    data() {
-        return {
-            hasChild: this.$help.hasChild,
-            handleNull: this.$help.handleNull
-        };
-    },
     methods: {
         childIsObj(child) {
-            if (typeof child === "object" && !Array.isArray(child)) {
+            if (typeof child === 'object' && !Array.isArray(child)) {
                 return true;
             }
             return false;
-        }
-    }
+        },
+    },
 };
 </script>
 <style lang="scss" scoped>

@@ -1,10 +1,10 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 export default {
     state: {
         serversData: [],
-        credentials: JSON.parse(sessionStorage.getItem("credentials")),
-        currentServer: {}
+        credentials: JSON.parse(sessionStorage.getItem('credentials')),
+        currentServer: {},
     },
     mutations: {
         setServers(state, payload) {
@@ -12,58 +12,144 @@ export default {
         },
         setCurrentServer(state, payload) {
             state.currentServer = payload;
-        }
+        },
     },
     actions: {
         async fetchServers({ commit, state }) {
             try {
                 let res = await Vue.axios.get(`/v1/servers`, {
-                    auth: state.credentials
+                    auth: state.credentials,
                 });
-                console.log("fetchServers", res.data.data);
-                commit("setServers", res.data.data);
+                await commit('setServers', res.data.data);
             } catch (error) {
-                console.log("fetchServers error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
         },
         async fetchServerById({ commit, state }, id) {
             try {
                 let res = await Vue.axios.get(`/v1/servers/${id}`, {
-                    auth: state.credentials
+                    auth: state.credentials,
                 });
-                commit("setCurrentServer", res.data.data);
+                commit('setCurrentServer', res.data.data);
             } catch (error) {
-                console.log("fetchServerById error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
         },
-        async createServer({ dispatch, state }, obj) {
+        /**
+         * 
+         * 
+         * @param { 
+                mode: String,
+                id:String,
+                relationships: Object,
+                parameters: Object,
+            } serverData 
+         *
+         */
+        async createOrUpdateServer({ commit, dispatch, state }, serverData) {
             try {
-                await Vue.axios.post(
-                    `/v1/servers/`,
-                    {
-                        data: {
-                            id: "row_server_8",
-                            type: "servers",
-                            attributes: {
-                                parameters: {
-                                    address: "127.0.0.1",
-                                    port: 8989
-                                }
-                            }
+                let res;
+                let message;
+                if (serverData.mode === 'post') {
+                    res = await Vue.axios.post(
+                        `/v1/servers/`,
+                        {
+                            data: {
+                                id: serverData.id,
+                                type: 'servers',
+                                attributes: {
+                                    parameters: serverData.parameters,
+                                },
+                                relationships: serverData.relationships,
+                            },
+                        },
+                        {
+                            auth: state.credentials,
                         }
-                    },
-                    {
-                        auth: state.credentials
-                    }
-                );
-                await dispatch("fetchServers");
+                    );
+                    message = `Server ${serverData.id} is created`;
+                } else if (serverData.mode === 'patch') {
+                    res = await Vue.axios.patch(
+                        `/v1/servers/${serverData.id}`,
+                        {
+                            data: {
+                                id: serverData.id,
+                                type: 'servers',
+                                attributes: {
+                                    parameters: serverData.parameters,
+                                },
+                                relationships: serverData.relationships,
+                            },
+                        },
+                        {
+                            auth: state.credentials,
+                        }
+                    );
+                    message = `Server ${serverData.id} is updated`;
+                }
+
+                // response ok
+                if (res.status === 204) {
+                    await commit('showMessage', {
+                        text: message,
+                        type: 'success',
+                    });
+                    await dispatch('fetchServers');
+                }
             } catch (error) {
-                console.log("createServer error", error);
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
             }
-        }
+        },
+
+        async deleteServerById({ dispatch, commit, state }, id) {
+            try {
+                let res = await Vue.axios.delete(`/v1/servers/${id}`, {
+                    auth: state.credentials,
+                });
+                // response ok
+                if (res.status === 204) {
+                    await dispatch('fetchServers');
+                    await commit('showMessage', {
+                        text: `Server ${id} Deleted`,
+                        type: 'success',
+                    });
+                }
+            } catch (error) {
+                await commit('showMessage', {
+                    text: error,
+                    type: 'error',
+                });
+            }
+        },
     },
     getters: {
         serversData: state => state.serversData,
-        currentServer: state => state.currentServer
-    }
+        serversDataMap: state => {
+            let map = new Map();
+            state.serversData.forEach(ele => {
+                map.set(ele.id, ele);
+            });
+            return map;
+        },
+        currentServer: state => state.currentServer,
+        allServersInfo: state => {
+            let idArr = [];
+            let portNumArr = [];
+            return state.serversData.reduce((accumulator, _, index, array) => {
+                idArr.push(array[index].id);
+                portNumArr.push(array[index].attributes.parameters.port);
+
+                return (accumulator = { idArr: idArr, portNumArr: portNumArr });
+            }, []);
+        },
+    },
 };
