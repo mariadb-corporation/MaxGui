@@ -8,7 +8,7 @@
             </template>
             <span>Update</span>
         </v-tooltip>
-        <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="600px">
+        <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="800px">
             <template v-slot:body>
                 <v-card-title>
                     <span class="headline">Update server</span>
@@ -127,6 +127,65 @@
                                     />
                                 </v-col>
                             </v-row>
+
+                            <v-row>
+                                <v-col cols="12" xs="12" sm="12">
+                                    <h3>Relationships configurations</h3>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="6">
+                                    <v-btn color="primary" x-small @click="addRelationship('services')">
+                                        Add Service
+                                    </v-btn>
+                                    <div class="scrollable-input-div" v-if="relationships.services.data.length">
+                                        <div v-for="(item, i) in relationships.services.data" :key="i">
+                                            <v-btn
+                                                class="delete"
+                                                right
+                                                icon
+                                                x-small
+                                                @click="deleteRelationship('services', item)"
+                                            >
+                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                            </v-btn>
+                                            <v-text-field
+                                                class="add-server-input_height_prefix"
+                                                label="Service id"
+                                                id="service_id"
+                                                v-model="item.id"
+                                                name="service_id"
+                                                dense
+                                                outlined
+                                            />
+                                        </div>
+                                    </div>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="6">
+                                    <v-btn color="primary" x-small @click="addRelationship('monitors')">
+                                        Add Monitor
+                                    </v-btn>
+                                    <div class="scrollable-input-div" v-if="relationships.monitors.data.length">
+                                        <div v-for="(item, i) in relationships.monitors.data" :key="i">
+                                            <v-btn
+                                                class="delete"
+                                                icon
+                                                x-small
+                                                @click="deleteRelationship('monitors', item)"
+                                            >
+                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                            </v-btn>
+                                            <v-text-field
+                                                class="add-server-input_height_prefix"
+                                                dense
+                                                label="Monitor id"
+                                                id="monitor_id"
+                                                v-model="item.id"
+                                                name="monitor_id"
+                                                outlined
+                                            />
+                                        </div>
+                                    </div>
+                                </v-col>
+                            </v-row>
                         </v-form>
                     </v-container>
                 </v-card-text>
@@ -145,7 +204,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { mdiTableEdit } from '@mdi/js';
+import { mdiTableEdit, mdiClose } from '@mdi/js';
 import { isEqual } from 'lodash';
 /* eslint-disable camelcase */
 
@@ -160,12 +219,19 @@ export default {
             return this.serversDataMap.get(this.item.id);
         },
     },
-    updated() {
-        this.parameters = { ...this.serversDataMap.get(this.item.id).attributes.parameters };
+    watch: {
+        dialog: function(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.parameters = { ...this.serversDataMap.get(this.item.id).attributes.parameters };
+                this.relationships = { ...this.serversDataMap.get(this.item.id).relationships };
+            }
+        },
     },
+
     data() {
         return {
-            mdiTableEdit: mdiTableEdit,
+            mdiTableEdit: mdiTableEdit, // icons
+            mdiClose: mdiClose, // icons
             dialog: false,
             isValid: false,
             radioGroup: 'address',
@@ -177,6 +243,14 @@ export default {
                 port: [val => this.validatePortNumber(val)],
             },
             parameters: {},
+            relationships: {
+                services: {
+                    data: [],
+                },
+                monitors: {
+                    data: [],
+                },
+            },
         };
     },
     methods: {
@@ -189,20 +263,38 @@ export default {
             }
             return true;
         },
+        addRelationship(type) {
+            switch (type) {
+                case 'services':
+                    this.relationships.services.data.push({ type: 'services', id: '' });
+                    break;
+                case 'monitors':
+                    this.relationships.monitors.data.push({ type: 'monitors', id: '' });
+                    break;
+            }
+        },
+        deleteRelationship(type, target) {
+            switch (type) {
+                case 'services':
+                    this.relationships.services.data = this.relationships.services.data.filter(
+                        item => item.id !== target.id
+                    );
+                    break;
+                case 'monitors':
+                    this.relationships.monitors.data = this.relationships.monitors.data.filter(
+                        item => item.id !== target.id
+                    );
+                    break;
+            }
+        },
         handleUpdate() {
             this.dialog = false;
-            // console.log(isEqual(this.serversDataMap.get(this.item.id).attributes.parameters, this.parameters));
-            console.log('this.parameters', this.parameters);
-            console.log(
-                'this.serversDataMap.get(this.item.id).attributes.parameters',
-                this.serversDataMap.get(this.item.id).attributes.parameters
-            );
-            // this.createOrUpdateServer({
-            //     mode: 'patch',
-            //     id: this.item.id,
-            //     relationships: {},
-            //     parameters: this.parameters,
-            // });
+            this.createOrUpdateServer({
+                mode: 'patch',
+                id: this.item.id,
+                relationships: this.relationships,
+                parameters: this.parameters,
+            });
         },
     },
 };

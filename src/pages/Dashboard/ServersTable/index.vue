@@ -46,7 +46,7 @@
                             <span class="headline">Delete server</span>
                         </v-card-title>
                         <v-card-text>
-                            <p>Are you sure you want to delete{{ chosenId }} ?</p>
+                            <p>Are you sure you want to delete {{ chosenId }} ?</p>
                         </v-card-text>
                     </template>
                     <template v-slot:actions="{ cancel, save }">
@@ -100,6 +100,7 @@ export default {
     methods: {
         ...mapActions(['deleteServerById']),
         openDeleteDialog(item) {
+            console.log('item', item);
             this.deleteDialog = true;
             this.chosenId = item.id;
         },

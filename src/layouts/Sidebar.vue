@@ -168,7 +168,6 @@ export default {
                     transition: 0.5s !important;
                     display: flex !important;
                     text-decoration: none !important;
-                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     i {
                         display: flex !important;
                         justify-content: flex-start !important;
@@ -189,7 +188,6 @@ export default {
                 }
                 .router-link-exact-active {
                     background-color: #e7eef1;
-                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
                         color: black !important;
                     }
@@ -197,7 +195,6 @@ export default {
 
                 &:hover > a {
                     background-color: #e7eef1;
-                    clip-path: polygon(50% 3%, 100% 0, 99% 50%, 100% 100%, 50% 97%, 0 100%, 1% 50%, 0 0);
                     & > * {
                         color: black !important;
                     }
