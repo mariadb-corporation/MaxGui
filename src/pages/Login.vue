@@ -61,9 +61,17 @@
                                 color="primary"
                                 indeterminate
                             ></v-progress-circular>
-                            <v-btn v-else @click="handleSubmit" :disabled="!isValid" block color="primary" depressed
-                                >Login</v-btn
+                            <v-btn
+                                :dark="darkTheme"
+                                v-else
+                                @click="handleSubmit"
+                                :disabled="!isValid"
+                                block
+                                color="primary"
+                                depressed
                             >
+                                Login
+                            </v-btn>
                         </div>
                     </v-card-actions>
                 </v-form>
