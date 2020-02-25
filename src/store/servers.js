@@ -4,14 +4,10 @@ export default {
     state: {
         serversData: [],
         credentials: JSON.parse(sessionStorage.getItem('credentials')),
-        currentServer: {},
     },
     mutations: {
         setServers(state, payload) {
             state.serversData = payload;
-        },
-        setCurrentServer(state, payload) {
-            state.currentServer = payload;
         },
     },
     actions: {
@@ -28,70 +24,37 @@ export default {
                 });
             }
         },
-        async fetchServerById({ commit, state }, id) {
-            try {
-                let res = await Vue.axios.get(`/v1/servers/${id}`, {
-                    auth: state.credentials,
-                });
-                commit('setCurrentServer', res.data.data);
-            } catch (error) {
-                await commit('showMessage', {
-                    text: error,
-                    type: 'error',
-                });
-            }
-        },
         /**
-         * 
-         * 
-         * @param { 
-                mode: String,
-                id:String,
-                relationships: Object,
-                parameters: Object,
-            } serverData 
-         *
+         * @param {Object} serverData Server object
+         * @param {String} serverData.mode Mode to perform async request POST or Patch
+         * @param {String} serverData.id Id of the server
+         * @param {Object} serverData.relationships Relationships of the server
+         * @param {Object} serverData.parameters Parameters for the server
          */
         async createOrUpdateServer({ commit, dispatch, state }, serverData) {
+            const auth = {
+                auth: state.credentials,
+            };
+            const payload = {
+                data: {
+                    id: serverData.id,
+                    type: 'servers',
+                    attributes: { parameters: serverData.parameters },
+                    relationships: serverData.relationships,
+                },
+            };
             try {
                 let res;
                 let message;
-                if (serverData.mode === 'post') {
-                    res = await Vue.axios.post(
-                        `/v1/servers/`,
-                        {
-                            data: {
-                                id: serverData.id,
-                                type: 'servers',
-                                attributes: {
-                                    parameters: serverData.parameters,
-                                },
-                                relationships: serverData.relationships,
-                            },
-                        },
-                        {
-                            auth: state.credentials,
-                        }
-                    );
-                    message = `Server ${serverData.id} is created`;
-                } else if (serverData.mode === 'patch') {
-                    res = await Vue.axios.patch(
-                        `/v1/servers/${serverData.id}`,
-                        {
-                            data: {
-                                id: serverData.id,
-                                type: 'servers',
-                                attributes: {
-                                    parameters: serverData.parameters,
-                                },
-                                relationships: serverData.relationships,
-                            },
-                        },
-                        {
-                            auth: state.credentials,
-                        }
-                    );
-                    message = `Server ${serverData.id} is updated`;
+                switch (serverData.mode) {
+                    case 'post':
+                        res = await Vue.axios.post(`/v1/servers/`, payload, auth);
+                        message = `Server ${serverData.id} is created`;
+                        break;
+                    case 'patch':
+                        res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload, auth);
+                        message = `Server ${serverData.id} is updated`;
+                        break;
                 }
 
                 // response ok
@@ -109,7 +72,9 @@ export default {
                 });
             }
         },
-
+        /**
+         * @param {String} id id of the server
+         */
         async deleteServerById({ dispatch, commit, state }, id) {
             try {
                 let res = await Vue.axios.delete(`/v1/servers/${id}`, {
@@ -140,7 +105,6 @@ export default {
             });
             return map;
         },
-        currentServer: state => state.currentServer,
         allServersInfo: state => {
             let idArr = [];
             let portNumArr = [];

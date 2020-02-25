@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="pa-0">
+    <v-container :style="`background-color: ${darkTheme ? '#1E1E1E' : '#fff'}`" fluid class="pa-0">
         <v-row no-gutters>
             <v-col :md="8" :sm="4" class="d-none d-sm-flex">
                 <v-img src="../assets/img/home-hero-background.jpg" height="100vh"></v-img>
@@ -9,11 +9,13 @@
                     <v-avatar class="ma-2" color="primary" size="48">
                         <v-icon size="24" color="white">{{ mdiLock }}</v-icon>
                     </v-avatar>
-                    <h3 class="title">MariaDB MaxScale</h3>
+                    <h3 :style="`color: ${darkTheme ? '#fff' : '#1E1E1E'}`" class="title">MariaDB MaxScale</h3>
                 </div>
+
                 <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleSubmit()" class="py-12 px-8">
-                    <v-label>Username</v-label>
+                    <v-label :dark="darkTheme">Username</v-label>
                     <v-text-field
+                        :dark="darkTheme"
                         id="username"
                         v-model="login.username"
                         :rules="rules.username"
@@ -29,8 +31,9 @@
                         required
                     ></v-text-field>
 
-                    <v-label>Password</v-label>
+                    <v-label :dark="darkTheme">Password</v-label>
                     <v-text-field
+                        :dark="darkTheme"
                         id="password"
                         v-model="login.password"
                         :append-icon="isPwdVisible ? 'mdi-eye' : 'mdi-eye-off'"
@@ -47,10 +50,11 @@
                         rounded
                         required
                     ></v-text-field>
-                    <v-checkbox v-model="rememberMe" label="Remember Me" color="primary"></v-checkbox>
+                    <v-checkbox :dark="darkTheme" v-model="rememberMe" label="Remember Me" color="primary"></v-checkbox>
                     <v-card-actions class="pt-0 pb-12">
                         <div class="mx-auto text-center" style="width: 50%;">
                             <v-progress-circular
+                                :dark="darkTheme"
                                 v-if="isLoading"
                                 :size="40"
                                 :width="5"
@@ -70,6 +74,8 @@
 
 <script>
 import { mdiLock } from '@mdi/js';
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'Login',
     data() {
@@ -89,6 +95,9 @@ export default {
                 password: [val => !!val || 'Password is required'],
             },
         };
+    },
+    computed: {
+        ...mapGetters([, 'darkTheme']),
     },
     methods: {
         async handleSubmit() {

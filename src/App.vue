@@ -2,7 +2,7 @@
     <v-app id="vue-app">
         <div id="app">
             <sidebar />
-            <v-content id="page-wrap">
+            <v-content :style="`background-color: ${darkTheme ? '#121212' : '#ffffff'}`" id="page-wrap">
                 <appbar v-if="user.token" />
                 <snackbars v-if="user.token" />
                 <router-view> </router-view>
@@ -24,7 +24,7 @@ export default {
     },
     store,
     computed: {
-        ...mapGetters(['user']),
+        ...mapGetters(['user', 'darkTheme']),
     },
 };
 </script>

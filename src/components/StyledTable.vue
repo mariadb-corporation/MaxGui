@@ -1,15 +1,26 @@
 <template v-if="data">
-    <v-data-table dense hide-default-footer fixed-header :headers="headersArr" :items="itemsArr" item-key="name">
+    <v-data-table
+        :dark="darkTheme"
+        dense
+        hide-default-footer
+        fixed-header
+        :headers="headersArr"
+        :items="itemsArr"
+        item-key="name"
+    >
     </v-data-table>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'styled-table',
     props: {
         data: Array,
     },
     computed: {
+        ...mapGetters(['darkTheme']),
         genTableData: function() {
             const { data } = this;
             if (data) {

@@ -1,10 +1,10 @@
 <template>
-    <v-container v-if="currentServer" class="pa-6 attTable-padding">
+    <v-container v-if="getCurrentServer" class="">
         <v-row justify="center">
             <v-col cols="12" lg="6">
-                <h2>Attributes</h2>
+                <h3>Attributes</h3>
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentServer.attributes"
+                    v-for="(value, propertyName) in getCurrentServer.attributes"
                     :readOnlyVal="!$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
@@ -12,10 +12,10 @@
                     :child="!$help.hasChild(value) ? {} : value"
                 />
             </v-col>
-            <v-col cols="12" lg="6" v-if="!isEmpty(currentServer.relationships)">
-                <h2>Relationships</h2>
+            <v-col cols="12" lg="6" v-if="!isEmpty(getCurrentServer.relationships)">
+                <h3>Relationships</h3>
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentServer.relationships"
+                    v-for="(value, propertyName) in getCurrentServer.relationships"
                     :readOnlyVal="!$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
@@ -29,32 +29,40 @@
 
 <script>
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse';
-import { mapGetters, mapActions, mapMutations } from 'vuex';
-import { isEmpty } from 'lodash';
+import { mapGetters } from 'vuex';
+import { isEmpty, cloneDeep } from 'lodash';
 
 export default {
-    name: 'Server',
+    name: 'server-read',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },
+    props: {
+        id: String,
+    },
 
     computed: {
-        ...mapGetters(['currentServer']),
+        ...mapGetters(['serversDataMap']),
+        /**
+         * @returns {Object} A deep clone object from vuex state
+         */
+        getCurrentServer: function() {
+            return cloneDeep(this.serversDataMap.get(this.id));
+        },
     },
     methods: {
-        ...mapActions(['fetchServerById']),
         isEmpty(obj) {
             return isEmpty(obj);
         },
-    },
-    created() {
-        this.fetchServerById(this.$route.params.id);
+        cloneDeep() {
+            return cloneDeep();
+        },
     },
 };
 </script>
 
 <style lang="scss" scoped>
-h2 {
+h3 {
     text-align: center;
     margin-bottom: 20px;
 }

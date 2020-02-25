@@ -1,8 +1,9 @@
 <template>
     <span>
         <v-tooltip top>
+            <!-- Dialog activator -->
             <template v-slot:activator="{ on }">
-                <v-btn v-on="on" @click="dialog = true" text color="primary">
+                <v-btn v-on="on" @click="dialog = true" icon color="primary">
                     <v-icon medium>{{ mdiTableEdit }}</v-icon>
                 </v-btn>
             </template>
@@ -155,6 +156,7 @@
                                                 name="service_id"
                                                 dense
                                                 outlined
+                                                :rules="serverObjRules.service_id"
                                             />
                                         </div>
                                     </div>
@@ -181,6 +183,7 @@
                                                 v-model="item.id"
                                                 name="monitor_id"
                                                 outlined
+                                                :rules="serverObjRules.monitor_id"
                                             />
                                         </div>
                                     </div>
@@ -194,7 +197,7 @@
                 <v-btn color="blue darken-1" text @click="cancel" depressed>
                     Cancel
                 </v-btn>
-                <v-btn color="red" text @click="save" depressed>
+                <v-btn color="red" :disabled="!isValid" text @click="save" depressed>
                     Update
                 </v-btn>
             </template>
@@ -205,7 +208,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import { mdiTableEdit, mdiClose } from '@mdi/js';
-import { isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
 /* eslint-disable camelcase */
 
 export default {
@@ -215,23 +218,39 @@ export default {
     },
     computed: {
         ...mapGetters(['serversDataMap', 'allServersInfo']),
+        /**
+         * @returns {Object} A deep clone object from vuex state
+         */
         getCurrentServer: function() {
             return this.serversDataMap.get(this.item.id);
         },
     },
+
     watch: {
+        /**
+         * A watch on dialog to trigger deep clone object from vuex state for local state modification purpose
+         */
         dialog: function(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                this.parameters = { ...this.serversDataMap.get(this.item.id).attributes.parameters };
-                this.relationships = { ...this.serversDataMap.get(this.item.id).relationships };
+            if (newVal === true) {
+                // deep object copy or using cloneDeep from lodash
+                this.parameters = cloneDeep(this.getCurrentServer.attributes.parameters);
+                this.relationships = cloneDeep(this.getCurrentServer.relationships);
+                if (this.relationships.services === undefined) {
+                    this.$set(this.relationships, 'services', { data: [] });
+                }
+                if (this.relationships.monitors === undefined) {
+                    this.$set(this.relationships, 'monitors', { data: [] });
+                }
             }
         },
     },
 
     data() {
         return {
-            mdiTableEdit: mdiTableEdit, // icons
-            mdiClose: mdiClose, // icons
+            // icons
+            mdiTableEdit: mdiTableEdit,
+            mdiClose: mdiClose,
+            // state
             dialog: false,
             isValid: false,
             radioGroup: 'address',
@@ -241,6 +260,8 @@ export default {
                 address: [val => !!val || 'Address is required'],
                 socket: [val => !!val || 'Socket is required'],
                 port: [val => this.validatePortNumber(val)],
+                service_id: [val => !!val || 'Id of service is required'],
+                monitor_id: [val => !!val || 'Id of monitor is required'],
             },
             parameters: {},
             relationships: {
@@ -255,6 +276,9 @@ export default {
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),
+        cloneDeep() {
+            return cloneDeep();
+        },
         validatePortNumber(val) {
             if (!val) {
                 return 'port number is required';
@@ -273,6 +297,10 @@ export default {
                     break;
             }
         },
+        /**
+         * @param {String} type Type either services or monitors
+         * @param {Object} target Object to be filterd out
+         */
         deleteRelationship(type, target) {
             switch (type) {
                 case 'services':
@@ -284,6 +312,7 @@ export default {
                     this.relationships.monitors.data = this.relationships.monitors.data.filter(
                         item => item.id !== target.id
                     );
+
                     break;
             }
         },
@@ -299,5 +328,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped></style>

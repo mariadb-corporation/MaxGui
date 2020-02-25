@@ -5,10 +5,6 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px white inset !important;
 }
 
-#page-wrap {
-    background-color: $background;
-}
-
 *,
 :after,
 :before {
@@ -27,7 +23,7 @@ input:-webkit-autofill:active {
     table {
         th {
             padding: 0 24px;
-            background-color: $table-border;
+            // background-color: $table-border;
             text-transform: uppercase;
             &:last-child {
                 border-radius: 0 5px 0 0;
@@ -45,54 +41,6 @@ input:-webkit-autofill:active {
                     padding: 0 24px;
                     @media (max-width: 480px) {
                         border-bottom: none;
-                    }
-
-                    &:last-child {
-                        border-right: 1px solid $table-border;
-                    }
-                    &:first-child {
-                        border-left: 1px solid $table-border;
-                    }
-                    .cell-accent {
-                        height: 100%;
-                        padding: 0 24px;
-                        margin-left: -24px;
-                        display: flex;
-                        border-left: 8px solid #828282;
-                        &.info-accent {
-                            border-color: $accent;
-                        }
-                        &.success-accent {
-                            border-color: $success;
-                        }
-                        &.error-accent {
-                            border-color: $error;
-                        }
-                        &.warning-accent {
-                            border-color: $warning;
-                        }
-                    }
-                    &.actions {
-                        text-align: right;
-
-                        button {
-                            opacity: 0;
-                        }
-                    }
-                }
-                &:hover {
-                    td.actions button {
-                        opacity: 1;
-                    }
-                }
-                &.last-row {
-                    td {
-                        &:last-child {
-                            border-radius: 0 0 5px 0;
-                        }
-                        &:first-child {
-                            border-radius: 0 0 0 5px;
-                        }
                     }
                 }
             }

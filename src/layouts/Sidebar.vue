@@ -1,78 +1,133 @@
 <template>
-    <Push class="sidebar" :burgerIcon="isVisible" width="200">
-        <div class="nav-username">{{ user.username }}</div>
-        <div class="nav-username_divider" />
-        <ul>
-            <li v-for="route in renderNavRoute" v-bind:key="route.path">
-                <router-link :to="route.path">
-                    <v-icon medium color="#424f62">{{ route.icon }}</v-icon>
-                    <p>{{ route.name }}</p>
-                </router-link>
-            </li>
-        </ul>
-        <v-tooltip top>
-            <template v-slot:activator="{ on }">
-                <v-btn v-on="on" class="logout-btn white--text" @click="logoutHandle">
-                    <v-icon color="red">{{ mdiLogout }}</v-icon>
-                </v-btn>
-            </template>
-            <span>Sign out</span>
-        </v-tooltip>
+    <Push
+        @openMenu="oneMenuOpen"
+        @closeMenu="oneMenuClose"
+        :isOpen="open"
+        class="sidebar"
+        :burgerIcon="isVisible"
+        width="200"
+    >
+        <div class="sidebar-wrap-bg" :style="`background-color: ${darkTheme ? '#1E1E1E' : '#fff'}`">
+            <div class="nav-username" :style="`color: ${darkTheme ? '#fff' : '#424f62'}`">
+                {{ user.username }}
+            </div>
+            <div class="nav-username_divider" :style="`background-color: ${darkTheme ? '#fff' : '#424f62'}`" />
+            <ul>
+                <li v-for="route in renderNavRoute" v-bind:key="route.path">
+                    <router-link class="router-link" :to="route.path" @click.native="onItemClickHandle">
+                        <v-icon medium :color="`${darkTheme ? '#fff' : '#424f62'}`">{{ route.icon }}</v-icon>
+                        <p :style="`color: ${darkTheme ? '#fff' : '#424f62'}`">{{ route.name }}</p>
+                    </router-link>
+                </li>
+            </ul>
+            <div class="nav-footer" style="border-top: 1px solid #424f62">
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" icon class="logout-btn " @click="logoutHandle">
+                            <v-icon color="red">{{ mdiLogout }}</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Sign out</span>
+                </v-tooltip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" icon class=" " @click="setDarkThemeHandle">
+                            <v-icon color="primary">{{ darkTheme ? mdiBrightness4 : mdiBrightness7 }}</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>{{ darkTheme ? 'Disable dark mode' : 'Enable dark mode' }}</span>
+                </v-tooltip>
+            </div>
+        </div>
     </Push>
 </template>
 <script>
 import { Push } from 'vue-burger-menu';
 import { mapGetters, mapMutations } from 'vuex';
 import { routes } from '../router/routes';
-import { mdiLogout } from '@mdi/js';
+import { mdiLogout, mdiBrightness4, mdiBrightness7 } from '@mdi/js';
 
 export default {
     components: {
         Push,
     },
     computed: {
-        ...mapGetters(['user']),
+        ...mapGetters(['user', 'darkTheme']),
         renderNavRoute: function() {
             let navRoute = routes.filter(route => route.isSideBar);
             return navRoute;
         },
     },
     methods: {
-        ...mapMutations(['logout']),
+        ...mapMutations(['logout', 'toggleDarkTheme']),
         logoutHandle() {
+            this.open = false;
             this.logout();
             this.$router.push('login');
+        },
+        setDarkThemeHandle() {
+            this.toggleDarkTheme();
+        },
+        // catch on menu open when burger button is pressed
+        oneMenuOpen() {
+            this.open = true;
+        },
+        oneMenuClose() {
+            this.open = false;
+        },
+        onItemClickHandle(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.open = !this.open;
         },
     },
     data() {
         return {
-            routes: routes,
+            // icons
             mdiLogout: mdiLogout,
+            mdiBrightness4: mdiBrightness4,
+            mdiBrightness7: mdiBrightness7,
+            // states
+            routes: routes,
+            open: false,
             isVisible: true,
         };
     },
     mounted() {
         this.isVisible = this.user.token ? true : false;
+        // toggle background color of the cross button in sidebar
+        const ele = document.querySelectorAll('.bm-cross');
+        let darkTheme = this.darkTheme;
+        document.querySelectorAll('.bm-cross').forEach(function(ele) {
+            ele.style.background = darkTheme ? '#fff' : '#424f62';
+        });
     },
     watch: {
         user: function(newVal, oldVal) {
             this.isVisible = newVal.token ? true : false;
+        },
+        darkTheme: function(newVal, oldVal) {
+            document.querySelectorAll('.bm-cross').forEach(function(ele) {
+                ele.style.background = newVal ? '#fff' : '#424f62';
+            });
+        },
+        open: function(newVal, oldVal) {
+            console.log('newVal', newVal);
         },
     },
 };
 </script>
 
 <style lang="scss">
-.logout-btn {
-    position: absolute;
-    bottom: 50px;
-    margin-left: 50%;
-    transform: translateX(-50%);
-}
 /* styling nav-username */
 .sidebar {
+    .sidebar-wrap-bg {
+        display: inline-block;
+        width: 100%;
+        height: 100vh;
+        padding: 0;
+    }
     .nav-username {
-        color: $navigation;
         font-size: 18px;
         text-align: center;
         padding: 10px 0px;
@@ -84,12 +139,11 @@ export default {
             margin-left: 10%;
             opacity: 0.5;
             height: 1px;
-            background-color: $navigation;
             padding: 0px;
         }
     }
 
-    /* Position and sizing of burger button */
+    /* Position and sizing of burger button in the Appbar*/
     .bm-burger-button {
         position: fixed !important;
         top: 14px !important;
@@ -116,9 +170,7 @@ export default {
         right: 2px !important;
         cursor: pointer !important;
     }
-    .bm-cross {
-        background: $navigation !important;
-    }
+
     .bm-cross-button {
         height: 24px !important;
         width: 24px !important;
@@ -126,80 +178,87 @@ export default {
     .bm-menu {
         box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
             0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
-
         height: 100% !important; /* 100% Full-height */
         position: fixed !important; /* Stay in place */
         z-index: 1000 !important; /* Stay on top */
         top: 0 !important;
         left: 0 !important;
         padding-top: 0px !important;
-        background-color: $background !important;
+        // background-color: $background !important;
         overflow-x: hidden !important; /* Disable horizontal scroll */
         transition: 0.5s !important; /*0.5 second transition effect to slide in the sidenav*/
     }
-
-    .bm-overlay {
-        background: rgba(0, 0, 0, 0.3) !important;
-    }
+    // Remove default style from vue-burger-menu lib
     .bm-item-list > * > span {
         margin-left: unset !important;
+        font-weight: unset !important;
+        color: unset !important;
     }
     .bm-item-list {
-        color: #b8b7ad !important;
         margin-left: 0px !important;
-        font-size: 20px !important;
 
         ul {
-            margin: 0px !important;
-            padding: 20px 0px !important;
-            display: flex !important;
-            justify-content: center !important;
-            flex-direction: column !important;
+            margin: 0px;
+            padding: 20px 0px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
             li {
-                text-align: left !important;
-                position: relative !important;
-                display: block !important;
-                padding: 0px !important;
+                text-align: left;
+                position: relative;
+                display: block;
+                padding: 0px;
 
-                a {
-                    margin: 5px 18px !important;
-                    border-radius: 0px !important;
-                    padding: 8px 16px !important;
-                    transition: 0.5s !important;
-                    display: flex !important;
-                    text-decoration: none !important;
+                .router-link {
+                    margin: 5px 18px;
+                    border-radius: 0px;
+                    padding: 8px 16px;
+                    transition: 0.5s;
+                    display: flex;
+                    text-decoration: none;
+
+                    &-exact-active {
+                        background-color: #e7eef1;
+                        & > * {
+                            color: black !important ; // overwrite inline color style
+                        }
+                    }
+                    &:hover {
+                        background-color: #e7eef1;
+                        // all elements include i and p
+                        & > * {
+                            color: black !important ; // overwrite inline color style
+                        }
+                    }
                     i {
-                        display: flex !important;
-                        justify-content: flex-start !important;
-                        align-items: center !important;
-                        font-size: 32px !important;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                        font-size: 32px;
                     }
 
                     p {
-                        display: flex !important;
-                        align-items: center !important;
-                        margin: 0px 0px 0px 10px !important;
-                        font-weight: 600 !important;
-                        font-size: 18px !important;
-                        color: $navigation !important;
-                        opacity: 0.72 !important;
-                        padding: 0px !important;
-                    }
-                }
-                .router-link-exact-active {
-                    background-color: #e7eef1;
-                    & > * {
-                        color: black !important;
-                    }
-                }
-
-                &:hover > a {
-                    background-color: #e7eef1;
-                    & > * {
-                        color: black !important;
+                        display: flex;
+                        align-items: center;
+                        margin: 0px 0px 0px 10px;
+                        font-weight: 600;
+                        font-size: 18px;
+                        padding: 0px;
                     }
                 }
             }
+        }
+    }
+    .nav-footer {
+        position: absolute;
+        bottom: 0px;
+        display: block;
+        width: 100%;
+        padding: 10px 0px;
+        .logout-btn {
+            // bottom: 50px;
+            margin-left: 50%;
+            transform: translateX(-50%);
         }
     }
 }

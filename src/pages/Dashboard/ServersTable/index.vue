@@ -1,10 +1,10 @@
 <template>
-    <v-card>
+    <v-card :outlined="darkTheme" :dark="darkTheme">
         <v-card-title>
-            Servers
+            <h3>Servers</h3>
             <v-spacer />
             <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
-            <server-add />
+            <server-create />
         </v-card-title>
         <v-data-table
             :search="search"
@@ -14,102 +14,81 @@
             :items="generateTableRows"
             class="data-table-full"
             sort-by="id"
+            :single-expand="false"
+            :expanded.sync="expanded"
+            show-expand
+            :dark="darkTheme"
         >
-            <template v-slot:item.action="{ item }">
-                <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-btn v-on="on" @click="$router.push(`/dashboard/${item.id}`)" text color="primary">
-                            <v-icon medium>{{ mdiDotsHorizontal }}</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>View More</span>
-                </v-tooltip>
-
-                <server-update :item="item" />
-
-                <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-btn v-on="on" color="red" text @click="openDeleteDialog(item)">
-                            <v-icon color="red" medium>{{ mdiDelete }}</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Delete</span>
-                </v-tooltip>
-                <base-dialog
-                    v-model="deleteDialog"
-                    :onCancel="() => (deleteDialog = false)"
-                    :onSave="handleDelete"
-                    maxWidth="400px"
-                >
-                    <template v-slot:body>
-                        <v-card-title>
-                            <span class="headline">Delete server</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <p>Are you sure you want to delete {{ chosenId }} ?</p>
-                        </v-card-text>
-                    </template>
-                    <template v-slot:actions="{ cancel, save }">
-                        <v-btn color="blue darken-1" text @click="cancel" depressed>
-                            Cancel
-                        </v-btn>
-                        <v-btn color="red" text @click="save" depressed>
-                            Delete
-                        </v-btn>
-                    </template>
-                </base-dialog>
+            <!-- Actions slot -->
+            <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
+                <div style="display:flex">
+                    <server-update :item="item" />
+                    <server-delete :item="item" />
+                    <!-- Sub component Activator -->
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" v-if="!isExpanded" @click="expand(!isExpanded)" icon color="primary">
+                                <v-icon medium>{{ mdiChevronDown }}</v-icon>
+                            </v-btn>
+                            <v-btn v-else v-on="on" @click="expand(!isExpanded)" icon color="primary">
+                                <v-icon medium>{{ mdiChevronUp }}</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>View More</span>
+                    </v-tooltip>
+                </div>
+            </template>
+            <!-- Sub component -->
+            <template v-slot:expanded-item="{ headers, item }">
+                <!-- :colspan="headers.length" set width to full -->
+                <td :colspan="headers.length">
+                    <server-read :id="item.id" />
+                </td>
             </template>
         </v-data-table>
     </v-card>
 </template>
 
 <script>
-import { mdiDotsHorizontal, mdiMagnify, mdiDelete, mdiTableEdit } from '@mdi/js';
-import { mapActions } from 'vuex';
-import ServerAdd from './ServerAdd';
+import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
+import { mapGetters } from 'vuex';
+import ServerCreate from './ServerCreate';
 import ServerUpdate from './ServerUpdate';
+import ServerRead from './ServerRead';
+import ServerDelete from './ServerDelete';
 
 export default {
     name: 'servers-table',
     components: {
-        ServerAdd,
+        ServerCreate,
+        ServerDelete,
         ServerUpdate,
+        ServerRead,
+    },
+    computed: {
+        ...mapGetters(['user', 'darkTheme']),
     },
     props: {
         generateTableRows: Array,
     },
     data() {
         return {
-            search: '',
-            deleteDialog: false,
-
-            mdiDotsHorizontal: mdiDotsHorizontal,
-            mdiDelete: mdiDelete,
-            mdiTableEdit: mdiTableEdit,
+            //Icons
             mdiMagnify: mdiMagnify,
-            chosenId: null,
+            mdiChevronUp: mdiChevronUp,
+            mdiChevronDown: mdiChevronDown,
+            //State
+            search: '',
+            expanded: [],
             tableHeaders: [
-                { text: 'ID', value: 'id' },
-                { text: 'STATE', value: 'state' },
-                { text: 'PORT', value: 'port' },
+                { text: 'Server', value: 'id' },
                 { text: 'Address', value: 'address' },
-                { text: 'Actions', value: 'action', align: 'center', sortable: false },
+                { text: 'Port', value: 'port' },
+                { text: 'Connections', value: 'connections' },
+                { text: 'State', value: 'state' },
+                { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
         };
-    },
-    methods: {
-        ...mapActions(['deleteServerById']),
-        openDeleteDialog(item) {
-            console.log('item', item);
-            this.deleteDialog = true;
-            this.chosenId = item.id;
-        },
-        handleDelete() {
-            this.deleteDialog = false;
-            this.deleteServerById(this.chosenId);
-            //clear
-            this.chosenId = null;
-        },
     },
 };
 </script>

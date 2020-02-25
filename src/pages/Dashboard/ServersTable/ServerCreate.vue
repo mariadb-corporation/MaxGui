@@ -1,15 +1,14 @@
 <template>
     <span>
-        <div class="d-sm-flex justify-sm-end ml-5 mr-4 mt-4">
-            <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                    <v-btn right v-on="on" @click="dialog = true" color="primary" depressed>
-                        <v-icon medium>{{ mdiPlus }}</v-icon>
-                    </v-btn>
-                </template>
-                <span>Add Server</span>
-            </v-tooltip>
-        </div>
+        <!-- Dialog activator -->
+        <v-tooltip top>
+            <template v-slot:activator="{ on }">
+                <v-btn v-on="on" class="ml-5 mr-4 mt-4" @click="dialog = true" color="primary" depressed>
+                    <v-icon medium>{{ mdiPlus }}</v-icon>
+                </v-btn>
+            </template>
+            <span>Add Server</span>
+        </v-tooltip>
 
         <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleCreate" maxWidth="800px">
             <template v-slot:body>
@@ -215,16 +214,14 @@ import { mdiPlus, mdiClose } from '@mdi/js';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    name: 'server-add',
+    name: 'server-create',
     computed: {
         ...mapGetters(['serversData', 'allServersInfo']),
     },
     props: {
         item: Object,
     },
-    updated() {
-        console.log('this.', this.item);
-    },
+
     data: function() {
         return {
             isValid: false,
@@ -301,6 +298,10 @@ export default {
                     break;
             }
         },
+        /**
+         * @param {String} type Type either services or monitors
+         * @param {Object} target Object to be filterd out
+         */
         deleteRelationship(type, target) {
             switch (type) {
                 case 'services':
@@ -315,7 +316,7 @@ export default {
                     break;
             }
         },
-   
+
         handleCreate() {
             this.dialog = false;
 
@@ -359,10 +360,7 @@ export default {
     }
 }
 .scrollable-input-div {
-    max-height: 200px;
-    overflow: scroll;
-    width: 100%;
-    padding: 20px 10px;
+    padding: 10px 10px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     .delete {
         left: 100%;
@@ -370,9 +368,12 @@ export default {
     }
 }
 .add-server-input_height_prefix {
-    padding: 0px 15px !important;
+    padding: 0px 10px !important;
     .v-input__control {
-        max-height: 40px !important;
+        max-height: auto !important;
+        .v-text-field__details {
+            margin-bottom: 0px !important;
+        }
     }
 }
 </style>

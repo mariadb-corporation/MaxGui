@@ -1,5 +1,5 @@
 <template>
-    <div style="width:80%">
+    <div style="width:100%">
         <line-chart ref="threadsChart" :chartData="chartdata" :options="options" />
     </div>
 </template>
@@ -13,6 +13,7 @@ export default {
     components: {
         'line-chart': LineChart,
     },
+
     data() {
         return {
             options: {
@@ -36,7 +37,6 @@ export default {
                         {
                             display: true,
                             ticks: {
-                                // beginAtZero: true,
                                 max: 100,
                                 min: 0,
                             },
@@ -50,16 +50,19 @@ export default {
         ...mapMutations(['clearState']),
     },
     computed: {
-        ...mapGetters(['chartdata', 'updateCount']),
+        ...mapGetters(['chartdata', 'updateCount', 'darkTheme']),
     },
-    // // update chartData
     watch: {
-        // add new data every updateCount changes
-        // this prevents parent component rerender
+        /* 
+        Update chartData by adding new data whenever updateCount's value changes
+        this prevents parent component rerender
+         */
         updateCount: function(newVal, oldVal) {
-            /*Check Docs for syntax to access chartjs instance 
-      https://vue-chartjs.org/api/#renderchart and 
-      https://www.chartjs.org/docs/latest/developers/updates.html*/
+            /*
+            Check Docs for syntax to access chartjs instance 
+            https://vue-chartjs.org/api/#renderchart and 
+            https://www.chartjs.org/docs/latest/developers/updates.html
+            */
             let chart = this.$refs.threadsChart.$data._chart;
             const timestamp = new Date().toLocaleTimeString();
 
@@ -67,8 +70,8 @@ export default {
             chart.data.datasets.forEach(dataset => {
                 dataset.data.push(Math.floor(Math.random() * 101));
             });
-            // remove data when updateCount's value is more than 4
-            if (newVal > 10) {
+            // remove item in data when updateCount's value is more than 4
+            if (newVal > 7) {
                 chart.data.labels.shift();
                 chart.data.datasets.forEach(dataset => {
                     dataset.data.shift();
