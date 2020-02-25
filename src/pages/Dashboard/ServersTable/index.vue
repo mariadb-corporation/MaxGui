@@ -1,11 +1,12 @@
 <template>
     <v-card>
         <v-card-title>
-            Servers
+            <h3>Servers</h3>
             <v-spacer />
             <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
             <server-add />
         </v-card-title>
+
         <v-data-table
             :search="search"
             :loading="!generateTableRows.length"
@@ -46,11 +47,14 @@
                             <span class="headline">Delete server</span>
                         </v-card-title>
                         <v-card-text>
-                            <p>Are you sure you want to delete {{ chosenId }} ?</p>
+                            <p>Are you sure you want to destroy {{ chosenId }} ?</p>
+                            <small>
+                                Make sure it is not used by any services or monitors.
+                            </small>
                         </v-card-text>
                     </template>
                     <template v-slot:actions="{ cancel, save }">
-                        <v-btn color="blue darken-1" text @click="cancel" depressed>
+                        <v-btn color="blue " text @click="cancel" depressed>
                             Cancel
                         </v-btn>
                         <v-btn color="red" text @click="save" depressed>
@@ -64,7 +68,7 @@
 </template>
 
 <script>
-import { mdiDotsHorizontal, mdiMagnify, mdiDelete, mdiTableEdit } from '@mdi/js';
+import { mdiDotsHorizontal, mdiMagnify, mdiDelete } from '@mdi/js';
 import { mapActions } from 'vuex';
 import ServerAdd from './ServerAdd';
 import ServerUpdate from './ServerUpdate';
@@ -82,17 +86,16 @@ export default {
         return {
             search: '',
             deleteDialog: false,
-
             mdiDotsHorizontal: mdiDotsHorizontal,
             mdiDelete: mdiDelete,
-            mdiTableEdit: mdiTableEdit,
             mdiMagnify: mdiMagnify,
             chosenId: null,
             tableHeaders: [
-                { text: 'ID', value: 'id' },
-                { text: 'STATE', value: 'state' },
-                { text: 'PORT', value: 'port' },
+                { text: 'Server', value: 'id' },
                 { text: 'Address', value: 'address' },
+                { text: 'Port', value: 'port' },
+                { text: 'Connections', value: 'connections' },
+                { text: 'State', value: 'state' },
                 { text: 'Actions', value: 'action', align: 'center', sortable: false },
             ],
         };

@@ -43,9 +43,10 @@ export default {
             for (let n = 0; n < this.serversData.length; n++) {
                 let row = {
                     id: this.serversData[n].id,
-                    state: this.serversData[n].attributes.state,
-                    port: this.serversData[n].attributes.parameters.port,
                     address: this.serversData[n].attributes.parameters.address,
+                    port: this.serversData[n].attributes.parameters.port,
+                    connections: this.serversData[n].attributes.statistics.connections,
+                    state: this.serversData[n].attributes.state,
                 };
                 itemsArr.push(row);
             }
@@ -62,7 +63,7 @@ export default {
     created() {
         this.resetDestroyState();
         this.fetchServers();
-        // this.fetchThreadsAsync();
+        this.fetchThreadsAsync();
     },
 };
 </script>

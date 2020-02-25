@@ -155,6 +155,7 @@
                                                 name="service_id"
                                                 dense
                                                 outlined
+                                                :rules="serverObjRules.service_id"
                                             />
                                         </div>
                                     </div>
@@ -181,6 +182,7 @@
                                                 v-model="item.id"
                                                 name="monitor_id"
                                                 outlined
+                                                :rules="serverObjRules.monitor_id"
                                             />
                                         </div>
                                     </div>
@@ -194,7 +196,7 @@
                 <v-btn color="blue darken-1" text @click="cancel" depressed>
                     Cancel
                 </v-btn>
-                <v-btn color="red" text @click="save" depressed>
+                <v-btn color="red" :disabled="!isValid" text @click="save" depressed>
                     Update
                 </v-btn>
             </template>
@@ -205,7 +207,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import { mdiTableEdit, mdiClose } from '@mdi/js';
-import { isEqual } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
 /* eslint-disable camelcase */
 
 export default {
@@ -219,11 +221,19 @@ export default {
             return this.serversDataMap.get(this.item.id);
         },
     },
+
     watch: {
         dialog: function(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                this.parameters = { ...this.serversDataMap.get(this.item.id).attributes.parameters };
-                this.relationships = { ...this.serversDataMap.get(this.item.id).relationships };
+            if (newVal === true) {
+                // deep object copy or using cloneDeep from lodash
+                this.parameters = cloneDeep(this.serversDataMap.get(this.item.id).attributes.parameters);
+                this.relationships = cloneDeep(this.serversDataMap.get(this.item.id).relationships);
+                if (this.relationships.services === undefined) {
+                    this.$set(this.relationships, 'services', { data: [] });
+                }
+                if (this.relationships.monitors === undefined) {
+                    this.$set(this.relationships, 'monitors', { data: [] });
+                }
             }
         },
     },
@@ -241,6 +251,8 @@ export default {
                 address: [val => !!val || 'Address is required'],
                 socket: [val => !!val || 'Socket is required'],
                 port: [val => this.validatePortNumber(val)],
+                service_id: [val => !!val || 'Id of service is required'],
+                monitor_id: [val => !!val || 'Id of monitor is required'],
             },
             parameters: {},
             relationships: {
@@ -255,6 +267,9 @@ export default {
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),
+        cloneDeep() {
+            return cloneDeep();
+        },
         validatePortNumber(val) {
             if (!val) {
                 return 'port number is required';
@@ -284,6 +299,7 @@ export default {
                     this.relationships.monitors.data = this.relationships.monitors.data.filter(
                         item => item.id !== target.id
                     );
+
                     break;
             }
         },
@@ -299,5 +315,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped></style>

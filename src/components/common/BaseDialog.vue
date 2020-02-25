@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="value" persistent :max-width="maxWidth">
+    <v-dialog v-model="computeShowDialog" :max-width="maxWidth">
         <v-card>
             <slot name="body"> </slot>
             <v-card-actions>
@@ -26,11 +26,26 @@ export default {
         onCancel: Function,
         onSave: Function,
     },
-    // computed: {
-    //     computeShowDialog: function() {
-    //         return this.value;
-    //     },
-    // },
+    computed: {
+        computeShowDialog: {
+            // get value from props
+            get() {
+                return this.value;
+            },
+            // set the value to show property in data
+            set(value) {
+                this.show = value;
+                if (value === false) {
+                    this.cancel();
+                }
+            },
+        },
+    },
+    data() {
+        return {
+            show: false,
+        };
+    },
     methods: {
         cancel() {
             this.onCancel && this.onCancel();
