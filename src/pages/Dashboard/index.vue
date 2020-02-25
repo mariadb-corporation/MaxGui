@@ -1,18 +1,18 @@
 <template>
     <v-container fluid class="server-padding">
-        <v-row class="server-add" align="center" justify="center">
+        <v-row class="server-add" justify="center">
             <v-col cols="12" class="pt-0" :xs="12" :xl="7">
                 <servers-table :generateTableRows="generateTableRows" />
             </v-col>
-
-            <v-col cols="12" :xs="12" :xl="5" align="center" justify="center">
-                <v-card width="100%" class="pa-6">
+            <v-col cols="12" :xs="12" :xl="5" align="center" justify="center" class="pt-0">
+                <v-card :outlined="darkTheme" :dark="darkTheme" width="100%" class="pa-6">
                     <h2 style="text-align:center">Last two second threads</h2>
                     <br />
                     <ThreadsChartContainer v-if="chartdata.datasets.length" />
                     <div v-else>
                         <p>Loading threads data</p>
                         <v-progress-linear
+                            :dark="darkTheme"
                             color="primary accent-4"
                             indeterminate
                             rounded
@@ -37,10 +37,25 @@ export default {
         ServersTable,
     },
     computed: {
-        ...mapGetters(['serversData', 'chartdata']),
+        ...mapGetters(['serversData', 'chartdata', 'darkTheme']),
+        /**
+         * @return {Array} An array of objects
+         */
         generateTableRows: function() {
+            /**
+             * @param {Array} itemsArr
+             *  Elements are {Object} row
+             */
             let itemsArr = [];
             for (let n = 0; n < this.serversData.length; n++) {
+                /**
+                 * @typedef {Object} row
+                 * @property {String} id - Id of the server
+                 * @property {String} address - Server's address
+                 * @property {Number} port - Server's port
+                 * @property {Number} connections - Number of connections to the server
+                 * @property {String} state - Server's state
+                 */
                 let row = {
                     id: this.serversData[n].id,
                     address: this.serversData[n].attributes.parameters.address,

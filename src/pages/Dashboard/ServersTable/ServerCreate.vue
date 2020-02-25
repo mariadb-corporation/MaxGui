@@ -1,5 +1,6 @@
 <template>
     <span>
+        <!-- Dialog activator -->
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" class="ml-5 mr-4 mt-4" @click="dialog = true" color="primary" depressed>
@@ -213,7 +214,7 @@ import { mdiPlus, mdiClose } from '@mdi/js';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    name: 'server-add',
+    name: 'server-create',
     computed: {
         ...mapGetters(['serversData', 'allServersInfo']),
     },
@@ -297,6 +298,10 @@ export default {
                     break;
             }
         },
+        /**
+         * @param {String} type Type either services or monitors
+         * @param {Object} target Object to be filterd out
+         */
         deleteRelationship(type, target) {
             switch (type) {
                 case 'services':

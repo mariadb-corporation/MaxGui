@@ -5,6 +5,12 @@ export default {
         token: null,
     },
     mutations: {
+        /**
+         * @param {Object} userObj User credentials info
+         * @param {String} userObj.username plain text
+         * @param {String} userObj.password plain text
+         * @param {String} userObj.token Token
+         */
         setUser(state, userObj) {
             state.username = userObj && userObj.username;
             state.password = userObj && userObj.password;

@@ -10,6 +10,7 @@ export default new Vuex.Store({
             text: '',
             type: 'info',
         },
+        darkTheme: localStorage.getItem('darkTheme') === 'true' ? true : false,
     },
     mutations: {
         showMessage(state, { text, type }) {
@@ -17,6 +18,13 @@ export default new Vuex.Store({
             state.message.text = text;
             state.message.type = type;
         },
+        toggleDarkTheme(state) {
+            state.darkTheme = !state.darkTheme;
+            localStorage.setItem('darkTheme', state.darkTheme);
+        },
+    },
+    getters: {
+        darkTheme: state => state.darkTheme,
     },
     modules: {
         user,

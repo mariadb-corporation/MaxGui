@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="computeShowDialog" :max-width="maxWidth">
-        <v-card>
+        <v-card :outlined="darkTheme" :dark="darkTheme">
             <slot name="body"> </slot>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'base-dialog',
     props: {
@@ -27,6 +29,7 @@ export default {
         onSave: Function,
     },
     computed: {
+        ...mapGetters(['darkTheme']),
         computeShowDialog: {
             // get value from props
             get() {

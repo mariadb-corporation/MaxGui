@@ -1,5 +1,5 @@
 <template>
-    <v-expansion-panels :readonly="readOnlyVal" accordion tile>
+    <v-expansion-panels :dark="darkTheme" :readonly="readOnlyVal" accordion tile>
         <v-expansion-panel>
             <v-expansion-panel-header ripple>
                 <b>{{ propertyName }}</b>
@@ -30,9 +30,10 @@
 
 <script>
 import StyledTable from 'components/StyledTable';
+import { mapGetters } from 'vuex';
 
 export default {
-    /* This component intends to render nested objects. First level will be rendered first
+    /* This component intends to render nested objects. First level of the object will be rendered first
     by providing propertyName props then value props
     The child props will detect whether render nested component or not
     */
@@ -44,7 +45,9 @@ export default {
         readOnlyVal: Boolean,
     },
     components: { 'styled-table': StyledTable },
-
+    computed: {
+        ...mapGetters(['darkTheme']),
+    },
     methods: {
         childIsObj(child) {
             if (typeof child === 'object' && !Array.isArray(child)) {
