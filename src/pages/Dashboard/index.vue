@@ -46,26 +46,32 @@ export default {
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            let itemsArr = [];
-            for (let n = 0; n < this.serversData.length; n++) {
-                /**
-                 * @typedef {Object} row
-                 * @property {String} id - Id of the server
-                 * @property {String} address - Server's address
-                 * @property {Number} port - Server's port
-                 * @property {Number} connections - Number of connections to the server
-                 * @property {String} state - Server's state
-                 */
-                let row = {
-                    id: this.serversData[n].id,
-                    address: this.serversData[n].attributes.parameters.address,
-                    port: this.serversData[n].attributes.parameters.port,
-                    connections: this.serversData[n].attributes.statistics.connections,
-                    state: this.serversData[n].attributes.state,
-                };
-                itemsArr.push(row);
+            if (this.serversData) {
+                let itemsArr = [];
+                for (let n = 0; n < this.serversData.length; n++) {
+                    /**
+                     * @typedef {Object} row
+                     * @property {String} id - Id of the server
+                     * @property {String} address - Server's address
+                     * @property {Number} port - Server's port
+                     * @property {Number} connections - Number of connections to the server
+                     * @property {String} state - Server's state
+                     */
+                    const {
+                        id,
+                        attributes: { state, parameters, statistics },
+                    } = this.serversData[n];
+                    let row = {
+                        id: id,
+                        address: parameters.address,
+                        port: parameters.port,
+                        connections: statistics.connections,
+                        state: state,
+                    };
+                    itemsArr.push(row);
+                }
+                return itemsArr;
             }
-            return itemsArr;
         },
     },
     methods: {
