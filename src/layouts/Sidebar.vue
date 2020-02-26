@@ -20,7 +20,7 @@
                     </router-link>
                 </li>
             </ul>
-            <div class="nav-footer" style="border-top: 1px solid #424f62">
+            <div class="nav-footer" :style="`border-top: 1px solid ${darkTheme ? 'rgba(255,255,255,0.5)' : '#fff'}`">
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn v-on="on" icon class="logout-btn " @click="logoutHandle">
