@@ -61,7 +61,7 @@ export default {
                         return dispatch('fetchThreadsAsync');
                     }));
             } catch (error) {
-                console.log('error', error);
+                // console.log('error', error);
                 await commit('showMessage', {
                     text: error,
                     type: 'error',

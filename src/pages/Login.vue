@@ -105,7 +105,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters([, 'darkTheme']),
+        ...mapGetters(['darkTheme']),
     },
     methods: {
         async handleSubmit() {

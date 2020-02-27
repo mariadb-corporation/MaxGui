@@ -15,12 +15,16 @@
 
 <script>
 export default {
-    created: function() {
-        this.generateBreadcrumbs();
+    data() {
+        return {
+            items: [],
+        };
     },
-
     watch: {
         $route: 'generateBreadcrumbs',
+    },
+    created: function() {
+        this.generateBreadcrumbs();
     },
     methods: {
         generateBreadcrumbs() {
@@ -39,11 +43,7 @@ export default {
             }
         },
     },
-    data() {
-        return {
-            items: [],
-        };
-    },
+
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.generateBreadcrumbs();

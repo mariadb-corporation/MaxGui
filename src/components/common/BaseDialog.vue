@@ -1,14 +1,20 @@
 <template>
-    <v-dialog v-model="computeShowDialog" :max-width="maxWidth">
+    <v-dialog content-class="base-dialog" v-model="computeShowDialog" :max-width="maxWidth">
         <v-card :outlined="darkTheme" :dark="darkTheme">
+            <v-card-title>
+                <v-btn class="close" @click="cancel" large icon>
+                    <v-icon color="red" medium>{{ mdiCloseCircle }}</v-icon>
+                </v-btn>
+                <slot name="title"> </slot>
+            </v-card-title>
             <slot name="body"> </slot>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <slot name="actions" :cancel="cancel" :save="save">
-                    <v-btn color="blue darken-1" text @click="cancel" depressed>
+                    <v-btn class="cancel" color="blue darken-1" text @click="cancel" depressed>
                         Cancel
                     </v-btn>
-                    <v-btn color="red" text @click="save" depressed>
+                    <v-btn class="save" color="red" text @click="save" depressed>
                         Save
                     </v-btn>
                 </slot>
@@ -19,6 +25,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { mdiCloseCircle } from '@mdi/js';
 
 export default {
     name: 'base-dialog',
@@ -27,6 +34,12 @@ export default {
         value: Boolean,
         onCancel: Function,
         onSave: Function,
+    },
+    data() {
+        return {
+            mdiCloseCircle: mdiCloseCircle,
+            show: false,
+        };
     },
     computed: {
         ...mapGetters(['darkTheme']),
@@ -44,14 +57,12 @@ export default {
             },
         },
     },
-    data() {
-        return {
-            show: false,
-        };
-    },
+
     methods: {
         cancel() {
             this.onCancel && this.onCancel();
+            // unit event testing
+            this.$emit('cancelClick', false);
         },
         save() {
             this.onSave && this.onSave();
@@ -60,4 +71,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.base-dialog {
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+}
+</style>

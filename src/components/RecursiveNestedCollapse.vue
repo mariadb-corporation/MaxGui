@@ -38,13 +38,13 @@ export default {
     The child props will detect whether render nested component or not
     */
     name: 'RecursiveNestedCollapse',
+    components: { 'styled-table': StyledTable },
     props: {
         propertyName: [String, Number, Boolean],
         value: [String, Number, Boolean], // null object value has been handle by handleNull
         child: [Object, Array],
         readOnlyVal: Boolean,
     },
-    components: { 'styled-table': StyledTable },
     computed: {
         ...mapGetters(['darkTheme']),
     },

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 export function hasChild(val) {
-    if ((typeof val === 'object' || typeof val === 'array') && val != null) {
+    if ((typeof val === 'object' || Array.isArray(val) === 'array') && val != null) {
         return true;
     }
     return false;

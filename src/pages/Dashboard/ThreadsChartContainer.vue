@@ -46,12 +46,10 @@ export default {
             },
         };
     },
-    methods: {
-        ...mapMutations(['clearState']),
-    },
     computed: {
         ...mapGetters(['chartdata', 'updateCount', 'darkTheme']),
     },
+
     watch: {
         /* 
         Update chartData by adding new data whenever updateCount's value changes
@@ -86,6 +84,9 @@ export default {
         chart.data.datasets = [];
         chart.destroy();
         this.clearState();
+    },
+    methods: {
+        ...mapMutations(['clearState']),
     },
 };
 </script>

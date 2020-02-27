@@ -65,9 +65,6 @@ export default {
         ServerUpdate,
         ServerRead,
     },
-    computed: {
-        ...mapGetters(['user', 'darkTheme']),
-    },
     props: {
         generateTableRows: Array,
     },
@@ -89,6 +86,9 @@ export default {
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
         };
+    },
+    computed: {
+        ...mapGetters(['user', 'darkTheme']),
     },
 };
 </script>

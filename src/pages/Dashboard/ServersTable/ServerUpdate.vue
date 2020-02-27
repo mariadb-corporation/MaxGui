@@ -10,10 +10,12 @@
             <span>Update</span>
         </v-tooltip>
         <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="800px">
-            <template v-slot:body>
+            <template v-slot:title>
                 <v-card-title>
                     <span class="headline">Update server</span>
                 </v-card-title>
+            </template>
+            <template v-slot:body>
                 <v-card-text>
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleUpdate()">
@@ -216,35 +218,6 @@ export default {
     props: {
         item: Object,
     },
-    computed: {
-        ...mapGetters(['serversDataMap', 'allServersInfo']),
-        /**
-         * @returns {Object} A deep clone object from vuex state
-         */
-        getCurrentServer: function() {
-            return this.serversDataMap.get(this.item.id);
-        },
-    },
-
-    watch: {
-        /**
-         * A watch on dialog to trigger deep clone object from vuex state for local state modification purpose
-         */
-        dialog: function(newVal, oldVal) {
-            if (newVal === true) {
-                // deep object copy or using cloneDeep from lodash
-                this.parameters = cloneDeep(this.getCurrentServer.attributes.parameters);
-                this.relationships = cloneDeep(this.getCurrentServer.relationships);
-                if (this.relationships.services === undefined) {
-                    this.$set(this.relationships, 'services', { data: [] });
-                }
-                if (this.relationships.monitors === undefined) {
-                    this.$set(this.relationships, 'monitors', { data: [] });
-                }
-            }
-        },
-    },
-
     data() {
         return {
             // icons
@@ -273,6 +246,34 @@ export default {
                 },
             },
         };
+    },
+    computed: {
+        ...mapGetters(['serversDataMap', 'allServersInfo']),
+        /**
+         * @returns {Object} A deep clone object from vuex state
+         */
+        getCurrentServer: function() {
+            return this.serversDataMap.get(this.item.id);
+        },
+    },
+
+    watch: {
+        /**
+         * A watch on dialog to trigger deep clone object from vuex state for local state modification purpose
+         */
+        dialog: function(newVal, oldVal) {
+            if (newVal === true) {
+                // deep object copy or using cloneDeep from lodash
+                this.parameters = cloneDeep(this.getCurrentServer.attributes.parameters);
+                this.relationships = cloneDeep(this.getCurrentServer.relationships);
+                if (this.relationships.services === undefined) {
+                    this.$set(this.relationships, 'services', { data: [] });
+                }
+                if (this.relationships.monitors === undefined) {
+                    this.$set(this.relationships, 'monitors', { data: [] });
+                }
+            }
+        },
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),

@@ -22,7 +22,6 @@ export default {
     components: {
         ...Layouts,
     },
-    store,
     computed: {
         ...mapGetters(['user', 'darkTheme']),
     },

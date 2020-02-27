@@ -15,10 +15,12 @@
             :onSave="handleDelete"
             maxWidth="400px"
         >
-            <template v-slot:body>
+            <template v-slot:title>
                 <v-card-title>
                     <span class="headline">Delete server</span>
                 </v-card-title>
+            </template>
+            <template v-slot:body>
                 <v-card-text>
                     <p>Are you sure you want to destroy {{ chosenId }} ?</p>
                     <small>

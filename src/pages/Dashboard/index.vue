@@ -72,7 +72,13 @@ export default {
                 }
                 return itemsArr;
             }
+            return [];
         },
+    },
+    created() {
+        this.resetDestroyState();
+        this.fetchServers();
+        this.fetchThreadsAsync();
     },
     methods: {
         ...mapActions([
@@ -80,11 +86,6 @@ export default {
             'fetchThreadsAsync', // map `this.fetchThreadsAsync()` to `this.$store.dispatch('fetchThreadsAsync')`
         ]),
         ...mapMutations(['resetDestroyState']),
-    },
-    created() {
-        this.resetDestroyState();
-        this.fetchServers();
-        this.fetchThreadsAsync();
     },
 };
 </script>

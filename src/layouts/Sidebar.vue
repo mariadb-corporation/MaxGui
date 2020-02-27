@@ -51,12 +51,43 @@ export default {
     components: {
         Push,
     },
+    data() {
+        return {
+            // icons
+            mdiLogout: mdiLogout,
+            mdiBrightness4: mdiBrightness4,
+            mdiBrightness7: mdiBrightness7,
+            // states
+            routes: routes,
+            open: false,
+            isVisible: true,
+        };
+    },
     computed: {
         ...mapGetters(['user', 'darkTheme']),
         renderNavRoute: function() {
             let navRoute = routes.filter(route => route.isSideBar);
             return navRoute;
         },
+    },
+    watch: {
+        user: function(newVal, oldVal) {
+            this.isVisible = newVal.token ? true : false;
+        },
+        darkTheme: function(newVal, oldVal) {
+            document.querySelectorAll('.bm-cross').forEach(function(ele) {
+                ele.style.background = newVal ? '#fff' : '#424f62';
+            });
+        },
+    },
+    mounted() {
+        this.isVisible = this.user.token ? true : false;
+        // toggle background color of the cross button in sidebar
+        const ele = document.querySelectorAll('.bm-cross');
+        let darkTheme = this.darkTheme;
+        document.querySelectorAll('.bm-cross').forEach(function(ele) {
+            ele.style.background = darkTheme ? '#fff' : '#424f62';
+        });
     },
     methods: {
         ...mapMutations(['logout', 'toggleDarkTheme']),
@@ -79,40 +110,6 @@ export default {
             e.preventDefault();
             e.stopPropagation();
             this.open = !this.open;
-        },
-    },
-    data() {
-        return {
-            // icons
-            mdiLogout: mdiLogout,
-            mdiBrightness4: mdiBrightness4,
-            mdiBrightness7: mdiBrightness7,
-            // states
-            routes: routes,
-            open: false,
-            isVisible: true,
-        };
-    },
-    mounted() {
-        this.isVisible = this.user.token ? true : false;
-        // toggle background color of the cross button in sidebar
-        const ele = document.querySelectorAll('.bm-cross');
-        let darkTheme = this.darkTheme;
-        document.querySelectorAll('.bm-cross').forEach(function(ele) {
-            ele.style.background = darkTheme ? '#fff' : '#424f62';
-        });
-    },
-    watch: {
-        user: function(newVal, oldVal) {
-            this.isVisible = newVal.token ? true : false;
-        },
-        darkTheme: function(newVal, oldVal) {
-            document.querySelectorAll('.bm-cross').forEach(function(ele) {
-                ele.style.background = newVal ? '#fff' : '#424f62';
-            });
-        },
-        open: function(newVal, oldVal) {
-            console.log('newVal', newVal);
         },
     },
 };

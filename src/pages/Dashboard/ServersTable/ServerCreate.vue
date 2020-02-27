@@ -11,10 +11,12 @@
         </v-tooltip>
 
         <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleCreate" maxWidth="800px">
-            <template v-slot:body>
+            <template v-slot:title>
                 <v-card-title>
                     <span class="headline">Add a server</span>
                 </v-card-title>
+            </template>
+            <template v-slot:body>
                 <v-card-text>
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleCreate()">
@@ -215,13 +217,9 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: 'server-create',
-    computed: {
-        ...mapGetters(['serversData', 'allServersInfo']),
-    },
     props: {
         item: Object,
     },
-
     data: function() {
         return {
             isValid: false,
@@ -269,6 +267,22 @@ export default {
                 },
             },
         };
+    },
+    computed: {
+        ...mapGetters(['serversData', 'allServersInfo']),
+    },
+    watch: {
+        serverId: function(newVal, oldVal) {
+            // add hyphens when ever input have whitespace
+            this.serverId = newVal.split(' ').join('_');
+        },
+        radioGroup: function(newVal, oldVal) {
+            if (newVal === 'address') {
+                this.parameters.socket = null;
+            } else {
+                this.parameters.address = '127.0.0.1';
+            }
+        },
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),
@@ -333,19 +347,6 @@ export default {
                 relationships: this.relationships,
                 parameters: this.parameters,
             });
-        },
-    },
-    watch: {
-        serverId: function(newVal, oldVal) {
-            // add hyphens when ever input have whitespace
-            this.serverId = newVal.split(' ').join('_');
-        },
-        radioGroup: function(newVal, oldVal) {
-            if (newVal === 'address') {
-                this.parameters.socket = null;
-            } else {
-                this.parameters.address = '127.0.0.1';
-            }
         },
     },
 };

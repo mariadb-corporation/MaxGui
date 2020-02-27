@@ -15,11 +15,13 @@ module.exports = {
         devServer: { port: 8000 },
     },
 
+    // css: {
+    //     extract: false, //set it to be true to include css in the head tag
+    // },
     transpileDependencies: ['vuetify'],
-
-    css: {
-        extract: false,
-    },
+    /* Testing purpose, build folder will be output at this path
+     */
+    outputDir: `${process.env.buildPath}/gui`,
 };
 function addStyleResource(rule) {
     rule.use('style-resource')
