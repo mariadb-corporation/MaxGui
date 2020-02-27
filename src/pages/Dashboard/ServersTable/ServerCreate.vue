@@ -72,7 +72,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col v-if="radioGroup === 'address'" cols="12" sm="6" md="4">
                                     <v-text-field
                                         label="port*"
                                         type="number"
@@ -83,15 +83,6 @@
                                         :rules="serverObjRules.port"
                                         name="port"
                                         required
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-select
-                                        :items="protocolItems"
-                                        v-model="parameters.protocol"
-                                        name="protocol"
-                                        label="protocol"
-                                        id="protocol"
                                     />
                                 </v-col>
 
@@ -202,7 +193,7 @@
                 <v-btn color="blue darken-1" text @click="cancel" depressed>
                     Cancel
                 </v-btn>
-                <v-btn color="red" :disabled="!isValid" text @click="save" depressed>
+                <v-btn color="red" text @click="save" depressed>
                     Add
                 </v-btn>
             </template>
@@ -233,7 +224,6 @@ export default {
                 socket: [val => !!val || 'Socket is required'],
                 port: [val => this.validatePortNumber(val)],
             },
-            protocolItems: ['mariadbclient', 'mariadbbackend'],
             ssl_versionItems: ['TLSv10', 'TLSv11', 'TLSv12', 'TLSv13', 'MAX'],
             // server object attributes input values below here
             serverId: null,
@@ -241,7 +231,6 @@ export default {
                 address: '127.0.0.1',
                 socket: null,
                 port: null,
-                protocol: null,
                 ssl_cert: null,
                 ssl_ca_cert: null,
                 ssl_version: 'MAX',
@@ -332,21 +321,24 @@ export default {
         },
 
         handleCreate() {
-            this.dialog = false;
+            this.$refs.form.validate();
+            if (this.isValid) {
+                this.dialog = false;
 
-            // these parameters need to have null value if it is not set
-            this.parameters.socket = this.$help.treatEmptyStringAsNull(this.parameters.socket);
-            this.parameters.authenticator = this.$help.treatEmptyStringAsNull(this.parameters.authenticator);
-            this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(this.parameters.ssl_key);
-            this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(this.parameters.ssl_cert);
-            this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(this.parameters.ssl_ca_cert);
+                // these parameters need to have null value if it is not set
+                this.parameters.socket = this.$help.treatEmptyStringAsNull(this.parameters.socket);
+                this.parameters.authenticator = this.$help.treatEmptyStringAsNull(this.parameters.authenticator);
+                this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(this.parameters.ssl_key);
+                this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(this.parameters.ssl_cert);
+                this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(this.parameters.ssl_ca_cert);
 
-            this.createOrUpdateServer({
-                mode: 'post',
-                id: this.serverId,
-                relationships: this.relationships,
-                parameters: this.parameters,
-            });
+                this.createOrUpdateServer({
+                    mode: 'post',
+                    id: this.serverId,
+                    relationships: this.relationships,
+                    parameters: this.parameters,
+                });
+            }
         },
     },
 };

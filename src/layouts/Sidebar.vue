@@ -24,7 +24,7 @@
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn v-on="on" icon class="logout-btn " @click="logoutHandle">
-                            <v-icon color="red">{{ mdiLogout }}</v-icon>
+                            <v-icon color="#eb5757">{{ mdiLogout }}</v-icon>
                         </v-btn>
                     </template>
                     <span>Sign out</span>

@@ -26,34 +26,19 @@
                                         id="id"
                                         v-model="item.id"
                                         name="id"
-                                        autofocus
                                         required
                                         disabled
                                     />
                                 </v-col>
                             </v-row>
                             <h3>Parameters Update</h3>
+
                             <v-row>
-                                <v-col cols="12" xs="12" sm="6">
-                                    <span>Use either address or socket</span>
-                                    <v-radio-group v-model="radioGroup">
-                                        <v-radio label="Use address" value="address" />
-                                        <v-radio label="Use socket" value="socket" />
-                                    </v-radio-group>
-                                </v-col>
-                                <v-col cols="12" xs="12" sm="6">
-                                    <span>ssl_verify_peer_certificate</span>
-                                    <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
-                                        <v-radio label="True" :value="true" />
-                                        <v-radio label="False" :value="false" />
-                                    </v-radio-group>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col id="addressCol" v-if="radioGroup === 'address'" cols="12" sm="6" md="4">
+                                <v-col id="addressCol" v-if="parameters.address" cols="12" sm="6" md="4">
                                     <v-text-field
                                         label="address: 127.0.0.1 *"
                                         id="address"
+                                        autofocus
                                         v-model="parameters.address"
                                         :rules="serverObjRules.address"
                                         name="address"
@@ -62,6 +47,7 @@
                                 </v-col>
                                 <v-col id="socketCol" v-else cols="12" sm="6" md="4">
                                     <v-text-field
+                                        disabled
                                         label="socket *"
                                         id="socket"
                                         v-model.trim="parameters.socket"
@@ -70,7 +56,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col v-if="parameters.address" cols="12" sm="6" md="4">
                                     <v-text-field
                                         label="port*"
                                         type="number"
@@ -83,54 +69,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-select
-                                        :items="protocolItems"
-                                        v-model="parameters.protocol"
-                                        name="protocol"
-                                        label="protocol"
-                                        id="protocol"
-                                    />
-                                </v-col>
-
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field
-                                        label="ssl_cert"
-                                        id="ssl_cert"
-                                        v-model.trim="parameters.ssl_cert"
-                                        name="ssl_cert"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field
-                                        label="ssl_ca_cert"
-                                        id="ssl_ca_cert"
-                                        v-model.trim="parameters.ssl_ca_cert"
-                                        name="ssl_ca_cert"
-                                    />
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-select
-                                        :items="ssl_versionItems"
-                                        v-model="parameters.ssl_version"
-                                        name="ssl_version"
-                                        label="ssl_version"
-                                        id="ssl_version"
-                                    />
-                                </v-col>
-
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field
-                                        label="ssl_cert_verify_depth"
-                                        type="number"
-                                        min="1"
-                                        id="ssl_cert_verify_depth"
-                                        v-model.number="parameters.ssl_cert_verify_depth"
-                                        name="ssl_cert_verify_depth"
-                                    />
-                                </v-col>
                             </v-row>
-
                             <v-row>
                                 <v-col cols="12" xs="12" sm="12">
                                     <h3>Relationships configurations</h3>
@@ -226,9 +165,6 @@ export default {
             // state
             dialog: false,
             isValid: false,
-            radioGroup: 'address',
-            protocolItems: ['mariadbclient', 'mariadbbackend'],
-            ssl_versionItems: ['TLSv10', 'TLSv11', 'TLSv12', 'TLSv13', 'MAX'],
             serverObjRules: {
                 address: [val => !!val || 'Address is required'],
                 socket: [val => !!val || 'Socket is required'],
@@ -318,13 +254,16 @@ export default {
             }
         },
         handleUpdate() {
-            this.dialog = false;
-            this.createOrUpdateServer({
-                mode: 'patch',
-                id: this.item.id,
-                relationships: this.relationships,
-                parameters: this.parameters,
-            });
+            this.$refs.form.validate();
+            if (this.isValid) {
+                this.dialog = false;
+                this.createOrUpdateServer({
+                    mode: 'patch',
+                    id: this.item.id,
+                    relationships: this.relationships,
+                    parameters: this.parameters,
+                });
+            }
         },
     },
 };

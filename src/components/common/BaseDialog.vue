@@ -3,7 +3,7 @@
         <v-card :outlined="darkTheme" :dark="darkTheme">
             <v-card-title>
                 <v-btn class="close" @click="cancel" large icon>
-                    <v-icon color="red" medium>{{ mdiCloseCircle }}</v-icon>
+                    <v-icon color="#eb5757" medium>{{ mdiCloseCircle }}</v-icon>
                 </v-btn>
                 <slot name="title"> </slot>
             </v-card-title>
@@ -61,6 +61,7 @@ export default {
     methods: {
         cancel() {
             this.onCancel && this.onCancel();
+
             // unit event testing
             this.$emit('cancelClick', false);
         },
