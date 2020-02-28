@@ -1,17 +1,17 @@
 <template>
     <v-card :outlined="darkTheme" :dark="darkTheme">
         <v-card-title>
-            <h3>Servers</h3>
+            <h3>Services</h3>
             <v-spacer />
             <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
-            <server-create />
+            <service-create />
         </v-card-title>
         <v-data-table
             :search="search"
-            :loading="!generateTableRows.length"
             loading-text="Loading... Please wait"
             :headers="tableHeaders"
             :items="generateTableRows"
+            :loading="!generateTableRows.length"
             class="data-table-full"
             sort-by="id"
             :single-expand="false"
@@ -22,12 +22,13 @@
             <!-- Actions slot -->
             <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
                 <div style="display:flex">
-                    <server-update :item="item" />
+                    <!-- <server-update :item="item" /> -->
                     <delete-modal
-                        title="Delete Server"
+                        title="Delete Service"
                         :item="item"
-                        :dispatchDelete="() => deleteServerById(item.id)"
-                        smallInfo="Make sure it is not used by any services or monitors."
+                        :dispatchDelete="() => deleteServiceById(item.id)"
+                        smallInfo="A service can only be destroyed if the service uses no servers or filters and all the listeners
+                        pointing to the service have been destroyed."
                     />
                     <!-- Sub component Activator -->
                     <v-tooltip top>
@@ -43,11 +44,12 @@
                     </v-tooltip>
                 </div>
             </template>
-            <!-- Sub component -->
+
+            <!--Sub component -->
             <template v-slot:expanded-item="{ headers, item }">
                 <!-- :colspan="headers.length" set width to full -->
                 <td :colspan="headers.length">
-                    <server-read :id="item.id" />
+                    <service-read :id="item.id" />
                 </td>
             </template>
         </v-data-table>
@@ -57,21 +59,21 @@
 <script>
 import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
 import { mapGetters, mapActions } from 'vuex';
+import ServiceCreate from './ServiceCreate';
+// import ServerUpdate from './ServerUpdate';
+import ServiceRead from './ServiceRead';
 import DeleteModal from 'components/DeleteModal';
-import ServerCreate from './ServerCreate';
-import ServerUpdate from './ServerUpdate';
-import ServerRead from './ServerRead';
 
 export default {
-    name: 'servers-table',
+    name: 'services-table',
     components: {
+        ServiceCreate,
+        ServiceRead,
+        //     ServerUpdate,
         DeleteModal,
-        ServerCreate,
-        ServerUpdate,
-        ServerRead,
     },
     props: {
-        serversData: Array,
+        servicesData: Array,
     },
     data() {
         return {
@@ -80,15 +82,14 @@ export default {
             mdiChevronUp: mdiChevronUp,
             mdiChevronDown: mdiChevronDown,
             //State
-            serverStates: ['Master, Running', 'Slave, Running'],
             search: '',
             expanded: [],
             tableHeaders: [
-                { text: 'Server', value: 'id' },
-                { text: 'Address', value: 'address' },
-                { text: 'Port', value: 'port' },
+                { text: 'Service', value: 'id' },
+                { text: 'Router', value: 'router' },
                 { text: 'Connections', value: 'connections' },
-                { text: 'State', value: 'state' },
+                { text: 'Total Connections', value: 'total_connections' },
+                { text: 'Servers', value: 'servers' },
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
         };
@@ -103,27 +104,29 @@ export default {
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            if (this.serversData) {
+            if (this.servicesData) {
                 let itemsArr = [];
-                for (let n = 0; n < this.serversData.length; n++) {
+                for (let n = 0; n < this.servicesData.length; n++) {
                     /**
                      * @typedef {Object} row
-                     * @property {String} id - Id of the server
-                     * @property {String} address - Server's address
-                     * @property {Number} port - Server's port
-                     * @property {Number} connections - Number of connections to the server
-                     * @property {String} state - Server's state
+                     * @property {String} row.id - Service's name
+                     * @property {String} row.router - Server's address
+                     * @property {Number} row.total_connections - Server's address
+                     * @property {Number} row.connections - Number of connections to the server
+                     * @property {Array} row,servers - Server's state
                      */
                     const {
                         id,
-                        attributes: { state, parameters, statistics },
-                    } = this.serversData[n];
+                        attributes: { router, connections, total_connections },
+                        relationships: { servers: { data: serversData = [] } = {} },
+                    } = this.servicesData[n] || {};
+                    let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
                     let row = {
                         id: id,
-                        address: parameters.address,
-                        port: parameters.port,
-                        connections: statistics.connections,
-                        state: state,
+                        router: router,
+                        connections: connections,
+                        total_connections: total_connections,
+                        servers: serversList,
                     };
                     itemsArr.push(row);
                 }
@@ -133,7 +136,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['deleteServerById']),
+        ...mapActions(['deleteServiceById']),
     },
 };
 </script>

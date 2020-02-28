@@ -16,15 +16,13 @@
             maxWidth="400px"
         >
             <template v-slot:title>
-                <v-card-title>
-                    <span class="headline">Delete server</span>
-                </v-card-title>
+                <span class="headline">{{ title }}</span>
             </template>
             <template v-slot:body>
                 <v-card-text>
                     <p>Are you sure you want to destroy {{ item.id }} ?</p>
                     <small style="color: #eb5757">
-                        Make sure it is not used by any services or monitors.
+                        {{ smallInfo }}
                     </small>
                 </v-card-text>
             </template>
@@ -42,11 +40,14 @@
 
 <script>
 import { mdiDelete } from '@mdi/js';
-import { mapActions } from 'vuex';
+
 export default {
-    name: 'server-delete',
+    name: 'delete-modal',
     props: {
+        title: String,
         item: Object,
+        dispatchDelete: Function,
+        smallInfo: String,
     },
     data() {
         return {
@@ -55,11 +56,9 @@ export default {
         };
     },
     methods: {
-        ...mapActions(['deleteServerById']),
-
         handleDelete() {
             this.deleteDialog = false;
-            this.deleteServerById(this.item.id);
+            this.dispatchDelete(this.item.id);
         },
     },
 };

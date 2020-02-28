@@ -6,6 +6,9 @@ export default {
         credentials: JSON.parse(sessionStorage.getItem('credentials')),
     },
     mutations: {
+        /**
+         * @param {Array} payload serversData array
+         */
         setServers(state, payload) {
             state.serversData = payload;
         },
@@ -18,8 +21,12 @@ export default {
                 });
                 await commit('setServers', res.data.data);
             } catch (error) {
+                let errorsArr = [error];
+                if (error.response.data) {
+                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
+                }
                 await commit('showMessage', {
-                    text: error,
+                    text: errorsArr,
                     type: 'error',
                 });
             }
@@ -49,11 +56,11 @@ export default {
                 switch (serverData.mode) {
                     case 'post':
                         res = await Vue.axios.post(`/v1/servers/`, payload, auth);
-                        message = `Server ${serverData.id} is created`;
+                        message = [`Server ${serverData.id} is created`];
                         break;
                     case 'patch':
                         res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload, auth);
-                        message = `Server ${serverData.id} is updated`;
+                        message = [`Server ${serverData.id} is updated`];
                         break;
                 }
 
@@ -66,8 +73,12 @@ export default {
                     await dispatch('fetchServers');
                 }
             } catch (error) {
+                let errorsArr = [error];
+                if (error.response.data) {
+                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
+                }
                 await commit('showMessage', {
-                    text: error,
+                    text: errorsArr,
                     type: 'error',
                 });
             }
@@ -84,13 +95,17 @@ export default {
                 if (res.status === 204) {
                     await dispatch('fetchServers');
                     await commit('showMessage', {
-                        text: `Server ${id} Deleted`,
+                        text: [`Server ${id} is deleted`],
                         type: 'success',
                     });
                 }
             } catch (error) {
+                let errorsArr = [error];
+                if (error.response.data) {
+                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
+                }
                 await commit('showMessage', {
-                    text: error,
+                    text: errorsArr,
                     type: 'error',
                 });
             }

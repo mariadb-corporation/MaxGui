@@ -61,9 +61,12 @@ export default {
                         return dispatch('fetchThreadsAsync');
                     }));
             } catch (error) {
-                // console.log('error', error);
+                let errorsArr = [error];
+                if (error.response.data) {
+                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
+                }
                 await commit('showMessage', {
-                    text: error,
+                    text: errorsArr,
                     type: 'error',
                 });
                 !state.isDestroyed &&

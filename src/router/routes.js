@@ -1,4 +1,5 @@
 import Dashboard from 'pages/Dashboard';
+import Statistics from 'pages/Statistics';
 import Login from 'pages/Login';
 import { mdiViewDashboard, mdiEqualizer } from '@mdi/js';
 
@@ -19,7 +20,7 @@ export const routes = [
     },
     {
         path: '/statistics',
-        component: Dashboard,
+        component: Statistics,
         meta: {
             requiresAuth: true,
         },

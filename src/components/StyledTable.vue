@@ -7,8 +7,7 @@
         :headers="headersArr"
         :items="itemsArr"
         item-key="name"
-    >
-    </v-data-table>
+    />
 </template>
 
 <script>
@@ -16,6 +15,7 @@ import { mapGetters } from 'vuex';
 
 export default {
     name: 'styled-table',
+
     props: {
         data: Array,
     },
@@ -23,6 +23,7 @@ export default {
         return {
             headersArr: [],
             itemsArr: [],
+            expanded: [],
         };
     },
     computed: {
@@ -49,5 +50,20 @@ export default {
             this.itemsArr = itemsArr;
         }
     },
+    methods: {
+        childIsObj(child) {
+            if (typeof child === 'object' && !Array.isArray(child)) {
+                return true;
+            }
+            return false;
+        },
+    },
 };
 </script>
+
+<style lang="scss" scoped>
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+</style>

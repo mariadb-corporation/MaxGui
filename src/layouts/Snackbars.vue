@@ -7,7 +7,7 @@
         :timeout="timeout"
         multi-line
     >
-        <span v-html="message.text"></span>
+        <span v-for="(item, i) in message.text" :key="i">{{ item }}</span>
         <v-btn dark class="mr-0" @click="message.status = false" text icon>
             <v-icon>{{ mdiClose }}</v-icon>
         </v-btn>

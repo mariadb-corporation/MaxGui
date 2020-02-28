@@ -24,7 +24,7 @@ module.exports = {
         'no-template-curly-in-string': 1,
         'no-alert': 2,
         'no-eval': 2,
-        camelcase: 2,
+        camelcase: 0,
         'max-len': ['warn', 140, 1],
         indent: ['error', 4, { SwitchCase: 1 }],
         'vue/this-in-template': 'error',

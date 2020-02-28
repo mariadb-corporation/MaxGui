@@ -12,9 +12,7 @@
 
         <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleCreate" maxWidth="800px">
             <template v-slot:title>
-                <v-card-title>
-                    <span class="headline">Add a server</span>
-                </v-card-title>
+                <span class="headline">Add a server</span>
             </template>
             <template v-slot:body>
                 <v-card-text>
@@ -23,7 +21,7 @@
                             <v-row>
                                 <v-col cols="12" xs="12" sm="6">
                                     <v-text-field
-                                        label="Id of the server*"
+                                        label="Name of the server*"
                                         id="id"
                                         v-model="serverId"
                                         :rules="serverObjRules.id"
@@ -144,13 +142,15 @@
                                                 <v-icon color="red">{{ mdiClose }} </v-icon>
                                             </v-btn>
                                             <v-text-field
-                                                class="add-server-input_height_prefix"
+                                                class="input_height_prefix"
                                                 label="Service id"
                                                 id="service_id"
                                                 v-model="item.id"
                                                 name="service_id"
                                                 dense
                                                 outlined
+                                                :rules="serverObjRules.service_id"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -170,13 +170,15 @@
                                                 <v-icon color="red">{{ mdiClose }} </v-icon>
                                             </v-btn>
                                             <v-text-field
-                                                class="add-server-input_height_prefix"
+                                                class="input_height_prefix"
                                                 dense
                                                 label="Monitor id"
                                                 id="monitor_id"
                                                 v-model="item.id"
                                                 name="monitor_id"
                                                 outlined
+                                                :rules="serverObjRules.monitor_id"
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -202,15 +204,11 @@
 </template>
 
 <script>
-/* eslint-disable camelcase */
 import { mdiPlus, mdiClose } from '@mdi/js';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    name: 'server-create',
-    props: {
-        item: Object,
-    },
+    name: 'service-create',
     data: function() {
         return {
             isValid: false,
@@ -223,6 +221,8 @@ export default {
                 address: [val => !!val || 'Address is required'],
                 socket: [val => !!val || 'Socket is required'],
                 port: [val => this.validatePortNumber(val)],
+                service_id: [val => !!val || 'Service name is required'],
+                monitor_id: [val => !!val || 'Monitor name is required'],
             },
             ssl_versionItems: ['TLSv10', 'TLSv11', 'TLSv12', 'TLSv13', 'MAX'],
             // server object attributes input values below here
@@ -239,31 +239,21 @@ export default {
             },
             relationships: {
                 services: {
-                    data: [
-                        {
-                            id: 'RCR-Router',
-                            type: 'services',
-                        },
-                    ],
+                    data: [],
                 },
                 monitors: {
-                    data: [
-                        {
-                            id: 'Monitor',
-                            type: 'monitors',
-                        },
-                    ],
+                    data: [],
                 },
             },
         };
     },
     computed: {
-        ...mapGetters(['serversData', 'allServersInfo']),
+        ...mapGetters(['allServersInfo']),
     },
     watch: {
         serverId: function(newVal, oldVal) {
             // add hyphens when ever input have whitespace
-            this.serverId = newVal.split(' ').join('_');
+            this.serverId = newVal.split(' ').join('-');
         },
         radioGroup: function(newVal, oldVal) {
             if (newVal === 'address') {
@@ -360,7 +350,7 @@ export default {
         transform: translateX(-100%);
     }
 }
-.add-server-input_height_prefix {
+.input_height_prefix {
     padding: 0px 10px !important;
     .v-input__control {
         max-height: auto !important;

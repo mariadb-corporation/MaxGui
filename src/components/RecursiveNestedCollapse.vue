@@ -1,7 +1,8 @@
 <template>
     <v-expansion-panels :dark="darkTheme" :readonly="readOnlyVal" accordion tile>
         <v-expansion-panel>
-            <v-expansion-panel-header ripple>
+            <!-- Dont display the self links generated automatically of json-->
+            <v-expansion-panel-header v-if="propertyName !== 'links'" ripple>
                 <b>{{ propertyName }}</b>
                 {{ value }}
                 <template v-slot:actions>
@@ -10,7 +11,8 @@
             </v-expansion-panel-header>
 
             <v-expansion-panel-content class="v-expansion-panel-content__scrollable" v-if="$help.hasChild(child)">
-                <template v-if="childIsObj(child)">
+                <!--Temporary hardcoded for propertyName === 'listeners' for resource service -->
+                <template v-if="childIsObj(child) || propertyName === 'listeners'">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
                         :readOnlyVal="!$help.hasChild(childValue)"
@@ -61,7 +63,7 @@ export default {
 <style lang="scss" scoped>
 .v-expansion-panel-content__scrollable {
     overflow: scroll;
-    max-height: 240px;
+    max-height: 500px;
     padding: 5px 0px;
 }
 </style>

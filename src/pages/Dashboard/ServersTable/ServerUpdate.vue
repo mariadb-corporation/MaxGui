@@ -11,9 +11,7 @@
         </v-tooltip>
         <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="800px">
             <template v-slot:title>
-                <v-card-title>
-                    <span class="headline">Update server</span>
-                </v-card-title>
+                <span class="headline">Update server</span>
             </template>
             <template v-slot:body>
                 <v-card-text>
@@ -90,7 +88,7 @@
                                                 <v-icon color="red">{{ mdiClose }} </v-icon>
                                             </v-btn>
                                             <v-text-field
-                                                class="add-server-input_height_prefix"
+                                                class="input_height_prefix"
                                                 label="Service id"
                                                 id="service_id"
                                                 v-model="item.id"
@@ -117,7 +115,7 @@
                                                 <v-icon color="red">{{ mdiClose }} </v-icon>
                                             </v-btn>
                                             <v-text-field
-                                                class="add-server-input_height_prefix"
+                                                class="input_height_prefix"
                                                 dense
                                                 label="Monitor id"
                                                 id="monitor_id"
@@ -150,7 +148,6 @@
 import { mapActions, mapGetters } from 'vuex';
 import { mdiTableEdit, mdiClose } from '@mdi/js';
 import { cloneDeep } from 'lodash';
-/* eslint-disable camelcase */
 
 export default {
     name: 'server-update',
