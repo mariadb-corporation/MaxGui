@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import axios from 'axios';
 
 export default {
     state: {
@@ -15,7 +15,7 @@ export default {
     actions: {
         async fetchServers({ commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/servers`);
+                let res = await axios.get(`/v1/servers`);
                 await commit('setServers', res.data.data);
             } catch (error) {
                 let errorsArr = [error];
@@ -49,11 +49,11 @@ export default {
                 let message;
                 switch (serverData.mode) {
                     case 'post':
-                        res = await Vue.axios.post(`/v1/servers/`, payload);
+                        res = await axios.post(`/v1/servers/`, payload);
                         message = [`Server ${serverData.id} is created`];
                         break;
                     case 'patch':
-                        res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload);
+                        res = await axios.patch(`/v1/servers/${serverData.id}`, payload);
                         message = [`Server ${serverData.id} is updated`];
                         break;
                 }
@@ -83,7 +83,7 @@ export default {
          */
         async deleteServerById({ dispatch, commit, state }, id) {
             try {
-                let res = await Vue.axios.delete(`/v1/servers/${id}`);
+                let res = await axios.delete(`/v1/servers/${id}`);
                 // response ok
                 if (res.status === 204) {
                     await dispatch('fetchServers');

@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import axios from 'axios'
 
 export default {
     state: {
@@ -24,7 +24,7 @@ export default {
     actions: {
         async fetchServices({ commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/services`);
+                let res = await axios.get(`/v1/services`);
                 await commit('setServices', res.data.data);
             } catch (error) {
                 let errorsArr = [error];
@@ -68,11 +68,11 @@ export default {
                 let message;
                 switch (serviceData.mode) {
                     case 'post':
-                        res = await Vue.axios.post(`/v1/services/`, payload);
+                        res = await axios.post(`/v1/services/`, payload);
                         message = [`Service ${serviceData.id} is created`];
                         break;
                     case 'patch':
-                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload);
+                        res = await axios.patch(`/v1/services/${serviceData.id}`, payload);
                         message = [`Service ${serviceData.id} is updated`];
                         break;
                 }
@@ -102,7 +102,7 @@ export default {
          */
         async deleteServiceById({ dispatch, commit, state }, id) {
             try {
-                let res = await Vue.axios.delete(`/v1/services/${id}`);
+                let res = await axios.delete(`/v1/services/${id}`);
                 // response ok
                 if (res.status === 204) {
                     await dispatch('fetchServices');
@@ -125,7 +125,7 @@ export default {
         //-----------------------------------------------------Listeners of the service----------------------------------------------------
         // async fetchListenersByService({ commit, state }, serviceId) {
         //     try {
-        //         let res = await Vue.axios.get(`/v1/services${serviceId}/listeners`);
+        //         let res = await axios.get(`/v1/services${serviceId}/listeners`);
         //         await commit('setListenersByService', { data: res.data.data, id: serviceId });
         //     } catch (error) {
         // let errorsArr = [error];

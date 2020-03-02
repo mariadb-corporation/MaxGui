@@ -1,10 +1,10 @@
 <template>
     <v-container fluid class="page-padding">
         <v-row class="server-add" justify="center">
-            <v-col cols="12" class="pt-0" :xs="12" :xl="6">
+            <v-col class="pt-0" :xs="12" :xl="6">
                 <servers-table :serversData="serversData" />
             </v-col>
-            <v-col cols="12" class="pt-0" :xs="12" :xl="6">
+            <v-col class="pt-0" :xs="12" :xl="6">
                 <services-table :servicesData="servicesData" />
             </v-col>
         </v-row>

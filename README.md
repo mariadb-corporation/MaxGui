@@ -25,6 +25,9 @@ npm run lint
 ```
 
 ### Developer settings
+Disable CORS when accessing the app via localhost
+For chrome in linux: google-chrome  --user-data-dir=”/var/tmp/Chrome” --disable-web-security
+
 
 Add .env.local file that contains `buildPath=dataDir`
 dataDir indicates your maxscale's Data directory absolute path

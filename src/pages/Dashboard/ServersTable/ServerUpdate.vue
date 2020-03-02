@@ -18,7 +18,7 @@
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleUpdate()">
                             <v-row>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-text-field
                                         label="Id of the server*"
                                         id="id"
@@ -32,7 +32,7 @@
                             <h3>Parameters Update</h3>
 
                             <v-row>
-                                <v-col id="addressCol" v-if="parameters.address" cols="12" sm="6" md="4">
+                                <v-col id="addressCol" v-if="parameters.address" sm="6" md="4">
                                     <v-text-field
                                         label="address: 127.0.0.1 *"
                                         id="address"
@@ -43,7 +43,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col id="socketCol" v-else cols="12" sm="6" md="4">
+                                <v-col id="socketCol" v-else sm="6" md="4">
                                     <v-text-field
                                         disabled
                                         label="socket *"
@@ -54,7 +54,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col v-if="parameters.address" cols="12" sm="6" md="4">
+                                <v-col v-if="parameters.address" sm="6" md="4">
                                     <v-text-field
                                         label="port*"
                                         type="number"
@@ -69,10 +69,10 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12" xs="12" sm="12">
+                                <v-col cols="12">
                                     <h3>Relationships configurations</h3>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationship('services')">
                                         Add Service
                                     </v-btn>
@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationship('monitors')">
                                         Add Monitor
                                     </v-btn>

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export default {
     state: {
         user: JSON.parse(sessionStorage.getItem('user')),
@@ -10,11 +12,16 @@ export default {
          */
         setUser(state, userObj) {
             state.user = userObj && userObj;
-            sessionStorage.setItem('user', JSON.stringify(userObj));
         },
         logout(state) {
             state.user = null;
+        },
+    },
+    actions: {
+        async logout({ commit }) {
+            commit('logout');
             sessionStorage.removeItem('user');
+            delete axios.defaults.headers.common['Authorization'];
         },
     },
     getters: {

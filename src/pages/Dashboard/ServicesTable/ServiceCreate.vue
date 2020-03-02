@@ -19,7 +19,7 @@
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleCreate()">
                             <v-row>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-text-field
                                         label="Name of the service*"
                                         id="id"
@@ -33,7 +33,7 @@
                             </v-row>
 
                             <v-row>
-                                <v-col id="router" cols="12" sm="6" md="4">
+                                <v-col id="router" sm="6" md="4">
                                     <v-select
                                         :items="routing_module"
                                         v-model="router"
@@ -46,10 +46,10 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12" xs="12" sm="12">
+                                <v-col cols="12">
                                     <h3>Parameters configurations</h3>
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="The user to be*"
                                         id="user"
@@ -59,7 +59,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="The password to use*"
                                         id="password"
@@ -69,7 +69,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="version_string"
                                         id="version_string"
@@ -92,7 +92,7 @@
                                         :label="`Enable ${name}`"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="connection_timeout"
                                         id="connection_timeout"
@@ -102,7 +102,7 @@
                                         name="connection_timeout"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="max_connections"
                                         id="max_connections"
@@ -112,7 +112,7 @@
                                         name="max_connections"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="retain_last_statements"
                                         id="retain_last_statements"
@@ -121,7 +121,7 @@
                                         name="retain_last_statements"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="connection_keepalive"
                                         id="connection_keepalive"
@@ -131,7 +131,7 @@
                                     />
                                 </v-col>
 
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col sm="6" md="4">
                                     <v-text-field
                                         label="net_write_timeout"
                                         id="net_write_timeout"
@@ -142,10 +142,10 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12" xs="12" sm="12">
+                                <v-col cols="12">
                                     <h3>Relationships configurations</h3>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationshipType('filters')">
                                         Add filter
                                     </v-btn>
@@ -174,7 +174,7 @@
                                         </div>
                                     </div>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationshipType('servers')">
                                         Add server
                                     </v-btn>

@@ -19,7 +19,7 @@
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleCreate()">
                             <v-row>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col  xs="12" sm="6">
                                     <v-text-field
                                         label="Name of the server*"
                                         id="id"
@@ -33,24 +33,24 @@
                             </v-row>
 
                             <v-row>
-                                <v-col cols="12" xs="12" sm="12">
+                                <v-col cols="12">
                                     <h3>Parameters configurations</h3>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col  xs="12" sm="6">
                                     <span>Use either address or socket</span>
                                     <v-radio-group v-model="radioGroup">
                                         <v-radio label="Use address" value="address" />
                                         <v-radio label="Use socket" value="socket" />
                                     </v-radio-group>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col  xs="12" sm="6">
                                     <span>ssl_verify_peer_certificate</span>
                                     <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
                                         <v-radio label="True" :value="true" />
                                         <v-radio label="False" :value="false" />
                                     </v-radio-group>
                                 </v-col>
-                                <v-col id="addressCol" v-if="radioGroup === 'address'" cols="12" sm="6" md="4">
+                                <v-col id="addressCol" v-if="radioGroup === 'address'"  sm="6" md="4">
                                     <v-text-field
                                         label="address: 127.0.0.1 *"
                                         id="address"
@@ -60,7 +60,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col id="socketCol" v-else cols="12" sm="6" md="4">
+                                <v-col id="socketCol" v-else  sm="6" md="4">
                                     <v-text-field
                                         label="socket *"
                                         id="socket"
@@ -70,7 +70,7 @@
                                         required
                                     />
                                 </v-col>
-                                <v-col v-if="radioGroup === 'address'" cols="12" sm="6" md="4">
+                                <v-col v-if="radioGroup === 'address'"  sm="6" md="4">
                                     <v-text-field
                                         label="port*"
                                         type="number"
@@ -84,7 +84,7 @@
                                     />
                                 </v-col>
 
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col  sm="6" md="4">
                                     <v-text-field
                                         label="ssl_cert"
                                         id="ssl_cert"
@@ -92,7 +92,7 @@
                                         name="ssl_cert"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col  sm="6" md="4">
                                     <v-text-field
                                         label="ssl_ca_cert"
                                         id="ssl_ca_cert"
@@ -100,7 +100,7 @@
                                         name="ssl_ca_cert"
                                     />
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col  sm="6" md="4">
                                     <v-select
                                         :items="ssl_versionItems"
                                         v-model="parameters.ssl_version"
@@ -110,7 +110,7 @@
                                     />
                                 </v-col>
 
-                                <v-col cols="12" sm="6" md="4">
+                                <v-col  sm="6" md="4">
                                     <v-text-field
                                         label="ssl_cert_verify_depth"
                                         type="number"
@@ -123,10 +123,10 @@
                             </v-row>
 
                             <v-row>
-                                <v-col cols="12" xs="12" sm="12">
+                                <v-col  xs="12" sm="12">
                                     <h3>Relationships configurations</h3>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col  xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationship('services')">
                                         Add Service
                                     </v-btn>
@@ -155,7 +155,7 @@
                                         </div>
                                     </div>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="6">
+                                <v-col  xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationship('monitors')">
                                         Add Monitor
                                     </v-btn>

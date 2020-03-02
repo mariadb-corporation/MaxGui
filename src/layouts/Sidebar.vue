@@ -43,7 +43,7 @@
 </template>
 <script>
 import { Push } from 'vue-burger-menu';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapActions } from 'vuex';
 import { routes } from '../router/routes';
 import { mdiLogout, mdiBrightness4, mdiBrightness7 } from '@mdi/js';
 
@@ -93,7 +93,8 @@ export default {
         });
     },
     methods: {
-        ...mapMutations(['logout', 'toggleDarkTheme']),
+        ...mapMutations(['toggleDarkTheme']),
+        ...mapActions(['logout']),
         logoutHandle() {
             this.open = false;
             this.logout();

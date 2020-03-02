@@ -17,7 +17,7 @@
                     <v-text-field
                         :dark="darkTheme"
                         id="username"
-                        v-model="login.username"
+                        v-model="credential.username"
                         :rules="rules.username"
                         :error-messages="errorMessage"
                         @input="errorMessage = ''"
@@ -35,7 +35,7 @@
                     <v-text-field
                         :dark="darkTheme"
                         id="password"
-                        v-model="login.password"
+                        v-model="credential.password"
                         :append-icon="isPwdVisible ? 'mdi-eye' : 'mdi-eye-off'"
                         :rules="rules.password"
                         :error-messages="errorMessage"
@@ -82,7 +82,8 @@
 
 <script>
 import { mdiLock } from '@mdi/js';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import axios from 'axios';
 
 export default {
     name: 'Login',
@@ -93,7 +94,7 @@ export default {
             isLoading: false,
             isPwdVisible: false,
             rememberMe: false,
-            login: {
+            credential: {
                 username: '',
                 password: '',
             },
@@ -109,17 +110,19 @@ export default {
     },
     methods: {
         ...mapMutations(['setUser']),
+        ...mapActions(['login']),
         async handleSubmit() {
             if (!this.$refs.form.validate()) {
                 return;
             }
             this.isLoading = true;
             try {
-                let res = await this.axios.get(`/auth`, {
-                    auth: this.login,
-                });
+                let res = await axios.get(`/v1/auth`, { auth: this.credential });
                 // temporary user's name, it is using username for name
-                this.setUser({ username: this.login.username, token: res.data.token });
+                let userObj = { username: this.credential.username, token: res.data.token };
+                await this.setUser(userObj);
+                await sessionStorage.setItem('user', JSON.stringify(userObj));
+                axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`;
                 this.isLoading = false;
                 this.$router.push('server');
             } catch (e) {
