@@ -3,7 +3,6 @@ import Vue from 'vue';
 export default {
     state: {
         serversData: [],
-        credentials: JSON.parse(sessionStorage.getItem('credentials')),
     },
     mutations: {
         /**
@@ -16,9 +15,7 @@ export default {
     actions: {
         async fetchServers({ commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/servers`, {
-                    auth: state.credentials,
-                });
+                let res = await Vue.axios.get(`/v1/servers`);
                 await commit('setServers', res.data.data);
             } catch (error) {
                 let errorsArr = [error];
@@ -38,10 +35,7 @@ export default {
          * @param {Object} serverData.relationships Relationships of the server
          * @param {Object} serverData.parameters Parameters for the server
          */
-        async createOrUpdateServer({ commit, dispatch, state }, serverData) {
-            const auth = {
-                auth: state.credentials,
-            };
+        async createOrUpdateServer({ commit, dispatch }, serverData) {
             const payload = {
                 data: {
                     id: serverData.id,
@@ -55,11 +49,11 @@ export default {
                 let message;
                 switch (serverData.mode) {
                     case 'post':
-                        res = await Vue.axios.post(`/v1/servers/`, payload, auth);
+                        res = await Vue.axios.post(`/v1/servers/`, payload);
                         message = [`Server ${serverData.id} is created`];
                         break;
                     case 'patch':
-                        res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload, auth);
+                        res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload);
                         message = [`Server ${serverData.id} is updated`];
                         break;
                 }
@@ -71,6 +65,7 @@ export default {
                         type: 'success',
                     });
                     await dispatch('fetchServers');
+                    await dispatch('fetchServices');
                 }
             } catch (error) {
                 let errorsArr = [error];
@@ -88,9 +83,7 @@ export default {
          */
         async deleteServerById({ dispatch, commit, state }, id) {
             try {
-                let res = await Vue.axios.delete(`/v1/servers/${id}`, {
-                    auth: state.credentials,
-                });
+                let res = await Vue.axios.delete(`/v1/servers/${id}`);
                 // response ok
                 if (res.status === 204) {
                     await dispatch('fetchServers');

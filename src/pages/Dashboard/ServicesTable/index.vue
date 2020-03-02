@@ -10,8 +10,8 @@
             :search="search"
             loading-text="Loading... Please wait"
             :headers="tableHeaders"
-            :items="generateTableRows"
-            :loading="!generateTableRows.length"
+            :items="tableRows"
+            :loading="!tableRows.length"
             class="data-table-full"
             sort-by="id"
             :single-expand="false"
@@ -22,7 +22,7 @@
             <!-- Actions slot -->
             <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
                 <div style="display:flex">
-                    <!-- <server-update :item="item" /> -->
+                    <service-update :item="item" />
                     <delete-modal
                         title="Delete Service"
                         :item="item"
@@ -60,7 +60,7 @@
 import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
 import { mapGetters, mapActions } from 'vuex';
 import ServiceCreate from './ServiceCreate';
-// import ServerUpdate from './ServerUpdate';
+import ServiceUpdate from './ServiceUpdate';
 import ServiceRead from './ServiceRead';
 import DeleteModal from 'components/DeleteModal';
 
@@ -69,7 +69,7 @@ export default {
     components: {
         ServiceCreate,
         ServiceRead,
-        //     ServerUpdate,
+        ServiceUpdate,
         DeleteModal,
     },
     props: {
@@ -92,21 +92,31 @@ export default {
                 { text: 'Servers', value: 'servers' },
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
+            tableRows: [],
         };
     },
+
     computed: {
-        ...mapGetters(['user', 'darkTheme']),
+        ...mapGetters(['darkTheme']),
+    },
+    watch: {
+        servicesData: function(newVal, oldVal) {
+            this.generateTableRows(newVal);
+        },
+    },
+    methods: {
+        ...mapActions(['deleteServiceById']),
         /**
          * @return {Array} An array of objects
          */
-        generateTableRows: function() {
+        generateTableRows: function(servicesData) {
             /**
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            if (this.servicesData) {
+            if (servicesData) {
                 let itemsArr = [];
-                for (let n = 0; n < this.servicesData.length; n++) {
+                for (let n = 0; n < servicesData.length; n++) {
                     /**
                      * @typedef {Object} row
                      * @property {String} row.id - Service's name
@@ -119,7 +129,8 @@ export default {
                         id,
                         attributes: { router, connections, total_connections },
                         relationships: { servers: { data: serversData = [] } = {} },
-                    } = this.servicesData[n] || {};
+                    } = servicesData[n] || {};
+
                     let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
                     let row = {
                         id: id,
@@ -130,13 +141,10 @@ export default {
                     };
                     itemsArr.push(row);
                 }
-                return itemsArr;
+                return (this.tableRows = itemsArr);
             }
             return [];
         },
-    },
-    methods: {
-        ...mapActions(['deleteServiceById']),
     },
 };
 </script>

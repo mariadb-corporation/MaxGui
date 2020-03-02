@@ -12,7 +12,7 @@
 
             <v-expansion-panel-content class="v-expansion-panel-content__scrollable" v-if="$help.hasChild(child)">
                 <!--Temporary hardcoded for propertyName === 'listeners' for resource service -->
-                <template v-if="childIsObj(child) || propertyName === 'listeners'">
+                <template v-if="childIsObj(child) ">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
                         :readOnlyVal="!$help.hasChild(childValue)"

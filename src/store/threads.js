@@ -10,7 +10,6 @@ export default {
             labels: [],
             datasets: [],
         },
-        credentials: JSON.parse(sessionStorage.getItem('credentials')),
     },
     mutations: {
         setThreads(state, payload) {
@@ -38,9 +37,7 @@ export default {
     actions: {
         async fetchThreadsAsync({ dispatch, commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/maxscale/threads`, {
-                    auth: state.credentials,
-                });
+                let res = await Vue.axios.get(`/v1/maxscale/threads`);
                 // console.log("state.threads", state.threads.length);
                 // console.log("res.data.data", res.data.data.length);
                 if (state.threads.length !== res.data.data.length) {

@@ -9,7 +9,7 @@
     >
         <div class="sidebar-wrap-bg" :style="`background-color: ${darkTheme ? '#1E1E1E' : '#fff'}`">
             <div class="nav-username" :style="`color: ${darkTheme ? '#fff' : '#424f62'}`">
-                {{ user.username }}
+                {{ user && user.username }}
             </div>
             <div class="nav-username_divider" :style="`background-color: ${darkTheme ? '#fff' : '#424f62'}`" />
             <ul>
@@ -31,7 +31,7 @@
                 </v-tooltip>
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
-                        <v-btn v-on="on" icon class=" " @click="setDarkThemeHandle">
+                        <v-btn v-on="on" icon class=" " @click="toggleDarkTheme()">
                             <v-icon color="primary">{{ darkTheme ? mdiBrightness4 : mdiBrightness7 }}</v-icon>
                         </v-btn>
                     </template>
@@ -43,13 +43,17 @@
 </template>
 <script>
 import { Push } from 'vue-burger-menu';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapMutations } from 'vuex';
 import { routes } from '../router/routes';
 import { mdiLogout, mdiBrightness4, mdiBrightness7 } from '@mdi/js';
 
 export default {
     components: {
         Push,
+    },
+    props: {
+        darkTheme: Boolean,
+        user: Object,
     },
     data() {
         return {
@@ -64,7 +68,6 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['user', 'darkTheme']),
         renderNavRoute: function() {
             let navRoute = routes.filter(route => route.isSideBar);
             return navRoute;
@@ -72,7 +75,7 @@ export default {
     },
     watch: {
         user: function(newVal, oldVal) {
-            this.isVisible = newVal.token ? true : false;
+            this.isVisible = newVal && newVal.token ? true : false;
         },
         darkTheme: function(newVal, oldVal) {
             document.querySelectorAll('.bm-cross').forEach(function(ele) {
@@ -81,7 +84,7 @@ export default {
         },
     },
     mounted() {
-        this.isVisible = this.user.token ? true : false;
+        this.isVisible = this.user && this.user.token ? true : false;
         // toggle background color of the cross button in sidebar
         const ele = document.querySelectorAll('.bm-cross');
         let darkTheme = this.darkTheme;
@@ -95,9 +98,6 @@ export default {
             this.open = false;
             this.logout();
             this.$router.push('login');
-        },
-        setDarkThemeHandle() {
-            this.toggleDarkTheme();
         },
         // catch on menu open when burger button is pressed
         oneMenuOpen() {

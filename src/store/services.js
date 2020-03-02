@@ -4,7 +4,6 @@ export default {
     state: {
         servicesData: [],
         // listenersByServiceIdMap: new Map(),
-        credentials: JSON.parse(sessionStorage.getItem('credentials')),
     },
     mutations: {
         /**
@@ -25,9 +24,7 @@ export default {
     actions: {
         async fetchServices({ commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/services`, {
-                    auth: state.credentials,
-                });
+                let res = await Vue.axios.get(`/v1/services`);
                 await commit('setServices', res.data.data);
             } catch (error) {
                 let errorsArr = [error];
@@ -46,6 +43,7 @@ export default {
          * @param {String} serviceData.mode Mode to perform async request POST or Patch
          * @param {String} serviceData.id Name of the service
          * @param {String} serviceData.router The router module to use
+
          * @param {Object} serviceData.parameters Parameters for the server
          * @param {String} serviceData.parameters.user The user to use
          * @param {String} serviceData.parameters.password The password to use
@@ -54,14 +52,14 @@ export default {
          * @param {Object} serviceData.relationships.filters Type of relationships
          */
         async createOrUpdateService({ commit, dispatch, state }, serviceData) {
-            const auth = {
-                auth: state.credentials,
-            };
             const payload = {
                 data: {
                     id: serviceData.id,
                     type: 'services',
-                    attributes: { router: serviceData.router, parameters: serviceData.parameters },
+                    attributes: {
+                        router: serviceData.router,
+                        parameters: serviceData.parameters,
+                    },
                     relationships: serviceData.relationships,
                 },
             };
@@ -70,11 +68,11 @@ export default {
                 let message;
                 switch (serviceData.mode) {
                     case 'post':
-                        res = await Vue.axios.post(`/v1/services/`, payload, auth);
+                        res = await Vue.axios.post(`/v1/services/`, payload);
                         message = [`Service ${serviceData.id} is created`];
                         break;
                     case 'patch':
-                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload, auth);
+                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload);
                         message = [`Service ${serviceData.id} is updated`];
                         break;
                 }
@@ -86,6 +84,7 @@ export default {
                         type: 'success',
                     });
                     await dispatch('fetchServices');
+                    await dispatch('fetchServers');
                 }
             } catch (error) {
                 let errorsArr = [error];
@@ -103,9 +102,7 @@ export default {
          */
         async deleteServiceById({ dispatch, commit, state }, id) {
             try {
-                let res = await Vue.axios.delete(`/v1/services/${id}`, {
-                    auth: state.credentials,
-                });
+                let res = await Vue.axios.delete(`/v1/services/${id}`);
                 // response ok
                 if (res.status === 204) {
                     await dispatch('fetchServices');
@@ -128,9 +125,7 @@ export default {
         //-----------------------------------------------------Listeners of the service----------------------------------------------------
         // async fetchListenersByService({ commit, state }, serviceId) {
         //     try {
-        //         let res = await Vue.axios.get(`/v1/services${serviceId}/listeners`, {
-        //             auth: state.credentials,
-        //         });
+        //         let res = await Vue.axios.get(`/v1/services${serviceId}/listeners`);
         //         await commit('setListenersByService', { data: res.data.data, id: serviceId });
         //     } catch (error) {
         // let errorsArr = [error];

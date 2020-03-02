@@ -15,8 +15,8 @@ let router = new Router({
 });
 router.beforeEach(async (to, from, next) => {
     // Check if user is logged in
-    const cookies = JSON.parse(sessionStorage.getItem('credentials'));
-    const token = cookies ? cookies.token : null;
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const token = user ? user.token : null;
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
@@ -25,9 +25,7 @@ router.beforeEach(async (to, from, next) => {
                 params: { nextUrl: to.fullPath },
             });
         } else {
-            // console.log("user is authenticated", to);
             next();
-            await store.dispatch('fetchUser');
         }
     } else {
         // console.log("public route", to);

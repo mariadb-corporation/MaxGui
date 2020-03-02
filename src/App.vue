@@ -1,11 +1,11 @@
 <template>
     <v-app id="vue-app">
         <div id="app">
-            <sidebar />
+            <sidebar :user="user" :darkTheme="darkTheme" />
             <v-content :style="`background-color: ${darkTheme ? '#121212' : '#ffffff'}`" id="page-wrap">
-                <appbar v-if="user.token" />
-                <snackbars v-if="user.token" />
-                <router-view> </router-view>
+                <appbar v-if="user && user.token" />
+                <snackbars v-if="user && user.token" />
+                <router-view />
             </v-content>
         </div>
     </v-app>

@@ -94,7 +94,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['user', 'darkTheme']),
+        ...mapGetters(['darkTheme']),
         /**
          * @return {Array} An array of objects
          */

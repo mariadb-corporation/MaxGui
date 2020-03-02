@@ -82,7 +82,7 @@
 
 <script>
 import { mdiLock } from '@mdi/js';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: 'Login',
@@ -108,22 +108,18 @@ export default {
         ...mapGetters(['darkTheme']),
     },
     methods: {
+        ...mapMutations(['setUser']),
         async handleSubmit() {
             if (!this.$refs.form.validate()) {
                 return;
             }
             this.isLoading = true;
             try {
-                await this.axios.get(`/maxscale`, {
+                let res = await this.axios.get(`/auth`, {
                     auth: this.login,
                 });
                 // temporary user's name, it is using username for name
-                this.$store.commit({
-                    type: 'setUser',
-                    username: this.login.username,
-                    password: this.login.password,
-                    token: 'fakeToken', // fake token received from server
-                });
+                this.setUser({ username: this.login.username, token: res.data.token });
                 this.isLoading = false;
                 this.$router.push('server');
             } catch (e) {
