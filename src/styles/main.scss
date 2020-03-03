@@ -5,11 +5,11 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px white inset !important;
 }
 
-*,
-:after,
-:before {
-    box-sizing: border-box;
-}
+// *,
+// :after,
+// :before {
+//     box-sizing: border-box;
+// }
 
 #app,
 #page-wrap {
@@ -50,4 +50,34 @@ input:-webkit-autofill:active {
 
 .page-padding {
     padding: 40px 24px 0px;
+}
+
+// vuetify input restyle
+.std.v-text-field--outlined > .v-input__control {
+    .v-input__slot {
+        min-height: 0;
+    }
+
+    fieldset {
+        border-width: 1px !important;
+    }
+
+    & input {
+        margin-top: 1px;
+        font-size: 15px;
+        color: $navigation;
+    }
+
+    & .v-input__append-inner {
+        margin-top: 6px;
+    }
+}
+// vuetify input error message
+.std.v-input.v-text-field .v-text-field__details {
+    position: absolute;
+    top: -2px;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0;
+    transform: translateY(-100%);
 }

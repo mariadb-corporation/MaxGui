@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios from 'axios';
+import { getErrorsArr } from '@/utils/helpers';
 
 export default {
     state: {
@@ -27,12 +28,8 @@ export default {
                 let res = await axios.get(`/v1/services`);
                 await commit('setServices', res.data.data);
             } catch (error) {
-                let errorsArr = [error];
-                if (error.response.data) {
-                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
-                }
                 await commit('showMessage', {
-                    text: errorsArr,
+                    text: getErrorsArr(error),
                     type: 'error',
                 });
             }
@@ -87,12 +84,8 @@ export default {
                     await dispatch('fetchServers');
                 }
             } catch (error) {
-                let errorsArr = [error];
-                if (error.response.data) {
-                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
-                }
                 await commit('showMessage', {
-                    text: errorsArr,
+                    text: getErrorsArr(error),
                     type: 'error',
                 });
             }
@@ -112,12 +105,8 @@ export default {
                     });
                 }
             } catch (error) {
-                let errorsArr = [error];
-                if (error.response.data) {
-                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
-                }
                 await commit('showMessage', {
-                    text: errorsArr,
+                    text: getErrorsArr(error),
                     type: 'error',
                 });
             }

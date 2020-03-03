@@ -38,6 +38,15 @@ export function dynamicColors() {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
+/**
+ * @param {Object} error Error object that returns from try catch
+ * @return {Array} An array of error string
+ */
+export function getErrorsArr(error) {
+    let errorsArr = [error];
+    error.response.data && (errorsArr = error.response.data.errors.map(ele => `${ele.detail}`));
+    return errorsArr;
+}
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -47,6 +56,7 @@ Object.defineProperties(Vue.prototype, {
                 dynamicColors,
                 delay,
                 treatEmptyStringAsNull,
+                getErrorsArr,
             };
         },
     },

@@ -15,9 +15,9 @@ module.exports = {
         devServer: { port: 8000 },
     },
 
-    css: {
-        extract: false, //set it to be true to include css in the head tag
-    },
+    // css: {
+    //     extract: false, //set it to be true to include css in the head tag
+    // },
     transpileDependencies: ['vuetify'],
     outputDir: `${process.env.buildPath}/gui`,
 };

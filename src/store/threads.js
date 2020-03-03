@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { delay, dynamicColors } from 'utils/helpers';
+import axios from 'axios';
+import { delay, dynamicColors, getErrorsArr } from 'utils/helpers';
 
 export default {
     state: {
@@ -58,12 +58,8 @@ export default {
                         return dispatch('fetchThreadsAsync');
                     }));
             } catch (error) {
-                let errorsArr = [error];
-                if (error.response.data) {
-                    errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
-                }
                 await commit('showMessage', {
-                    text: errorsArr,
+                    text: getErrorsArr(error),
                     type: 'error',
                 });
                 !state.isDestroyed &&
