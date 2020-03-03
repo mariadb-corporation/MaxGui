@@ -1,4 +1,11 @@
 import Vue from 'vue';
+const { t } = require('typy');
+
+export function range(start, end) {
+    if (!t(start).isNumber || !t(end).isNumber) return;
+
+    return Math.floor(Math.random() * (end - start + 1)) + start;
+}
 
 export function hasChild(val) {
     if ((typeof val === 'object' || Array.isArray(val) === 'array') && val != null) {
@@ -51,6 +58,7 @@ Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
             return {
+                range,
                 hasChild,
                 handleNull,
                 dynamicColors,

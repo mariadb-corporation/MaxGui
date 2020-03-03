@@ -5,7 +5,7 @@
             <v-content :style="`background-color: ${darkTheme ? '#121212' : '#ffffff'}`" id="page-wrap">
                 <appbar v-if="user && user.token" />
                 <snackbars v-if="user && user.token" />
-                <router-view />
+                <keep-alive> <router-view /></keep-alive>
             </v-content>
         </div>
     </v-app>

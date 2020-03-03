@@ -12,8 +12,8 @@ module.exports = {
         parser: 'babel-eslint',
     },
 
-    plugins: ['vuetify'],
-    extends: ['prettier', 'prettier/vue', 'plugin:vue/essential', '@vue/standard'],
+    plugins: ['vue', 'vuetify'],
+    extends: ['prettier', 'prettier/vue', 'plugin:vue/essential', 'eslint:recommended'],
 
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 2 : 1,
