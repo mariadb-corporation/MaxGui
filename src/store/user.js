@@ -1,4 +1,4 @@
-import axios from 'axios';
+import Vue from 'vue';
 
 export default {
     state: {
@@ -21,7 +21,7 @@ export default {
         async logout({ commit }) {
             commit('logout');
             sessionStorage.removeItem('user');
-            delete axios.defaults.headers.common['Authorization'];
+            Vue.axios.defaults.headers.common['Authorization'];
         },
     },
     getters: {

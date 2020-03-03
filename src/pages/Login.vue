@@ -90,7 +90,7 @@
 <script>
 import { mdiEye, mdiEyeOff } from '@mdi/js';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import axios from 'axios';
+// import axios from 'axios';
 
 export default {
     name: 'Login',
@@ -138,6 +138,7 @@ export default {
             window.requestAnimationFrame(this.draw);
         }
     },
+
     methods: {
         ...mapMutations(['setUser']),
         ...mapActions(['login']),
@@ -147,17 +148,13 @@ export default {
             }
             this.isLoading = true;
             try {
-                let res = await axios.get(`/v1/auth`, { auth: this.credential });
+                let res = await this.axios.get(`/v1/auth`, { auth: this.credential });
                 // temporary user's name, it is using username for name
                 let userObj = { username: this.credential.username, token: res.data.token };
                 await this.setUser(userObj);
                 await sessionStorage.setItem('user', JSON.stringify(userObj));
-                axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`;
-                if (this.$route.params.nextUrl != null) {
-                    this.$router.push(this.$route.params.nextUrl);
-                } else {
-                    this.$router.push('server');
-                }
+                this.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`;
+                this.$router.push('dashboard');
             } catch (error) {
                 this.displayOneError = true;
                 this.errorMessage =

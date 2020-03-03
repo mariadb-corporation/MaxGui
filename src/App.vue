@@ -5,7 +5,7 @@
             <v-content :style="`background-color: ${darkTheme ? '#121212' : '#ffffff'}`" id="page-wrap">
                 <appbar v-if="user && user.token" />
                 <snackbars v-if="user && user.token" />
-                <keep-alive> <router-view /></keep-alive>
+                <router-view />
             </v-content>
         </div>
     </v-app>
@@ -30,6 +30,4 @@ export default {
 
 <style lang="scss">
 @import 'styles/main.scss';
-@import 'styles/font.scss';
-@import 'styles/constants.scss';
 </style>

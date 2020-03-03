@@ -17,6 +17,7 @@
         "lodash": "^4.17.15",
         "typy": "^3.3.0",
         "vue": "^2.6.11",
+        "vue-axios": "^2.1.5",
         "vue-burger-menu": "^2.0.3",
         "vue-chartjs": "^3.5.0",
         "vue-router": "^3.1.5",

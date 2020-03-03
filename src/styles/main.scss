@@ -1,3 +1,7 @@
+@import 'font.scss';
+@import 'constants.scss';
+@import 'class_colors';
+
 html,
 body,
 #app,
@@ -6,7 +10,6 @@ body,
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 .v-application {
     background-color: $background !important;

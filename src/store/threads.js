@@ -1,4 +1,4 @@
-import axios from 'axios';
+import Vue from 'vue';
 import { delay, dynamicColors, getErrorsArr } from 'utils/helpers';
 
 export default {
@@ -37,7 +37,7 @@ export default {
     actions: {
         async fetchThreadsAsync({ dispatch, commit, state }) {
             try {
-                let res = await axios.get(`/v1/maxscale/threads`);
+                let res = await Vue.axios.get(`/v1/maxscale/threads`);
                 // console.log("state.threads", state.threads.length);
                 // console.log("res.data.data", res.data.data.length);
                 if (state.threads.length !== res.data.data.length) {

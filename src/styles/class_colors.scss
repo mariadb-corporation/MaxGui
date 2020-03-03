@@ -1,0 +1,32 @@
+@import 'constants';
+
+
+$colors: (
+    "error": $error,
+    "warning": $warning,
+    "success": $success,
+    "info": $info,
+    "accent": $accent,
+    "table-header": $table-header,
+    "text": $text,
+    "text-subtle": $text-subtle,
+    "navigation": $navigation,
+    "links": $links,
+    "primary": $primary,
+    "inputs": $inputs,
+    "background": $background
+);
+
+.color {
+    @each $name, $value in $colors {
+        &.bg-#{$name} {
+            background-color: $value !important;
+        }
+        &.text-#{$name} {
+            color: $value !important;
+        }
+        &.border-#{$name} {
+            border-color: $value !important;
+        }
+    }
+}
