@@ -1,13 +1,11 @@
 <template>
-    <v-app id="vue-app">
-        <div id="app">
-            <sidebar :user="user" :darkTheme="darkTheme" />
-            <v-content :style="`background-color: ${darkTheme ? '#121212' : '#ffffff'}`" id="page-wrap">
-                <appbar v-if="user && user.token" />
-                <snackbars v-if="user && user.token" />
-                <router-view />
-            </v-content>
-        </div>
+    <v-app>
+        <top-header :user="user" v-if="user && user.token" />
+        <sidebar v-if="user && user.token" />
+        <snackbars v-if="user && user.token" />
+        <v-content>
+            <router-view />
+        </v-content>
     </v-app>
 </template>
 
@@ -23,7 +21,7 @@ export default {
         ...Layouts,
     },
     computed: {
-        ...mapGetters(['user', 'darkTheme']),
+        ...mapGetters(['user']),
     },
 };
 </script>

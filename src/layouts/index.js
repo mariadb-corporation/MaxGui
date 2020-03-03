@@ -1,8 +1,8 @@
 import Sidebar from 'layouts/Sidebar';
-import Appbar from 'layouts/Appbar';
+import Header from 'layouts/Header';
 import Snackbars from 'layouts/Snackbars';
 export default {
     sidebar: Sidebar,
-    appbar: Appbar,
+    'top-header': Header,
     snackbars: Snackbars,
 };

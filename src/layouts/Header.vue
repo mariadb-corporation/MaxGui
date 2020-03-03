@@ -1,0 +1,107 @@
+<template>
+    <v-app-bar height="52px" class="header pl-12 pr-2" fixed clipped-left app flat color="#003545">
+        <v-toolbar-title class="headline">
+            <router-link to="/dashboard">
+                <img src="@/assets/logo.svg" alt="MariaDB Logo" />
+                <span class="ml-2 white--text"><b>Maria</b>DB <b>MaxScale</b></span>
+            </router-link>
+        </v-toolbar-title>
+
+        <v-spacer></v-spacer>
+
+        <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
+            <template v-slot:activator="{ on }">
+                <v-btn class="mr-0" v-on="on" text tile>
+                    <v-icon class="mr-1 white--text" size="32">$vuetify.icons.user</v-icon>
+                    <span class="white--text">{{ user.username }}</span>
+                    <v-icon class="mr-0 ml-1 white--text" left>{{
+                        'expand_' + (isProfileOpened ? 'less' : 'more')
+                    }}</v-icon>
+                </v-btn>
+            </template>
+            <v-list>
+                <v-list-item @click="logout()">
+                    <v-list-item-title>logout</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+        <!-- <users-dialog ref="userDialog" /> -->
+    </v-app-bar>
+    <!-- <v-breadcrumbs class="mt-12" :items="items" large>
+            <template v-slot:item="{ item }">
+                <v-breadcrumbs-item>
+                    <router-link style="text-decoration:none" :to="item.href">
+                        {{ item.text.toUpperCase() }}
+                    </router-link>
+                </v-breadcrumbs-item>
+            </template>
+        </v-breadcrumbs> -->
+</template>
+
+<script>
+export default {
+    props: { user: Object },
+    data() {
+        return {
+            items: [],
+            isProfileOpened: false,
+        };
+    },
+    watch: {
+        $route: 'generateBreadcrumbs',
+    },
+    created: function() {
+        this.generateBreadcrumbs();
+    },
+    methods: {
+        generateBreadcrumbs() {
+            let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
+            let items = [];
+            for (let i = 0; i < pathNames.length; i++) {
+                const last = i === pathNames.length - 1;
+                const toPath = `/${pathNames.slice(0, i + 1).join('/')}`;
+                let item = {
+                    text: pathNames[i].toUpperCase(),
+                    href: toPath,
+                    disabled: false,
+                };
+                items.push(item);
+                this.items = items;
+            }
+        },
+        logout() {},
+    },
+
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.generateBreadcrumbs();
+        });
+    },
+};
+</script>
+<style lang="scss" scoped>
+.header {
+    background: linear-gradient(to right, #013545 0%, #064251 100%);
+}
+
+.headline {
+    a {
+        text-decoration: none;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+
+    span {
+        position: relative;
+        vertical-align: middle;
+        font-size: 18px;
+        font-weight: bold;
+    }
+}
+
+.v-btn {
+    letter-spacing: normal;
+}
+</style>

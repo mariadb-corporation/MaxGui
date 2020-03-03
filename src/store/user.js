@@ -21,7 +21,7 @@ export default {
         async logout({ commit }) {
             commit('logout');
             sessionStorage.removeItem('user');
-            Vue.axios.defaults.headers.common['Authorization'];
+            delete Vue.axios.defaults.headers.common['Authorization'];
         },
     },
     getters: {

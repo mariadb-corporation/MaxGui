@@ -4,11 +4,11 @@ import Login from 'pages/Login';
 import { mdiViewDashboard, mdiEqualizer } from '@mdi/js';
 
 export const routes = [
-    // {
-    //     path: '*',
-    //     name: 'default',
-    //     redirect: '/dashboard',
-    // },
+    {
+        path: '*',
+        name: 'default',
+        redirect: '/dashboard',
+    },
     {
         path: '/dashboard',
         component: Dashboard,
@@ -17,7 +17,6 @@ export const routes = [
         },
         name: 'dashboard',
         icon: mdiViewDashboard,
-        isSideBar: true,
     },
     {
         path: '/statistics',
@@ -27,7 +26,6 @@ export const routes = [
         },
         name: 'statistics',
         icon: mdiEqualizer,
-        isSideBar: true,
     },
     {
         path: '/login',

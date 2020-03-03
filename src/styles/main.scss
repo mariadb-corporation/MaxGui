@@ -1,11 +1,13 @@
 @import 'font.scss';
 @import 'constants.scss';
 @import 'class_colors';
+@import 'fonts/material-icons';
+// Vuetify helper variables
+@import '~vuetify/src/styles/settings/_variables';
 
 html,
 body,
-#app,
-#page-wrap {
+#app {
     width: 100%;
     height: 100%;
     margin: 0;
