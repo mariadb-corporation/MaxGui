@@ -45,13 +45,14 @@
                                     id="password"
                                     placeholder="Password"
                                     v-model="credential.password"
-                                    :append-icon="isPwdVisible ? mdiEye : mdiEyeOff"
+                                    :append-icon="isPwdVisible ? 'fa-eye' : 'fa-eye-slash'"
                                     :rules="rules.password"
                                     :error-messages="!displayOneError ? errorMessage : ''"
                                     @input="errorMessage = ''"
                                     :type="isPwdVisible ? 'text' : 'password'"
                                     @click:append="isPwdVisible = !isPwdVisible"
                                 />
+
                                 <v-checkbox
                                     class="small mt-2"
                                     v-model="rememberMe"
@@ -88,7 +89,6 @@
 </template>
 
 <script>
-import { mdiEye, mdiEyeOff } from '@mdi/js';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 // import axios from 'axios';
 
@@ -96,8 +96,6 @@ export default {
     name: 'Login',
     data() {
         return {
-            mdiEye: mdiEye,
-            mdiEyeOff: mdiEyeOff,
             isValid: false,
             isLoading: false,
             isPwdVisible: false,

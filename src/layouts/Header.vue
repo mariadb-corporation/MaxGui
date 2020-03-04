@@ -12,11 +12,14 @@
         <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
             <template v-slot:activator="{ on }">
                 <v-btn class="mr-0" v-on="on" text tile>
-                    <v-icon class="mr-1 white--text" size="32">$vuetify.icons.user</v-icon>
+                    <v-icon class="mr-1 white--text fa fa-user" size="24" />
                     <span class="white--text">{{ user.username }}</span>
-                    <v-icon class="mr-0 ml-1 white--text" left>{{
-                        'expand_' + (isProfileOpened ? 'less' : 'more')
-                    }}</v-icon>
+                    <v-icon
+                        size="9"
+                        class="mr-0 ml-1 white--text fa"
+                        :class="[isProfileOpened ? 'fa-chevron-down' : 'fa-chevron-up']"
+                        left
+                    />
                 </v-btn>
             </template>
             <v-list>

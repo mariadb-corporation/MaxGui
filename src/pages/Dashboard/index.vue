@@ -1,14 +1,12 @@
 <template>
-    <v-container fluid class="page-padding">
-        <v-row class="server-add" justify="center">
-            <v-col class="pt-0" :xs="12" :xl="6">
-                <servers-table :serversData="serversData" />
-            </v-col>
-            <v-col class="pt-0" :xs="12" :xl="6">
-                <services-table :servicesData="servicesData" />
-            </v-col>
-        </v-row>
-    </v-container>
+    <v-row class="server-add" justify="center">
+        <v-col class="pt-0" :xs="12" :xl="6">
+            <servers-table :serversData="serversData" />
+        </v-col>
+        <v-col class="pt-0" :xs="12" :xl="6">
+            <services-table :servicesData="servicesData" />
+        </v-col>
+    </v-row>
 </template>
 
 <script>

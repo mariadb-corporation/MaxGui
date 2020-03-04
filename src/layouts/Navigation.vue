@@ -22,7 +22,7 @@
                         @click="navigate(item)"
                     >
                         <v-list-item-icon class="mx-0">
-                            <v-icon :size="item.size" color="white">{{ item.icon }}</v-icon>
+                            <v-icon :size="item.size" color="white" :class="`fa fa-${item.icon}`" />
                         </v-list-item-icon>
                         <v-list-item-content>
                             <v-list-item-title style="color: white;">{{ item.title }}</v-list-item-title>

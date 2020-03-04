@@ -25,20 +25,8 @@ import Restore from 'icons/Restore';
 import QuestionCircle from 'icons/QuestionCircle';
 import Table from 'icons/Table';
 import Comments from 'icons/Comments';
-//
-import Dashboard from 'icons/Dashboard';
-import Statistics from 'icons/Statistics';
 
 export default {
-    // New icons
-    dashboard: {
-        component: Dashboard,
-    },
-    statistics: {
-        component: Statistics,
-    },
-
-    //
     user: {
         component: User,
     },

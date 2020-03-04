@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" class="ml-5 mr-4 mt-4" @click="dialog = true" color="primary" depressed>
-                    <v-icon medium>{{ mdiPlus }}</v-icon>
+                    <v-icon size="16" class="fa fa-plus" medium />
                 </v-btn>
             </template>
             <span>Add Service</span>
@@ -158,7 +158,7 @@
                                                 x-small
                                                 @click="deleteRelationshipType('filters', item)"
                                             >
-                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                                <v-icon color="red" size="16" class="fa fa-close" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -186,7 +186,13 @@
                                                 x-small
                                                 @click="deleteRelationshipType('servers', item)"
                                             >
-                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                                <v-text-field
+                                                    v-model="search"
+                                                    append-icon="fa fa-search"
+                                                    label="Search"
+                                                    single-line
+                                                    hide-details
+                                                />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -225,7 +231,6 @@
 </template>
 
 <script>
-import { mdiPlus, mdiClose } from '@mdi/js';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -233,8 +238,6 @@ export default {
     data: function() {
         return {
             isValid: false,
-            mdiPlus: mdiPlus,
-            mdiClose: mdiClose,
             dialog: false,
             serviceObjRules: {
                 id: [val => this.validateServiceId(val)],

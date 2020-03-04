@@ -1,7 +1,6 @@
 import Dashboard from 'pages/Dashboard';
 import Statistics from 'pages/Statistics';
 import Login from 'pages/Login';
-import { mdiViewDashboard, mdiEqualizer } from '@mdi/js';
 
 export const routes = [
     {
@@ -16,7 +15,6 @@ export const routes = [
             requiresAuth: true,
         },
         name: 'dashboard',
-        icon: mdiViewDashboard,
     },
     {
         path: '/statistics',
@@ -25,7 +23,6 @@ export const routes = [
             requiresAuth: true,
         },
         name: 'statistics',
-        icon: mdiEqualizer,
     },
     {
         path: '/login',

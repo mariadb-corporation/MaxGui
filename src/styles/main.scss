@@ -1,9 +1,9 @@
+// Vuetify helper variables
+@import '~vuetify/src/styles/settings/_variables';
 @import 'font.scss';
 @import 'constants.scss';
 @import 'class_colors';
-@import 'fonts/material-icons';
-// Vuetify helper variables
-@import '~vuetify/src/styles/settings/_variables';
+
 
 html,
 body,
@@ -16,6 +16,10 @@ body,
 .v-application {
     background-color: $background !important;
 }
+.v-content-padding {
+    padding: 35px;
+}
+// --------------------------------- Vuetify custom restyle ----------------------------------
 .data-table-full {
     a:hover {
         text-decoration: underline;
@@ -48,9 +52,6 @@ body,
     }
 }
 
-.page-padding {
-    padding: 40px 24px 0px;
-}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -60,7 +61,7 @@ input:-webkit-autofill:active {
 // vuetify input restyle
 .std.v-text-field--outlined > .v-input__control {
     .v-input__slot {
-        min-height: 0;
+        min-height: 0 !important;
     }
 
     fieldset {
@@ -72,9 +73,23 @@ input:-webkit-autofill:active {
         font-size: 15px;
         color: $navigation;
     }
+}
+.search-restyle.v-text-field--rounded {
+    .v-input__control {
+        .v-input__slot {
+            min-height: 0 !important;
+            padding: 0px 15px;
+        }
 
-    & .v-input__append-inner {
-        margin-top: 6px;
+        fieldset {
+            border-width: 1px !important;
+        }
+
+        & input {
+            margin-top: 1px;
+            font-size: 15px;
+            color: $navigation;
+        }
     }
 }
 // vuetify input error message
@@ -91,6 +106,7 @@ input:-webkit-autofill:active {
     label {
         font-size: 0.865rem;
         color: $navigation;
+        left: 3px !important;
     }
 
     svg {

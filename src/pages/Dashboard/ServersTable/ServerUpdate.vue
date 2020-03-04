@@ -4,7 +4,7 @@
             <!-- Dialog activator -->
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" @click="dialog = true" icon color="primary">
-                    <v-icon medium>{{ mdiTableEdit }}</v-icon>
+                    <v-icon size="16" class="fa fa-edit" medium />
                 </v-btn>
             </template>
             <span>Update</span>
@@ -85,7 +85,7 @@
                                                 x-small
                                                 @click="deleteRelationship('services', item)"
                                             >
-                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                                <v-icon color="red" size="16" class="fa fa-close" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -112,7 +112,7 @@
                                                 x-small
                                                 @click="deleteRelationship('monitors', item)"
                                             >
-                                                <v-icon color="red">{{ mdiClose }} </v-icon>
+                                                <v-icon color="red" size="16" class="fa fa-close" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -146,7 +146,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { mdiTableEdit, mdiClose } from '@mdi/js';
 import { cloneDeep } from 'lodash';
 
 export default {
@@ -156,9 +155,6 @@ export default {
     },
     data() {
         return {
-            // icons
-            mdiTableEdit: mdiTableEdit,
-            mdiClose: mdiClose,
             // state
             dialog: false,
             isValid: false,

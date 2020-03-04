@@ -3,7 +3,7 @@
         <v-card-title>
             <h3>Services</h3>
             <v-spacer />
-            <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
+            <v-text-field v-model="search" append-icon="fa fa-search" label="Search" single-line hide-details />
             <service-create />
         </v-card-title>
         <v-data-table
@@ -33,11 +33,13 @@
                     <!-- Sub component Activator -->
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" v-if="!isExpanded" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronDown }}</v-icon>
-                            </v-btn>
-                            <v-btn v-else v-on="on" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronUp }}</v-icon>
+                            <v-btn v-on="on" @click="expand(!isExpanded)" icon color="primary">
+                                <v-icon
+                                    size="16"
+                                    class="fa"
+                                    :class="[isExpanded ? 'fa-chevron-down' : 'fa-chevron-up']"
+                                    medium
+                                />
                             </v-btn>
                         </template>
                         <span>Show detailed information</span>
@@ -57,7 +59,6 @@
 </template>
 
 <script>
-import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
 import { mapGetters, mapActions } from 'vuex';
 import ServiceCreate from './ServiceCreate';
 import ServiceUpdate from './ServiceUpdate';
@@ -77,10 +78,6 @@ export default {
     },
     data() {
         return {
-            //Icons
-            mdiMagnify: mdiMagnify,
-            mdiChevronUp: mdiChevronUp,
-            mdiChevronDown: mdiChevronDown,
             //State
             search: '',
             expanded: [],
