@@ -1,111 +1,123 @@
-import User from 'icons/User'
-import Monitoring from 'icons/Monitoring'
-import Alerts from 'icons/Alerts'
-import Security from 'icons/Security'
-import Users from 'icons/Users'
-import StatusOk from 'icons/StatusOk'
-import StatusWarning from 'icons/StatusWarning'
-import StatusError from 'icons/StatusError'
-import StatusInfo from 'icons/StatusInfo'
-import ConnectivityOk from 'icons/ConnectivityOk'
-import ConnectivityAlert from 'icons/ConnectivityAlert'
-import ConnectivityBad from 'icons/ConnectivityBad'
-import Running from 'icons/Running'
-import Stopped from 'icons/Stopped'
-import Paused from 'icons/Paused'
-import HealthOk from 'icons/HealthOk'
-import HealthBad from 'icons/HealthBad'
-import HealthAlert from 'icons/HealthAlert'
-import ArrowRight from 'icons/ArrowRight'
-import Close from 'icons/Close'
-import Reload from 'icons/Reload'
-import Edit from 'icons/Edit'
-import Delete from 'icons/Delete'
-import Restore from 'icons/Restore'
-import QuestionCircle from 'icons/QuestionCircle'
-import Table from 'icons/Table'
-import Comments from 'icons/Comments'
+import User from 'icons/User';
+import Monitoring from 'icons/Monitoring';
+import Alerts from 'icons/Alerts';
+import Security from 'icons/Security';
+import Users from 'icons/Users';
+import StatusOk from 'icons/StatusOk';
+import StatusWarning from 'icons/StatusWarning';
+import StatusError from 'icons/StatusError';
+import StatusInfo from 'icons/StatusInfo';
+import ConnectivityOk from 'icons/ConnectivityOk';
+import ConnectivityAlert from 'icons/ConnectivityAlert';
+import ConnectivityBad from 'icons/ConnectivityBad';
+import Running from 'icons/Running';
+import Stopped from 'icons/Stopped';
+import Paused from 'icons/Paused';
+import HealthOk from 'icons/HealthOk';
+import HealthBad from 'icons/HealthBad';
+import HealthAlert from 'icons/HealthAlert';
+import ArrowRight from 'icons/ArrowRight';
+import Close from 'icons/Close';
+import Reload from 'icons/Reload';
+import Edit from 'icons/Edit';
+import Delete from 'icons/Delete';
+import Restore from 'icons/Restore';
+import QuestionCircle from 'icons/QuestionCircle';
+import Table from 'icons/Table';
+import Comments from 'icons/Comments';
+//
+import Dashboard from 'icons/Dashboard';
+import Statistics from 'icons/Statistics';
 
 export default {
+    // New icons
+    dashboard: {
+        component: Dashboard,
+    },
+    statistics: {
+        component: Statistics,
+    },
+
+    //
     user: {
-        component: User
+        component: User,
     },
     monitoring: {
-        component: Monitoring
+        component: Monitoring,
     },
     alerts: {
-        component: Alerts
+        component: Alerts,
     },
     security: {
-        component: Security
+        component: Security,
     },
     users: {
-        component: Users
+        component: Users,
     },
     statusOk: {
-        component: StatusOk
+        component: StatusOk,
     },
     statusWarning: {
-        component: StatusWarning
+        component: StatusWarning,
     },
     statusError: {
-        component: StatusError
+        component: StatusError,
     },
     connectivityOk: {
-        component: ConnectivityOk
+        component: ConnectivityOk,
     },
     connectivityAlert: {
-        component: ConnectivityAlert
+        component: ConnectivityAlert,
     },
     connectivityBad: {
-        component: ConnectivityBad
+        component: ConnectivityBad,
     },
     running: {
-        component: Running
+        component: Running,
     },
     stopped: {
-        component: Stopped
+        component: Stopped,
     },
     paused: {
-        component: Paused
+        component: Paused,
     },
     healthOk: {
-        component: HealthOk
+        component: HealthOk,
     },
     healthBad: {
-        component: HealthBad
+        component: HealthBad,
     },
     healthAlert: {
-        component: HealthAlert
+        component: HealthAlert,
     },
     arrowRight: {
-        component: ArrowRight
+        component: ArrowRight,
     },
     close: {
-        component: Close
+        component: Close,
     },
     reload: {
-        component: Reload
+        component: Reload,
     },
     edit: {
-        component: Edit
+        component: Edit,
     },
     delete: {
-        component: Delete
+        component: Delete,
     },
     restore: {
-        component: Restore
+        component: Restore,
     },
     statusInfo: {
-        component: StatusInfo
+        component: StatusInfo,
     },
     questionCircle: {
-        component: QuestionCircle
+        component: QuestionCircle,
     },
     table: {
-        component: Table
+        component: Table,
     },
     comments: {
-        component: Comments
-    }
-}
+        component: Comments,
+    },
+};

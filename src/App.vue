@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <top-header :user="user" v-if="user && user.token" />
-        <sidebar v-if="user && user.token" />
+        <navigation v-if="user && user.token" />
         <snackbars v-if="user && user.token" />
         <v-content>
             <router-view />

@@ -20,7 +20,7 @@
                 </v-btn>
             </template>
             <v-list>
-                <v-list-item @click="logout()">
+                <v-list-item @click="handleLogout">
                     <v-list-item-title>logout</v-list-item-title>
                 </v-list-item>
             </v-list>
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
     props: { user: Object },
     data() {
@@ -47,36 +48,40 @@ export default {
             isProfileOpened: false,
         };
     },
-    watch: {
-        $route: 'generateBreadcrumbs',
-    },
-    created: function() {
-        this.generateBreadcrumbs();
-    },
+    // watch: {
+    //     $route: 'generateBreadcrumbs',
+    // },
+    // created: function() {
+    //     this.generateBreadcrumbs();
+    // },
     methods: {
-        generateBreadcrumbs() {
-            let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
-            let items = [];
-            for (let i = 0; i < pathNames.length; i++) {
-                const last = i === pathNames.length - 1;
-                const toPath = `/${pathNames.slice(0, i + 1).join('/')}`;
-                let item = {
-                    text: pathNames[i].toUpperCase(),
-                    href: toPath,
-                    disabled: false,
-                };
-                items.push(item);
-                this.items = items;
-            }
+        ...mapActions(['logout']),
+        handleLogout() {
+            this.logout();
+            this.$router.push('login');
         },
-        logout() {},
+        // generateBreadcrumbs() {
+        //     let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
+        //     let items = [];
+        //     for (let i = 0; i < pathNames.length; i++) {
+        //         const last = i === pathNames.length - 1;
+        //         const toPath = `/${pathNames.slice(0, i + 1).join('/')}`;
+        //         let item = {
+        //             text: pathNames[i].toUpperCase(),
+        //             href: toPath,
+        //             disabled: false,
+        //         };
+        //         items.push(item);
+        //         this.items = items;
+        //     }
+        // },
     },
 
-    beforeRouteEnter(to, from, next) {
-        next(vm => {
-            vm.generateBreadcrumbs();
-        });
-    },
+    // beforeRouteEnter(to, from, next) {
+    //     next(vm => {
+    //         vm.generateBreadcrumbs();
+    //     });
+    // },
 };
 </script>
 <style lang="scss" scoped>

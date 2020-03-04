@@ -7,7 +7,7 @@
             mini-variant-width="50"
             :mini-variant.sync="isMini"
             @mouseover.native="isMini = false"
-            @mouseout.native="isMini = true && !isExpanded"
+            @mouseout.native="isMini = true"
             fixed
             left
             clipped
@@ -44,19 +44,13 @@ export default {
     data() {
         return {
             isMini: true,
-            subNavigation: null,
-            searchTags: '',
-            items: APP_CONFIG.navigation[process.env.VUE_APP_INTEGRATION],
+            items: APP_CONFIG.navigation.maxscale,
             version: process.env.VUE_APP_VERSION || '',
         };
     },
     computed: {
-       
         currentRoute() {
             return this.$route.name;
-        },
-        isExpanded() {
-            return !!this.subNavigation;
         },
     },
     methods: {
@@ -68,9 +62,6 @@ export default {
             if (route && route !== this.currentRoute) {
                 this.$router.push({ name: route });
             }
-        },
-        expand(name) {
-            this.subNavigation = name !== this.subNavigation ? name : null;
         },
     },
 };
