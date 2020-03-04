@@ -13,11 +13,11 @@
             <template v-slot:activator="{ on }">
                 <v-btn class="mr-0" v-on="on" text tile>
                     <v-icon class="mr-1 white--text fa fa-user" size="24" />
-                    <span class="white--text">{{ user.username }}</span>
+                    <span class="text-capitalize white--text">{{ user.username }}</span>
                     <v-icon
                         size="9"
                         class="mr-0 ml-1 white--text fa"
-                        :class="[isProfileOpened ? 'fa-chevron-down' : 'fa-chevron-up']"
+                        :class="[!isProfileOpened ? 'fa-chevron-down' : 'fa-chevron-up']"
                         left
                     />
                 </v-btn>

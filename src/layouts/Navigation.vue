@@ -18,7 +18,7 @@
                 <template v-for="item in items">
                     <v-list-item
                         :key="item.title"
-                        :class="{ navitem: true, active: item.route === currentRoute }"
+                        :class="{ navitem: true, active: currentPath.includes(item.route) }"
                         @click="navigate(item)"
                     >
                         <v-list-item-icon class="mx-0">
@@ -49,6 +49,9 @@ export default {
         };
     },
     computed: {
+        currentPath() {
+            return this.$route.path;
+        },
         currentRoute() {
             return this.$route.name;
         },

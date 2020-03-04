@@ -1,6 +1,11 @@
 import Vue from 'vue';
+import { cloneDeep } from 'lodash';
+
 const { t } = require('typy');
 
+export function deepClone(obj) {
+    return cloneDeep(obj);
+}
 export function range(start, end) {
     if (!t(start).isNumber || !t(end).isNumber) return;
 
@@ -65,6 +70,7 @@ Object.defineProperties(Vue.prototype, {
                 delay,
                 treatEmptyStringAsNull,
                 getErrorsArr,
+                deepClone,
             };
         },
     },

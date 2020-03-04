@@ -85,7 +85,7 @@
                                                 x-small
                                                 @click="deleteRelationship('services', item)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-close" medium />
+                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -112,7 +112,7 @@
                                                 x-small
                                                 @click="deleteRelationship('monitors', item)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-close" medium />
+                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -146,7 +146,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { cloneDeep } from 'lodash';
 
 export default {
     name: 'server-update',
@@ -192,9 +191,9 @@ export default {
          */
         dialog: function(newVal, oldVal) {
             if (newVal === true) {
-                // deep object copy or using cloneDeep from lodash
-                this.parameters = cloneDeep(this.getCurrentServer.attributes.parameters);
-                this.relationships = cloneDeep(this.getCurrentServer.relationships);
+                // deep object copy or using this.$help.deepClone from lodash
+                this.parameters = this.$help.deepClone(this.getCurrentServer.attributes.parameters);
+                this.relationships = this.$help.deepClone(this.getCurrentServer.relationships);
                 if (this.relationships.services === undefined) {
                     this.$set(this.relationships, 'services', { data: [] });
                 }
@@ -206,9 +205,6 @@ export default {
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),
-        cloneDeep() {
-            return cloneDeep();
-        },
         validatePortNumber(val) {
             if (!val) {
                 return 'port number is required';

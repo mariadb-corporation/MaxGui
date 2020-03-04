@@ -139,7 +139,7 @@
                                                 x-small
                                                 @click="deleteRelationship('services', item)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-close" medium />
+                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -167,7 +167,7 @@
                                                 x-small
                                                 @click="deleteRelationship('monitors', item)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-close" medium />
+                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"

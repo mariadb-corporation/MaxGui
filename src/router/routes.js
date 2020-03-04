@@ -1,5 +1,8 @@
 import Dashboard from 'pages/Dashboard';
 import Statistics from 'pages/Statistics';
+import Servers from 'pages/Servers';
+import Services from 'pages/Services';
+
 import Login from 'pages/Login';
 
 export const routes = [
@@ -9,6 +12,16 @@ export const routes = [
         redirect: '/dashboard',
     },
     {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+            requiresAuth: false,
+            guest: true,
+        },
+    },
+    // Sidebar Route
+    {
         path: '/dashboard',
         component: Dashboard,
         meta: {
@@ -16,6 +29,7 @@ export const routes = [
         },
         name: 'dashboard',
     },
+
     {
         path: '/statistics',
         component: Statistics,
@@ -25,12 +39,30 @@ export const routes = [
         name: 'statistics',
     },
     {
-        path: '/login',
-        name: 'login',
-        component: Login,
+        path: '/users',
+        component: Statistics,
         meta: {
-            requiresAuth: false,
-            guest: true,
+            requiresAuth: true,
         },
+        name: 'users',
+    },
+    // Slide Nav
+    {
+        path: '/dashboard/services',
+        component: Services,
+        meta: {
+            requiresAuth: true,
+        },
+        name: 'services',
+        isSlideNav: true,
+    },
+    {
+        path: '/dashboard/servers',
+        component: Servers,
+        meta: {
+            requiresAuth: true,
+        },
+        name: 'servers',
+        isSlideNav: true,
     },
 ];

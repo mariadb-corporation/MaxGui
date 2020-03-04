@@ -1,17 +1,11 @@
 <template>
     <v-card :outlined="darkTheme" :dark="darkTheme">
-        <v-card-title>
-            <h3>Services</h3>
-            <v-spacer />
-            <v-text-field v-model="search" append-icon="fa fa-search" label="Search" single-line hide-details />
-            <service-create />
-        </v-card-title>
         <v-data-table
             :search="search"
+            :loading="!generateTableRows.length"
             loading-text="Loading... Please wait"
             :headers="tableHeaders"
-            :items="tableRows"
-            :loading="!tableRows.length"
+            :items="generateTableRows"
             class="data-table-full"
             sort-by="id"
             :single-expand="false"
@@ -22,13 +16,12 @@
             <!-- Actions slot -->
             <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
                 <div style="display:flex">
-                    <service-update :item="item" />
+                    <server-update :item="item" />
                     <delete-modal
-                        title="Delete Service"
+                        title="Delete Server"
                         :item="item"
-                        :dispatchDelete="() => deleteServiceById(item.id)"
-                        smallInfo="A service can only be destroyed if the service uses no servers or filters and all the listeners
-                        pointing to the service have been destroyed."
+                        :dispatchDelete="() => deleteServerById(item.id)"
+                        smallInfo="Make sure it is not used by any services or monitors."
                     />
                     <!-- Sub component Activator -->
                     <v-tooltip top>
@@ -46,12 +39,11 @@
                     </v-tooltip>
                 </div>
             </template>
-
-            <!--Sub component -->
+            <!-- Sub component -->
             <template v-slot:expanded-item="{ headers, item }">
                 <!-- :colspan="headers.length" set width to full -->
                 <td :colspan="headers.length">
-                    <service-read :id="item.id" />
+                    <server-read :id="item.id" />
                 </td>
             </template>
         </v-data-table>
@@ -60,88 +52,79 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import ServiceCreate from './ServiceCreate';
-import ServiceUpdate from './ServiceUpdate';
-import ServiceRead from './ServiceRead';
 import DeleteModal from 'components/DeleteModal';
+// import ServerCreate from './ServerCreate';
+import ServerUpdate from './ServerUpdate';
+import ServerRead from './ServerRead';
 
 export default {
-    name: 'services-table',
+    name: 'servers-table',
     components: {
-        ServiceCreate,
-        ServiceRead,
-        ServiceUpdate,
         DeleteModal,
+        // ServerCreate,
+        ServerUpdate,
+        ServerRead,
     },
     props: {
-        servicesData: Array,
+        serversData: Array,
     },
     data() {
         return {
             //State
+            serverStates: ['Master, Running', 'Slave, Running'],
             search: '',
             expanded: [],
             tableHeaders: [
-                { text: 'Service', value: 'id' },
-                { text: 'Router', value: 'router' },
+                { text: 'Server', value: 'id' },
+                { text: 'Address', value: 'address' },
+                { text: 'Port', value: 'port' },
                 { text: 'Connections', value: 'connections' },
-                { text: 'Total Connections', value: 'total_connections' },
-                { text: 'Servers', value: 'servers' },
+                { text: 'State', value: 'state' },
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
-            tableRows: [],
         };
     },
-
     computed: {
         ...mapGetters(['darkTheme']),
-    },
-    watch: {
-        servicesData: function(newVal, oldVal) {
-            this.generateTableRows(newVal);
-        },
-    },
-    methods: {
-        ...mapActions(['deleteServiceById']),
         /**
          * @return {Array} An array of objects
          */
-        generateTableRows: function(servicesData) {
+        generateTableRows: function() {
             /**
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            if (servicesData) {
+            if (this.serversData) {
                 let itemsArr = [];
-                for (let n = 0; n < servicesData.length; n++) {
+                for (let n = 0; n < this.serversData.length; n++) {
                     /**
                      * @typedef {Object} row
-                     * @property {String} row.id - Service's name
-                     * @property {String} row.router - Server's address
-                     * @property {Number} row.total_connections - Server's address
-                     * @property {Number} row.connections - Number of connections to the server
-                     * @property {Array} row,servers - Server's state
+                     * @property {String} id - Id of the server
+                     * @property {String} address - Server's address
+                     * @property {Number} port - Server's port
+                     * @property {Number} connections - Number of connections to the server
+                     * @property {String} state - Server's state
                      */
                     const {
                         id,
-                        attributes: { router, connections, total_connections },
-                        relationships: { servers: { data: serversData = [] } = {} },
-                    } = servicesData[n] || {};
-
-                    let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
+                        attributes: { state, parameters, statistics },
+                    } = this.serversData[n];
                     let row = {
                         id: id,
-                        router: router,
-                        connections: connections,
-                        total_connections: total_connections,
-                        servers: serversList,
+                        address: parameters.address,
+                        port: parameters.port,
+                        connections: statistics.connections,
+                        state: state,
                     };
                     itemsArr.push(row);
                 }
-                return (this.tableRows = itemsArr);
+                return itemsArr;
             }
             return [];
         },
+    },
+    methods: {
+        ...mapActions(['deleteServerById']),
     },
 };
 </script>
