@@ -3,7 +3,7 @@
 @import 'font.scss';
 @import 'constants.scss';
 @import 'class_colors';
-
+@import 'helpers.scss';
 
 html,
 body,
@@ -41,17 +41,65 @@ body,
         }
         tbody {
             tr {
+   
                 td {
                     padding: 0 24px;
-                    @media (max-width: 480px) {
+                    border-bottom: 1px solid $table-border;
+                    @media (max-width: 600px) {
                         border-bottom: none;
+                    }
+                    &:last-child {
+                        border-right: 1px solid $table-border;
+                    }
+                    &:first-child {
+                        border-left: 1px solid $table-border;
+                    }
+                    .cell-accent {
+                        height: 100%;
+                        padding: 0 24px;
+                        margin-left: -24px;
+                        display: flex;
+                        border-left: 8px solid #828282;
+                        &.info-accent {
+                            border-color: $accent;
+                        }
+                        &.success-accent {
+                            border-color: $success;
+                        }
+                        &.error-accent {
+                            border-color: $error;
+                        }
+                        &.warning-accent {
+                            border-color: $warning;
+                        }
+                    }
+                    &.actions {
+                        text-align: right;
+
+                        button {
+                            opacity: 0;
+                        }
+                    }
+                }
+                &:hover {
+                    td.actions button {
+                        opacity: 1;
+                    }
+                }
+                &.last-row {
+                    td {
+                        &:last-child {
+                            border-radius: 0 0 5px 0;
+                        }
+                        &:first-child {
+                            border-radius: 0 0 0 5px;
+                        }
                     }
                 }
             }
         }
     }
 }
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -109,15 +157,15 @@ input:-webkit-autofill:active {
         left: 3px !important;
     }
 
-    svg {
-        width: 16px;
+    i {
+        font-size: 16px;
     }
 
     .v-input--selection-controls__ripple {
-        width: 18px;
-        height: 18px;
-        left: -4px;
-        top: -4px;
+        width: 16px;
+        height: 16px;
+        left: -3px;
+        top: -3px;
     }
 
     .v-input--selection-controls__input {

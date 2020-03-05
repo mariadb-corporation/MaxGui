@@ -75,12 +75,12 @@ export default {
 .slide-fade-enter-active {
     transition: all 0.6s ease;
 }
-// .slide-fade-leave-active {
-//     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-// }
+.slide-fade-leave-active {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active below version 2.1.8 */ {
-    transform: translateX(10px);
+    transform: translateX(0px);
     opacity: 0;
 }
 </style>
