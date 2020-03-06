@@ -1,5 +1,9 @@
 <template>
-    <div class="search-box" :class="{ center: position === 'center', right: position === 'right' }">
+    <div
+        :style="`width:${width}`"
+        class="search-box"
+        :class="{ center: position === 'center', right: position === 'right' }"
+    >
         <input type="text" ref="search-input" :placeholder="placeholder" :value="value" @input="onInput($event)" />
         <v-icon :size="value.length ? 18 : 24" @click="clearInput" :class="`${value.length ? 'close' : 'search'}`" />
     </div>
@@ -9,6 +13,7 @@
 export default {
     name: 'search-box',
     props: {
+        width: String,
         focus: Boolean,
         position: {
             type: String,

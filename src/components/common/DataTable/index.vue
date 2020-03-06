@@ -14,8 +14,68 @@
         :page="page"
         :sort-by="sortBy"
         :sort-desc="sortDesc"
+        :search="search"
     >
-        <!-- Toggle the column, enable this feature by set hasColumnToggle to be true  -->
+        <!----------------------------------------------------TABLE HEAD--------------------------------------------->
+        <template v-slot:header="{ props: { headers } }">
+            <thead class="v-data-table-header" :class="[windowSize.x < 600 && 'v-data-table-header-mobile']">
+                <tr v-if="windowSize.x >= 600">
+                    <th
+                        v-for="header in headers"
+                        :width="header.width"
+                        :key="header.text"
+                        :class="[
+                            header.align && `text-${header.align}`,
+                            header.sortable !== false ? 'pointer sortable' : '',
+                            pagination.sortDesc[0] ? 'desc' : 'asc',
+                            header.value === pagination.sortBy[0] ? 'active' : '',
+                        ]"
+                        @click="changeSort(header.value)"
+                        :style="`${header.text === 'Actions' ? 'padding:0px;' : ''}`"
+                    >
+                        <div class="d-inline-flex">
+                            <span>{{ header.text }}</span>
+                            <v-icon
+                                v-if="header.sortable !== false"
+                                size="12"
+                                class="ml-1 v-data-table-header__icon fa fa-chevron-up"
+                            />
+                        </div>
+                    </th>
+                    <!-- Add an extra table heading to remain text align ability in heading
+                        display searchbox and toggle icon as the last th item
+                        Only display in large tablet to laptop md
+                     -->
+                    <th style="padding-left:0px" v-if="windowSize.x > 960">
+                        <div  style="width:100%;" v-if="hasSearch || hasColumnToggle" class="d-flex align-center ">
+                            
+                            <search-box
+                                width="140px"
+                                v-if="hasSearch && !isColumnToggleVisible"
+                                class="color text-text border-text-subtle"
+                                position="right"
+                                v-model="search"
+                                @click.native.stop
+                            />
+                            
+                            <!--column toggle icon-->
+                            <v-icon
+                                v-if="hasColumnToggle"
+                                size="18"
+                                  class="pl-4 pr-0 fa"
+                                :class="[isColumnToggleVisible ? 'fa-eye' : 'fa-eye-slash']"
+                                @click.stop="columnToggle"
+                            />
+                        </div>
+                    </th>
+                </tr>
+                <tr v-else>
+                    <data-table-header-mobile @sort="changeSort" :items="headers" />
+                </tr>
+            </thead>
+        </template>
+
+        <!-- Checkbox PREPEND to TABLE BODY to toggle columns, dislayed when hasColumnToggle and isColumnToggleVisible  -->
         <template v-if="hasColumnToggle && isColumnToggleVisible" v-slot:body.prepend>
             <tr>
                 <td class="pl-4" :colspan="visibleHeaders.length" style="height: 100%">
@@ -31,74 +91,17 @@
                         />
                     </div>
                 </td>
+                <!-- Add extra table data -->
+                <td v-if="isColumnToggleVisible" />
             </tr>
         </template>
-        <template v-slot:header="{ props: { headers } }">
-            <thead class="v-data-table-header" :class="[windowSize.x < 600 && 'v-data-table-header-mobile']">
-                <tr v-if="windowSize.x >= 600">
-                    <th
-                        v-for="(header, i) in headers"
-                        :width="header.width"
-                        :key="header.text"
-                        :class="[
-                            header.align && `text-${header.align}`,
-                            header.sortable !== false ? 'pointer sortable' : '',
-                            pagination.sortDesc[0] ? 'desc' : 'asc',
-                            header.value === pagination.sortBy[0] ? 'active' : '',
-                        ]"
-                        @click="changeSort(header.value)"
-                    >
-                        <!--
-                            This condition i === headers.length - 1 is to display searchbox and
-                            toggle icon as the last th item 
-                            -->
-                        <div v-if="i === headers.length - 1" class="d-flex">
-                            <div>
-                                <span>{{ header.text }}</span>
-                                <v-icon
-                                    v-if="header.sortable !== false"
-                                    size="16"
-                                    class="ml-2 v-data-table-header__icon fa fa-chevron-up"
-                                />
-                            </div>
-                            <v-spacer></v-spacer>
-                            <!--                               
-                                <search-box
-                                    v-if="hasSearch && !isColumnToggleVisible"
-                                    class="pl-2 color text-text border-text-subtle"
-                                    position="right"
-                                    v-model="search"
-                                    @click.native.stop
-                                /> -->
-                            <!--column toggle icon-->
-                            <v-icon
-                                v-if="hasColumnToggle"
-                                size="18"
-                                class="pl-4 pr-0 toggle-icon fa fa-eye"
-                                @click.stop="columnToggle"
-                            />
-                        </div>
-                        <template v-else>
-                            <span>{{ header.text }}</span>
-                            <v-icon
-                                v-if="header.sortable !== false"
-                                size="16"
-                                class="ml-2 v-data-table-header__icon fa fa-chevron-up"
-                            />
-                        </template>
-                    </th>
-                </tr>
-                <tr v-else>
-                    <data-table-header-mobile @sort="changeSort" :items="headers" />
-                </tr>
-            </thead>
-        </template>
 
+        <!----------------------------------------------------TABLE ROW--------------------------------------------->
         <template v-slot:item="{ item, index }">
             <tr
                 @click="rowClick(item, headers, visibleHeaders)"
                 :class="{
-                    pointer: onRowClick || $scopedSlots['expandable'],
+                    pointer: onRowClick,
                     'last-row': index === data.length - 1,
                     'v-data-table__mobile-table-row': windowSize.x < 600,
                 }"
@@ -112,46 +115,58 @@
                         header.tdClass || header.class,
                         windowSize.x < 600 && 'v-data-table__mobile-row',
                     ]"
+                    :style="`${header.text === 'Actions' && windowSize.x >= 600 ? 'padding:0px;' : ''}`"
                 >
-                    <template v-if="windowSize.x >= 600">
-                        <slot :name="header.value" :data="{ item, header }">
-                            <!-- no content for the corresponding header, usually this is an error -->
-                            <span v-if="$typy(item[header.value]).isUndefined"></span>
-                            <!-- regular cell -->
-                            <span v-else>{{ getValue(item, header) }}</span>
-                        </slot>
-                        <!-- expandle row -->
-                        <div v-if="i === headers.length - 1" style="display:flex">
-                            <slot name="actions" :data="{ item }" />
-                            <slot
-                                v-if="$scopedSlots['expandable']"
-                                name="expandIndicator"
-                                :expanded="expandedRows.includes(item.id)"
-                            />
-                        </div>
-                    </template>
-                    <!-- Mobile view -->
-                    <template v-else>
-                        <div class="v-data-table__mobile-row__header">{{ header.text }}</div>
-                        <div class="v-data-table__mobile-row__cell">
+                    <template>
+                        <!-- Display header in  table data for Mobile view as thead will be removed when windowSize.x < 600 -->
+                        <div v-if="windowSize.x < 600" class="v-data-table__mobile-row__header">{{ header.text }}</div>
+                        <!-- Adde mobile class when windowSize.x < 600 -->
+                        <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
                             <slot :name="header.value" :data="{ item, header }">
                                 <!-- no content for the corresponding header, usually this is an error -->
                                 <span v-if="$typy(item[header.value]).isUndefined"></span>
                                 <!-- regular cell -->
                                 <span v-else>{{ getValue(item, header) }}</span>
-                                <!-- expandle row -->
-                                <div v-if="i === headers.length - 1" style="display:flex">
-                                    <slot name="actions" :data="{ item }" />
-                                    <slot
-                                        v-if="$scopedSlots['expandable']"
-                                        name="expandIndicator"
-                                        :expanded="expandedRows.includes(item.id)"
-                                    />
-                                </div>
                             </slot>
+                            <!-- Actions slot includes expandIndicator slot -->
+                            <div v-if="header.text === 'Actions'" :class="`d-flex justify-${header.align}`">
+                                <slot name="actions" :data="{ item }" />
+                                <!-- expandle activator -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn
+                                            v-if="$scopedSlots['expandable']"
+                                            v-on="on"
+                                            @click="toggleRow(item.id)"
+                                            icon
+                                            color="primary"
+                                        >
+                                            <!-- optional expand indicator icon -->
+                                            <slot name="expandIndicator" :expanded="expandedRows.includes(item.id)">
+                                                <v-icon
+                                                    size="16"
+                                                    class="fa"
+                                                    :class="[
+                                                        !expandedRows.includes(item.id)
+                                                            ? 'fa-chevron-down'
+                                                            : 'fa-chevron-up',
+                                                    ]"
+                                                    medium
+                                                />
+                                            </slot>
+                                        </v-btn>
+                                    </template>
+                                    <span>Show detailed information</span>
+                                </v-tooltip>
+                            </div>
                         </div>
                     </template>
                 </td>
+                <!-- Extra table data item when search bar or toggle icon are visible -->
+                <td
+                    :style="`${headers[headers.length - 1].text === 'Actions' ? 'padding:0px;' : ''}`"
+                    v-if="windowSize.x > 960 && (hasSearch || hasColumnToggle)"
+                />
             </tr>
             <!-- optional expandable row -->
             <tr v-if="expandedRows.includes(item.id)" class="expanded-row">
@@ -169,6 +184,12 @@ import DataTableHeaderMobile from './DataTableHeaderMobile';
 export default {
     name: 'data-table',
     components: { DataTableHeaderMobile },
+    /* SLOTS available for data-table
+       :name="header.value" // slot :name equals to header.value
+        name="actions" :data="{ item }" 
+        name="expandable"   :data="{ item }"  
+        name="expandIndicator" :expanded Boolean
+     */
     props: {
         headers: { type: Array },
         data: { type: Array },
@@ -178,7 +199,7 @@ export default {
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
-        // hasSearch: { type: Boolean, default: true },
+        hasSearch: { type: Boolean, default: true },
         hasColumnToggle: { type: Boolean, default: true },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
@@ -192,7 +213,7 @@ export default {
                 y: 0,
             },
             expandedRows: [],
-            // search: '',
+            search: '',
             pagination: {},
             visible: [],
             isColumnToggleVisible: false,
@@ -231,7 +252,6 @@ export default {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight };
         },
         changeSort(column) {
-            console.log('column', column);
             // TODO: support multiple column sorting
             if (this.pagination.sortBy[0] === column) {
                 this.pagination.sortDesc = [!this.pagination.sortDesc[0]];
@@ -241,7 +261,7 @@ export default {
             }
         },
         rowClick(item, headers) {
-            if (this.$scopedSlots['expandable']) this.toggleRow(item.id);
+            // if (this.$scopedSlots['expandable']) this.toggleRow(item.id);
             this.onRowClick && this.onRowClick(item, headers);
         },
         cellClick(item, header) {

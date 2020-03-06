@@ -55,7 +55,7 @@ export default {
                 { text: 'Connections', value: 'connections' },
                 { text: 'Total Connections', value: 'total_connections' },
                 { text: 'Servers', value: 'servers' },
-                { text: 'Actions', align: 'left', value: '', sortable: false },
+                { text: 'Actions', align: 'center', value: '', sortable: false },
             ],
             tableRows: [],
         };
