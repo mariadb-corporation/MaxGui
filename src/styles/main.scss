@@ -1,9 +1,8 @@
-// Vuetify helper variables
-@import '~vuetify/src/styles/settings/_variables';
 @import 'font.scss';
 @import 'constants.scss';
 @import 'class_colors';
 @import 'helpers.scss';
+@import 'variables.scss';
 
 html,
 body,
@@ -35,11 +34,9 @@ body,
             &:first-child {
                 border-radius: 5px 0 0 0;
             }
-          
         }
         tbody {
             tr {
-   
                 td {
                     padding: 0 24px;
                     border-bottom: 1px solid $table-border;
@@ -118,6 +115,11 @@ input:-webkit-autofill:active {
         margin-top: 1px;
         font-size: 15px;
         color: $navigation;
+    }
+    .v-input__icon {
+        .v-icon.v-icon.fa {
+            font-size: 16px;
+        }
     }
 }
 .search-restyle.v-text-field--rounded {

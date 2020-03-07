@@ -13,6 +13,7 @@
             single-line
             hide-details
             rounded
+            @click.native.stop
         >
             <v-icon size="16" slot="append" class="fa fa-search" />
         </v-text-field>

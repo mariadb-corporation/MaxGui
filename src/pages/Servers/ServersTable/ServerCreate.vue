@@ -156,9 +156,15 @@
                                     </div>
                                 </v-col>
                                 <v-col xs="12" sm="6">
-                                    <v-btn color="primary" x-small @click="addRelationship('monitors')">
+                                    <v-btn
+                                        v-if="relationships.monitors.data.length == 0"
+                                        color="primary"
+                                        x-small
+                                        @click="addRelationship('monitors')"
+                                    >
                                         Add Monitor
                                     </v-btn>
+                                    <div v-else style="height:20px" />
                                     <div class="scrollable-input-div" v-if="relationships.monitors.data.length">
                                         <div v-for="(item, i) in relationships.monitors.data" :key="i">
                                             <v-btn
