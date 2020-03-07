@@ -46,7 +46,7 @@
                         display searchbox and toggle icon as the last th item
                         Only display in large tablet to laptop md
                      -->
-                    <th style="padding-left:0px" v-if="windowSize.x > 960">
+                    <th style="padding-left:24px; padding-right:0px" v-if="windowSize.x > 960">
                         <div  style="width:100%;" v-if="hasSearch || hasColumnToggle" class="d-flex align-center ">
                             
                             <search-box
@@ -199,7 +199,7 @@ export default {
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
-        hasSearch: { type: Boolean, default: true },
+        hasSearch: { type: Boolean, default: false },
         hasColumnToggle: { type: Boolean, default: true },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
