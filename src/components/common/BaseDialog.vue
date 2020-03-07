@@ -3,7 +3,7 @@
         <v-card :outlined="darkTheme" :dark="darkTheme">
             <v-card-title>
                 <v-btn class="close" @click="cancel" large icon>
-                    <v-icon color="#eb5757" medium>{{ mdiCloseCircle }}</v-icon>
+                    <v-icon color="#eb5757" class="fa fa-times-circle" medium />
                 </v-btn>
                 <slot name="title"> </slot>
             </v-card-title>
@@ -25,7 +25,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { mdiCloseCircle } from '@mdi/js';
 
 export default {
     name: 'base-dialog',
@@ -37,7 +36,6 @@ export default {
     },
     data() {
         return {
-            mdiCloseCircle: mdiCloseCircle,
             show: false,
         };
     },

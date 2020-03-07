@@ -4,12 +4,14 @@
             <v-col cols="12" align="center" justify="center">
                 <div class="logo">
                     <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                    <span class="ml-2 white--text"><b>Maria</b>DB <b>MaxScale</b></span>
+                    <span class="ml-2 white--text"><b>MaxScale</b></span>
                 </div>
-                <v-card style="max-width: 436px; z-index: 2;border-radius: 10px;">
-                    <v-card-text class="pt-12 pb-0" align-center>
+                <v-card style="max-width: 463px; z-index: 2;border-radius: 10px;">
+                    <v-card-text style="padding-top:60px" class="pb-0" align-center>
                         <div class="px-12">
-                            <h1 align="left" class="display-2 pb-4" style="color: #003545;">Welcome</h1>
+                            <h1 align="left" class="display-2 font-weight-light pb-4" style="color: #003545;">
+                                Welcome
+                            </h1>
                             <v-form
                                 class="pt-4"
                                 ref="form"
@@ -45,13 +47,14 @@
                                     id="password"
                                     placeholder="Password"
                                     v-model="credential.password"
-                                    :append-icon="isPwdVisible ? mdiEye : mdiEyeOff"
+                                    :append-icon="isPwdVisible ? 'fa-eye' : 'fa-eye-slash'"
                                     :rules="rules.password"
                                     :error-messages="!displayOneError ? errorMessage : ''"
                                     @input="errorMessage = ''"
                                     :type="isPwdVisible ? 'text' : 'password'"
                                     @click:append="isPwdVisible = !isPwdVisible"
                                 />
+
                                 <v-checkbox
                                     class="small mt-2"
                                     v-model="rememberMe"
@@ -61,7 +64,7 @@
                             </v-form>
                         </div>
                     </v-card-text>
-                    <v-card-actions class="pt-0 pb-12">
+                    <v-card-actions style="padding-bottom:60px" class="pt-0">
                         <div class="mx-auto text-center" style="width: 50%;">
                             <v-progress-circular v-if="isLoading" :size="40" :width="5" color="primary" indeterminate />
                             <v-btn
@@ -88,7 +91,6 @@
 </template>
 
 <script>
-import { mdiEye, mdiEyeOff } from '@mdi/js';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 // import axios from 'axios';
 
@@ -96,8 +98,6 @@ export default {
     name: 'Login',
     data() {
         return {
-            mdiEye: mdiEye,
-            mdiEyeOff: mdiEyeOff,
             isValid: false,
             isLoading: false,
             isPwdVisible: false,
@@ -222,14 +222,14 @@ export default {
     margin-bottom: 5px;
 
     & img {
-        height: 48px;
+        width: 265px;
         vertical-align: middle;
     }
 
     & span {
         display: inline-block;
         margin-top: 2px;
-        font-size: 23px;
+        font-size: 31px;
         vertical-align: middle;
 
         :after,

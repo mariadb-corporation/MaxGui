@@ -1,20 +1,20 @@
 @import 'constants';
 
-
 $colors: (
-    "error": $error,
-    "warning": $warning,
-    "success": $success,
-    "info": $info,
-    "accent": $accent,
-    "table-header": $table-header,
-    "text": $text,
-    "text-subtle": $text-subtle,
-    "navigation": $navigation,
-    "links": $links,
-    "primary": $primary,
-    "inputs": $inputs,
-    "background": $background
+    'error': $error,
+    'warning': $warning,
+    'success': $success,
+    'info': $info,
+    'accent': $accent,
+    'accent-dark': $accent-dark,
+    'table-header': $table-header,
+    'text': $text,
+    'text-subtle': $text-subtle,
+    'navigation': $navigation,
+    'links': $links,
+    'primary': $primary,
+    'inputs': $inputs,
+    'background': $background,
 );
 
 .color {
@@ -27,6 +27,9 @@ $colors: (
         }
         &.border-#{$name} {
             border-color: $value !important;
+        }
+        &.border-bottom-#{$name} {
+            border-bottom: 1px solid $value !important;
         }
     }
 }

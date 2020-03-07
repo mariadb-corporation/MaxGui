@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" color="#eb5757" icon @click="deleteDialog = true">
-                    <v-icon color="#eb5757" medium>{{ mdiDelete }}</v-icon>
+                    <v-icon size="16" class="fa fa-trash" color="#eb5757" medium />
                 </v-btn>
             </template>
             <span>Delete</span>
@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import { mdiDelete } from '@mdi/js';
-
 export default {
     name: 'delete-modal',
     props: {
@@ -52,7 +50,6 @@ export default {
     data() {
         return {
             deleteDialog: false,
-            mdiDelete: mdiDelete,
         };
     },
     methods: {

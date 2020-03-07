@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import icons from 'icons';
+import '@fortawesome/fontawesome-free/css/all.css';
 Vue.use(Vuetify);
 
 export default new Vuetify({
     icons: {
-        iconfont: 'md',
+        iconfont: 'fa',
         values: icons,
     },
     theme: {
@@ -22,7 +23,7 @@ export default new Vuetify({
             dark: {
                 primary: '#121212',
                 secondary: '#1E1E1E',
-                accent: '#0e9bc0',
+                accent: '#0b718c',
             },
         },
     },

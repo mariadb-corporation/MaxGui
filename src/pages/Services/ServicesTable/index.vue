@@ -1,65 +1,34 @@
 <template>
     <v-card :outlined="darkTheme" :dark="darkTheme">
-        <v-card-title>
-            <h3>Services</h3>
-            <v-spacer />
-            <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
-            <service-create />
-        </v-card-title>
-        <v-data-table
-            :search="search"
-            loading-text="Loading... Please wait"
+        <data-table
             :headers="tableHeaders"
-            :items="tableRows"
+            :data="tableRows"
+            sortBy="id"
+            :sortDesc="false"
             :loading="!tableRows.length"
-            class="data-table-full"
-            sort-by="id"
-            :single-expand="false"
-            :expanded.sync="expanded"
-            show-expand
-            :dark="darkTheme"
+            :singleExpand="false"
+            :showExpand="true"
         >
-            <!-- Actions slot -->
-            <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
-                <div style="display:flex">
-                    <service-update :item="item" />
-                    <delete-modal
-                        title="Delete Service"
-                        :item="item"
-                        :dispatchDelete="() => deleteServiceById(item.id)"
-                        smallInfo="A service can only be destroyed if the service uses no servers or filters and all the listeners
+            <template v-slot:actions="{ data: { item } }">
+                <service-update :item="item" />
+                <delete-modal
+                    title="Delete Service"
+                    :item="item"
+                    :dispatchDelete="() => deleteServiceById(item.id)"
+                    smallInfo="A service can only be destroyed if the service uses no servers or filters and all the listeners
                         pointing to the service have been destroyed."
-                    />
-                    <!-- Sub component Activator -->
-                    <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" v-if="!isExpanded" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronDown }}</v-icon>
-                            </v-btn>
-                            <v-btn v-else v-on="on" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronUp }}</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Show detailed information</span>
-                    </v-tooltip>
-                </div>
+                />
             </template>
-
-            <!--Sub component -->
-            <template v-slot:expanded-item="{ headers, item }">
-                <!-- :colspan="headers.length" set width to full -->
-                <td :colspan="headers.length">
-                    <service-read :id="item.id" />
-                </td>
+            <template v-slot:expandable="{ data: { item } }">
+                <service-read :id="item.id" />
             </template>
-        </v-data-table>
+        </data-table>
     </v-card>
 </template>
 
 <script>
-import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
 import { mapGetters, mapActions } from 'vuex';
-import ServiceCreate from './ServiceCreate';
+// import ServiceCreate from './ServiceCreate';
 import ServiceUpdate from './ServiceUpdate';
 import ServiceRead from './ServiceRead';
 import DeleteModal from 'components/DeleteModal';
@@ -67,7 +36,7 @@ import DeleteModal from 'components/DeleteModal';
 export default {
     name: 'services-table',
     components: {
-        ServiceCreate,
+        // ServiceCreate,
         ServiceRead,
         ServiceUpdate,
         DeleteModal,
@@ -77,10 +46,6 @@ export default {
     },
     data() {
         return {
-            //Icons
-            mdiMagnify: mdiMagnify,
-            mdiChevronUp: mdiChevronUp,
-            mdiChevronDown: mdiChevronDown,
             //State
             search: '',
             expanded: [],
@@ -90,7 +55,7 @@ export default {
                 { text: 'Connections', value: 'connections' },
                 { text: 'Total Connections', value: 'total_connections' },
                 { text: 'Servers', value: 'servers' },
-                { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
+                { text: 'Actions', align: 'center', value: '', sortable: false },
             ],
             tableRows: [],
         };
@@ -106,6 +71,7 @@ export default {
     },
     methods: {
         ...mapActions(['deleteServiceById']),
+
         /**
          * @return {Array} An array of objects
          */
@@ -137,7 +103,7 @@ export default {
                         router: router,
                         connections: connections,
                         total_connections: total_connections,
-                        servers: serversList,
+                        servers: serversList.toString(),
                     };
                     itemsArr.push(row);
                 }

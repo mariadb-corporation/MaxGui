@@ -1,64 +1,34 @@
 <template>
     <v-card :outlined="darkTheme" :dark="darkTheme">
-        <v-card-title>
-            <h3>Servers</h3>
-            <v-spacer />
-            <v-text-field v-model="search" :append-icon="mdiMagnify" label="Search" single-line hide-details />
-            <server-create />
-        </v-card-title>
-        <v-data-table
-            :search="search"
-            :loading="!generateTableRows.length"
-            loading-text="Loading... Please wait"
+        <data-table
             :headers="tableHeaders"
-            :items="generateTableRows"
-            class="data-table-full"
-            sort-by="id"
-            :single-expand="false"
-            :expanded.sync="expanded"
-            show-expand
-            :dark="darkTheme"
+            :data="generateTableRows"
+            sortBy="id"
+            :sortDesc="false"
+            :loading="!generateTableRows.length"
+            :singleExpand="false"
+            :showExpand="true"
         >
-            <!-- Actions slot -->
-            <template v-slot:item.data-table-expand="{ expand, isExpanded, item }">
-                <div style="display:flex">
-                    <server-update :item="item" />
-                    <delete-modal
-                        title="Delete Server"
-                        :item="item"
-                        :dispatchDelete="() => deleteServerById(item.id)"
-                        smallInfo="Make sure it is not used by any services or monitors."
-                    />
-                    <!-- Sub component Activator -->
-                    <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                            <v-btn v-on="on" v-if="!isExpanded" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronDown }}</v-icon>
-                            </v-btn>
-                            <v-btn v-else v-on="on" @click="expand(!isExpanded)" icon color="primary">
-                                <v-icon medium>{{ mdiChevronUp }}</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>Show detailed information</span>
-                    </v-tooltip>
-                </div>
+            <template v-slot:actions="{ data: { item } }">
+                <server-update :item="item" />
+                <delete-modal
+                    title="Delete Server"
+                    :item="item"
+                    :dispatchDelete="() => deleteServerById(item.id)"
+                    smallInfo="Make sure it is not used by any services or monitors."
+                />
             </template>
-            <!-- Sub component -->
-            <template v-slot:expanded-item="{ headers, item }">
-                <!-- :colspan="headers.length" set width to full -->
-                <td :colspan="headers.length">
-                    <server-read :id="item.id" />
-                </td>
+            <template v-slot:expandable="{ data: { item } }">
+                <server-read :id="item.id" />
             </template>
-        </v-data-table>
+        </data-table>
     </v-card>
 </template>
 
 <script>
-import { mdiChevronUp, mdiChevronDown, mdiMagnify } from '@mdi/js';
 import { mapGetters, mapActions } from 'vuex';
 import DeleteModal from 'components/DeleteModal';
-import ServerCreate from './ServerCreate';
+// import ServerCreate from './ServerCreate';
 import ServerUpdate from './ServerUpdate';
 import ServerRead from './ServerRead';
 
@@ -66,7 +36,7 @@ export default {
     name: 'servers-table',
     components: {
         DeleteModal,
-        ServerCreate,
+        // ServerCreate,
         ServerUpdate,
         ServerRead,
     },
@@ -75,10 +45,6 @@ export default {
     },
     data() {
         return {
-            //Icons
-            mdiMagnify: mdiMagnify,
-            mdiChevronUp: mdiChevronUp,
-            mdiChevronDown: mdiChevronDown,
             //State
             serverStates: ['Master, Running', 'Slave, Running'],
             search: '',
