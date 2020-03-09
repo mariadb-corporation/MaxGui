@@ -6,22 +6,7 @@
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
                 <search-to-create />
-                <h1 class="text-navigation display-1 text-capitalize font-weight-light page-title">
-                    {{ currentRoute }}
-                </h1>
-                <v-tabs
-                    style="margin-bottom:30px"
-                    v-if="currentPath.includes('dashboard') && currentRoute !== 'dashboard'"
-                >
-                    <v-tab
-                        class="color border-bottom-table-header"
-                        :to="route.path"
-                        v-for="route in slideRoute"
-                        :key="route.path"
-                    >
-                        {{ route.name }}
-                    </v-tab>
-                </v-tabs>
+                <TabNav />
                 <transition name="slide-fade">
                     <router-view />
                 </transition>
@@ -37,6 +22,7 @@ import Layouts from 'layouts';
 import { mapGetters } from 'vuex';
 import SearchToCreate from 'components/SearchToCreate';
 import { routes } from 'router/routes';
+import TabNav from 'components/TabNav';
 
 export default {
     name: 'App',
@@ -44,23 +30,11 @@ export default {
     components: {
         ...Layouts,
         SearchToCreate,
+        TabNav,
     },
-    data() {
-        return {
-            items: routes,
-        };
-    },
+
     computed: {
         ...mapGetters(['user']),
-        slideRoute: function() {
-            return routes.filter(route => route.isSlideNav);
-        },
-        currentPath() {
-            return this.$route.path;
-        },
-        currentRoute() {
-            return this.$route.name;
-        },
     },
 };
 </script>

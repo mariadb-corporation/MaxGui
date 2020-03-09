@@ -34,7 +34,7 @@ export default {
     },
     methods: {
         create() {
-            console.log('Create based on search keyword');
+            // console.log('Create based on search keyword');
         },
     },
 };
