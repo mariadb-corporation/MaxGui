@@ -1,26 +1,26 @@
 <template>
     <v-container v-if="getCurrentService" class="">
         <v-row justify="center">
-            <v-col cols="12" >
+            <v-col cols="12">
                 <h3>Attributes</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.attributes"
-                    :readOnlyVal="!$help.hasChild(value)"
+                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
-                    :child="!$help.hasChild(value) ? {} : value"
+                    :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
             <v-col cols="12" v-if="!isEmpty(getCurrentService.relationships)">
                 <h3>Relationships</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.relationships"
-                    :readOnlyVal="!$help.hasChild(value)"
+                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
-                    :child="!$help.hasChild(value) ? {} : value"
+                    :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
         </v-row>

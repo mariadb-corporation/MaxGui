@@ -9,3 +9,18 @@ tbody tr.stripe {
 .hide {
     display: none !important;
 }
+
+.no-underline {
+    text-decoration: none;
+}
+.overflow-helper {
+    overflow: scroll;
+    max-height: 500px;
+}
+
+.no-pointer {
+    cursor: default;
+    * {
+        cursor: default !important;
+    }
+}

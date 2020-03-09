@@ -1,5 +1,6 @@
 import Vuex from 'vuex';
 import user from 'store/user';
+import maxscale from './maxscale';
 import threads from './threads';
 import servers from './servers';
 import services from './services';
@@ -38,6 +39,7 @@ export default new Vuex.Store({
     },
     modules: {
         user,
+        maxscale,
         servers,
         services,
         threads,

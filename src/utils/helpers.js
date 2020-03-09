@@ -12,8 +12,12 @@ export function range(start, end) {
     return Math.floor(Math.random() * (end - start + 1)) + start;
 }
 
+/**
+ * @param {(Object|Array.)} val Param either Object or Array. Null is ignore*
+ * @returns {Boolean} A boolean value to detect wheter value is object or array
+ */
 export function hasChild(val) {
-    if ((typeof val === 'object' || Array.isArray(val) === 'array') && val != null) {
+    if ((typeof val === 'object' || Array.isArray(val) === 'array') && val !== null) {
         return true;
     }
     return false;
@@ -26,6 +30,10 @@ export function treatEmptyStringAsNull(val) {
     return val;
 }
 
+/**
+ * @param {(Object|String.)} val Param either Object or String.*
+ * @returns Return String
+ */
 export function handleNull(val) {
     // render null string
     if (val == null) {
@@ -37,6 +45,9 @@ export function handleNull(val) {
     } else {
         return val;
     }
+}
+export function handleEmptyString(val) {
+    return val === '' ? '""' : val;
 }
 export function delay(t, v) {
     return new Promise(function(resolve) {
@@ -66,6 +77,7 @@ Object.defineProperties(Vue.prototype, {
                 range,
                 hasChild,
                 handleNull,
+                handleEmptyString,
                 dynamicColors,
                 delay,
                 treatEmptyStringAsNull,

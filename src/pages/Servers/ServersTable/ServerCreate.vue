@@ -137,7 +137,7 @@
                                                 right
                                                 icon
                                                 x-small
-                                                @click="deleteRelationship('services', item)"
+                                                @click="deleteRelationship('services', item.id)"
                                             >
                                                 <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
@@ -171,7 +171,7 @@
                                                 class="delete"
                                                 icon
                                                 x-small
-                                                @click="deleteRelationship('monitors', item)"
+                                                @click="deleteRelationship('monitors', item.id)"
                                             >
                                                 <v-icon color="red" size="16" class="fa fa-times-circle" medium />
                                             </v-btn>
@@ -296,18 +296,18 @@ export default {
         },
         /**
          * @param {String} type Type either services or monitors
-         * @param {Object} target Object to be filterd out
+         * @param {String} targetId targetId to be filterd out
          */
-        deleteRelationship(type, target) {
+        deleteRelationship(type, targetId) {
             switch (type) {
                 case 'services':
                     this.relationships.services.data = this.relationships.services.data.filter(
-                        item => item.id !== target.id
+                        item => item.id !== targetId
                     );
                     break;
                 case 'monitors':
                     this.relationships.monitors.data = this.relationships.monitors.data.filter(
-                        item => item.id !== target.id
+                        item => item.id !== targetId
                     );
                     break;
             }

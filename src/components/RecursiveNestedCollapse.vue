@@ -1,25 +1,25 @@
 <template>
-    <v-expansion-panels :dark="darkTheme" :readonly="readOnlyVal" accordion tile>
+    <v-expansion-panels :class="[hasChild ? '' : 'no-pointer']" :dark="darkTheme" :readonly="!hasChild" accordion tile>
         <v-expansion-panel>
-            <!-- Dont display the self links generated automatically of json-->
-            <v-expansion-panel-header v-if="propertyName !== 'links'" ripple>
+            <v-expansion-panel-header v-if="propertyName !== 'links'" :ripple="hasChild">
                 <b>{{ propertyName }}</b>
-                {{ value }}
+                <template v-if="!hasChild">
+                    {{ $help.handleEmptyString(value) }}
+                </template>
                 <template v-slot:actions>
-                    <v-icon color="primary">{{ readOnlyVal ? '' : '$expand' }}</v-icon>
+                    <v-icon size="16" color="primary">{{ hasChild ? '$expand' : '' }}</v-icon>
                 </template>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content class="v-expansion-panel-content__scrollable" v-if="$help.hasChild(child)">
-                <!--Temporary hardcoded for propertyName === 'listeners' for resource service -->
-                <template v-if="childIsObj(child) ">
+                <template v-if="childIsObj(child) || propertyName === 'listeners'">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
-                        :readOnlyVal="!$help.hasChild(childValue)"
+                        :hasChild="$help.hasChild(childValue)"
                         :key="childPropertyName"
                         :propertyName="childPropertyName"
                         :value="$help.handleNull(childValue)"
-                        :child="!$help.hasChild(childValue) ? {} : childValue"
+                        :child="$help.hasChild(childValue) ? childValue : {}"
                     />
                 </template>
                 <template v-else>
@@ -45,11 +45,14 @@ export default {
         propertyName: [String, Number, Boolean],
         value: [String, Number, Boolean], // null object value has been handle by handleNull
         child: [Object, Array],
-        readOnlyVal: Boolean,
+        hasChild: Boolean,
+        index: Number,
     },
+
     computed: {
         ...mapGetters(['darkTheme']),
     },
+
     methods: {
         childIsObj(child) {
             if (typeof child === 'object' && !Array.isArray(child)) {

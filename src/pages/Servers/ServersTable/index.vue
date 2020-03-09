@@ -65,10 +65,6 @@ export default {
          * @return {Array} An array of objects
          */
         generateTableRows: function() {
-            /**
-             * @param {Array} itemsArr
-             *  Elements are {Object} row
-             */
             if (this.serversData) {
                 let itemsArr = [];
                 for (let n = 0; n < this.serversData.length; n++) {

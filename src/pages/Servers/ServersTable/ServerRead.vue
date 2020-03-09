@@ -5,22 +5,22 @@
                 <h3>Attributes</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentServer.attributes"
-                    :readOnlyVal="!$help.hasChild(value)"
+                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
-                    :child="!$help.hasChild(value) ? {} : value"
+                    :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
             <v-col cols="12" v-if="!isEmpty(getCurrentServer.relationships)">
-                <h3>Relationships</h3>
+                <h3>Relationshis</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentServer.relationships"
-                    :readOnlyVal="!$help.hasChild(value)"
+                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
-                    :child="!$help.hasChild(value) ? {} : value"
+                    :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
         </v-row>

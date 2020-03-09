@@ -1,9 +1,12 @@
+import Login from 'pages/Login';
+// Sidebar components
 import Dashboard from 'pages/Dashboard';
 import Statistics from 'pages/Statistics';
+// Slide Nav components
 import Servers from 'pages/Servers';
 import Services from 'pages/Services';
-
-import Login from 'pages/Login';
+// Child components
+import MaxScale from 'pages/MaxScale';
 
 export const routes = [
     {
@@ -64,5 +67,14 @@ export const routes = [
         },
         name: 'servers',
         isSlideNav: true,
+    },
+    // Child route
+    {
+        path: '/dashboard/maxscale',
+        component: MaxScale,
+        meta: {
+            requiresAuth: true,
+        },
+        name: 'maxscale',
     },
 ];

@@ -13,8 +13,19 @@
         </v-sheet>
         <v-sheet style="margin-top:35px">
             <p class="font-weight-bold title text-uppercase color text-navigation">MAXSCALE DETAILS</p>
-            <v-card outlined height="180" width="330">
-                <v-row class="fill-height" align="center" justify="center"> </v-row>
+            <v-card class="px-6 py-3" outlined height="180" maxWidth="360">
+                <div class="" v-for="(value, name) in maxscaleDetails" :key="name">
+                    <span class="d-flex " v-if="name !== 'parameters'">
+                        <b class="text-capitalize" style="width:45%"> {{ name.split('_').join(' ') }}</b>
+                        <div style="width:55%;max-width:150px" class="d-inline-block text-truncate">{{ value }}</div>
+                    </span>
+                </div>
+                <router-link
+                    class="no-underline"
+                    :to="{ name: 'maxscale', params: { parameters: maxscaleDetails.parameters } }"
+                >
+                    <span class="text-capitalize" style="width:45%"> Parameters</span>
+                </router-link>
             </v-card>
         </v-sheet>
     </div>
@@ -32,11 +43,16 @@ export default {
         };
     },
     computed: {
+        ...mapGetters(['maxscaleDetails']),
         slideRoute: function() {
             return routes.filter(route => route.isSlideNav);
         },
     },
+    created() {
+        this.fetchMaxScaleDetails();
+    },
     methods: {
+        ...mapActions(['fetchMaxScaleDetails']),
         navigate(path) {
             this.$router.push(path);
         },
