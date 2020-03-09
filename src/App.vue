@@ -6,11 +6,12 @@
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
                 <search-to-create />
-                <TabNav />
+                <TabNav :slideRoutes="slideRoutes" :currentRoute="currentRoute" />
                 <transition name="slide-fade">
-                    <router-view />
+                    <router-view v-if="!checkIsSlideNav()" />
                 </transition>
             </v-container>
+
             <router-view v-else />
         </v-content>
     </v-app>
@@ -32,9 +33,27 @@ export default {
         SearchToCreate,
         TabNav,
     },
-
     computed: {
         ...mapGetters(['user']),
+        currentRoute() {
+            return this.$route.name;
+        },
+        slideRoutes: function() {
+            return routes.filter(route => route.isSlideNav);
+        },
+    },
+
+    methods: {
+        checkIsSlideNav() {
+            let arr = this.slideRoutes;
+            let isSlideNav = false;
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].name === this.currentRoute) {
+                    isSlideNav = true;
+                }
+            }
+            return isSlideNav;
+        },
     },
 };
 </script>
@@ -47,14 +66,13 @@ export default {
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {
-    transition: all 0.6s ease;
+    transition: all 0.2s ease;
 }
 .slide-fade-leave-active {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active below version 2.1.8 */ {
-    transform: translateX(0px);
     opacity: 0;
 }
 </style>

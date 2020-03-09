@@ -3,15 +3,26 @@
         <h1 class="text-navigation display-1 text-capitalize font-weight-light page-title">
             {{ currentRoute }}
         </h1>
-        <v-tabs style="margin-bottom:30px" v-if="currentPath.includes('dashboard') && currentRoute !== 'dashboard'">
+        <v-tabs
+            v-if="currentPath !== '/dashboard/maxscale' && currentPath.match(/^(\/dashboard\/?)\w+/g)"
+            v-model="activeTab"
+        >
             <v-tab
                 class="color border-bottom-table-header"
                 :to="route.path"
-                v-for="route in slideRoute"
+                v-for="route in slideRoutes"
                 :key="route.path"
             >
                 {{ route.name }}
             </v-tab>
+            <v-tabs-items class="pt-5" v-model="activeTab">
+                <v-tab-item v-for="route in slideRoutes" :key="route.name" :id="route.path">
+                    <router-view v-if="activeTab === route.path" />
+                </v-tab-item>
+            </v-tabs-items>
+            <v-tab-item id="/dashboard/servers">
+                <router-view v-if="activeTab === '/dashboard/servers'" />
+            </v-tab-item>
         </v-tabs>
     </span>
 </template>
@@ -25,21 +36,18 @@ import { routes } from 'router/routes';
 
 export default {
     name: 'TabNav',
-
+    props: {
+        slideRoutes: Array,
+        currentRoute: String,
+    },
     data() {
         return {
-            items: routes,
+            activeTab: '/dashboard/services',
         };
     },
     computed: {
-        slideRoute: function() {
-            return routes.filter(route => route.isSlideNav);
-        },
         currentPath() {
             return this.$route.path;
-        },
-        currentRoute() {
-            return this.$route.name;
         },
     },
 };

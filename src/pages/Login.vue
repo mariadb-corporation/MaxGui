@@ -157,8 +157,12 @@ export default {
                 this.$router.push('dashboard');
             } catch (error) {
                 this.displayOneError = true;
-                this.errorMessage =
-                    error.response.status === 401 ? 'Incorrect password or username' : this.$help.getErrorsArr(error);
+                if (error.response) {
+                    this.errorMessage =
+                        error.response.status === 401
+                            ? 'Incorrect password or username'
+                            : this.$help.getErrorsArr(error);
+                }
             }
             this.isLoading = false;
         },

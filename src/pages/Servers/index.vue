@@ -1,5 +1,5 @@
 <template>
-    <v-row class="server-add">
+    <v-row>
         <v-col class="pt-0" cols="10">
             <servers-table :serversData="serversData" />
         </v-col>
@@ -26,9 +26,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.server-add {
-    margin-bottom: 60px;
-}
-</style>
