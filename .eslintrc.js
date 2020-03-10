@@ -29,6 +29,7 @@ module.exports = {
         indent: ['error', 4, { SwitchCase: 1 }],
         'vue/this-in-template': 'error',
         'vue/order-in-components': 'error',
+        'vue/no-unused-components': process.env.NODE_ENV === 'production' ? 2 : 1,
     },
 
     overrides: [

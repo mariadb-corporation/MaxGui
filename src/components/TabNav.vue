@@ -10,13 +10,13 @@
             <v-tab
                 class="color border-bottom-table-header"
                 :to="route.path"
-                v-for="route in slideRoutes"
+                v-for="route in tabRoutes"
                 :key="route.path"
             >
                 {{ route.name }}
             </v-tab>
             <v-tabs-items class="pt-5" v-model="activeTab">
-                <v-tab-item v-for="route in slideRoutes" :key="route.name" :id="route.path">
+                <v-tab-item v-for="route in tabRoutes" :key="route.name" :id="route.path">
                     <router-view v-if="activeTab === route.path" />
                 </v-tab-item>
             </v-tabs-items>
@@ -37,7 +37,7 @@ import { routes } from 'router/routes';
 export default {
     name: 'TabNav',
     props: {
-        slideRoutes: Array,
+        tabRoutes: Array,
         currentRoute: String,
     },
     data() {

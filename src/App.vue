@@ -6,13 +6,15 @@
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
                 <search-to-create />
-                <TabNav :slideRoutes="slideRoutes" :currentRoute="currentRoute" />
+                <TabNav :tabRoutes="tabRoutes" :currentRoute="currentRoute" />
                 <transition name="slide-fade">
-                    <router-view v-if="!checkIsSlideNav()" />
+                    <router-view v-if="!checkIsTabRoute()" />
                 </transition>
             </v-container>
-
-            <router-view v-else />
+            <!-- Public routes -->
+            <transition v-else name="slide-fade">
+                <router-view />
+            </transition>
         </v-content>
     </v-app>
 </template>
@@ -24,6 +26,7 @@ import { mapGetters } from 'vuex';
 import SearchToCreate from 'components/SearchToCreate';
 import { routes } from 'router/routes';
 import TabNav from 'components/TabNav';
+import tabRoutes from 'router/tabRoutes';
 
 export default {
     name: 'App',
@@ -33,26 +36,29 @@ export default {
         SearchToCreate,
         TabNav,
     },
+    data() {
+        return {
+            tabRoutes: tabRoutes,
+        };
+    },
     computed: {
         ...mapGetters(['user']),
         currentRoute() {
             return this.$route.name;
         },
-        slideRoutes: function() {
-            return routes.filter(route => route.isSlideNav);
-        },
     },
 
     methods: {
-        checkIsSlideNav() {
-            let arr = this.slideRoutes;
-            let isSlideNav = false;
+        // check if currentRoute is a tabRoute
+        checkIsTabRoute() {
+            let arr = this.tabRoutes;
+            let isTabRoute = false;
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].name === this.currentRoute) {
-                    isSlideNav = true;
+                    isTabRoute = true;
                 }
             }
-            return isSlideNav;
+            return isTabRoute;
         },
     },
 };
@@ -66,13 +72,13 @@ export default {
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .slide-fade-enter-active {
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 .slide-fade-leave-active {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+.slide-fade-enter,
+.slide-fade-leave-to {
     opacity: 0;
 }
 </style>
