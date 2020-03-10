@@ -5,14 +5,21 @@
         <snackbars v-if="user && user.token" />
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
-                <search-to-create />
-                <TabNav :tabRoutes="tabRoutes" :currentRoute="currentRoute" />
-                <transition name="slide-fade">
+                <search-to-create
+                    :isTabRoute="checkIsTabRoute()"
+                    :currentRoute="currentRoute"
+                    :tabRoutes="tabRoutes"
+                />
+                <h1 class="text-navigation display-1 text-capitalize font-weight-light page-title">
+                    {{ currentRoute }}
+                </h1>
+                <TabNav :tabRoutes="tabRoutes" />
+                <transition name="fade">
                     <router-view v-if="!checkIsTabRoute()" />
                 </transition>
             </v-container>
             <!-- Public routes -->
-            <transition v-else name="slide-fade">
+            <transition v-else name="fade">
                 <router-view />
             </transition>
         </v-content>
@@ -66,19 +73,19 @@ export default {
 
 <style lang="scss">
 @import 'styles/main.scss';
+
 .page-title {
     margin-bottom: 55px;
 }
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
-.slide-fade-enter-active {
-    transition: all 0.3s ease;
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
 }
-.slide-fade-leave-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
+.fade-enter,
+.fade-leave-to {
     opacity: 0;
 }
 </style>

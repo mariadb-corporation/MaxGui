@@ -1,30 +1,25 @@
 <template>
-    <span>
-        <h1 class="text-navigation display-1 text-capitalize font-weight-light page-title">
-            {{ currentRoute }}
-        </h1>
-        <v-tabs
-            v-if="currentPath !== '/dashboard/maxscale' && currentPath.match(/^(\/dashboard\/?)\w+/g)"
-            v-model="activeTab"
+    <v-tabs
+        v-if="currentPath !== '/dashboard/maxscale' && currentPath.match(/^(\/dashboard\/?)\w+/g)"
+        v-model="activeTab"
+    >
+        <v-tab
+            class="color border-bottom-table-header"
+            :to="route.path"
+            v-for="route in tabRoutesFilter"
+            :key="route.path"
         >
-            <v-tab
-                class="color border-bottom-table-header"
-                :to="route.path"
-                v-for="route in tabRoutes"
-                :key="route.path"
-            >
-                {{ route.name }}
-            </v-tab>
-            <v-tabs-items class="pt-5" v-model="activeTab">
-                <v-tab-item v-for="route in tabRoutes" :key="route.name" :id="route.path">
-                    <router-view v-if="activeTab === route.path" />
-                </v-tab-item>
-            </v-tabs-items>
-            <v-tab-item id="/dashboard/servers">
-                <router-view v-if="activeTab === '/dashboard/servers'" />
+            {{ route.name }}
+        </v-tab>
+        <v-tabs-items class="pt-5" v-model="activeTab">
+            <v-tab-item v-for="route in tabRoutesFilter" :key="route.name" :id="route.path">
+                <router-view v-if="activeTab === route.path" />
             </v-tab-item>
-        </v-tabs>
-    </span>
+        </v-tabs-items>
+        <v-tab-item id="/dashboard/servers">
+            <router-view v-if="activeTab === '/dashboard/servers'" />
+        </v-tab-item>
+    </v-tabs>
 </template>
 
 <script>
@@ -38,7 +33,6 @@ export default {
     name: 'TabNav',
     props: {
         tabRoutes: Array,
-        currentRoute: String,
     },
     data() {
         return {
@@ -46,8 +40,14 @@ export default {
         };
     },
     computed: {
+        ...mapGetters(['searchKeyWord']),
         currentPath() {
             return this.$route.path;
+        },
+        tabRoutesFilter() {
+            let self = this;
+            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
+            return filteredData;
         },
     },
 };

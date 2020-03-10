@@ -13,6 +13,7 @@ export default new Vuex.Store({
             type: 'info',
         },
         darkTheme: localStorage.getItem('darkTheme') === 'true' ? true : false,
+        searchKeyWord: '',
     },
     mutations: {
         /**
@@ -33,8 +34,12 @@ export default new Vuex.Store({
             state.darkTheme = !state.darkTheme;
             localStorage.setItem('darkTheme', state.darkTheme);
         },
+        setSearchKeyWord(state, keyword) {
+            state.searchKeyWord = keyword;
+        },
     },
     getters: {
+        searchKeyWord: state => state.searchKeyWord,
         darkTheme: state => state.darkTheme,
     },
     modules: {
