@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" @click="dialog = true" icon color="primary">
-                    <v-icon size="16" class="fa fa-edit" medium />
+                    <v-icon size="16">$vuetify.icons.edit</v-icon>
                 </v-btn>
             </template>
             <span>Service Update</span>
@@ -84,7 +84,7 @@
                                                 x-small
                                                 @click="deleteRelationshipType('filters', item.id)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -112,7 +112,7 @@
                                                 x-small
                                                 @click="deleteRelationshipType('servers', item.id)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"

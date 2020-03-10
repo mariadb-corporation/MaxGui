@@ -15,6 +15,7 @@ $colors: (
     'primary': $primary,
     'inputs': $inputs,
     'background': $background,
+    'reflection': $reflection,
 );
 
 .color {
@@ -30,6 +31,9 @@ $colors: (
         }
         &.border-bottom-#{$name} {
             border-bottom: 1px solid $value !important;
+        }
+        &.border-top-#{$name} {
+            border-top: 1px solid $value !important;
         }
     }
 }

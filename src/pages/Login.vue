@@ -47,7 +47,7 @@
                                     id="password"
                                     placeholder="Password"
                                     v-model="credential.password"
-                                    :append-icon="isPwdVisible ? 'fa-eye' : 'fa-eye-slash'"
+                                    :append-icon="isPwdVisible ? 'visibility_off' : 'visibility'"
                                     :rules="rules.password"
                                     :error-messages="!displayOneError ? errorMessage : ''"
                                     @input="errorMessage = ''"
@@ -92,7 +92,6 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-// import axios from 'axios';
 
 export default {
     name: 'Login',
@@ -220,7 +219,7 @@ export default {
 .login-wrapper {
     width: 100%;
     height: 100%;
-    background: radial-gradient(1100px at 100% 89%, $accent 0%, $background1 100%);
+    background: radial-gradient(1100px at 100% 89%, $accent 0%, $deep-ocean 100%);
 }
 .logo {
     margin-bottom: 5px;

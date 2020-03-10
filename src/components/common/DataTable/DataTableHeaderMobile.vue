@@ -4,7 +4,7 @@
             <template v-slot:selection="{ item }">
                 <v-chip small class="text-capitalize" :class="[item.sortable !== false ? 'sortable' : '']">
                     <span>{{ item.text }}</span>
-                    <v-icon size="12" class="ml-2 fa fa-chevron-up" />
+                    <v-icon size="7" class="ml-2">$vuetify.icons.arrowDown</v-icon>
                 </v-chip>
             </template>
         </v-select>

@@ -9,7 +9,9 @@
     >
         <span v-for="(item, i) in message.text" :key="i">{{ item }}</span>
         <v-btn dark class="mr-0" @click="message.status = false" text icon>
-            <v-icon class="fa fa-times-circle" />
+            <v-icon size="16">
+                close
+            </v-icon>
         </v-btn>
     </v-snackbar>
 </template>

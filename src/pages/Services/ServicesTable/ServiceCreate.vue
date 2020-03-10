@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" class="ml-5 mr-4 mt-4" @click="dialog = true" color="primary" depressed>
-                    <v-icon size="16" class="fa fa-plus" medium />
+                    <v-icon size="16">plus</v-icon>
                 </v-btn>
             </template>
             <span>Add Service</span>
@@ -158,7 +158,7 @@
                                                 x-small
                                                 @click="deleteRelationshipType('filters', item.id)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -186,13 +186,7 @@
                                                 x-small
                                                 @click="deleteRelationshipType('servers', item.id)"
                                             >
-                                                <v-text-field
-                                                    v-model="search"
-                                                    append-icon="fa fa-search"
-                                                    label="Search"
-                                                    single-line
-                                                    hide-details
-                                                />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -219,10 +213,10 @@
                 </v-card-text>
             </template>
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="blue darken-1" text @click="cancel" depressed>
+                <v-btn color="blue darken-1" @click="cancel" depressed>
                     Cancel
                 </v-btn>
-                <v-btn color="red" text @click="save" depressed>
+                <v-btn color="primary" @click="save" depressed>
                     Add
                 </v-btn>
             </template>

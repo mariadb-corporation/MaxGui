@@ -1,20 +1,21 @@
 <template>
     <v-dialog content-class="base-dialog" v-model="computeShowDialog" :max-width="maxWidth">
         <v-card :outlined="darkTheme" :dark="darkTheme">
-            <v-card-title>
-                <v-btn class="close" @click="cancel" large icon>
-                    <v-icon color="#eb5757" class="fa fa-times-circle" medium />
+            <v-card-title> 
+                <v-btn class="close" @click="cancel" icon>
+                    <v-icon size="20" color="#eb5757">close</v-icon>
                 </v-btn>
+
                 <slot name="title"> </slot>
             </v-card-title>
             <slot name="body"> </slot>
-            <v-card-actions>
+            <v-card-actions class="border-top-primary">
                 <v-spacer></v-spacer>
                 <slot name="actions" :cancel="cancel" :save="save">
-                    <v-btn class="cancel" color="blue darken-1" text @click="cancel" depressed>
+                    <v-btn class="cancel" color="primary" outlined @click="cancel" depressed>
                         Cancel
                     </v-btn>
-                    <v-btn class="save" color="red" text @click="save" depressed>
+                    <v-btn class="save" color="primary" @click="save" depressed>
                         Save
                     </v-btn>
                 </slot>

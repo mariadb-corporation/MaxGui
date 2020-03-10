@@ -15,12 +15,13 @@
             rounded
             @click.native.stop
         >
-            <v-icon size="16" slot="append" class="fa fa-search" />
+            <v-icon size="16" slot="append">$vuetify.icons.search</v-icon>
         </v-text-field>
         <v-spacer />
         <v-btn
             outlined
             rounded
+            dark
             color="accent"
             class="text-capitalize"
             :disabled="isBtnDisabled"
@@ -75,9 +76,9 @@ export default {
         ...mapMutations(['setSearchKeyWord']),
         create() {
             if (this.searchKeyWord && !this.isBtnDisabled) {
-                console.log('Create based on search keyword', this.searchKeyWord);
+                // console.log('Create based on search keyword', this.searchKeyWord);
             } else {
-                console.log('Create based on curent route', this.currentRoute);
+                // console.log('Create based on curent route', this.currentRoute);
             }
         },
         isKeyWordMatchTabRoutes(keyword) {

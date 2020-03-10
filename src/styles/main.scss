@@ -1,7 +1,9 @@
-@import 'font.scss';
 @import 'constants.scss';
 @import 'class_colors';
 @import 'helpers.scss';
+// Fonts
+@import 'fonts/material-icons';
+// Vuetify helper variables
 @import 'variables.scss';
 
 html,
@@ -33,6 +35,9 @@ body,
             }
             &:first-child {
                 border-radius: 5px 0 0 0;
+            }
+            .toggle-icon {
+                color: inherit;
             }
         }
         tbody {
@@ -115,11 +120,6 @@ input:-webkit-autofill:active {
         margin-top: 1px;
         font-size: 15px;
         color: $navigation;
-    }
-    .v-input__icon {
-        .v-icon.v-icon.fa {
-            font-size: 16px;
-        }
     }
 }
 .search-restyle.v-text-field--rounded {

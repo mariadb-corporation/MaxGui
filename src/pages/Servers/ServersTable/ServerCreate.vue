@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" class="ml-5 mr-4 mt-4" @click="dialog = true" color="primary" depressed>
-                    <v-icon size="16" class="fa fa-plus" medium />
+                    <v-icon size="16">plus</v-icon>
                 </v-btn>
             </template>
             <span>Add Server</span>
@@ -139,7 +139,7 @@
                                                 x-small
                                                 @click="deleteRelationship('services', item.id)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"
@@ -173,7 +173,7 @@
                                                 x-small
                                                 @click="deleteRelationship('monitors', item.id)"
                                             >
-                                                <v-icon color="red" size="16" class="fa fa-times-circle" medium />
+                                                <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 class="input_height_prefix"

@@ -33,13 +33,11 @@
                         @click="changeSort(header.value)"
                         :style="`${header.text === 'Actions' ? 'padding:0px;' : ''}`"
                     >
-                        <div class="d-inline-flex">
+                        <div class="d-inline-flex justify-center align-center">
                             <span>{{ header.text }}</span>
-                            <v-icon
-                                v-if="header.sortable !== false"
-                                size="12"
-                                class="ml-1 v-data-table-header__icon fa fa-chevron-up"
-                            />
+                            <v-icon v-if="header.sortable !== false" size="7" class="ml-1 v-data-table-header__icon"
+                                >$vuetify.icons.arrowDown</v-icon
+                            >
                         </div>
                     </th>
                     <!-- Add an extra table heading to remain text align ability in heading
@@ -47,8 +45,7 @@
                         Only display in large tablet to laptop md
                      -->
                     <th style="padding-left:24px; padding-right:0px" v-if="windowSize.x > 960">
-                        <div  style="width:100%;" v-if="hasSearch || hasColumnToggle" class="d-flex align-center ">
-                            
+                        <div style="width:100%;" v-if="hasSearch || hasColumnToggle" class="d-flex align-center ">
                             <search-box
                                 width="140px"
                                 v-if="hasSearch && !isColumnToggleVisible"
@@ -57,15 +54,17 @@
                                 v-model="search"
                                 @click.native.stop
                             />
-                            
+
                             <!--column toggle icon-->
+
                             <v-icon
                                 v-if="hasColumnToggle"
                                 size="18"
-                                  class="pl-4 pr-0 fa"
-                                :class="[isColumnToggleVisible ? 'fa-eye' : 'fa-eye-slash']"
+                                class="pl-4 pr-0 toggle-icon"
                                 @click.stop="columnToggle"
-                            />
+                            >
+                                visibility
+                            </v-icon>
                         </div>
                     </th>
                 </tr>
@@ -143,16 +142,10 @@
                                         >
                                             <!-- optional expand indicator icon -->
                                             <slot name="expandIndicator" :expanded="expandedRows.includes(item.id)">
-                                                <v-icon
-                                                    size="16"
-                                                    class="fa"
-                                                    :class="[
-                                                        !expandedRows.includes(item.id)
-                                                            ? 'fa-chevron-down'
-                                                            : 'fa-chevron-up',
-                                                    ]"
-                                                    medium
-                                                />
+                                                <v-icon v-if="!expandedRows.includes(item.id)" size="24"
+                                                    >keyboard_arrow_down</v-icon
+                                                >
+                                                <v-icon v-else size="24">keyboard_arrow_up</v-icon>
                                             </slot>
                                         </v-btn>
                                     </template>

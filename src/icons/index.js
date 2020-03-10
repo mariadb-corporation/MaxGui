@@ -1,58 +1,55 @@
-import User from 'icons/User';
-import Monitoring from 'icons/Monitoring';
 import Alerts from 'icons/Alerts';
-import Security from 'icons/Security';
-import Users from 'icons/Users';
-import StatusOk from 'icons/StatusOk';
-import StatusWarning from 'icons/StatusWarning';
-import StatusError from 'icons/StatusError';
-import StatusInfo from 'icons/StatusInfo';
-import ConnectivityOk from 'icons/ConnectivityOk';
+import ArrowDown from 'icons/ArrowDown'; // MaxScale new icons
+import ArrowRight from 'icons/ArrowRight';
+import Backup from 'icons/Backup';
+import Close from 'icons/Close';
+import Comments from 'icons/Comments';
 import ConnectivityAlert from 'icons/ConnectivityAlert';
 import ConnectivityBad from 'icons/ConnectivityBad';
-import Running from 'icons/Running';
-import Stopped from 'icons/Stopped';
-import Paused from 'icons/Paused';
-import HealthOk from 'icons/HealthOk';
-import HealthBad from 'icons/HealthBad';
-import HealthAlert from 'icons/HealthAlert';
-import ArrowRight from 'icons/ArrowRight';
-import Close from 'icons/Close';
-import Reload from 'icons/Reload';
-import Edit from 'icons/Edit';
+import ConnectivityOk from 'icons/ConnectivityOk';
 import Delete from 'icons/Delete';
-import Restore from 'icons/Restore';
+import Edit from 'icons/Edit';
+import HealthAlert from 'icons/HealthAlert';
+import HealthBad from 'icons/HealthBad';
+import HealthOk from 'icons/HealthOk';
+import Monitoring from 'icons/Monitoring';
+import Paused from 'icons/Paused';
 import QuestionCircle from 'icons/QuestionCircle';
+import Reload from 'icons/Reload';
+import Reports from 'icons/Reports'; // MaxScale new icons
+import Restore from 'icons/Restore';
+import Running from 'icons/Running';
+import Search from 'icons/Search'; // MaxScale new icons
+import Security from 'icons/Security';
+import Settings from 'icons/Settings'; // MaxScale new icons
+import StatusError from 'icons/StatusError';
+import StatusInfo from 'icons/StatusInfo';
+import StatusOk from 'icons/StatusOk';
+import StatusWarning from 'icons/StatusWarning';
+import Stopped from 'icons/Stopped';
 import Table from 'icons/Table';
-import Comments from 'icons/Comments';
+import Tachometer from 'icons/Tachometer'; // MaxScale new icons
+import User from 'icons/User';
+import Users from 'icons/Users';
 
 export default {
-    user: {
-        component: User,
-    },
-    monitoring: {
-        component: Monitoring,
-    },
     alerts: {
         component: Alerts,
     },
-    security: {
-        component: Security,
+    arrowDown: {
+        component: ArrowDown,
     },
-    users: {
-        component: Users,
+    arrowRight: {
+        component: ArrowRight,
     },
-    statusOk: {
-        component: StatusOk,
+    backUp: {
+        component: Backup,
     },
-    statusWarning: {
-        component: StatusWarning,
+    close: {
+        component: Close,
     },
-    statusError: {
-        component: StatusError,
-    },
-    connectivityOk: {
-        component: ConnectivityOk,
+    comments: {
+        component: Comments,
     },
     connectivityAlert: {
         component: ConnectivityAlert,
@@ -60,52 +57,79 @@ export default {
     connectivityBad: {
         component: ConnectivityBad,
     },
-    running: {
-        component: Running,
-    },
-    stopped: {
-        component: Stopped,
-    },
-    paused: {
-        component: Paused,
-    },
-    healthOk: {
-        component: HealthOk,
-    },
-    healthBad: {
-        component: HealthBad,
-    },
-    healthAlert: {
-        component: HealthAlert,
-    },
-    arrowRight: {
-        component: ArrowRight,
-    },
-    close: {
-        component: Close,
-    },
-    reload: {
-        component: Reload,
-    },
-    edit: {
-        component: Edit,
+    connectivityOk: {
+        component: ConnectivityOk,
     },
     delete: {
         component: Delete,
     },
-    restore: {
-        component: Restore,
+    edit: {
+        component: Edit,
     },
-    statusInfo: {
-        component: StatusInfo,
+    healthAlert: {
+        component: HealthAlert,
+    },
+    healthBad: {
+        component: HealthBad,
+    },
+    healthOk: {
+        component: HealthOk,
+    },
+    monitoring: {
+        component: Monitoring,
+    },
+    paused: {
+        component: Paused,
     },
     questionCircle: {
         component: QuestionCircle,
     },
+    reload: {
+        component: Reload,
+    },
+    reports: {
+        component: Reports, // MaxScale new icons
+    },
+    restore: {
+        component: Restore,
+    },
+    running: {
+        component: Running,
+    },
+    search: {
+        component: Search,
+    },
+    security: {
+        component: Security,
+    },
+    settings: {
+        component: Settings, // MaxScale new icons
+    },
+    statusError: {
+        component: StatusError,
+    },
+    statusInfo: {
+        component: StatusInfo,
+    },
+    statusOk: {
+        component: StatusOk,
+    },
+    statusWarning: {
+        component: StatusWarning,
+    },
+    stopped: {
+        component: Stopped,
+    },
     table: {
         component: Table,
     },
-    comments: {
-        component: Comments,
+    tachometer: {
+        component: Tachometer, // MaxScale new icons
+    },
+    user: {
+        component: User,
+    },
+    users: {
+        component: Users,
     },
 };

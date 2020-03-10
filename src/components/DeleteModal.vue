@@ -4,7 +4,9 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" color="#eb5757" icon @click="deleteDialog = true">
-                    <v-icon size="16" class="fa fa-trash" color="#eb5757" medium />
+                    <v-icon size="16" color="#eb5757">
+                        $vuetify.icons.delete
+                    </v-icon>
                 </v-btn>
             </template>
             <span>Delete</span>
@@ -21,16 +23,16 @@
             <template v-slot:body>
                 <v-card-text>
                     <p>Are you sure you want to destroy {{ item.id }} ?</p>
-                    <small style="color: #eb5757">
+                    <small>
                         {{ smallInfo }}
                     </small>
                 </v-card-text>
             </template>
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="blue " text @click="cancel" depressed>
+                <v-btn color="primary" class="px-5 text-capitalize" rounded outlined @click="cancel" depressed>
                     Cancel
                 </v-btn>
-                <v-btn color="#eb5757" text @click="save" depressed>
+                <v-btn color="primary" class="px-5 text-capitalize" rounded  @click="save" depressed>
                     Delete
                 </v-btn>
             </template>

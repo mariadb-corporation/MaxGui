@@ -3,7 +3,7 @@
         <v-toolbar-title class="headline">
             <router-link to="/dashboard">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                <span class="ml-2 white--text"><b>Maria</b>DB <b>MaxScale</b></span>
+                <span class="ml-2 white--text"><b>MaxScale</b></span>
             </router-link>
         </v-toolbar-title>
 
@@ -12,14 +12,19 @@
         <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
             <template v-slot:activator="{ on }">
                 <v-btn class="mr-0" v-on="on" text tile>
-                    <v-icon class="mr-1 white--text fa fa-user" size="24" />
+                    <v-icon class="user-icon mr-1 white--text" style="width:30px" size="30">
+                        $vuetify.icons.user
+                    </v-icon>
                     <span class="text-capitalize white--text">{{ user.username }}</span>
+
                     <v-icon
-                        size="9"
-                        class="mr-0 ml-1 white--text fa"
-                        :class="[!isProfileOpened ? 'fa-chevron-down' : 'fa-chevron-up']"
+                        :class="[!isProfileOpened ? 'arrow-down' : 'arrow-up']"
+                        size="7"
+                        class="mr-0 ml-1 white--text"
                         left
-                    />
+                    >
+                        $vuetify.icons.arrowDown
+                    </v-icon>
                 </v-btn>
             </template>
             <v-list>
@@ -108,7 +113,12 @@ export default {
         font-weight: bold;
     }
 }
-
+.arrow-up {
+    transform: rotate(-180deg);
+}
+.arrow-down {
+    transform: rotate(0deg);
+}
 .v-btn {
     letter-spacing: normal;
 }
