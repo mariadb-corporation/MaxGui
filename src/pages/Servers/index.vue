@@ -11,7 +11,7 @@ import { mapGetters, mapActions } from 'vuex';
 import ServersTable from './ServersTable';
 
 export default {
-    name: 'servers',
+    name: 'Servers',
     components: {
         ServersTable,
     },

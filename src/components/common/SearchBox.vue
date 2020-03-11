@@ -4,14 +4,14 @@
         class="search-box"
         :class="{ center: position === 'center', right: position === 'right' }"
     >
-        <input type="text" ref="search-input" :placeholder="placeholder" :value="value" @input="onInput($event)" />
-        <v-icon :size="value.length ? 18 : 24" @click="clearInput" :class="`${value.length ? 'close' : 'search'}`" />
+        <input ref="search-input" type="text" :placeholder="placeholder" :value="value" @input="onInput($event)" />
+        <v-icon :size="value.length ? 18 : 24" :class="`${value.length ? 'close' : 'search'}`" @click="clearInput" />
     </div>
 </template>
 
 <script>
 export default {
-    name: 'search-box',
+    name: 'SearchBox',
     props: {
         width: String,
         focus: Boolean,

@@ -8,7 +8,7 @@
         multi-line
     >
         <span v-for="(item, i) in message.text" :key="i">{{ item }}</span>
-        <v-btn dark class="mr-0" @click="message.status = false" text icon>
+        <v-btn dark class="mr-0" text icon @click="message.status = false">
             <v-icon size="16">
                 close
             </v-icon>

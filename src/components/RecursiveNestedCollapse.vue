@@ -11,12 +11,12 @@
                 </template>
             </v-expansion-panel-header>
 
-            <v-expansion-panel-content class="v-expansion-panel-content__scrollable" v-if="$help.hasChild(child)">
+            <v-expansion-panel-content v-if="$help.hasChild(child)" class="v-expansion-panel-content__scrollable">
                 <template v-if="childIsObj(child) || propertyName === 'listeners'">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
-                        :hasChild="$help.hasChild(childValue)"
                         :key="childPropertyName"
+                        :hasChild="$help.hasChild(childValue)"
                         :propertyName="childPropertyName"
                         :value="$help.handleNull(childValue)"
                         :child="$help.hasChild(childValue) ? childValue : {}"

@@ -1,52 +1,56 @@
 <template>
-    <div class="d-flex flex-wrap" style="margin-bottom: 25px">
-        <v-text-field
-            class="search-restyle"
-            name="search"
-            id="search"
-            dense
-            outlined
-            required
-            placeholder="Search"
-            v-model="search"
-            label="Search"
-            single-line
-            hide-details
-            rounded
-            @click.native.stop
-        >
-            <v-icon size="16" slot="append">$vuetify.icons.search</v-icon>
-        </v-text-field>
-        <v-spacer />
-        <v-btn
-            outlined
-            rounded
-            dark
-            color="accent"
-            class="text-capitalize"
-            :disabled="isBtnDisabled"
-            @click="create"
-            depressed
-        >
-            + Create New
-        </v-btn>
-    </div>
+    <fragment>
+        <div class="d-flex flex-wrap" style="margin-bottom: 25px">
+            <v-text-field
+                id="search"
+                v-model="search"
+                class="search-restyle"
+                name="search"
+                dense
+                outlined
+                required
+                placeholder="Search"
+                label="Search"
+                single-line
+                hide-details
+                rounded
+                @click.native.stop
+            >
+                <v-icon slot="append" size="16">$vuetify.icons.search</v-icon>
+            </v-text-field>
+            <v-spacer />
+            <v-btn outlined rounded color="accent" class="text-capitalize" :disabled="isBtnDisabled" depressed @click.stop="create">
+                + Create New
+            </v-btn>
+        </div>
+        <service-create v-model="serviceDialog" mode="create" :close-modal="() => (serviceDialog = false)" />
+        <server-create v-model="serverDialog" :close-modal="() => (serverDialog = false)" />
+    </fragment>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from 'vuex';
+import ServiceCreate from 'pages/Services/ServiceCreate';
+import ServerCreate from 'pages/Servers/ServerCreate';
 
 export default {
-    name: 'search-to-create',
-    props: {
-        tabRoutes: Array,
-        currentRoute: String,
-        isTabRoute: Boolean,
+    name: 'SearchToCreate',
+    components: {
+        ServiceCreate,
+        ServerCreate,
     },
+    props: {
+        tabRoutes: { type: Array, default: () => [] },
+        currentRoute: { type: String, default: '' },
+        isTabRoute: { type: Boolean, default: false },
+    },
+
     data() {
         return {
             search: '',
             isBtnDisabled: true,
+            serviceDialog: false,
+            serverDialog: false,
         };
     },
     computed: {
@@ -76,9 +80,18 @@ export default {
         ...mapMutations(['setSearchKeyWord']),
         create() {
             if (this.searchKeyWord && !this.isBtnDisabled) {
-                // console.log('Create based on search keyword', this.searchKeyWord);
+                this.createType(this.searchKeyWord);
             } else {
-                // console.log('Create based on curent route', this.currentRoute);
+                this.createType(this.currentRoute);
+            }
+        },
+        createType(type) {
+            switch (type) {
+                case 'services':
+                    this.serviceDialog = true;
+                    break;
+                case 'servers':
+                    this.serverDialog = true;
             }
         },
         isKeyWordMatchTabRoutes(keyword) {

@@ -74,7 +74,7 @@ export default {
         /**
          * @param {String} id id of the server
          */
-        async deleteServerById({ dispatch, commit, state }, id) {
+        async deleteServerById({ dispatch, commit }, id) {
             try {
                 let res = await Vue.axios.delete(`/v1/servers/${id}`);
                 // response ok

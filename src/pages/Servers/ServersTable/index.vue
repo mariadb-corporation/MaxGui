@@ -1,5 +1,5 @@
 <template>
-    <v-card :outlined="darkTheme" :dark="darkTheme">
+    <v-card class="v-card-custom" :outlined="darkTheme" :dark="darkTheme">
         <data-table
             :headers="tableHeaders"
             :data="generateTableRows"
@@ -26,78 +26,76 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import DeleteModal from 'components/DeleteModal';
-// import ServerCreate from './ServerCreate';
-import ServerUpdate from './ServerUpdate';
-import ServerRead from './ServerRead';
+    import { mapGetters, mapActions } from 'vuex';
+    import DeleteModal from 'components/DeleteModal';
+    import ServerUpdate from './ServerUpdate';
+    import ServerRead from './ServerRead';
 
-export default {
-    name: 'servers-table',
-    components: {
-        DeleteModal,
-        // ServerCreate,
-        ServerUpdate,
-        ServerRead,
-    },
-    props: {
-        serversData: Array,
-    },
-    data() {
-        return {
-            //State
-            serverStates: ['Master, Running', 'Slave, Running'],
-            search: '',
-            expanded: [],
-            tableHeaders: [
-                { text: 'Server', value: 'id' },
-                { text: 'Address', value: 'address' },
-                { text: 'Port', value: 'port' },
-                { text: 'Connections', value: 'connections' },
-                { text: 'State', value: 'state' },
-                { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
-            ],
-        };
-    },
-    computed: {
-        ...mapGetters(['darkTheme']),
-        /**
-         * @return {Array} An array of objects
-         */
-        generateTableRows: function() {
-            if (this.serversData) {
-                let itemsArr = [];
-                for (let n = 0; n < this.serversData.length; n++) {
-                    /**
-                     * @typedef {Object} row
-                     * @property {String} id - Id of the server
-                     * @property {String} address - Server's address
-                     * @property {Number} port - Server's port
-                     * @property {Number} connections - Number of connections to the server
-                     * @property {String} state - Server's state
-                     */
-                    const {
-                        id,
-                        attributes: { state, parameters, statistics },
-                    } = this.serversData[n];
-                    let row = {
-                        id: id,
-                        address: parameters.address,
-                        port: parameters.port,
-                        connections: statistics.connections,
-                        state: state,
-                    };
-                    itemsArr.push(row);
-                }
-                return itemsArr;
-            }
-            return [];
+    export default {
+        name: 'ServersTable',
+        components: {
+            DeleteModal,
+            ServerUpdate,
+            ServerRead,
         },
-    },
-    methods: {
-        ...mapActions(['deleteServerById']),
-    },
-};
+        props: {
+            serversData: Array,
+        },
+        data() {
+            return {
+                //State
+                serverStates: ['Master, Running', 'Slave, Running'],
+                search: '',
+                expanded: [],
+                tableHeaders: [
+                    { text: 'Server', value: 'id' },
+                    { text: 'Address', value: 'address' },
+                    { text: 'Port', value: 'port' },
+                    { text: 'Connections', value: 'connections' },
+                    { text: 'State', value: 'state' },
+                    { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
+                ],
+            };
+        },
+        computed: {
+            ...mapGetters(['darkTheme']),
+            /**
+             * @return {Array} An array of objects
+             */
+            generateTableRows: function() {
+                if (this.serversData) {
+                    let itemsArr = [];
+                    for (let n = 0; n < this.serversData.length; n++) {
+                        /**
+                         * @typedef {Object} row
+                         * @property {String} id - Id of the server
+                         * @property {String} address - Server's address
+                         * @property {Number} port - Server's port
+                         * @property {Number} connections - Number of connections to the server
+                         * @property {String} state - Server's state
+                         */
+                        const {
+                            id,
+                            attributes: { state, parameters, statistics },
+                        } = this.serversData[n];
+                        let row = {
+                            id: id,
+                            address: parameters.address,
+                            port: parameters.port,
+                            connections: statistics.connections,
+                            state: state,
+                        };
+                        itemsArr.push(row);
+                    }
+                    return itemsArr;
+                }
+                return [];
+            },
+        },
+        methods: {
+            ...mapActions(['deleteServerById']),
+        },
+    };
 </script>
 
 <style lang="scss" scoped></style>

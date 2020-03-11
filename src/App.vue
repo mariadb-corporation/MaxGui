@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <top-header :user="user" v-if="user && user.token" />
+        <top-header v-if="user && user.token" :user="user" />
         <navigation v-if="user && user.token" />
         <snackbars v-if="user && user.token" />
         <v-content>
@@ -9,6 +9,7 @@
                 <h1 class="text-navigation display-1 text-capitalize page-title">
                     {{ currentRoute }}
                 </h1>
+
                 <TabNav :tabRoutes="tabRoutes" />
                 <transition name="fade">
                     <router-view v-if="!checkIsTabRoute()" />

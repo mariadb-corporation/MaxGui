@@ -7,8 +7,8 @@
             <v-col cols="7">
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in genData()"
-                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
+                    :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
                     :child="$help.hasChild(value) ? value : {}"

@@ -6,13 +6,13 @@
             width="200"
             mini-variant-width="50"
             :mini-variant.sync="isMini"
-            @mouseover.native="isMini = false"
-            @mouseout.native="isMini = true"
             fixed
             left
             clipped
             app
             permanent
+            @mouseover.native="isMini = false"
+            @mouseout.native="isMini = true"
         >
             <v-list>
                 <template v-for="item in items">

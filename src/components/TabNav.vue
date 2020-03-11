@@ -4,15 +4,15 @@
         v-model="activeTab"
     >
         <v-tab
-            class="color border-bottom-table-header"
-            :to="route.path"
             v-for="route in tabRoutesFilter"
             :key="route.path"
+            class="color border-bottom-table-header"
+            :to="route.path"
         >
             {{ route.name }}
         </v-tab>
-        <v-tabs-items class="pt-5" v-model="activeTab">
-            <v-tab-item v-for="route in tabRoutesFilter" :key="route.name" :id="route.path">
+        <v-tabs-items v-model="activeTab" class="pt-5">
+            <v-tab-item v-for="route in tabRoutesFilter" :id="route.path" :key="route.name">
                 <router-view v-if="activeTab === route.path" />
             </v-tab-item>
         </v-tabs-items>
@@ -23,32 +23,32 @@
 </template>
 
 <script>
-import store from 'store';
-import Layouts from 'layouts';
-import { mapGetters } from 'vuex';
-import SearchToCreate from 'components/SearchToCreate';
-import { routes } from 'router/routes';
+    import store from 'store';
+    import Layouts from 'layouts';
+    import { mapGetters } from 'vuex';
+    import SearchToCreate from 'components/SearchToCreate';
+    import { routes } from 'router/routes';
 
-export default {
-    name: 'TabNav',
-    props: {
-        tabRoutes: Array,
-    },
-    data() {
-        return {
-            activeTab: '/dashboard/services',
-        };
-    },
-    computed: {
-        ...mapGetters(['searchKeyWord']),
-        currentPath() {
-            return this.$route.path;
+    export default {
+        name: 'TabNav',
+        props: {
+            tabRoutes: Array,
         },
-        tabRoutesFilter() {
-            let self = this;
-            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
-            return filteredData;
+        data() {
+            return {
+                activeTab: '/dashboard/services',
+            };
         },
-    },
-};
+        computed: {
+            ...mapGetters(['searchKeyWord']),
+            currentPath() {
+                return this.$route.path;
+            },
+            tabRoutesFilter() {
+                let self = this;
+                let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
+                return filteredData;
+            },
+        },
+    };
 </script>

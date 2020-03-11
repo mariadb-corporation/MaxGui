@@ -5,19 +5,19 @@
                 <h3>Attributes</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.attributes"
-                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
+                    :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
                     :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
-            <v-col cols="12" v-if="!isEmpty(getCurrentService.relationships)">
+            <v-col v-if="!isEmpty(getCurrentService.relationships)" cols="12">
                 <h3>Relationships</h3>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.relationships"
-                    :hasChild="$help.hasChild(value)"
                     :key="propertyName"
+                    :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
                     :value="$help.handleNull(value)"
                     :child="$help.hasChild(value) ? value : {}"
@@ -33,7 +33,7 @@ import { mapGetters } from 'vuex';
 import { isEmpty, cloneDeep } from 'lodash';
 
 export default {
-    name: 'service-read',
+    name: 'ServiceRead',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },

@@ -1,6 +1,6 @@
 <template>
     <th>
-        <v-select :items="headers" v-model="selectItem" name="header" label="SORT BY" id="header">
+        <v-select id="header" v-model="selectItem" :items="headers" name="header" label="SORT BY">
             <template v-slot:selection="{ item }">
                 <v-chip small class="text-capitalize" :class="[item.sortable !== false ? 'sortable' : '']">
                     <span>{{ item.text }}</span>
@@ -13,7 +13,7 @@
 
 <script>
 export default {
-    name: 'data-table-header-mobile',
+    name: 'DataTableHeaderMobile',
     props: {
         items: Array,
     },

@@ -1,5 +1,5 @@
 <template>
-    <v-card :outlined="darkTheme" :dark="darkTheme">
+    <v-card class="v-card-custom" :outlined="darkTheme" :dark="darkTheme">
         <data-table
             :headers="tableHeaders"
             :data="tableRows"
@@ -27,92 +27,90 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-// import ServiceCreate from './ServiceCreate';
-import ServiceUpdate from './ServiceUpdate';
-import ServiceRead from './ServiceRead';
-import DeleteModal from 'components/DeleteModal';
+    import { mapGetters, mapActions } from 'vuex';
+    import ServiceUpdate from './ServiceUpdate';
+    import ServiceRead from './ServiceRead';
+    import DeleteModal from 'components/DeleteModal';
 
-export default {
-    name: 'services-table',
-    components: {
-        // ServiceCreate,
-        ServiceRead,
-        ServiceUpdate,
-        DeleteModal,
-    },
-    props: {
-        servicesData: Array,
-    },
-    data() {
-        return {
-            //State
-            search: '',
-            expanded: [],
-            tableHeaders: [
-                { text: 'Service', value: 'id' },
-                { text: 'Router', value: 'router' },
-                { text: 'Connections', value: 'connections' },
-                { text: 'Total Connections', value: 'total_connections' },
-                { text: 'Servers', value: 'servers' },
-                { text: 'Actions', align: 'center', value: '', sortable: false },
-            ],
-            tableRows: [],
-        };
-    },
-
-    computed: {
-        ...mapGetters(['darkTheme']),
-    },
-    watch: {
-        servicesData: function(newVal, oldVal) {
-            this.generateTableRows(newVal);
+    export default {
+        name: 'ServicesTable',
+        components: {
+            ServiceRead,
+            ServiceUpdate,
+            DeleteModal,
         },
-    },
-    methods: {
-        ...mapActions(['deleteServiceById']),
+        props: {
+            servicesData: Array,
+        },
+        data() {
+            return {
+                //State
+                search: '',
+                expanded: [],
+                tableHeaders: [
+                    { text: 'Service', value: 'id' },
+                    { text: 'Router', value: 'router' },
+                    { text: 'Connections', value: 'connections' },
+                    { text: 'Total Connections', value: 'total_connections' },
+                    { text: 'Servers', value: 'servers' },
+                    { text: 'Actions', align: 'center', value: '', sortable: false },
+                ],
+                tableRows: [],
+            };
+        },
 
-        /**
-         * @return {Array} An array of objects
-         */
-        generateTableRows: function(servicesData) {
+        computed: {
+            ...mapGetters(['darkTheme']),
+        },
+        watch: {
+            servicesData: function(newVal, oldVal) {
+                this.generateTableRows(newVal);
+            },
+        },
+        methods: {
+            ...mapActions(['deleteServiceById']),
+
             /**
-             * @param {Array} itemsArr
-             *  Elements are {Object} row
+             * @return {Array} An array of objects
              */
-            if (servicesData) {
-                let itemsArr = [];
-                for (let n = 0; n < servicesData.length; n++) {
-                    /**
-                     * @typedef {Object} row
-                     * @property {String} row.id - Service's name
-                     * @property {String} row.router - Server's address
-                     * @property {Number} row.total_connections - Server's address
-                     * @property {Number} row.connections - Number of connections to the server
-                     * @property {Array} row,servers - Server's state
-                     */
-                    const {
-                        id,
-                        attributes: { router, connections, total_connections },
-                        relationships: { servers: { data: serversData = [] } = {} },
-                    } = servicesData[n] || {};
+            generateTableRows: function(servicesData) {
+                /**
+                 * @param {Array} itemsArr
+                 *  Elements are {Object} row
+                 */
+                if (servicesData) {
+                    let itemsArr = [];
+                    for (let n = 0; n < servicesData.length; n++) {
+                        /**
+                         * @typedef {Object} row
+                         * @property {String} row.id - Service's name
+                         * @property {String} row.router - Server's address
+                         * @property {Number} row.total_connections - Server's address
+                         * @property {Number} row.connections - Number of connections to the server
+                         * @property {Array} row,servers - Server's state
+                         */
+                        const {
+                            id,
+                            attributes: { router, connections, total_connections },
+                            relationships: { servers: { data: serversData = [] } = {} },
+                        } = servicesData[n] || {};
 
-                    let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
-                    let row = {
-                        id: id,
-                        router: router,
-                        connections: connections,
-                        total_connections: total_connections,
-                        servers: serversList.toString(),
-                    };
-                    itemsArr.push(row);
+                        let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
+                        let row = {
+                            id: id,
+                            router: router,
+                            connections: connections,
+                            total_connections: total_connections,
+                            servers: serversList.toString(),
+                        };
+                        itemsArr.push(row);
+                    }
+                    return (this.tableRows = itemsArr);
                 }
-                return (this.tableRows = itemsArr);
-            }
-            return [];
+                return [];
+            },
         },
-    },
-};
+    };
 </script>
 
 <style lang="scss" scoped></style>

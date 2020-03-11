@@ -3,53 +3,47 @@
         <!-- Dialog activator -->
         <v-tooltip top>
             <template v-slot:activator="{ on }">
-                <v-btn v-on="on" @click="dialog = true" icon color="primary">
+                <v-btn icon color="primary" v-on="on" @click="dialog = true">
                     <v-icon size="16">$vuetify.icons.edit</v-icon>
                 </v-btn>
             </template>
             <span>Service Update</span>
         </v-tooltip>
 
-        <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="800px">
+        <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="890px">
             <template v-slot:title>
-                <span class="headline">Add a service</span>
+                <h3>Update service</h3>
             </template>
             <template v-slot:body>
-                <v-card-text>
+                <fragment>
                     <v-container>
                         <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleUpdate()">
                             <v-row>
                                 <v-col xs="12" sm="6">
-                                    <v-text-field
-                                        label="Name of the service*"
-                                        id="id"
-                                        v-model="item.id"
-                                        name="id"
-                                        disabled
-                                    ></v-text-field>
+                                    <v-text-field id="id" v-model="item.id" label="Name of the service*" name="id" disabled></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col id="router" sm="6" md="4">
                                     <v-select
-                                        :items="routing_module"
+                                        id="router"
                                         v-model="router"
+                                        :items="routing_module"
                                         name="router"
                                         label="The router module to use*"
-                                        id="router"
                                         disabled
                                     />
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="12">
-                                    <h3>Parameters configurations</h3>
+                                    <h5>Parameters configurations</h5>
                                 </v-col>
                                 <v-col sm="6" md="4">
                                     <v-text-field
-                                        label="The user to be*"
                                         id="user"
                                         v-model.trim="parameters.user"
+                                        label="The user to be*"
                                         :rules="serviceObjRules.user"
                                         name="user"
                                         required
@@ -57,9 +51,9 @@
                                 </v-col>
                                 <v-col sm="6" md="4">
                                     <v-text-field
-                                        label="The password to use*"
                                         id="password"
                                         v-model.trim="parameters.password"
+                                        label="The password to use*"
                                         :rules="serviceObjRules.password"
                                         name="password"
                                         required
@@ -68,29 +62,23 @@
                             </v-row>
 
                             <v-row>
-                                <v-col xs="12">
-                                    <h3>Relationships configurations</h3>
+                                <v-col cols="12">
+                                    <h5>Relationships configurations</h5>
                                 </v-col>
                                 <v-col xs="12" sm="6">
                                     <v-btn color="primary" x-small @click="addRelationshipType('filters')">
                                         Add filter
                                     </v-btn>
-                                    <div class="scrollable-input-div" v-if="relationships.filters.data.length">
-                                        <div v-for="(item, i) in relationships.filters.data" :key="i">
-                                            <v-btn
-                                                class="delete"
-                                                right
-                                                icon
-                                                x-small
-                                                @click="deleteRelationshipType('filters', item.id)"
-                                            >
+                                    <div v-if="relationships.filters.data.length" class="scrollable-input-div">
+                                        <div v-for="(filter, i) in relationships.filters.data" :key="i">
+                                            <v-btn class="delete" right icon x-small @click="deleteRelationshipType('filters', filter.id)">
                                                 <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
+                                                id="filter_id"
+                                                v-model="filter.id"
                                                 class="input_height_prefix"
                                                 label="filter name"
-                                                id="filter_id"
-                                                v-model="item.id"
                                                 name="filter_id"
                                                 dense
                                                 outlined
@@ -104,22 +92,17 @@
                                     <v-btn color="primary" x-small @click="addRelationshipType('servers')">
                                         Add server
                                     </v-btn>
-                                    <div class="scrollable-input-div" v-if="relationships.servers.data.length">
-                                        <div v-for="(item, i) in relationships.servers.data" :key="i">
-                                            <v-btn
-                                                class="delete"
-                                                icon
-                                                x-small
-                                                @click="deleteRelationshipType('servers', item.id)"
-                                            >
+                                    <div v-if="relationships.servers.data.length" class="scrollable-input-div">
+                                        <div v-for="(server, i) in relationships.servers.data" :key="i">
+                                            <v-btn class="delete" icon x-small @click="deleteRelationshipType('servers', server.id)">
                                                 <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
+                                                id="server_id"
+                                                v-model="server.id"
                                                 class="input_height_prefix"
                                                 dense
                                                 label="server name"
-                                                id="server_id"
-                                                v-model="item.id"
                                                 name="server_id"
                                                 :rules="serviceObjRules.server_id"
                                                 outlined
@@ -131,16 +114,14 @@
                             </v-row>
                         </v-form>
                     </v-container>
-                    <small
-                        >Empty value in non-required fileds will be treated as null. *indicates required field.
-                    </small>
-                </v-card-text>
+                    <small>Empty value in non-required fileds will be treated as null. *indicates required field. </small>
+                </fragment>
             </template>
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="blue darken-1" text @click="cancel" depressed>
+                <v-btn color="primary" class="px-5 text-capitalize" rounded outlined depressed @click="cancel">
                     Cancel
                 </v-btn>
-                <v-btn color="red" :disabled="!isValid" text @click="save" depressed>
+                <v-btn color="primary" class="px-5 text-capitalize" rounded depressed @click="save">
                     Update
                 </v-btn>
             </template>
@@ -151,7 +132,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 export default {
-    name: 'service-update',
+    name: 'ServiceUpdate',
     props: {
         item: Object,
     },
@@ -233,14 +214,10 @@ export default {
         deleteRelationshipType(type, targetId) {
             switch (type) {
                 case 'filters':
-                    this.relationships.filters.data = this.relationships.filters.data.filter(
-                        item => item.id !== targetId
-                    );
+                    this.relationships.filters.data = this.relationships.filters.data.filter(item => item.id !== targetId);
                     break;
                 case 'servers':
-                    this.relationships.servers.data = this.relationships.servers.data.filter(
-                        item => item.id !== targetId
-                    );
+                    this.relationships.servers.data = this.relationships.servers.data.filter(item => item.id !== targetId);
                     break;
             }
         },

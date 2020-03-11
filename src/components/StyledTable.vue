@@ -14,7 +14,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
-    name: 'styled-table',
+    name: 'StyledTable',
 
     props: {
         data: Array,

@@ -9,7 +9,7 @@ import LineChart from 'components/LineChart.vue';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
-    name: 'threads-chart-container',
+    name: 'ThreadsChartContainer',
     components: {
         'line-chart': LineChart,
     },

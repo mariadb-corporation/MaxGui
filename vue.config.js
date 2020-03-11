@@ -12,7 +12,7 @@ module.exports = {
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },
-        devServer: { port: 8000 },
+        devServer: { progress: false, port: 8000 },
     },
 
     // css: {

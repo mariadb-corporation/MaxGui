@@ -1,21 +1,22 @@
 <template>
-    <v-dialog content-class="base-dialog" v-model="computeShowDialog" :max-width="maxWidth">
-        <v-card :outlined="darkTheme" :dark="darkTheme">
-            <v-card-title> 
-                <v-btn class="close" @click="cancel" icon>
-                    <v-icon size="20" color="#eb5757">close</v-icon>
+    <v-dialog v-model="computeShowDialog" content-class="base-dialog" :max-width="maxWidth">
+        <v-card class="v-card-custom" :outlined="darkTheme" :dark="darkTheme">
+            <v-card-title class="px-12 pt-10 pb-7">
+                <v-btn class="close" icon @click="cancel">
+                    <v-icon size="18"> $vuetify.icons.close</v-icon>
                 </v-btn>
-
                 <slot name="title"> </slot>
             </v-card-title>
-            <slot name="body"> </slot>
-            <v-card-actions class="border-top-primary">
+            <v-card-text class="px-12 pb-7">
+                <slot name="body"></slot>
+            </v-card-text>
+            <v-card-actions class="px-12 pt-7 pb-8 color border-top-reflection">
                 <v-spacer></v-spacer>
                 <slot name="actions" :cancel="cancel" :save="save">
-                    <v-btn class="cancel" color="primary" outlined @click="cancel" depressed>
+                    <v-btn class="cancel" color="primary" outlined depressed @click="cancel">
                         Cancel
                     </v-btn>
-                    <v-btn class="save" color="primary" @click="save" depressed>
+                    <v-btn class="save" color="primary" depressed @click="save">
                         Save
                     </v-btn>
                 </slot>
@@ -25,58 +26,58 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+    import { mapGetters } from 'vuex';
 
-export default {
-    name: 'base-dialog',
-    props: {
-        maxWidth: String,
-        value: Boolean,
-        onCancel: Function,
-        onSave: Function,
-    },
-    data() {
-        return {
-            show: false,
-        };
-    },
-    computed: {
-        ...mapGetters(['darkTheme']),
-        computeShowDialog: {
-            // get value from props
-            get() {
-                return this.value;
+    export default {
+        name: 'BaseDialog',
+        props: {
+            maxWidth: String,
+            value: Boolean,
+            onCancel: Function,
+            onSave: Function,
+        },
+        data() {
+            return {
+                show: false,
+            };
+        },
+        computed: {
+            ...mapGetters(['darkTheme']),
+            computeShowDialog: {
+                // get value from props
+                get() {
+                    return this.value;
+                },
+                // set the value to show property in data
+                set(value) {
+                    this.show = value;
+                    if (value === false) {
+                        this.cancel();
+                    }
+                },
             },
-            // set the value to show property in data
-            set(value) {
-                this.show = value;
-                if (value === false) {
-                    this.cancel();
-                }
+        },
+
+        methods: {
+            cancel() {
+                this.onCancel && this.onCancel();
+
+                // unit event testing
+                this.$emit('cancelClick', false);
+            },
+            save() {
+                this.onSave && this.onSave();
             },
         },
-    },
-
-    methods: {
-        cancel() {
-            this.onCancel && this.onCancel();
-
-            // unit event testing
-            this.$emit('cancelClick', false);
-        },
-        save() {
-            this.onSave && this.onSave();
-        },
-    },
-};
+    };
 </script>
 
 <style lang="scss" scoped>
-.base-dialog {
-    .close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
+    .base-dialog {
+        .close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+        }
     }
-}
 </style>

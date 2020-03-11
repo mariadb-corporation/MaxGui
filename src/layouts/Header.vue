@@ -11,7 +11,7 @@
 
         <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
             <template v-slot:activator="{ on }">
-                <v-btn class="mr-0" v-on="on" text tile>
+                <v-btn class="mr-0" text tile v-on="on">
                     <v-icon class="user-icon mr-1 white--text" style="width:30px" size="30">
                         $vuetify.icons.user
                     </v-icon>
