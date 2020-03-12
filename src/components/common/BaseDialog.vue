@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="computeShowDialog" :max-width="maxWidth" content-class="base-dialog">
         <v-card :outlined="darkTheme" :dark="darkTheme" class="v-card-custom">
-            <v-card-title class="px-12 pt-10 pb-7">
+            <v-card-title class="px-12 pt-10 pb-5">
                 <v-btn class="close" icon @click="cancel">
                     <v-icon size="18"> $vuetify.icons.close</v-icon>
                 </v-btn>

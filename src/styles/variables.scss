@@ -96,7 +96,7 @@ $headings: (
 );
 $code-color: #525a65 !important;
 // override v-card
-$card-text-font-size: map-deep-get($headings, 'subtitle-1', 'size');
+$card-text-font-size: map-deep-get($headings, 'subtitle-2', 'size');
 $card-text-line-height: 1.125rem;
 @import '~vuetify/src/components/VBtn/variables';
 

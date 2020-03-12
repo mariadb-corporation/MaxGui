@@ -18,7 +18,7 @@
             maxWidth="470px"
         >
             <template v-slot:title>
-                <h3>{{ title }}</h3>
+                <h3 class="color text-navigation font-weight-light">{{ title }}</h3>
             </template>
 
             <template v-slot:body>
@@ -32,6 +32,7 @@
 
             <template v-slot:actions="{ cancel, save }">
                 <v-btn
+                    small
                     color="primary"
                     class="px-5 text-capitalize"
                     rounded
@@ -41,7 +42,14 @@
                 >
                     Cancel
                 </v-btn>
-                <v-btn color="primary" class="px-5 text-capitalize" rounded depressed @click="save">
+                <v-btn
+                    small
+                    color="primary"
+                    class="px-5 text-capitalize"
+                    rounded
+                    depressed
+                    @click="save"
+                >
                     Delete
                 </v-btn>
             </template>

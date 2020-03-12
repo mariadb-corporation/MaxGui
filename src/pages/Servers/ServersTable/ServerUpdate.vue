@@ -16,11 +16,11 @@
             maxWidth="800px"
         >
             <template v-slot:title>
-                <span class="headline">Update server</span>
+                <h3>Update server</h3>
             </template>
             <template v-slot:body>
-                <v-card-text>
-                    <v-container>
+                <fragment>
+                    <v-container class="pa-0">
                         <v-form
                             ref="form"
                             v-model="isValid"
@@ -38,7 +38,7 @@
                                     />
                                 </v-col>
                             </v-row>
-                            <h3>Parameters Update</h3>
+                            <h5>Parameters Update</h5>
 
                             <v-row>
                                 <v-col v-if="parameters.address" id="addressCol" sm="6" md="4">
@@ -79,7 +79,7 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="12">
-                                    <h3>Relationships configurations</h3>
+                                    <h5>Relationships configurations</h5>
                                 </v-col>
                                 <v-col xs="12" sm="6">
                                     <v-btn
@@ -161,13 +161,28 @@
                             </v-row>
                         </v-form>
                     </v-container>
-                </v-card-text>
+                </fragment>
             </template>
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="blue darken-1" text depressed @click="cancel">
+                <v-btn
+                    small
+                    color="primary"
+                    class="px-5 text-capitalize"
+                    rounded
+                    outlined
+                    depressed
+                    @click="cancel"
+                >
                     Cancel
                 </v-btn>
-                <v-btn :disabled="!isValid" color="red" text depressed @click="save">
+                <v-btn
+                    small
+                    color="primary"
+                    class="px-5 text-capitalize"
+                    rounded
+                    depressed
+                    @click="save"
+                >
                     Update
                 </v-btn>
             </template>

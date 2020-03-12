@@ -203,10 +203,25 @@
             </fragment>
         </template>
         <template v-slot:actions="{ cancel, save }">
-            <v-btn small color="blue darken-1" text depressed @click="cancel">
+            <v-btn
+                small
+                color="primary"
+                class="px-5 text-capitalize"
+                rounded
+                outlined
+                depressed
+                @click="cancel"
+            >
                 Cancel
             </v-btn>
-            <v-btn small color="red" text depressed @click="save">
+            <v-btn
+                small
+                color="primary"
+                class="px-5 text-capitalize"
+                rounded
+                depressed
+                @click="save"
+            >
                 Add
             </v-btn>
         </template>
