@@ -2,7 +2,7 @@
     <v-container v-if="getCurrentService" class="">
         <v-row justify="center">
             <v-col cols="12">
-                <h3>Attributes</h3>
+                <h5>Attributes</h5>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.attributes"
                     :key="propertyName"
@@ -13,7 +13,7 @@
                 />
             </v-col>
             <v-col v-if="!isEmpty(getCurrentService.relationships)" cols="12">
-                <h3>Relationships</h3>
+                <h5>Relationships</h5>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentService.relationships"
                     :key="propertyName"
@@ -62,7 +62,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h3 {
+h5 {
     text-align: center;
     margin-bottom: 20px;
 }

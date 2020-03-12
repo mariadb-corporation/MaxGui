@@ -1,7 +1,7 @@
 <style lang="scss" scoped>
-    path {
-        fill: currentColor;
-    }
+path {
+    fill: currentColor;
+}
 </style>
 
 <template>
@@ -38,11 +38,6 @@
             x1="15.1348"
             style="stroke:#f59d34;stroke-width:1.38255644"
         />
-        <circle
-            cy="15.5"
-            cx="14.9617"
-            r="0.57692301"
-            style="fill:#ffffff;stroke-width:0.8495388"
-        />
+        <circle cy="15.5" cx="14.9617" r="0.57692301" style="fill:#ffffff;stroke-width:0.8495388" />
     </svg>
 </template>

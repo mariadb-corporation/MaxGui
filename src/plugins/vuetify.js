@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib'
+import Vuetify from 'vuetify/lib';
 import icons from 'icons';
 Vue.use(Vuetify);
 

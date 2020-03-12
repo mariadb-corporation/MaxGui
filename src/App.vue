@@ -5,7 +5,11 @@
         <snackbars v-if="user && user.token" />
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
-                <search-to-create :isTabRoute="checkIsTabRoute()" :currentRoute="currentRoute" :tabRoutes="tabRoutes" />
+                <search-to-create
+                    :isTabRoute="checkIsTabRoute()"
+                    :currentRoute="currentRoute"
+                    :tabRoutes="tabRoutes"
+                />
                 <h1 class="text-navigation display-1 text-capitalize page-title">
                     {{ currentRoute }}
                 </h1>

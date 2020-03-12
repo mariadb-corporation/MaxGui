@@ -1,11 +1,11 @@
 <template>
     <div>
         <v-navigation-drawer
+            :mini-variant.sync="isMini"
             color="#424F62"
             class="main-nav"
             width="200"
             mini-variant-width="50"
-            :mini-variant.sync="isMini"
             fixed
             left
             clipped
@@ -25,13 +25,17 @@
                             <v-icon :size="item.size" color="white">{{ item.icon }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title style="color: white;">{{ item.title }}</v-list-item-title>
+                            <v-list-item-title style=" font-size: 0.875rem; color: white;">{{
+                                item.title
+                            }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider :key="`divider-${item.title}`"></v-divider>
                 </template>
             </v-list>
-            <div class="version caption text-center font-weight-bold white--text">{{ version }}</div>
+            <div class="version caption text-center font-weight-bold white--text">
+                {{ version }}
+            </div>
         </v-navigation-drawer>
     </div>
 </template>

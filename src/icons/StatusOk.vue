@@ -1,14 +1,11 @@
 <style lang="scss" scoped>
-    path {
-        fill: currentColor;
-    }
+path {
+    fill: currentColor;
+}
 </style>
 
 <template>
-    <svg
-        viewBox="0 0 13 13"
-        fill="none"
-    >
+    <svg viewBox="0 0 13 13" fill="none">
         <path
             fill-rule="evenodd"
             clip-rule="evenodd"

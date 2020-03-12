@@ -20,7 +20,7 @@ body,
 .v-content-padding {
     padding: 35px;
 }
-// --------------------------------- Vuetify custom restyle ----------------------------------
+// --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 .data-table-full {
     a:hover {
         text-decoration: underline;
@@ -171,4 +171,79 @@ input:-webkit-autofill:active {
     .v-input--selection-controls__input {
         margin-right: 0;
     }
+}
+
+// for create/update modal
+.input-div-wrapper {
+    padding: 10px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    .delete {
+        left: 100%;
+        transform: translateX(-100%);
+    }
+}
+.input_height_prefix {
+    padding: 0px 10px !important;
+    .v-input__control {
+        max-height: auto !important;
+        .v-text-field__details {
+            margin-bottom: 0px !important;
+        }
+    }
+}
+
+//-------------------------------------------------Typography
+h1 {
+    font-size: map-deep-get($headings, 'h1', 'size');
+    font-family: map-deep-get($headings, 'h1', 'font');
+    font-weight: map-deep-get($headings, 'h1', 'weight');
+    line-height: map-deep-get($headings, 'h1', 'line-height');
+    color: $navigation;
+}
+
+h2 {
+    font-size: map-deep-get($headings, 'h2', 'size');
+    font-family: map-deep-get($headings, 'h2', 'font');
+    font-weight: map-deep-get($headings, 'h2', 'weight');
+    line-height: map-deep-get($headings, 'h2', 'line-height');
+    color: $blue-azure;
+}
+
+h3 {
+    font-size: map-deep-get($headings, 'h3', 'size');
+    font-family: map-deep-get($headings, 'h3', 'font');
+    font-weight: map-deep-get($headings, 'h3', 'weight');
+    line-height: map-deep-get($headings, 'h3', 'line-height');
+    color: $deep-ocean;
+}
+
+h4 {
+    font-size: map-deep-get($headings, 'h4', 'size');
+    font-family: map-deep-get($headings, 'h4', 'font');
+    font-weight: map-deep-get($headings, 'h4', 'weight');
+    line-height: map-deep-get($headings, 'h4', 'line-height');
+    color: $accent;
+}
+
+h5 {
+    font-size: map-deep-get($headings, 'h5', 'size');
+    font-family: map-deep-get($headings, 'h5', 'font');
+    font-weight: map-deep-get($headings, 'h5', 'weight');
+    line-height: map-deep-get($headings, 'h5', 'line-height');
+    color: $accent;
+}
+
+h6 {
+    font-size: map-deep-get($headings, 'h6', 'size');
+    font-family: map-deep-get($headings, 'h6', 'font');
+    font-weight: map-deep-get($headings, 'h6', 'weight');
+    line-height: map-deep-get($headings, 'h6', 'line-height');
+    color: $deep-ocean;
+}
+
+//--------------------------------------------------v-card
+
+.v-card.v-card-custom {
+    box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e3e6ea !important;
 }

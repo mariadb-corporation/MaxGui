@@ -1,5 +1,11 @@
 <template>
-    <v-expansion-panels :class="[hasChild ? '' : 'no-pointer']" :dark="darkTheme" :readonly="!hasChild" accordion tile>
+    <v-expansion-panels
+        :class="[hasChild ? '' : 'no-pointer']"
+        :dark="darkTheme"
+        :readonly="!hasChild"
+        accordion
+        tile
+    >
         <v-expansion-panel>
             <v-expansion-panel-header v-if="propertyName !== 'links'" :ripple="hasChild">
                 <b>{{ propertyName }}</b>
@@ -11,7 +17,10 @@
                 </template>
             </v-expansion-panel-header>
 
-            <v-expansion-panel-content v-if="$help.hasChild(child)" class="v-expansion-panel-content__scrollable">
+            <v-expansion-panel-content
+                v-if="$help.hasChild(child)"
+                class="v-expansion-panel-content__scrollable"
+            >
                 <template v-if="childIsObj(child) || propertyName === 'listeners'">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"

@@ -11,7 +11,12 @@
             </template>
             <span>Delete</span>
         </v-tooltip>
-        <base-dialog v-model="deleteDialog" :onCancel="() => (deleteDialog = false)" :onSave="handleDelete" maxWidth="470px">
+        <base-dialog
+            v-model="deleteDialog"
+            :onCancel="() => (deleteDialog = false)"
+            :onSave="handleDelete"
+            maxWidth="470px"
+        >
             <template v-slot:title>
                 <h3>{{ title }}</h3>
             </template>
@@ -26,7 +31,14 @@
             </template>
 
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="primary" class="px-5 text-capitalize" rounded outlined depressed @click="cancel">
+                <v-btn
+                    color="primary"
+                    class="px-5 text-capitalize"
+                    rounded
+                    outlined
+                    depressed
+                    @click="cancel"
+                >
                     Cancel
                 </v-btn>
                 <v-btn color="primary" class="px-5 text-capitalize" rounded depressed @click="save">
@@ -38,24 +50,24 @@
 </template>
 
 <script>
-    export default {
-        name: 'DeleteModal',
-        props: {
-            title: String,
-            item: Object,
-            dispatchDelete: Function,
-            smallInfo: String,
+export default {
+    name: 'DeleteModal',
+    props: {
+        title: String,
+        item: Object,
+        dispatchDelete: Function,
+        smallInfo: String,
+    },
+    data() {
+        return {
+            deleteDialog: false,
+        };
+    },
+    methods: {
+        handleDelete() {
+            this.deleteDialog = false;
+            this.dispatchDelete(this.item.id);
         },
-        data() {
-            return {
-                deleteDialog: false,
-            };
-        },
-        methods: {
-            handleDelete() {
-                this.deleteDialog = false;
-                this.dispatchDelete(this.item.id);
-            },
-        },
-    };
+    },
+};
 </script>

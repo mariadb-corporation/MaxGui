@@ -2,7 +2,11 @@
     <th>
         <v-select id="header" v-model="selectItem" :items="headers" name="header" label="SORT BY">
             <template v-slot:selection="{ item }">
-                <v-chip small class="text-capitalize" :class="[item.sortable !== false ? 'sortable' : '']">
+                <v-chip
+                    :class="[item.sortable !== false ? 'sortable' : '']"
+                    class="text-capitalize"
+                    small
+                >
                     <span>{{ item.text }}</span>
                     <v-icon size="7" class="ml-2">$vuetify.icons.arrowDown</v-icon>
                 </v-chip>
@@ -26,7 +30,9 @@ export default {
     },
     computed: {
         headers() {
-            return this.items.filter(item => item.sortable !== false && { text: item.text, value: item.value });
+            return this.items.filter(
+                item => item.sortable !== false && { text: item.text, value: item.value }
+            );
         },
     },
     watch: {

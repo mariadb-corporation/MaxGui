@@ -1,7 +1,7 @@
 <style lang="scss" scoped>
-    path {
-        fill: currentColor;
-    }
+path {
+    fill: currentColor;
+}
 </style>
 
 <template>

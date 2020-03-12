@@ -14,16 +14,29 @@
                 single-line
                 hide-details
                 rounded
-                @click.native.stop
+                @keyup.enter="create"
             >
                 <v-icon slot="append" size="16">$vuetify.icons.search</v-icon>
             </v-text-field>
             <v-spacer />
-            <v-btn outlined rounded color="accent" class="text-capitalize" :disabled="isBtnDisabled" depressed @click.stop="create">
+            <v-btn
+                :disabled="isBtnDisabled"
+                outlined
+                rounded
+                color="accent"
+                class="text-capitalize"
+                depressed
+                small
+                @click.native="create"
+            >
                 + Create New
             </v-btn>
         </div>
-        <service-create v-model="serviceDialog" mode="create" :close-modal="() => (serviceDialog = false)" />
+        <service-create
+            v-model="serviceDialog"
+            :close-modal="() => (serviceDialog = false)"
+            mode="create"
+        />
         <server-create v-model="serverDialog" :close-modal="() => (serverDialog = false)" />
     </fragment>
 </template>
@@ -62,7 +75,8 @@ export default {
             this.setSearchKeyWord(keyword);
         },
         searchKeyWord: function(newVal) {
-            // Display create button when the current route belongs to tabRoute, when search keyword is empty, currentRoute is
+            /*Display create button when the current route belongs to tabRoute, 
+            when search keyword is empty, currentRoute is */
             if (newVal === '' && this.isTabRoute) {
                 this.isBtnDisabled = false;
             } else {
@@ -72,10 +86,16 @@ export default {
         currentRoute: function(newRoute) {
             this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newRoute);
         },
+        $route: function(to, from) {
+            // Clear local search and global search state when route changes
+            this.search = '';
+            this.setSearchKeyWord('');
+        },
     },
     created() {
         this.isBtnDisabled = this.isKeyWordMatchTabRoutes(this.currentRoute);
     },
+
     methods: {
         ...mapMutations(['setSearchKeyWord']),
         create() {

@@ -1,8 +1,8 @@
 <style lang="scss" scoped>
-    path {
-        fill: currentColor;
-        stroke: currentColor;
-    }
+path {
+    fill: currentColor;
+    stroke: currentColor;
+}
 </style>
 
 <template>

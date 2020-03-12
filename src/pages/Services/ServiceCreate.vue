@@ -1,19 +1,28 @@
 <template>
-    <base-dialog v-model="computeShowDialog" :onCancel="closeModal" :onSave="handleSave" maxWidth="890px">
+    <base-dialog
+        v-model="computeShowDialog"
+        :onCancel="closeModal"
+        :onSave="handleSave"
+        maxWidth="890px"
+    >
         <template v-slot:title>
             <h3>{{ modalTitle }}service</h3>
         </template>
         <template v-slot:body>
             <fragment>
-                <v-container>
-                    <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleSave()">
+                <v-container class="pa-0">
+                    <v-form
+                        ref="form"
+                        v-model="isValid"
+                        @keyup.native.enter="isValid && handleSave()"
+                    >
                         <v-row>
                             <v-col xs="12" sm="6">
                                 <v-text-field
                                     id="id"
                                     v-model="serviceId"
-                                    label="Name of the service*"
                                     :rules="serviceObjRules.id"
+                                    label="Name of the service*"
                                     name="id"
                                     autofocus
                                     required
@@ -27,9 +36,9 @@
                                     id="router"
                                     v-model="router"
                                     :items="routing_module"
+                                    :rules="serviceObjRules.router"
                                     name="router"
                                     label="The router module to use*"
-                                    :rules="serviceObjRules.router"
                                     required
                                 />
                             </v-col>
@@ -42,8 +51,8 @@
                                 <v-text-field
                                     id="user"
                                     v-model.trim="parameters.user"
-                                    label="The user to be*"
                                     :rules="serviceObjRules.user"
+                                    label="The user to be*"
                                     name="user"
                                     required
                                 />
@@ -52,8 +61,8 @@
                                 <v-text-field
                                     id="password"
                                     v-model.trim="parameters.password"
-                                    label="The password to use*"
                                     :rules="serviceObjRules.password"
+                                    label="The password to use*"
                                     name="password"
                                     required
                                 />
@@ -69,12 +78,17 @@
                             <v-col
                                 v-for="(param, name) in parameters"
                                 :key="name"
+                                :style="`display:${typeof param === 'boolean' ? 'block' : 'none'}`"
                                 cols="12"
                                 sm="12"
                                 md="6"
-                                :style="`display:${typeof param === 'boolean' ? 'block' : 'none'}`"
                             >
-                                <v-checkbox v-if="typeof param === 'boolean'" v-model="parameters[name]" dense :label="`Enable ${name}`" />
+                                <v-checkbox
+                                    v-if="typeof param === 'boolean'"
+                                    v-model="parameters[name]"
+                                    :label="`Enable ${name}`"
+                                    dense
+                                />
                             </v-col>
                             <v-col sm="6" md="4">
                                 <v-text-field
@@ -130,45 +144,70 @@
                                 <h5>Relationships configurations</h5>
                             </v-col>
                             <v-col xs="12" sm="6">
-                                <v-btn color="primary" x-small @click="addRelationshipType('filters')">
+                                <v-btn
+                                    color="primary"
+                                    x-small
+                                    @click="addRelationshipType('filters')"
+                                >
                                     Add filter
                                 </v-btn>
-                                <div v-if="relationships.filters.data.length" class="scrollable-input-div">
+                                <div
+                                    v-if="relationships.filters.data.length"
+                                    class="input-div-wrapper"
+                                >
                                     <div v-for="(item, i) in relationships.filters.data" :key="i">
-                                        <v-btn class="delete" right icon x-small @click="deleteRelationshipType('filters', item.id)">
+                                        <v-btn
+                                            class="delete"
+                                            right
+                                            icon
+                                            x-small
+                                            @click="deleteRelationshipType('filters', item.id)"
+                                        >
                                             <v-icon color="red" size="16">close</v-icon>
                                         </v-btn>
                                         <v-text-field
                                             id="filter_id"
                                             v-model="item.id"
+                                            :rules="serviceObjRules.filter_id"
                                             class="input_height_prefix"
                                             label="filter name"
                                             name="filter_id"
                                             dense
                                             outlined
-                                            :rules="serviceObjRules.filter_id"
                                             required
                                         />
                                     </div>
                                 </div>
                             </v-col>
                             <v-col xs="12" sm="6">
-                                <v-btn color="primary" x-small @click="addRelationshipType('servers')">
+                                <v-btn
+                                    color="primary"
+                                    x-small
+                                    @click="addRelationshipType('servers')"
+                                >
                                     Add server
                                 </v-btn>
-                                <div v-if="relationships.servers.data.length" class="scrollable-input-div">
+                                <div
+                                    v-if="relationships.servers.data.length"
+                                    class="input-div-wrapper"
+                                >
                                     <div v-for="(item, i) in relationships.servers.data" :key="i">
-                                        <v-btn class="delete" icon x-small @click="deleteRelationshipType('servers', item.id)">
+                                        <v-btn
+                                            class="delete"
+                                            icon
+                                            x-small
+                                            @click="deleteRelationshipType('servers', item.id)"
+                                        >
                                             <v-icon color="red" size="16">close</v-icon>
                                         </v-btn>
                                         <v-text-field
                                             id="server_id"
                                             v-model="item.id"
+                                            :rules="serviceObjRules.server_id"
                                             class="input_height_prefix"
                                             dense
                                             label="server name"
                                             name="server_id"
-                                            :rules="serviceObjRules.server_id"
                                             outlined
                                             required
                                         />
@@ -179,17 +218,33 @@
                     </v-form>
                     <b>
                         <small>
-                            Empty value in non-required fileds will be treated as null. *indicates required field.
+                            Empty value in non-required fileds will be treated as null. *indicates
+                            required field.
                         </small>
                     </b>
                 </v-container>
             </fragment>
         </template>
         <template v-slot:actions="{ cancel, save }">
-            <v-btn color="primary" class="px-5 text-capitalize" rounded outlined depressed @click="cancel">
+            <v-btn
+                small
+                color="primary"
+                class="px-5 text-capitalize"
+                rounded
+                outlined
+                depressed
+                @click="cancel"
+            >
                 Cancel
             </v-btn>
-            <v-btn color="primary" class="px-5 text-capitalize" rounded depressed @click="save">
+            <v-btn
+                small
+                color="primary"
+                class="px-5 text-capitalize"
+                rounded
+                depressed
+                @click="save"
+            >
                 Add
             </v-btn>
         </template>
@@ -312,10 +367,14 @@ export default {
         deleteRelationshipType(type, targetId) {
             switch (type) {
                 case 'filters':
-                    this.relationships.filters.data = this.relationships.filters.data.filter(item => item.id !== targetId);
+                    this.relationships.filters.data = this.relationships.filters.data.filter(
+                        item => item.id !== targetId
+                    );
                     break;
                 case 'servers':
-                    this.relationships.servers.data = this.relationships.servers.data.filter(item => item.id !== targetId);
+                    this.relationships.servers.data = this.relationships.servers.data.filter(
+                        item => item.id !== targetId
+                    );
                     break;
             }
         },
@@ -324,7 +383,9 @@ export default {
             this.$refs.form.validate();
             if (this.isValid) {
                 // these parameters need to have null value if it is not set
-                this.parameters.version_string = this.$help.treatEmptyStringAsNull(this.parameters.version_string);
+                this.parameters.version_string = this.$help.treatEmptyStringAsNull(
+                    this.parameters.version_string
+                );
                 this.createOrUpdateService({
                     mode: 'post',
                     id: this.serviceId,
@@ -338,30 +399,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss">
-.server-card-add {
-    display: flex;
-    justify-content: center;
-    &__hovered {
-        box-shadow: 20px 20px #e1e1e1 !important;
-    }
-}
-.scrollable-input-div {
-    padding: 10px 10px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    .delete {
-        left: 100%;
-        transform: translateX(-100%);
-    }
-}
-.input_height_prefix {
-    padding: 0px 10px !important;
-    .v-input__control {
-        max-height: auto !important;
-        .v-text-field__details {
-            margin-bottom: 0px !important;
-        }
-    }
-}
-</style>

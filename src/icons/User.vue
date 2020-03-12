@@ -1,10 +1,10 @@
 <style lang="scss" scoped>
-    circle {
-        stroke: currentColor;
-    }
-    path {
-        fill: currentColor;
-    }
+circle {
+    stroke: currentColor;
+}
+path {
+    fill: currentColor;
+}
 </style>
 
 <template>

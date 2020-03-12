@@ -1,11 +1,11 @@
 <template v-if="data">
     <v-data-table
         :dark="darkTheme"
+        :headers="headersArr"
+        :items="itemsArr"
         dense
         hide-default-footer
         fixed-header
-        :headers="headersArr"
-        :items="itemsArr"
         item-key="name"
     />
 </template>

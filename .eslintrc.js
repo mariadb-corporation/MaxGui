@@ -13,8 +13,9 @@ module.exports = {
     },
 
     plugins: ['vue', 'vuetify'],
+
     rules: {
-        'no-console': 1,
+        'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-unused-vars': 0,
         'comma-dangle': 0,
         'no-tabs': 2,
@@ -23,8 +24,31 @@ module.exports = {
         'no-alert': 2,
         'no-eval': 2,
         camelcase: 0,
-        'max-len': 0,
-        indent: ['error', 4, { SwitchCase: 1 }],
+        'vue/max-len': [
+            'error',
+            {
+                code: 100,
+                template: 120,
+                tabWidth: 4,
+                comments: 120,
+                ignorePattern: '',
+                ignoreComments: false,
+                ignoreTrailingComments: false,
+                ignoreUrls: false,
+                ignoreStrings: false,
+                ignoreTemplateLiterals: false,
+                ignoreRegExpLiterals: false,
+                ignoreHTMLAttributeValues: true,
+                ignoreHTMLTextContents: false,
+            },
+        ],
+        indent: [
+            'error',
+            4,
+            {
+                SwitchCase: 1,
+            },
+        ],
         'vue/this-in-template': 'error',
         'vue/order-in-components': 'error',
         'vue/no-unused-components': 1,
@@ -32,7 +56,8 @@ module.exports = {
         'vuetify/no-legacy-grid': 'error',
         'vue/attribute-hyphenation': 0,
         'vue/require-default-prop': 0,
-        'vue/no-template-shadow': 0
+        'vue/no-template-shadow': 0,
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     },
 
     overrides: [
@@ -50,10 +75,11 @@ module.exports = {
         },
     ],
 
-    'extends': [
+    extends: [
         'plugin:vue/recommended',
         'eslint:recommended',
         'prettier',
         'prettier/vue',
-    ]
+        '@vue/prettier',
+    ],
 };

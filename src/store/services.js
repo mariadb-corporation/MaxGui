@@ -34,7 +34,7 @@ export default {
                 });
             }
         },
-        //--------------------------------------------------------------Service------------------------------------------------------------
+        //-----------------------------------------------Service----------------------------------------------
         /**
          * @param {Object} serviceData Service object
          * @param {String} serviceData.mode Mode to perform async request POST or Patch
@@ -111,7 +111,7 @@ export default {
                 });
             }
         },
-        //-----------------------------------------------------Listeners of the service----------------------------------------------------
+        //---------------------------------Listeners of the service-------------------------------------------
         // async fetchListenersByService({ commit, state }, serviceId) {
         //     try {
         //         let res = await Vue.axios.get(`/v1/services${serviceId}/listeners`);

@@ -1,14 +1,11 @@
 <style lang="scss" scoped>
-    path {
-        fill: currentColor;
-    }
+path {
+    fill: currentColor;
+}
 </style>
 
 <template>
-    <svg
-        viewBox="0 0 10 10"
-        style="fill:none"
-    >
+    <svg viewBox="0 0 10 10" style="fill:none">
         <path
             d="M 0.50124709,2.50209e-4 A 0.49991135,0.49987046 0 0 0 0.15368723,0.85931664 L 4.2931642,5.0004075 0.15368723,9.1395456
             a 0.49991135,0.49987046 0 1 0 0.70683521,0.706777 L 4.9999995,5.7071848 9.1394763,9.8463226 A 0.49991135,0.49987046 0 1 0

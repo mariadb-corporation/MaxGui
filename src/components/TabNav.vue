@@ -6,8 +6,8 @@
         <v-tab
             v-for="route in tabRoutesFilter"
             :key="route.path"
-            class="color border-bottom-table-header"
             :to="route.path"
+            class="color border-bottom-table-header"
         >
             {{ route.name }}
         </v-tab>
@@ -23,32 +23,32 @@
 </template>
 
 <script>
-    import store from 'store';
-    import Layouts from 'layouts';
-    import { mapGetters } from 'vuex';
-    import SearchToCreate from 'components/SearchToCreate';
-    import { routes } from 'router/routes';
+import store from 'store';
+import Layouts from 'layouts';
+import { mapGetters } from 'vuex';
+import SearchToCreate from 'components/SearchToCreate';
+import { routes } from 'router/routes';
 
-    export default {
-        name: 'TabNav',
-        props: {
-            tabRoutes: Array,
+export default {
+    name: 'TabNav',
+    props: {
+        tabRoutes: Array,
+    },
+    data() {
+        return {
+            activeTab: '/dashboard/services',
+        };
+    },
+    computed: {
+        ...mapGetters(['searchKeyWord']),
+        currentPath() {
+            return this.$route.path;
         },
-        data() {
-            return {
-                activeTab: '/dashboard/services',
-            };
+        tabRoutesFilter() {
+            let self = this;
+            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
+            return filteredData;
         },
-        computed: {
-            ...mapGetters(['searchKeyWord']),
-            currentPath() {
-                return this.$route.path;
-            },
-            tabRoutesFilter() {
-                let self = this;
-                let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
-                return filteredData;
-            },
-        },
-    };
+    },
+};
 </script>

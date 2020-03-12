@@ -10,17 +10,32 @@
             <span>Service Update</span>
         </v-tooltip>
 
-        <base-dialog v-model="dialog" :onCancel="() => (dialog = false)" :onSave="handleUpdate" maxWidth="890px">
+        <base-dialog
+            v-model="dialog"
+            :onCancel="() => (dialog = false)"
+            :onSave="handleUpdate"
+            maxWidth="890px"
+        >
             <template v-slot:title>
                 <h3>Update service</h3>
             </template>
             <template v-slot:body>
                 <fragment>
                     <v-container>
-                        <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleUpdate()">
+                        <v-form
+                            ref="form"
+                            v-model="isValid"
+                            @keyup.native.enter="isValid && handleUpdate()"
+                        >
                             <v-row>
                                 <v-col xs="12" sm="6">
-                                    <v-text-field id="id" v-model="item.id" label="Name of the service*" name="id" disabled></v-text-field>
+                                    <v-text-field
+                                        id="id"
+                                        v-model="item.id"
+                                        label="Name of the service*"
+                                        name="id"
+                                        disabled
+                                    ></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -43,8 +58,8 @@
                                     <v-text-field
                                         id="user"
                                         v-model.trim="parameters.user"
-                                        label="The user to be*"
                                         :rules="serviceObjRules.user"
+                                        label="The user to be*"
                                         name="user"
                                         required
                                     />
@@ -53,8 +68,8 @@
                                     <v-text-field
                                         id="password"
                                         v-model.trim="parameters.password"
-                                        label="The password to use*"
                                         :rules="serviceObjRules.password"
+                                        label="The password to use*"
                                         name="password"
                                         required
                                     />
@@ -66,45 +81,80 @@
                                     <h5>Relationships configurations</h5>
                                 </v-col>
                                 <v-col xs="12" sm="6">
-                                    <v-btn color="primary" x-small @click="addRelationshipType('filters')">
+                                    <v-btn
+                                        color="primary"
+                                        x-small
+                                        @click="addRelationshipType('filters')"
+                                    >
                                         Add filter
                                     </v-btn>
-                                    <div v-if="relationships.filters.data.length" class="scrollable-input-div">
-                                        <div v-for="(filter, i) in relationships.filters.data" :key="i">
-                                            <v-btn class="delete" right icon x-small @click="deleteRelationshipType('filters', filter.id)">
+                                    <div
+                                        v-if="relationships.filters.data.length"
+                                        class="input-div-wrapper"
+                                    >
+                                        <div
+                                            v-for="(filter, i) in relationships.filters.data"
+                                            :key="i"
+                                        >
+                                            <v-btn
+                                                class="delete"
+                                                right
+                                                icon
+                                                x-small
+                                                @click="
+                                                    deleteRelationshipType('filters', filter.id)
+                                                "
+                                            >
                                                 <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 id="filter_id"
                                                 v-model="filter.id"
+                                                :rules="serviceObjRules.filter_id"
                                                 class="input_height_prefix"
                                                 label="filter name"
                                                 name="filter_id"
                                                 dense
                                                 outlined
-                                                :rules="serviceObjRules.filter_id"
                                                 required
                                             />
                                         </div>
                                     </div>
                                 </v-col>
                                 <v-col xs="12" sm="6">
-                                    <v-btn color="primary" x-small @click="addRelationshipType('servers')">
+                                    <v-btn
+                                        color="primary"
+                                        x-small
+                                        @click="addRelationshipType('servers')"
+                                    >
                                         Add server
                                     </v-btn>
-                                    <div v-if="relationships.servers.data.length" class="scrollable-input-div">
-                                        <div v-for="(server, i) in relationships.servers.data" :key="i">
-                                            <v-btn class="delete" icon x-small @click="deleteRelationshipType('servers', server.id)">
+                                    <div
+                                        v-if="relationships.servers.data.length"
+                                        class="input-div-wrapper"
+                                    >
+                                        <div
+                                            v-for="(server, i) in relationships.servers.data"
+                                            :key="i"
+                                        >
+                                            <v-btn
+                                                class="delete"
+                                                icon
+                                                x-small
+                                                @click="
+                                                    deleteRelationshipType('servers', server.id)
+                                                "
+                                            >
                                                 <v-icon color="red" size="16">close</v-icon>
                                             </v-btn>
                                             <v-text-field
                                                 id="server_id"
                                                 v-model="server.id"
+                                                :rules="serviceObjRules.server_id"
                                                 class="input_height_prefix"
                                                 dense
                                                 label="server name"
                                                 name="server_id"
-                                                :rules="serviceObjRules.server_id"
                                                 outlined
                                                 required
                                             />
@@ -114,11 +164,21 @@
                             </v-row>
                         </v-form>
                     </v-container>
-                    <small>Empty value in non-required fileds will be treated as null. *indicates required field. </small>
+                    <small
+                        >Empty value in non-required fileds will be treated as null. *indicates
+                        required field.
+                    </small>
                 </fragment>
             </template>
             <template v-slot:actions="{ cancel, save }">
-                <v-btn color="primary" class="px-5 text-capitalize" rounded outlined depressed @click="cancel">
+                <v-btn
+                    color="primary"
+                    class="px-5 text-capitalize"
+                    rounded
+                    outlined
+                    depressed
+                    @click="cancel"
+                >
                     Cancel
                 </v-btn>
                 <v-btn color="primary" class="px-5 text-capitalize" rounded depressed @click="save">
@@ -214,10 +274,14 @@ export default {
         deleteRelationshipType(type, targetId) {
             switch (type) {
                 case 'filters':
-                    this.relationships.filters.data = this.relationships.filters.data.filter(item => item.id !== targetId);
+                    this.relationships.filters.data = this.relationships.filters.data.filter(
+                        item => item.id !== targetId
+                    );
                     break;
                 case 'servers':
-                    this.relationships.servers.data = this.relationships.servers.data.filter(item => item.id !== targetId);
+                    this.relationships.servers.data = this.relationships.servers.data.filter(
+                        item => item.id !== targetId
+                    );
                     break;
             }
         },
@@ -239,30 +303,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss">
-.server-card-add {
-    display: flex;
-    justify-content: center;
-    &__hovered {
-        box-shadow: 20px 20px #e1e1e1 !important;
-    }
-}
-.scrollable-input-div {
-    padding: 10px 10px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    .delete {
-        left: 100%;
-        transform: translateX(-100%);
-    }
-}
-.input_height_prefix {
-    padding: 0px 10px !important;
-    .v-input__control {
-        max-height: auto !important;
-        .v-text-field__details {
-            margin-bottom: 0px !important;
-        }
-    }
-}
-</style>
