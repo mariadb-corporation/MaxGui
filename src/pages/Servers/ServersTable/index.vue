@@ -10,32 +10,45 @@
             sortBy="id"
         >
             <template v-slot:actions="{ data: { item } }">
-                <server-update :item="item" />
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon color="primary" v-on="on" @click="handleOpenModal(item)">
+                            <v-icon size="16">$vuetify.icons.edit</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>{{ `${$t('server')} ${$t('update')}` }}</span>
+                </v-tooltip>
                 <delete-modal
                     :item="item"
                     :dispatchDelete="() => deleteServerById(item.id)"
-                    title="Delete Server"
-                    smallInfo="Make sure it is not used by any services or monitors."
+                    :title="`${$t('delete')} ${$t('server')}`"
+                    :smallInfo="$t('info.serverDeleteModal')"
                 />
             </template>
             <template v-slot:expandable="{ data: { item } }">
                 <server-read :id="item.id" />
             </template>
         </data-table>
+        <server-create-or-update
+            v-model="serverDialog"
+            :close-modal="() => (serverDialog = false)"
+            mode="patch"
+            :item="chosenItem"
+        />
     </v-card>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import DeleteModal from 'components/DeleteModal'
-import ServerUpdate from './ServerUpdate'
+import ServerCreateOrUpdate from '../ServerCreateOrUpdate'
 import ServerRead from './ServerRead'
 
 export default {
     name: 'servers-table',
     components: {
         DeleteModal,
-        ServerUpdate,
+        ServerCreateOrUpdate,
         ServerRead,
     },
     props: {
@@ -44,9 +57,6 @@ export default {
     data() {
         return {
             //State
-            serverStates: ['Master, Running', 'Slave, Running'],
-            search: '',
-            expanded: [],
             tableHeaders: [
                 { text: 'Server', value: 'id' },
                 { text: 'Address', value: 'address' },
@@ -55,10 +65,12 @@ export default {
                 { text: 'State', value: 'state' },
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
+            serverDialog: false,
+            chosenItem: null,
         }
     },
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['darkTheme']),
         /**
          * @return {Array} An array of objects
          */
@@ -94,6 +106,10 @@ export default {
     },
     methods: {
         ...mapActions(['deleteServerById']),
+        handleOpenModal: function(item) {
+            this.serverDialog = true
+            this.chosenItem = item
+        },
     },
 }
 </script>

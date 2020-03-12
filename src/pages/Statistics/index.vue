@@ -2,11 +2,11 @@
     <v-row justify="center">
         <v-col :xs="12" :md="8" align="center" justify="center" class="pt-0">
             <v-card :outlined="darkTheme" :dark="darkTheme" width="100%" class="v-card-custom pa-6">
-                <h2 style="text-align:center">Last two second threads</h2>
+                <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
                 <br />
                 <threads-chart-container v-if="chartdata.datasets.length" />
                 <div v-else>
-                    <p>Loading threads data</p>
+                    <p>{{ $t('loading.threadsData') }}</p>
                     <v-progress-linear
                         :dark="darkTheme"
                         color="primary accent-4"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
 import ThreadsChartContainer from './ThreadsChartContainer'
 
 export default {
@@ -29,7 +29,8 @@ export default {
         ThreadsChartContainer,
     },
     computed: {
-        ...mapGetters(['chartdata', 'darkTheme']),
+        ...mapGetters(['chartdata']),
+        ...mapState(['darkTheme']),
     },
     created() {
         this.resetDestroyState()

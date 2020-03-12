@@ -1,4 +1,7 @@
+import i18n from 'plugins/i18n'
+
 export const APP_CONFIG = Object.freeze({
+    productName: i18n.t('productName'),
     navigation: {
         maxscale: [
             { title: 'Dashboard', route: 'dashboard', size: 22, icon: '$vuetify.icons.tachometer' },

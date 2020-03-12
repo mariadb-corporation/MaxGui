@@ -32,25 +32,29 @@
                 + Create New
             </v-btn>
         </div>
-        <service-create
+        <service-create-or-update
             v-model="serviceDialog"
             :close-modal="() => (serviceDialog = false)"
-            mode="create"
+            mode="post"
         />
-        <server-create v-model="serverDialog" :close-modal="() => (serverDialog = false)" />
+        <server-create-or-update
+            v-model="serverDialog"
+            :close-modal="() => (serverDialog = false)"
+            mode="post"
+        />
     </fragment>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import ServiceCreate from 'pages/Services/ServiceCreate'
-import ServerCreate from 'pages/Servers/ServerCreate'
+import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
+import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
 
 export default {
     name: 'search-to-create',
     components: {
-        ServiceCreate,
-        ServerCreate,
+        ServiceCreateOrUpdate,
+        ServerCreateOrUpdate,
     },
     props: {
         tabRoutes: { type: Array, default: () => [] },

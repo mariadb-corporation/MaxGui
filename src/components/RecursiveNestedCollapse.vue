@@ -41,7 +41,7 @@
 
 <script>
 import StyledTable from 'components/StyledTable'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
     /* This component intends to render nested objects. First level of the object will be rendered first
@@ -59,7 +59,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['darkTheme']),
     },
 
     methods: {

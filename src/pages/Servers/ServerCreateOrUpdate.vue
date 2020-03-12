@@ -2,11 +2,11 @@
     <base-dialog
         v-model="computeShowDialog"
         :onCancel="closeModal"
-        :onSave="handleCreate"
-        maxWidth="800px"
+        :onSave="handleSave"
+        maxWidth="890px"
     >
         <template v-slot:title>
-            <h3>Add a server</h3>
+            <h3>{{ modalTitle }}{{ $t('server') }}</h3>
         </template>
         <template v-slot:body>
             <fragment>
@@ -14,7 +14,7 @@
                     <v-form
                         ref="form"
                         v-model="isValid"
-                        @keyup.native.enter="isValid && handleCreate()"
+                        @keyup.native.enter="isValid && handleSave()"
                     >
                         <v-row>
                             <v-col xs="12" sm="6">
@@ -25,6 +25,7 @@
                                     label="Name of the server*"
                                     name="id"
                                     autofocus
+                                    :disabled="mode === 'patch' ? true : false"
                                     required
                                 ></v-text-field>
                             </v-col>
@@ -32,22 +33,25 @@
 
                         <v-row>
                             <v-col cols="12">
-                                <h5>Parameters configurations</h5>
+                                <h5>{{ $t('paramtersConfig') }}</h5>
                             </v-col>
-                            <v-col xs="12" sm="6">
-                                <span>Use either address or socket</span>
-                                <v-radio-group v-model="radioGroup">
-                                    <v-radio label="Use address" value="address" />
-                                    <v-radio label="Use socket" value="socket" />
-                                </v-radio-group>
-                            </v-col>
-                            <v-col xs="12" sm="6">
-                                <span>ssl_verify_peer_certificate</span>
-                                <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
-                                    <v-radio :value="true" label="True" />
-                                    <v-radio :value="false" label="False" />
-                                </v-radio-group>
-                            </v-col>
+                            <fragment v-if="mode === 'post' ? true : false">
+                                <v-col xs="12" sm="6">
+                                    <span>Use either address or socket</span>
+                                    <v-radio-group v-model="radioGroup">
+                                        <v-radio label="Use address" value="address" />
+                                        <v-radio label="Use socket" value="socket" />
+                                    </v-radio-group>
+                                </v-col>
+                                <v-col xs="12" sm="6">
+                                    <span>ssl_verify_peer_certificate</span>
+                                    <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
+                                        <v-radio :value="true" label="True" />
+                                        <v-radio :value="false" label="False" />
+                                    </v-radio-group>
+                                </v-col>
+                            </fragment>
+                            <!-- radioGroup need to have corresponding value from the item props -->
                             <v-col v-if="radioGroup === 'address'" id="addressCol" sm="6" md="4">
                                 <v-text-field
                                     id="address"
@@ -81,52 +85,53 @@
                                     required
                                 />
                             </v-col>
+                            <fragment v-if="mode === 'post' ? true : false">
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="ssl_cert"
+                                        v-model.trim="parameters.ssl_cert"
+                                        label="ssl_cert"
+                                        name="ssl_cert"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="ssl_ca_cert"
+                                        v-model.trim="parameters.ssl_ca_cert"
+                                        label="ssl_ca_cert"
+                                        name="ssl_ca_cert"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-select
+                                        id="ssl_version"
+                                        v-model="parameters.ssl_version"
+                                        :items="ssl_versionItems"
+                                        name="ssl_version"
+                                        label="ssl_version"
+                                    />
+                                </v-col>
 
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="ssl_cert"
-                                    v-model.trim="parameters.ssl_cert"
-                                    label="ssl_cert"
-                                    name="ssl_cert"
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="ssl_ca_cert"
-                                    v-model.trim="parameters.ssl_ca_cert"
-                                    label="ssl_ca_cert"
-                                    name="ssl_ca_cert"
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-select
-                                    id="ssl_version"
-                                    v-model="parameters.ssl_version"
-                                    :items="ssl_versionItems"
-                                    name="ssl_version"
-                                    label="ssl_version"
-                                />
-                            </v-col>
-
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="ssl_cert_verify_depth"
-                                    v-model.number="parameters.ssl_cert_verify_depth"
-                                    label="ssl_cert_verify_depth"
-                                    type="number"
-                                    min="1"
-                                    name="ssl_cert_verify_depth"
-                                />
-                            </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="ssl_cert_verify_depth"
+                                        v-model.number="parameters.ssl_cert_verify_depth"
+                                        label="ssl_cert_verify_depth"
+                                        type="number"
+                                        min="1"
+                                        name="ssl_cert_verify_depth"
+                                    />
+                                </v-col>
+                            </fragment>
                         </v-row>
 
                         <v-row>
                             <v-col xs="12" sm="12">
-                                <h5>Relationships configurations</h5>
+                                <h5>{{ $t('relationshipsConfig') }}</h5>
                             </v-col>
                             <v-col xs="12" sm="6">
                                 <v-btn color="primary" x-small @click="addRelationship('services')">
-                                    Add Service
+                                    {{ $t('add') }} Service
                                 </v-btn>
                                 <div
                                     v-if="relationships.services.data.length"
@@ -163,7 +168,7 @@
                                     x-small
                                     @click="addRelationship('monitors')"
                                 >
-                                    Add Monitor
+                                    {{ $t('add') }} Monitor
                                 </v-btn>
                                 <div v-else style="height:20px" />
                                 <div
@@ -196,10 +201,11 @@
                         </v-row>
                     </v-form>
                 </v-container>
-                <small
-                    >Empty value in non-required fileds will be treated as null. *indicates required
-                    field.
-                </small>
+                <b>
+                    <small>
+                        {{ $t('info.createOrUpdateForm') }}
+                    </small>
+                </b>
             </fragment>
         </template>
         <template v-slot:actions="{ cancel, save }">
@@ -212,7 +218,7 @@
                 depressed
                 @click="cancel"
             >
-                Cancel
+                {{ $t('cancel') }}
             </v-btn>
             <v-btn
                 small
@@ -220,9 +226,10 @@
                 class="px-5 text-capitalize"
                 rounded
                 depressed
+                :disabled="!isValid"
                 @click="save"
             >
-                Add
+                {{ `${mode === 'post' ? $t('add') : $t('update')}` }}
             </v-btn>
         </template>
     </base-dialog>
@@ -232,10 +239,19 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    name: 'service-create',
+    name: 'server-create',
     props: {
         value: Boolean,
         closeModal: Function,
+        mode: {
+            type: String,
+            default: 'post', // post||patch
+        },
+        // only mode patch will need this props
+        item: {
+            type: Object,
+            default: () => {},
+        },
     },
     data: function() {
         return {
@@ -252,7 +268,7 @@ export default {
             },
             ssl_versionItems: ['TLSv10', 'TLSv11', 'TLSv12', 'TLSv13', 'MAX'],
             // server object attributes input values below here
-            serverId: null,
+            serverId: null, // patch mode need to set when get the item props
             parameters: {
                 address: '127.0.0.1',
                 socket: null,
@@ -274,7 +290,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServersInfo']),
+        ...mapGetters(['allServersInfo', 'serversDataMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -285,34 +301,87 @@ export default {
                 this.show = value
             },
         },
+        modalTitle: function() {
+            let title = ''
+            switch (this.mode) {
+                case 'post':
+                    title = 'Add a '
+                    break
+                case 'patch':
+                    title = 'Update '
+            }
+            return title
+        },
+        /**
+         * @returns {Object} Return object server
+         */
+        getCurrentServer: function() {
+            return this.serversDataMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
+        },
     },
     watch: {
+        /**
+         * ONLY AVAILABLE FOR POST MODE
+         */
         serverId: function(newVal, oldVal) {
-            // add hyphens when ever input have whitespace
-            this.serverId = newVal.split(' ').join('-')
+            if (this.mode === 'post') {
+                // add hyphens when ever input have whitespace
+                this.serverId = newVal.split(' ').join('-')
+            }
         },
+        /**
+         * ONLY AVAILABLE FOR POST MODE
+         */
         radioGroup: function(newVal, oldVal) {
-            if (newVal === 'address') {
-                this.parameters.socket = null
-            } else {
-                this.parameters.address = '127.0.0.1'
+            if (this.mode === 'post') {
+                if (newVal === 'address') {
+                    this.parameters.socket = null
+                } else {
+                    this.parameters.address = '127.0.0.1'
+                }
+            }
+        },
+        /**
+         * A watch on show to trigger deep clone object from vuex state for local state modification purpose
+         * ONLY AVAILABLE FOR PATCH MODE
+         */
+        computeShowDialog: function(newVal, oldVal) {
+            if (this.mode === 'patch' && newVal === true) {
+                const {
+                    attributes: { parameters },
+                    relationships,
+                } = this.getCurrentServer
+                //First set serverId from item props
+                this.serverId = this.item.id
+                this.radioGroup = parameters.address ? 'address' : 'socket'
+                // deep object copy or using this.$help.deepClone from lodash
+                this.parameters = this.$help.deepClone(parameters)
+                this.relationships = this.$help.deepClone(relationships)
+                if (this.relationships.services === undefined) {
+                    this.$set(this.relationships, 'services', { data: [] })
+                }
+                if (this.relationships.monitors === undefined) {
+                    this.$set(this.relationships, 'monitors', { data: [] })
+                }
             }
         },
     },
     methods: {
         ...mapActions(['createOrUpdateServer']),
+        //ONLY AVAILABLE FOR POST MODE
         validatePortNumber(val) {
             if (!val) {
                 return 'port number is required'
-            } else if (this.allServersInfo.portNumArr.includes(val)) {
+            } else if (this.allServersInfo.portNumArr.includes(val) && this.mode !== 'patch') {
                 return 'port number is already in use'
             }
             return true
         },
+        //ONLY AVAILABLE FOR POST MODE
         validateServerId(val) {
             if (!val) {
                 return 'id is required'
-            } else if (this.allServersInfo.idArr.includes(val)) {
+            } else if (this.allServersInfo.idArr.includes(val) && this.mode !== 'patch') {
                 return 'id is already registered'
             }
             return true
@@ -346,30 +415,39 @@ export default {
             }
         },
 
-        handleCreate() {
+        handleSave() {
             this.$refs.form.validate()
             if (this.isValid) {
-                this.closeModal()
-
-                // these parameters need to have null value if it is not set
-                this.parameters.socket = this.$help.treatEmptyStringAsNull(this.parameters.socket)
-                this.parameters.authenticator = this.$help.treatEmptyStringAsNull(
-                    this.parameters.authenticator
-                )
-                this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(this.parameters.ssl_key)
-                this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(
-                    this.parameters.ssl_cert
-                )
-                this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(
-                    this.parameters.ssl_ca_cert
-                )
+                switch (this.mode) {
+                    case 'post':
+                        // these parameters need to have null value if it is not set
+                        this.parameters.socket = this.$help.treatEmptyStringAsNull(
+                            this.parameters.socket
+                        )
+                        this.parameters.authenticator = this.$help.treatEmptyStringAsNull(
+                            this.parameters.authenticator
+                        )
+                        this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(
+                            this.parameters.ssl_key
+                        )
+                        this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(
+                            this.parameters.ssl_cert
+                        )
+                        this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(
+                            this.parameters.ssl_ca_cert
+                        )
+                        break
+                    case 'patch':
+                        console.log('update')
+                }
 
                 this.createOrUpdateServer({
-                    mode: 'post',
+                    mode: this.mode,
                     id: this.serverId,
                     relationships: this.relationships,
                     parameters: this.parameters,
                 })
+                this.closeModal()
             }
         },
     },

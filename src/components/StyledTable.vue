@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
     name: 'styled-table',
@@ -27,7 +27,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['darkTheme']),
     },
     mounted() {
         const { data } = this

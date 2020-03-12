@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
     name: 'base-dialog',
@@ -42,7 +42,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['darkTheme']),
         computeShowDialog: {
             // get value from props
             get() {

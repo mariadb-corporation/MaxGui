@@ -1,0 +1,72 @@
+{
+    "productName": "MaxScale",
+    "welcome": "Welcome",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "signIn": "Sign In",
+    "forgotPassword": "Forgot Password",
+    "lastTwoSecondsThreads": "Last two second threads",
+    "service": "Service",
+    "server": "Server",
+    "paramtersConfig": "Parameters configurations",
+    "relationshipsConfig": "Relationships configurations",
+    "enable": "Enable",
+    "add": "Add",
+    "close": "Close",
+    "cancel": "Cancel",
+    "update": "Update",
+    "actions": "Actions",
+    "delete": "Delete",
+
+    "save": "Save",
+    "errors": {
+        "usernameRequired": "Username is required.",
+        "passwordRequired": "Password is required.",
+        "wrongCredentials": "Incorrect password or username"
+    },
+    "loading": {
+        "threadsData": "Loading threads data"
+    },
+    "info": {
+        "createOrUpdateForm": "Empty value in non-required fileds will be treated as null. *indicates required field.",
+        "serverDeleteModal": "Make sure it is not used by any services or monitors.",
+        "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
+    },
+    "$vuetify": {
+        "close": "Close",
+        "dataIterator": {
+            "pageText": "{0}-{1} of {2}",
+            "noResultsText": "No matching records found",
+            "loadingText": "Loading items..."
+        },
+        "dataTable": {
+            "itemsPerPageText": "Rows per page:",
+            "ariaLabel": {
+                "sortDescending": ": Sorted descending. Activate to remove sorting.",
+                "sortAscending": ": Sorted ascending. Activate to sort descending.",
+                "sortNone": ": Not sorted. Activate to sort ascending."
+            }
+        },
+        "dataFooter": {
+            "itemsPerPageText": "Items per page:",
+            "itemsPerPageAll": "All",
+            "nextPage": "Next page",
+            "prevPage": "Previous page",
+            "firstPage": "First page",
+            "lastPage": "Last page",
+            "pageText": "{0}-{1} of {2}"
+        },
+        "datePicker": {
+            "itemsSelected": "{0} selected"
+        },
+        "noDataText": "No data available",
+        "carousel": {
+            "prev": "Previous visual",
+            "next": "Next visual"
+        },
+        "calendar": {
+            "moreEvents": "{0} more"
+        }
+    }
+}

@@ -6,7 +6,7 @@
         maxWidth="890px"
     >
         <template v-slot:title>
-            <h3>{{ modalTitle }}service</h3>
+            <h3>{{ modalTitle }}{{ $t('service') }}</h3>
         </template>
         <template v-slot:body>
             <fragment>
@@ -25,6 +25,7 @@
                                     label="Name of the service*"
                                     name="id"
                                     autofocus
+                                    :disabled="mode === 'patch' ? true : false"
                                     required
                                 ></v-text-field>
                             </v-col>
@@ -39,13 +40,14 @@
                                     :rules="serviceObjRules.router"
                                     name="router"
                                     label="The router module to use*"
+                                    :disabled="mode === 'patch' ? true : false"
                                     required
                                 />
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col cols="12">
-                                <h5>Parameters configurations</h5>
+                                <h5>{{ $t('paramtersConfig') }}</h5>
                             </v-col>
                             <v-col sm="6" md="4">
                                 <v-text-field
@@ -67,81 +69,85 @@
                                     required
                                 />
                             </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="version_string"
-                                    v-model.trim="parameters.version_string"
-                                    label="version_string"
-                                    name="version_string"
-                                />
-                            </v-col>
-                            <v-col
-                                v-for="(param, name) in parameters"
-                                :key="name"
-                                :style="`display:${typeof param === 'boolean' ? 'block' : 'none'}`"
-                                cols="12"
-                                sm="12"
-                                md="6"
-                            >
-                                <v-checkbox
-                                    v-if="typeof param === 'boolean'"
-                                    v-model="parameters[name]"
-                                    :label="`Enable ${name}`"
-                                    dense
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="connection_timeout"
-                                    v-model.number.trim="parameters.connection_timeout"
-                                    label="connection_timeout"
-                                    type="number"
-                                    min="0"
-                                    name="connection_timeout"
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="max_connections"
-                                    v-model.number.trim="parameters.max_connections"
-                                    label="max_connections"
-                                    type="number"
-                                    min="0"
-                                    name="max_connections"
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="retain_last_statements"
-                                    v-model.number.trim="parameters.retain_last_statements"
-                                    label="retain_last_statements"
-                                    type="number"
-                                    name="retain_last_statements"
-                                />
-                            </v-col>
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="connection_keepalive"
-                                    v-model.number.trim="parameters.connection_keepalive"
-                                    label="connection_keepalive"
-                                    type="number"
-                                    name="connection_keepalive"
-                                />
-                            </v-col>
-
-                            <v-col sm="6" md="4">
-                                <v-text-field
-                                    id="net_write_timeout"
-                                    v-model.number.trim="parameters.net_write_timeout"
-                                    label="net_write_timeout"
-                                    type="number"
-                                    name="net_write_timeout"
-                                />
-                            </v-col>
+                            <!-- parameters show only for post mode -->
+                            <fragment v-if="mode === 'post' ? true : false">
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="version_string"
+                                        v-model.trim="parameters.version_string"
+                                        label="version_string"
+                                        name="version_string"
+                                    />
+                                </v-col>
+                                <v-col
+                                    v-for="(param, name) in parameters"
+                                    :key="name"
+                                    :style="
+                                        `display:${typeof param === 'boolean' ? 'block' : 'none'}`
+                                    "
+                                    cols="12"
+                                    sm="12"
+                                    md="6"
+                                >
+                                    <v-checkbox
+                                        v-if="typeof param === 'boolean'"
+                                        v-model="parameters[name]"
+                                        :label="`${$t('enable')} ${name}`"
+                                        dense
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="connection_timeout"
+                                        v-model.number.trim="parameters.connection_timeout"
+                                        label="connection_timeout"
+                                        type="number"
+                                        min="0"
+                                        name="connection_timeout"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="max_connections"
+                                        v-model.number.trim="parameters.max_connections"
+                                        label="max_connections"
+                                        type="number"
+                                        min="0"
+                                        name="max_connections"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="retain_last_statements"
+                                        v-model.number.trim="parameters.retain_last_statements"
+                                        label="retain_last_statements"
+                                        type="number"
+                                        name="retain_last_statements"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="connection_keepalive"
+                                        v-model.number.trim="parameters.connection_keepalive"
+                                        label="connection_keepalive"
+                                        type="number"
+                                        name="connection_keepalive"
+                                    />
+                                </v-col>
+                                <v-col sm="6" md="4">
+                                    <v-text-field
+                                        id="net_write_timeout"
+                                        v-model.number.trim="parameters.net_write_timeout"
+                                        label="net_write_timeout"
+                                        type="number"
+                                        name="net_write_timeout"
+                                    />
+                                </v-col>
+                            </fragment>
                         </v-row>
                         <v-row>
                             <v-col cols="12">
-                                <h5>Relationships configurations</h5>
+                                <h5>{{ $t('relationshipsConfig') }}</h5>
                             </v-col>
                             <v-col xs="12" sm="6">
                                 <v-btn
@@ -149,7 +155,7 @@
                                     x-small
                                     @click="addRelationshipType('filters')"
                                 >
-                                    Add filter
+                                    {{ $t('add') }} filter
                                 </v-btn>
                                 <div
                                     v-if="relationships.filters.data.length"
@@ -163,7 +169,9 @@
                                             x-small
                                             @click="deleteRelationshipType('filters', item.id)"
                                         >
-                                            <v-icon color="red" size="16">close</v-icon>
+                                            <v-icon color="red" size="16">
+                                                close
+                                            </v-icon>
                                         </v-btn>
                                         <v-text-field
                                             id="filter_id"
@@ -185,7 +193,7 @@
                                     x-small
                                     @click="addRelationshipType('servers')"
                                 >
-                                    Add server
+                                    {{ $t('add') }} server
                                 </v-btn>
                                 <div
                                     v-if="relationships.servers.data.length"
@@ -218,8 +226,7 @@
                     </v-form>
                     <b>
                         <small>
-                            Empty value in non-required fileds will be treated as null. *indicates
-                            required field.
+                            {{ $t('info.createOrUpdateForm') }}
                         </small>
                     </b>
                 </v-container>
@@ -235,7 +242,7 @@
                 depressed
                 @click="cancel"
             >
-                Cancel
+                {{ $t('cancel') }}
             </v-btn>
             <v-btn
                 small
@@ -243,9 +250,10 @@
                 class="px-5 text-capitalize"
                 rounded
                 depressed
+                :disabled="!isValid"
                 @click="save"
             >
-                Add
+                {{ `${mode === 'post' ? $t('add') : $t('update')}` }}
             </v-btn>
         </template>
     </base-dialog>
@@ -255,13 +263,18 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    name: 'server-create',
+    name: 'service-create-or-update',
     props: {
         value: Boolean,
         closeModal: Function,
         mode: {
             type: String,
-            default: 'create', // create||update
+            default: 'post', // post||patch
+        },
+        // only mode patch will need this props
+        item: {
+            type: Object,
+            default: () => {},
         },
     },
     data: function() {
@@ -278,7 +291,7 @@ export default {
             },
             // service object input values below here
             routing_module: ['readconnroute', 'readwritesplit', 'schemarouter', 'binlogrouter'],
-            serviceId: null,
+            serviceId: null, // patch mode need to set when get the item props
             router: '',
             parameters: {
                 user: 'maxuser',
@@ -307,7 +320,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServicesInfo']),
+        ...mapGetters(['allServicesInfo', 'servicesDataMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -321,31 +334,64 @@ export default {
         modalTitle: function() {
             let title = ''
             switch (this.mode) {
-                case 'create':
+                case 'post':
                     title = 'Add a '
                     break
-                case 'update':
+                case 'patch':
                     title = 'Update '
             }
             return title
         },
+
+        /**
+         * @returns {Object} Return object service
+         */
+        getCurrentService: function() {
+            return this.servicesDataMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
+        },
     },
     watch: {
+        /**
+         * ONLY AVAILABLE FOR POST MODE
+         */
         serviceId: function(newVal, oldVal) {
-            // add hyphens when ever input have whitespace
-            this.serviceId = newVal.split(' ').join('-')
+            if (this.mode === 'post') {
+                // add hyphens when ever input have whitespace
+                this.serviceId = newVal.split(' ').join('-')
+            }
         },
-        // mode: function(newVal) {
-
-        // },
+        /**
+         * A watch on show to trigger deep clone object from vuex state for local state modification purpose
+         * ONLY AVAILABLE FOR PATCH MODE
+         */
+        computeShowDialog: function(newVal, oldVal) {
+            if (this.mode === 'patch' && newVal === true) {
+                const {
+                    attributes: { parameters, router },
+                    relationships,
+                } = this.getCurrentService
+                //First set serviceID from item props
+                this.serviceId = this.item.id
+                // deep object copy or using this.$help.deepClone from lodash
+                this.parameters = this.$help.deepClone(parameters)
+                this.relationships = this.$help.deepClone(relationships)
+                this.router = this.$help.deepClone(router)
+                if (this.relationships.filters === undefined) {
+                    this.$set(this.relationships, 'filters', { data: [] })
+                }
+                if (this.relationships.servers === undefined) {
+                    this.$set(this.relationships, 'servers', { data: [] })
+                }
+            }
+        },
     },
     methods: {
         ...mapActions(['createOrUpdateService']),
-
+        //ONLY AVAILABLE FOR POST MODE
         validateServiceId(val) {
             if (!val) {
                 return 'Service name is required'
-            } else if (this.allServicesInfo.idArr.includes(val)) {
+            } else if (this.allServicesInfo.idArr.includes(val) && this.mode !== 'patch') {
                 return 'Service name is already registered'
             }
             return true
@@ -382,12 +428,19 @@ export default {
         handleSave() {
             this.$refs.form.validate()
             if (this.isValid) {
-                // these parameters need to have null value if it is not set
-                this.parameters.version_string = this.$help.treatEmptyStringAsNull(
-                    this.parameters.version_string
-                )
+                switch (this.mode) {
+                    case 'post':
+                        // these parameters need to have null value if it is not set
+                        this.parameters.version_string = this.$help.treatEmptyStringAsNull(
+                            this.parameters.version_string
+                        )
+                        break
+                    case 'patch':
+                        console.log('update')
+                }
+
                 this.createOrUpdateService({
-                    mode: 'post',
+                    mode: this.mode,
                     id: this.serviceId,
                     router: this.router,
                     relationships: this.relationships,

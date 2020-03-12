@@ -5,7 +5,7 @@
                 <div class="logo">
                     <img src="@/assets/logo.svg" alt="MariaDB Logo" />
                     <span class="ml-2 white--text">
-                        <b>MaxScale</b>
+                        <b>{{ config.productName }} </b>
                     </span>
                 </div>
                 <v-card
@@ -15,7 +15,7 @@
                     <v-card-text style="padding:60px 80px 0px" align-center>
                         <div class="">
                             <h1 align="left" class="pb-4" style="color: #003545;">
-                                Welcome
+                                {{ $t('welcome') }}
                             </h1>
                             <v-form
                                 ref="form"
@@ -37,7 +37,7 @@
                                     single-line
                                     outlined
                                     required
-                                    placeholder="Login"
+                                    :placeholder="$t('username')"
                                     @input="errorMessage = ''"
                                 />
                                 <v-text-field
@@ -55,7 +55,7 @@
                                     dense
                                     outlined
                                     required
-                                    placeholder="Password"
+                                    :placeholder="$t('password')"
                                     @input="errorMessage = ''"
                                     @click:append="isPwdVisible = !isPwdVisible"
                                 />
@@ -63,7 +63,7 @@
                                 <v-checkbox
                                     v-model="rememberMe"
                                     class="small mt-2 mb-4"
-                                    label="Remember Me"
+                                    :label="$t('rememberMe')"
                                     color="primary"
                                     hide-details
                                 />
@@ -90,14 +90,16 @@
                                 height="36px"
                                 @click="handleSubmit"
                             >
-                                <span class="font-weight-bold text-capitalize">Sign In</span>
+                                <span class="font-weight-bold text-capitalize">{{
+                                    $t('signIn')
+                                }}</span>
                             </v-btn>
                             <a
                                 href
                                 style="font-size:0.75rem;text-decoration: none;"
                                 class="d-block mx-auto "
-                                >Forgot password</a
-                            >
+                                >{{ $t('forgotPassword') }}
+                            </a>
                         </div>
                     </v-card-actions>
                 </v-card>
@@ -108,7 +110,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
     name: 'login',
@@ -125,8 +127,8 @@ export default {
             errorMessage: '',
             displayOneError: false, // errors receives from api
             rules: {
-                username: [val => !!val || 'Username is required'],
-                password: [val => !!val || 'Password is required'],
+                username: [val => !!val || this.$t('errors.usernameRequired')],
+                password: [val => !!val || this.$t('errors.passwordRequired')],
             },
             circles: [],
             scratch: document.createElement('canvas'),
@@ -135,7 +137,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['config', 'darkTheme']),
     },
     mounted() {
         window.onfocus = () => {
@@ -176,7 +178,7 @@ export default {
                 if (error.response) {
                     this.errorMessage =
                         error.response.status === 401
-                            ? 'Incorrect password or username'
+                            ? this.$t('errors.wrongCredentials')
                             : this.$help.getErrorsArr(error)
                 }
             }

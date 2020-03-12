@@ -6,7 +6,7 @@
 
 <script>
 import LineChart from 'components/LineChart.vue'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
     name: 'threads-chart-container',
@@ -47,7 +47,8 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['chartdata', 'updateCount', 'darkTheme']),
+        ...mapGetters(['chartdata', 'updateCount']),
+        ...mapState(['darkTheme']),
     },
 
     watch: {

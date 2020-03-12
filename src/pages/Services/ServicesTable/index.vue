@@ -10,25 +10,39 @@
             sortBy="id"
         >
             <template v-slot:actions="{ data: { item } }">
-                <service-update :item="item" />
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon color="primary" v-on="on" @click="handleOpenModal(item)">
+                            <v-icon size="16">$vuetify.icons.edit</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>{{ `${$t('service')} ${$t('update')}` }}</span>
+                </v-tooltip>
+
                 <delete-modal
                     :item="item"
                     :dispatchDelete="() => deleteServiceById(item.id)"
-                    title="Delete Service"
-                    smallInfo="A service can only be destroyed if the service uses no servers or filters and all the listeners
-                        pointing to the service have been destroyed."
+                    :title="`${$t('delete')} ${$t('service')}`"
+                    :smallInfo="$t('info.serviceDeleteModal')"
                 />
             </template>
             <template v-slot:expandable="{ data: { item } }">
                 <service-read :id="item.id" />
             </template>
         </data-table>
+
+        <service-create-or-update
+            v-model="serviceDialog"
+            :close-modal="() => (serviceDialog = false)"
+            mode="patch"
+            :item="chosenItem"
+        />
     </v-card>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import ServiceUpdate from './ServiceUpdate'
+import { mapState, mapActions } from 'vuex'
+import ServiceCreateOrUpdate from '../ServiceCreateOrUpdate'
 import ServiceRead from './ServiceRead'
 import DeleteModal from 'components/DeleteModal'
 
@@ -36,7 +50,7 @@ export default {
     name: 'services-table',
     components: {
         ServiceRead,
-        ServiceUpdate,
+        ServiceCreateOrUpdate,
         DeleteModal,
     },
     props: {
@@ -45,8 +59,6 @@ export default {
     data() {
         return {
             //State
-            search: '',
-            expanded: [],
             tableHeaders: [
                 { text: 'Service', value: 'id' },
                 { text: 'Router', value: 'router' },
@@ -56,11 +68,13 @@ export default {
                 { text: 'Actions', align: 'center', value: '', sortable: false },
             ],
             tableRows: [],
+            serviceDialog: false,
+            chosenItem: null,
         }
     },
 
     computed: {
-        ...mapGetters(['darkTheme']),
+        ...mapState(['darkTheme']),
     },
     watch: {
         servicesData: function(newVal, oldVal) {
@@ -69,7 +83,10 @@ export default {
     },
     methods: {
         ...mapActions(['deleteServiceById']),
-
+        handleOpenModal: function(item) {
+            this.serviceDialog = true
+            this.chosenItem = item
+        },
         /**
          * @return {Array} An array of objects
          */

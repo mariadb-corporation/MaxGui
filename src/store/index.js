@@ -4,9 +4,11 @@ import maxscale from './maxscale'
 import threads from './threads'
 import servers from './servers'
 import services from './services'
+import { APP_CONFIG } from 'utils/constants'
 
 export default new Vuex.Store({
     state: {
+        config: APP_CONFIG,
         message: {
             status: false,
             text: '',

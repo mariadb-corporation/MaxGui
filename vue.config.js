@@ -19,7 +19,17 @@ module.exports = {
     //     extract: false, //set it to be true to include css in the head tag
     // },
     transpileDependencies: ['vuetify'],
+
     outputDir: `${process.env.buildPath}/gui`,
+
+    pluginOptions: {
+        i18n: {
+            locale: 'en',
+            fallbackLocale: 'en',
+            localeDir: 'locales',
+            enableInSFC: true,
+        },
+    },
 }
 function addStyleResource(rule) {
     rule.use('style-resource')
