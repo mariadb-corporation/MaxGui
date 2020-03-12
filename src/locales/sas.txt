@@ -19,6 +19,7 @@
     "save": "Save",
     "confirmation": "Confirmation",
     "welcomeTo": "Welcome to",
+
     "noServices": "There are no services set up yet.",
     "addService": "Add a service",
     "yourService": "Your Services",

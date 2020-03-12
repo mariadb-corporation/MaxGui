@@ -50,7 +50,7 @@
                         display searchbox and toggle icon as the last th item
                         Only display in large tablet to laptop md
                      -->
-                    <th v-if="windowSize.x > 960" style="padding-left:24px; padding-right:0px">
+                    <th v-if="windowSize.x > 960" style="padding-left:12px; padding-right:12px">
                         <div
                             v-if="hasSearch || hasColumnToggle"
                             style="width:100%;"

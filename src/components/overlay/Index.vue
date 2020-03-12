@@ -1,9 +1,11 @@
 <template>
-    <div>
+    <fragment>
         <loading-transparent-overlay v-if="transparentLoading" />
-        <loading-overlay v-if="loading" />
+        <v-fade-transition>
+            <loading-overlay v-if="loading" />
+        </v-fade-transition>
         <error-overlay v-if="error" />
-    </div>
+    </fragment>
 </template>
 
 <script>

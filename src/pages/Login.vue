@@ -111,6 +111,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
+import { OVERLAY_LOADING } from 'store/overlayTypes'
 
 export default {
     name: 'login',
@@ -139,6 +140,7 @@ export default {
     computed: {
         ...mapState(['config', 'darkTheme']),
     },
+
     mounted() {
         window.onfocus = () => {
             this.hasFocus = true
@@ -158,21 +160,27 @@ export default {
     },
 
     methods: {
-        ...mapMutations(['setUser']),
+        ...mapMutations(['setUser', 'showOverlay', 'hideOverlay']),
         ...mapActions(['login']),
         async handleSubmit() {
             if (!this.$refs.form.validate()) {
                 return
             }
             this.isLoading = true
+            this.showOverlay(OVERLAY_LOADING)
             try {
-                let res = await this.axios.get(`/v1/auth`, { auth: this.credential })
+                let self = this
+                let res = await self.axios.get(`/v1/auth`, { auth: self.credential })
                 // temporary user's name, it is using username for name
-                let userObj = { username: this.credential.username, token: res.data.token }
-                await this.setUser(userObj)
+                let userObj = { username: self.credential.username, token: res.data.token }
+                await self.setUser(userObj)
                 await sessionStorage.setItem('user', JSON.stringify(userObj))
-                this.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`
-                this.$router.push('dashboard')
+                self.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`
+                self.$router.push('dashboard')
+
+                setTimeout(function() {
+                    self.hideOverlay()
+                }, 4000)
             } catch (error) {
                 this.displayOneError = true
                 if (error.response) {

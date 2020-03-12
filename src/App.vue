@@ -4,8 +4,8 @@
         <navigation v-if="user && user.token" />
         <snackbars v-if="user && user.token" />
         <overlay />
-        <v-content>
-            <v-container v-if="user && user.token" fluid class="v-content-padding">
+        <v-content v-if="user && user.token">
+            <v-container fluid class="v-content-padding">
                 <search-to-create
                     :isTabRoute="checkIsTabRoute()"
                     :currentRoute="currentRoute"
@@ -20,11 +20,11 @@
                     <router-view v-if="!checkIsTabRoute()" />
                 </transition>
             </v-container>
-            <!-- Public routes -->
-            <transition v-else name="fade">
-                <router-view />
-            </transition>
         </v-content>
+        <!-- Public routes -->
+        <transition v-if="!user" name="fade">
+            <router-view />
+        </transition>
     </v-app>
 </template>
 
@@ -57,12 +57,7 @@ export default {
             return this.$route.name
         },
     },
-    mounted() {
-        let overlay = document.getElementById('global-overlay')
-        if (overlay) {
-            overlay.style.display = 'none'
-        }
-    },
+
     methods: {
         // check if currentRoute is a tabRoute
         checkIsTabRoute() {

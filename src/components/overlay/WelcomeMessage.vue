@@ -11,10 +11,10 @@
 <template>
     <div class="welcome-txt">
         <div>
-            {{ 'welcomeTo' }}
+            {{ $t('welcomeTo') }}
         </div>
         <div class="font-weight-medium">
-            {{ 'monitoringServices' }}
+            {{ $t('mariaDbMaxScale') }}
         </div>
     </div>
 </template>

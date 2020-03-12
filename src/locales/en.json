@@ -1,5 +1,7 @@
 {
     "productName": "MaxScale",
+    "welcomeTo": "Welcome to",
+    "mariaDbMaxScale": "MariaDB MaxScale",
     "welcome": "Welcome",
     "username": "Username",
     "password": "Password",
