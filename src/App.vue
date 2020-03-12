@@ -3,6 +3,7 @@
         <top-header v-if="user && user.token" :user="user" />
         <navigation v-if="user && user.token" />
         <snackbars v-if="user && user.token" />
+        <overlay />
         <v-content>
             <v-container v-if="user && user.token" fluid class="v-content-padding">
                 <search-to-create
@@ -28,48 +29,54 @@
 </template>
 
 <script>
-import store from 'store';
-import Layouts from 'layouts';
-import { mapGetters } from 'vuex';
-import SearchToCreate from 'components/SearchToCreate';
-import { routes } from 'router/routes';
-import TabNav from 'components/TabNav';
-import tabRoutes from 'router/tabRoutes';
+import store from 'store'
+import Layouts from 'layouts'
+import { mapGetters } from 'vuex'
+import SearchToCreate from 'components/SearchToCreate'
+import { routes } from 'router/routes'
+import TabNav from 'components/TabNav'
+import tabRoutes from 'router/tabRoutes'
+import Overlay from './components/overlay/Index'
 
 export default {
-    name: 'App',
     store,
     components: {
         ...Layouts,
         SearchToCreate,
         TabNav,
+        Overlay,
     },
     data() {
         return {
             tabRoutes: tabRoutes,
-        };
+        }
     },
     computed: {
         ...mapGetters(['user']),
         currentRoute() {
-            return this.$route.name;
+            return this.$route.name
         },
     },
-
+    mounted() {
+        let overlay = document.getElementById('global-overlay')
+        if (overlay) {
+            overlay.style.display = 'none'
+        }
+    },
     methods: {
         // check if currentRoute is a tabRoute
         checkIsTabRoute() {
-            let arr = this.tabRoutes;
-            let isTabRoute = false;
+            let arr = this.tabRoutes
+            let isTabRoute = false
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].name === this.currentRoute) {
-                    isTabRoute = true;
+                    isTabRoute = true
                 }
             }
-            return isTabRoute;
+            return isTabRoute
         },
     },
-};
+}
 </script>
 
 <style lang="scss">

@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import ServiceUpdate from './ServiceUpdate';
-import ServiceRead from './ServiceRead';
-import DeleteModal from 'components/DeleteModal';
+import { mapGetters, mapActions } from 'vuex'
+import ServiceUpdate from './ServiceUpdate'
+import ServiceRead from './ServiceRead'
+import DeleteModal from 'components/DeleteModal'
 
 export default {
-    name: 'ServicesTable',
+    name: 'services-table',
     components: {
         ServiceRead,
         ServiceUpdate,
@@ -56,7 +56,7 @@ export default {
                 { text: 'Actions', align: 'center', value: '', sortable: false },
             ],
             tableRows: [],
-        };
+        }
     },
 
     computed: {
@@ -64,7 +64,7 @@ export default {
     },
     watch: {
         servicesData: function(newVal, oldVal) {
-            this.generateTableRows(newVal);
+            this.generateTableRows(newVal)
         },
     },
     methods: {
@@ -79,7 +79,7 @@ export default {
              *  Elements are {Object} row
              */
             if (servicesData) {
-                let itemsArr = [];
+                let itemsArr = []
                 for (let n = 0; n < servicesData.length; n++) {
                     /**
                      * @typedef {Object} row
@@ -93,24 +93,24 @@ export default {
                         id,
                         attributes: { router, connections, total_connections },
                         relationships: { servers: { data: serversData = [] } = {} },
-                    } = servicesData[n] || {};
+                    } = servicesData[n] || {}
 
-                    let serversList = serversData ? serversData.map(item => ` ${item.id}`) : [];
+                    let serversList = serversData ? serversData.map(item => ` ${item.id}`) : []
                     let row = {
                         id: id,
                         router: router,
                         connections: connections,
                         total_connections: total_connections,
                         servers: serversList.toString(),
-                    };
-                    itemsArr.push(row);
+                    }
+                    itemsArr.push(row)
                 }
-                return (this.tableRows = itemsArr);
+                return (this.tableRows = itemsArr)
             }
-            return [];
+            return []
         },
     },
-};
+}
 </script>
 
 <style lang="scss" scoped></style>

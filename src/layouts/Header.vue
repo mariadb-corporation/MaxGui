@@ -47,14 +47,14 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 export default {
     props: { user: Object },
     data() {
         return {
             items: [],
             isProfileOpened: false,
-        };
+        }
     },
     // watch: {
     //     $route: 'generateBreadcrumbs',
@@ -65,8 +65,8 @@ export default {
     methods: {
         ...mapActions(['logout']),
         handleLogout() {
-            this.logout();
-            this.$router.push('login');
+            this.logout()
+            this.$router.push('login')
         },
         // generateBreadcrumbs() {
         //     let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
@@ -90,7 +90,7 @@ export default {
     //         vm.generateBreadcrumbs();
     //     });
     // },
-};
+}
 </script>
 <style lang="scss" scoped>
 .header {

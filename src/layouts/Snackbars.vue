@@ -18,16 +18,16 @@
 
 <script>
 export default {
-    name: 'Snackbars',
+    name: 'snackbars',
     data() {
         return {
             timeout: 6000,
-        };
+        }
     },
     computed: {
         message() {
-            return this.$store.state.message;
+            return this.$store.state.message
         },
     },
-};
+}
 </script>

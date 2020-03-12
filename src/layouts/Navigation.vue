@@ -41,37 +41,37 @@
 </template>
 
 <script>
-import { APP_CONFIG } from 'utils/constants';
+import { APP_CONFIG } from 'utils/constants'
 
 export default {
-    name: 'Navigation',
+    name: 'navigation',
     data() {
         return {
             isMini: true,
             items: APP_CONFIG.navigation.maxscale,
             version: process.env.VUE_APP_VERSION || '',
-        };
+        }
     },
     computed: {
         currentPath() {
-            return this.$route.path;
+            return this.$route.path
         },
         currentRoute() {
-            return this.$route.name;
+            return this.$route.name
         },
     },
     methods: {
         navigate({ route, url }) {
             if (url) {
-                return window.open(url);
+                return window.open(url)
             }
 
             if (route && route !== this.currentRoute) {
-                this.$router.push({ name: route });
+                this.$router.push({ name: route })
             }
         },
     },
-};
+}
 </script>
 <style lang="scss">
 .main-nav {

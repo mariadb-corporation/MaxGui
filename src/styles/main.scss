@@ -20,6 +20,20 @@ body,
 .v-content-padding {
     padding: 35px;
 }
+.overlay {
+    display: table;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(1100px at 100% 89%, #2f99a3 0%, #003545 100%);
+    .overlay-content {
+        display: table-cell;
+        vertical-align: middle;
+    }
+    .loading-icon {
+        text-align: center;
+    }
+}
+
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 .data-table-full {
     a:hover {

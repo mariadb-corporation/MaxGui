@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse';
-import { mapGetters, mapActions } from 'vuex';
+import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-    name: 'MaxScale',
+    name: 'max-scale',
     components: {
         RecursiveNestedCollapse,
     },
@@ -31,24 +31,24 @@ export default {
     data() {
         return {
             data: null,
-        };
+        }
     },
     computed: {
         ...mapGetters(['maxscaleDetails']),
     },
     created() {
-        !this.$route.params.parameters && this.fetchMaxScaleDetails();
+        !this.$route.params.parameters && this.fetchMaxScaleDetails()
     },
     methods: {
         ...mapActions(['fetchMaxScaleDetails']),
         genData() {
             if (this.$route.params.parameters) {
-                return this.$help.deepClone(this.$route.params.parameters);
+                return this.$help.deepClone(this.$route.params.parameters)
             }
-            return this.$help.deepClone(this.maxscaleDetails.parameters);
+            return this.$help.deepClone(this.maxscaleDetails.parameters)
         },
     },
-};
+}
 </script>
 
 <style scoped></style>

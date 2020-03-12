@@ -1,7 +1,7 @@
-import Login from 'pages/Login';
-import sideBarRoutes from './sideBarRoutes';
-import tabRoutes from './tabRoutes';
-import MaxScale from 'pages/MaxScale';
+import Login from 'pages/Login'
+import sideBarRoutes from './sideBarRoutes'
+import tabRoutes from './tabRoutes'
+import MaxScale from 'pages/MaxScale'
 
 export const routes = [
     {
@@ -29,4 +29,4 @@ export const routes = [
         },
         name: 'maxscale',
     },
-];
+]

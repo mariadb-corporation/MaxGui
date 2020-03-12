@@ -42,12 +42,12 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex';
-import ServiceCreate from 'pages/Services/ServiceCreate';
-import ServerCreate from 'pages/Servers/ServerCreate';
+import { mapMutations, mapGetters } from 'vuex'
+import ServiceCreate from 'pages/Services/ServiceCreate'
+import ServerCreate from 'pages/Servers/ServerCreate'
 
 export default {
-    name: 'SearchToCreate',
+    name: 'search-to-create',
     components: {
         ServiceCreate,
         ServerCreate,
@@ -64,71 +64,71 @@ export default {
             isBtnDisabled: true,
             serviceDialog: false,
             serverDialog: false,
-        };
+        }
     },
     computed: {
         ...mapGetters(['searchKeyWord']),
     },
     watch: {
         search: function(newVal) {
-            let keyword = newVal.toLowerCase();
-            this.setSearchKeyWord(keyword);
+            let keyword = newVal.toLowerCase()
+            this.setSearchKeyWord(keyword)
         },
         searchKeyWord: function(newVal) {
             /*Display create button when the current route belongs to tabRoute, 
             when search keyword is empty, currentRoute is */
             if (newVal === '' && this.isTabRoute) {
-                this.isBtnDisabled = false;
+                this.isBtnDisabled = false
             } else {
-                this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newVal);
+                this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newVal)
             }
         },
         currentRoute: function(newRoute) {
-            this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newRoute);
+            this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newRoute)
         },
         $route: function(to, from) {
             // Clear local search and global search state when route changes
-            this.search = '';
-            this.setSearchKeyWord('');
+            this.search = ''
+            this.setSearchKeyWord('')
         },
     },
     created() {
-        this.isBtnDisabled = this.isKeyWordMatchTabRoutes(this.currentRoute);
+        this.isBtnDisabled = this.isKeyWordMatchTabRoutes(this.currentRoute)
     },
 
     methods: {
         ...mapMutations(['setSearchKeyWord']),
         create() {
             if (this.searchKeyWord && !this.isBtnDisabled) {
-                this.createType(this.searchKeyWord);
+                this.createType(this.searchKeyWord)
             } else {
-                this.createType(this.currentRoute);
+                this.createType(this.currentRoute)
             }
         },
         createType(type) {
             switch (type) {
                 case 'services':
-                    this.serviceDialog = true;
-                    break;
+                    this.serviceDialog = true
+                    break
                 case 'servers':
-                    this.serverDialog = true;
+                    this.serverDialog = true
             }
         },
         isKeyWordMatchTabRoutes(keyword) {
-            let arr = this.tabRoutes.slice();
-            let match = false;
+            let arr = this.tabRoutes.slice()
+            let match = false
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].name === keyword) {
-                    match = false;
-                    break;
+                    match = false
+                    break
                 } else {
-                    match = true;
+                    match = true
                 }
             }
-            return match;
+            return match
         },
     },
-};
+}
 </script>
 
 <style scoped lang="scss">

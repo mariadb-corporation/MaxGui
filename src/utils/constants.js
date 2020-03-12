@@ -7,4 +7,4 @@ export const APP_CONFIG = Object.freeze({
             { title: 'Settings', route: 'settings', size: 22, icon: '$vuetify.icons.settings' },
         ],
     },
-});
+})

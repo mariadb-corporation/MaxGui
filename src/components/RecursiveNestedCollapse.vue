@@ -40,15 +40,15 @@
 </template>
 
 <script>
-import StyledTable from 'components/StyledTable';
-import { mapGetters } from 'vuex';
+import StyledTable from 'components/StyledTable'
+import { mapGetters } from 'vuex'
 
 export default {
     /* This component intends to render nested objects. First level of the object will be rendered first
     by providing propertyName props then value props
     The child props will detect whether render nested component or not
     */
-    name: 'RecursiveNestedCollapse',
+    name: 'recursive-nested-collapse',
     components: { 'styled-table': StyledTable },
     props: {
         propertyName: [String, Number, Boolean],
@@ -65,12 +65,12 @@ export default {
     methods: {
         childIsObj(child) {
             if (typeof child === 'object' && !Array.isArray(child)) {
-                return true;
+                return true
             }
-            return false;
+            return false
         },
     },
-};
+}
 </script>
 <style lang="scss" scoped>
 .v-expansion-panel-content__scrollable {

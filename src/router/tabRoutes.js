@@ -1,5 +1,5 @@
-import Servers from 'pages/Servers';
-import Services from 'pages/Services';
+import Servers from 'pages/Servers'
+import Services from 'pages/Services'
 
 export default [
     // Tab Routes
@@ -21,4 +21,4 @@ export default [
         name: 'servers',
         isTabRoute: true,
     },
-];
+]

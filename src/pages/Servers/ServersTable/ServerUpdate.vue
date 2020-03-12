@@ -191,10 +191,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    name: 'ServerUpdate',
+    name: 'server-update',
     props: {
         item: Object,
     },
@@ -219,7 +219,7 @@ export default {
                     data: [],
                 },
             },
-        };
+        }
     },
     computed: {
         ...mapGetters(['serversDataMap', 'allServersInfo']),
@@ -227,7 +227,7 @@ export default {
          * @returns {Object} A deep clone object from vuex state
          */
         getCurrentServer: function() {
-            return this.serversDataMap.get(this.item.id);
+            return this.serversDataMap.get(this.item.id)
         },
     },
 
@@ -238,13 +238,13 @@ export default {
         dialog: function(newVal, oldVal) {
             if (newVal === true) {
                 // deep object copy or using this.$help.deepClone from lodash
-                this.parameters = this.$help.deepClone(this.getCurrentServer.attributes.parameters);
-                this.relationships = this.$help.deepClone(this.getCurrentServer.relationships);
+                this.parameters = this.$help.deepClone(this.getCurrentServer.attributes.parameters)
+                this.relationships = this.$help.deepClone(this.getCurrentServer.relationships)
                 if (this.relationships.services === undefined) {
-                    this.$set(this.relationships, 'services', { data: [] });
+                    this.$set(this.relationships, 'services', { data: [] })
                 }
                 if (this.relationships.monitors === undefined) {
-                    this.$set(this.relationships, 'monitors', { data: [] });
+                    this.$set(this.relationships, 'monitors', { data: [] })
                 }
             }
         },
@@ -253,20 +253,20 @@ export default {
         ...mapActions(['createOrUpdateServer']),
         validatePortNumber(val) {
             if (!val) {
-                return 'port number is required';
+                return 'port number is required'
             } else if (this.allServersInfo.portNumArr.includes(val) && val !== this.item.port) {
-                return 'port number is already in use';
+                return 'port number is already in use'
             }
-            return true;
+            return true
         },
         addRelationship(type) {
             switch (type) {
                 case 'services':
-                    this.relationships.services.data.push({ type: 'services', id: '' });
-                    break;
+                    this.relationships.services.data.push({ type: 'services', id: '' })
+                    break
                 case 'monitors':
-                    this.relationships.monitors.data.push({ type: 'monitors', id: '' });
-                    break;
+                    this.relationships.monitors.data.push({ type: 'monitors', id: '' })
+                    break
             }
         },
         /**
@@ -278,28 +278,28 @@ export default {
                 case 'services':
                     this.relationships.services.data = this.relationships.services.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
                 case 'monitors':
                     this.relationships.monitors.data = this.relationships.monitors.data.filter(
                         item => item.id !== targetId
-                    );
+                    )
 
-                    break;
+                    break
             }
         },
         handleUpdate() {
-            this.$refs.form.validate();
+            this.$refs.form.validate()
             if (this.isValid) {
-                this.dialog = false;
+                this.dialog = false
                 this.createOrUpdateServer({
                     mode: 'patch',
                     id: this.item.id,
                     relationships: this.relationships,
                     parameters: this.parameters,
-                });
+                })
             }
         },
     },
-};
+}
 </script>

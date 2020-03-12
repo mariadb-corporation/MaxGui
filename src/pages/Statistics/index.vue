@@ -4,7 +4,7 @@
             <v-card :outlined="darkTheme" :dark="darkTheme" width="100%" class="v-card-custom pa-6">
                 <h2 style="text-align:center">Last two second threads</h2>
                 <br />
-                <ThreadsChartContainer v-if="chartdata.datasets.length" />
+                <threads-chart-container v-if="chartdata.datasets.length" />
                 <div v-else>
                     <p>Loading threads data</p>
                     <v-progress-linear
@@ -21,11 +21,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex';
-import ThreadsChartContainer from './ThreadsChartContainer';
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+import ThreadsChartContainer from './ThreadsChartContainer'
 
 export default {
-    name: 'Statistics',
     components: {
         ThreadsChartContainer,
     },
@@ -33,12 +32,12 @@ export default {
         ...mapGetters(['chartdata', 'darkTheme']),
     },
     created() {
-        this.resetDestroyState();
-        this.fetchThreadsAsync();
+        this.resetDestroyState()
+        this.fetchThreadsAsync()
     },
     methods: {
         ...mapActions(['fetchThreadsAsync']),
         ...mapMutations(['resetDestroyState']),
     },
-};
+}
 </script>

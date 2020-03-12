@@ -108,10 +108,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
-    name: 'Login',
+    name: 'login',
     data() {
         return {
             isValid: false,
@@ -132,26 +132,26 @@ export default {
             scratch: document.createElement('canvas'),
             ctx: null,
             hasFocus: true,
-        };
+        }
     },
     computed: {
         ...mapGetters(['darkTheme']),
     },
     mounted() {
         window.onfocus = () => {
-            this.hasFocus = true;
-        };
+            this.hasFocus = true
+        }
 
         window.onblur = () => {
-            this.hasFocus = false;
-        };
+            this.hasFocus = false
+        }
 
         if (window.requestAnimationFrame && this.$refs.canvas) {
-            this.ctx = this.$refs.canvas.getContext('2d');
+            this.ctx = this.$refs.canvas.getContext('2d')
 
-            this.createCircle(); // Same UX with monitoring application, copy and paste :D
+            this.createCircle() // Same UX with monitoring application, copy and paste :D
 
-            window.requestAnimationFrame(this.draw);
+            window.requestAnimationFrame(this.draw)
         }
     },
 
@@ -160,58 +160,58 @@ export default {
         ...mapActions(['login']),
         async handleSubmit() {
             if (!this.$refs.form.validate()) {
-                return;
+                return
             }
-            this.isLoading = true;
+            this.isLoading = true
             try {
-                let res = await this.axios.get(`/v1/auth`, { auth: this.credential });
+                let res = await this.axios.get(`/v1/auth`, { auth: this.credential })
                 // temporary user's name, it is using username for name
-                let userObj = { username: this.credential.username, token: res.data.token };
-                await this.setUser(userObj);
-                await sessionStorage.setItem('user', JSON.stringify(userObj));
-                this.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`;
-                this.$router.push('dashboard');
+                let userObj = { username: this.credential.username, token: res.data.token }
+                await this.setUser(userObj)
+                await sessionStorage.setItem('user', JSON.stringify(userObj))
+                this.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`
+                this.$router.push('dashboard')
             } catch (error) {
-                this.displayOneError = true;
+                this.displayOneError = true
                 if (error.response) {
                     this.errorMessage =
                         error.response.status === 401
                             ? 'Incorrect password or username'
-                            : this.$help.getErrorsArr(error);
+                            : this.$help.getErrorsArr(error)
                 }
             }
-            this.isLoading = false;
+            this.isLoading = false
         },
         onResize() {
-            this.scratch.width = this.$refs.canvas.width = window.innerWidth;
-            this.scratch.height = this.$refs.canvas.height = window.innerHeight;
+            this.scratch.width = this.$refs.canvas.width = window.innerWidth
+            this.scratch.height = this.$refs.canvas.height = window.innerHeight
         },
         drawCircle(circle) {
-            this.ctx.strokeStyle = circle.color;
-            this.ctx.lineWidth = 3;
-            this.ctx.globalAlpha = Math.max(0, circle.opacity);
+            this.ctx.strokeStyle = circle.color
+            this.ctx.lineWidth = 3
+            this.ctx.globalAlpha = Math.max(0, circle.opacity)
 
-            this.ctx.beginPath();
-            this.ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, true);
-            this.ctx.stroke();
+            this.ctx.beginPath()
+            this.ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, true)
+            this.ctx.stroke()
         },
         draw() {
-            if (!this.$refs.canvas) return;
+            if (!this.$refs.canvas) return
 
-            this.ctx.clearRect(0, 0, this.scratch.width, this.scratch.height);
-            this.ctx.save();
+            this.ctx.clearRect(0, 0, this.scratch.width, this.scratch.height)
+            this.ctx.save()
 
             for (let i = this.circles.length - 1; i >= 0; --i) {
-                this.drawCircle(this.circles[i]);
+                this.drawCircle(this.circles[i])
 
-                this.circles[i].radius += 3;
-                this.circles[i].opacity -= 0.0025;
-                if (this.circles[i].radius > this.$refs.canvas.width) this.circles.splice(i, 1);
+                this.circles[i].radius += 3
+                this.circles[i].opacity -= 0.0025
+                if (this.circles[i].radius > this.$refs.canvas.width) this.circles.splice(i, 1)
             }
 
-            this.ctx.restore();
+            this.ctx.restore()
 
-            window.requestAnimationFrame(this.draw);
+            window.requestAnimationFrame(this.draw)
         },
         createCircle() {
             setTimeout(() => {
@@ -222,14 +222,14 @@ export default {
                         radius: 1,
                         opacity: 0.9,
                         color: 'white',
-                    });
+                    })
                 }
 
-                this.createCircle();
-            }, this.$help.range(2.5, 5) * 1000);
+                this.createCircle()
+            }, this.$help.range(2.5, 5) * 1000)
         },
     },
-};
+}
 </script>
 
 <style lang="scss" scoped>

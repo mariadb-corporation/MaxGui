@@ -28,12 +28,12 @@
 </template>
 
 <script>
-import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse';
-import { mapGetters } from 'vuex';
-import { isEmpty, cloneDeep } from 'lodash';
+import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
+import { mapGetters } from 'vuex'
+import { isEmpty, cloneDeep } from 'lodash'
 
 export default {
-    name: 'ServiceRead',
+    name: 'service-read',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },
@@ -47,18 +47,18 @@ export default {
          * @returns {Object} A deep clone object from vuex state
          */
         getCurrentService: function() {
-            return cloneDeep(this.servicesDataMap.get(this.id));
+            return cloneDeep(this.servicesDataMap.get(this.id))
         },
     },
     methods: {
         isEmpty(obj) {
-            return isEmpty(obj);
+            return isEmpty(obj)
         },
         cloneDeep() {
-            return cloneDeep();
+            return cloneDeep()
         },
     },
-};
+}
 </script>
 
 <style lang="scss" scoped>

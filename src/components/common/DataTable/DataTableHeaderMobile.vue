@@ -17,7 +17,7 @@
 
 <script>
 export default {
-    name: 'DataTableHeaderMobile',
+    name: 'data-table-header-mobile',
     props: {
         items: Array,
     },
@@ -26,21 +26,21 @@ export default {
         return {
             pagination: {},
             selectItem: {},
-        };
+        }
     },
     computed: {
         headers() {
             return this.items.filter(
                 item => item.sortable !== false && { text: item.text, value: item.value }
-            );
+            )
         },
     },
     watch: {
         selectItem: function(newVal) {
-            this.$emit('sort', newVal);
+            this.$emit('sort', newVal)
         },
     },
-};
+}
 </script>
 
 <style lang="scss" scoped></style>

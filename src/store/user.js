@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default {
     state: {
@@ -11,20 +11,20 @@ export default {
          * @param {String} userObj.username username
          */
         setUser(state, userObj) {
-            state.user = userObj && userObj;
+            state.user = userObj && userObj
         },
         logout(state) {
-            state.user = null;
+            state.user = null
         },
     },
     actions: {
         async logout({ commit }) {
-            commit('logout');
-            sessionStorage.removeItem('user');
-            delete Vue.axios.defaults.headers.common['Authorization'];
+            commit('logout')
+            sessionStorage.removeItem('user')
+            delete Vue.axios.defaults.headers.common['Authorization']
         },
     },
     getters: {
         user: state => state.user,
     },
-};
+}

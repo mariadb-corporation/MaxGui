@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import { getErrorsArr } from '@/utils/helpers';
+import Vue from 'vue'
+import { getErrorsArr } from '@/utils/helpers'
 
 export default {
     state: {
@@ -11,7 +11,7 @@ export default {
          * @param {Array} payload payload Array
          */
         setServices(state, payload) {
-            state.servicesData = payload;
+            state.servicesData = payload
         },
         // /**
         //  * @param {Object} payload payload object
@@ -25,13 +25,13 @@ export default {
     actions: {
         async fetchServices({ commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/services`);
-                await commit('setServices', res.data.data);
+                let res = await Vue.axios.get(`/v1/services`)
+                await commit('setServices', res.data.data)
             } catch (error) {
                 await commit('showMessage', {
                     text: getErrorsArr(error),
                     type: 'error',
-                });
+                })
             }
         },
         //-----------------------------------------------Service----------------------------------------------
@@ -59,19 +59,19 @@ export default {
                     },
                     relationships: serviceData.relationships,
                 },
-            };
+            }
             try {
-                let res;
-                let message;
+                let res
+                let message
                 switch (serviceData.mode) {
                     case 'post':
-                        res = await Vue.axios.post(`/v1/services/`, payload);
-                        message = [`Service ${serviceData.id} is created`];
-                        break;
+                        res = await Vue.axios.post(`/v1/services/`, payload)
+                        message = [`Service ${serviceData.id} is created`]
+                        break
                     case 'patch':
-                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload);
-                        message = [`Service ${serviceData.id} is updated`];
-                        break;
+                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload)
+                        message = [`Service ${serviceData.id} is updated`]
+                        break
                 }
 
                 // response ok
@@ -79,15 +79,15 @@ export default {
                     await commit('showMessage', {
                         text: message,
                         type: 'success',
-                    });
-                    await dispatch('fetchServices');
-                    await dispatch('fetchServers');
+                    })
+                    await dispatch('fetchServices')
+                    await dispatch('fetchServers')
                 }
             } catch (error) {
                 await commit('showMessage', {
                     text: getErrorsArr(error),
                     type: 'error',
-                });
+                })
             }
         },
         /**
@@ -95,20 +95,20 @@ export default {
          */
         async deleteServiceById({ dispatch, commit, state }, id) {
             try {
-                let res = await Vue.axios.delete(`/v1/services/${id}`);
+                let res = await Vue.axios.delete(`/v1/services/${id}`)
                 // response ok
                 if (res.status === 204) {
-                    await dispatch('fetchServices');
+                    await dispatch('fetchServices')
                     await commit('showMessage', {
                         text: [`Service ${id} is deleted`],
                         type: 'success',
-                    });
+                    })
                 }
             } catch (error) {
                 await commit('showMessage', {
                     text: getErrorsArr(error),
                     type: 'error',
-                });
+                })
             }
         },
         //---------------------------------Listeners of the service-------------------------------------------
@@ -131,19 +131,19 @@ export default {
     getters: {
         servicesData: state => state.servicesData,
         servicesDataMap: state => {
-            let map = new Map();
+            let map = new Map()
             state.servicesData.forEach(ele => {
-                map.set(ele.id, ele);
-            });
-            return map;
+                map.set(ele.id, ele)
+            })
+            return map
         },
 
         allServicesInfo: state => {
-            let idArr = [];
+            let idArr = []
             return state.servicesData.reduce((accumulator, _, index, array) => {
-                idArr.push(array[index].id);
-                return (accumulator = { idArr: idArr });
-            }, []);
+                idArr.push(array[index].id)
+                return (accumulator = { idArr: idArr })
+            }, [])
         },
     },
-};
+}

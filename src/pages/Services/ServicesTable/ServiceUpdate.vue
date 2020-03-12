@@ -190,9 +190,9 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex'
 export default {
-    name: 'ServiceUpdate',
+    name: 'service-update',
     props: {
         item: Object,
     },
@@ -221,7 +221,7 @@ export default {
                     data: [],
                 },
             },
-        };
+        }
     },
     computed: {
         ...mapGetters(['allServicesInfo', 'servicesDataMap']),
@@ -229,7 +229,7 @@ export default {
          * @returns {Object} A deep clone object from vuex state
          */
         getCurrentServer: function() {
-            return this.servicesDataMap.get(this.item.id);
+            return this.servicesDataMap.get(this.item.id)
         },
     },
     watch: {
@@ -241,16 +241,16 @@ export default {
                 const {
                     attributes: { parameters, router },
                     relationships,
-                } = this.getCurrentServer;
+                } = this.getCurrentServer
                 // deep object copy or using this.$help.deepClone from lodash
-                this.parameters = this.$help.deepClone(parameters);
-                this.relationships = this.$help.deepClone(relationships);
-                this.router = this.$help.deepClone(router);
+                this.parameters = this.$help.deepClone(parameters)
+                this.relationships = this.$help.deepClone(relationships)
+                this.router = this.$help.deepClone(router)
                 if (this.relationships.filters === undefined) {
-                    this.$set(this.relationships, 'filters', { data: [] });
+                    this.$set(this.relationships, 'filters', { data: [] })
                 }
                 if (this.relationships.servers === undefined) {
-                    this.$set(this.relationships, 'servers', { data: [] });
+                    this.$set(this.relationships, 'servers', { data: [] })
                 }
             }
         },
@@ -260,11 +260,11 @@ export default {
         addRelationshipType(type) {
             switch (type) {
                 case 'filters':
-                    this.relationships.filters.data.push({ type: 'filters', id: '' });
-                    break;
+                    this.relationships.filters.data.push({ type: 'filters', id: '' })
+                    break
                 case 'servers':
-                    this.relationships.servers.data.push({ type: 'servers', id: '' });
-                    break;
+                    this.relationships.servers.data.push({ type: 'servers', id: '' })
+                    break
             }
         },
         /**
@@ -276,20 +276,20 @@ export default {
                 case 'filters':
                     this.relationships.filters.data = this.relationships.filters.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
                 case 'servers':
                     this.relationships.servers.data = this.relationships.servers.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
             }
         },
 
         handleUpdate() {
-            this.$refs.form.validate();
+            this.$refs.form.validate()
             if (this.isValid) {
-                this.dialog = false;
+                this.dialog = false
 
                 this.createOrUpdateService({
                     mode: 'patch',
@@ -297,9 +297,9 @@ export default {
                     router: this.router,
                     relationships: this.relationships,
                     parameters: this.parameters,
-                });
+                })
             }
         },
     },
-};
+}
 </script>

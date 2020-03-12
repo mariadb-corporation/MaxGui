@@ -26,13 +26,13 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import DeleteModal from 'components/DeleteModal';
-import ServerUpdate from './ServerUpdate';
-import ServerRead from './ServerRead';
+import { mapGetters, mapActions } from 'vuex'
+import DeleteModal from 'components/DeleteModal'
+import ServerUpdate from './ServerUpdate'
+import ServerRead from './ServerRead'
 
 export default {
-    name: 'ServersTable',
+    name: 'servers-table',
     components: {
         DeleteModal,
         ServerUpdate,
@@ -55,7 +55,7 @@ export default {
                 { text: 'State', value: 'state' },
                 { text: 'Actions', align: 'center', value: 'data-table-expand', sortable: false },
             ],
-        };
+        }
     },
     computed: {
         ...mapGetters(['darkTheme']),
@@ -64,7 +64,7 @@ export default {
          */
         generateTableRows: function() {
             if (this.serversData) {
-                let itemsArr = [];
+                let itemsArr = []
                 for (let n = 0; n < this.serversData.length; n++) {
                     /**
                      * @typedef {Object} row
@@ -77,25 +77,25 @@ export default {
                     const {
                         id,
                         attributes: { state, parameters, statistics },
-                    } = this.serversData[n];
+                    } = this.serversData[n]
                     let row = {
                         id: id,
                         address: parameters.address,
                         port: parameters.port,
                         connections: statistics.connections,
                         state: state,
-                    };
-                    itemsArr.push(row);
+                    }
+                    itemsArr.push(row)
                 }
-                return itemsArr;
+                return itemsArr
             }
-            return [];
+            return []
         },
     },
     methods: {
         ...mapActions(['deleteServerById']),
     },
-};
+}
 </script>
 
 <style lang="scss" scoped></style>

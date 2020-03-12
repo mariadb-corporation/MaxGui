@@ -200,10 +200,10 @@
 </template>
 
 <script>
-import DataTableHeaderMobile from './DataTableHeaderMobile';
+import DataTableHeaderMobile from './DataTableHeaderMobile'
 
 export default {
-    name: 'DataTable',
+    name: 'data-table',
     components: { DataTableHeaderMobile },
     /* SLOTS available for data-table */
     // :name="header.value" // slot :name equals to header.value
@@ -237,78 +237,78 @@ export default {
             pagination: {},
             visible: [],
             isColumnToggleVisible: false,
-        };
+        }
     },
     computed: {
         visibleHeaders() {
-            return this.headers.filter(header => this.visible.includes(header));
+            return this.headers.filter(header => this.visible.includes(header))
         },
     },
 
     watch: {
         pagination: {
             handler(val) {
-                this.$emit('pagination', val);
+                this.$emit('pagination', val)
             },
             deep: true,
         },
         data: {
             handler(list) {
                 list.forEach(item => {
-                    if (item.expanded) this.expandedRows.push(item.id);
-                });
+                    if (item.expanded) this.expandedRows.push(item.id)
+                })
             },
         },
     },
     mounted() {
-        this.onResize();
+        this.onResize()
     },
     created() {
-        this.visible = this.headers.filter(h => !h.hidden);
+        this.visible = this.headers.filter(h => !h.hidden)
     },
 
     methods: {
         onResize() {
-            this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
         changeSort(column) {
             // TODO: support multiple column sorting
             if (this.pagination.sortBy[0] === column) {
-                this.pagination.sortDesc = [!this.pagination.sortDesc[0]];
+                this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
             } else {
-                this.pagination.sortBy = [column];
-                this.pagination.sortDesc = [false];
+                this.pagination.sortBy = [column]
+                this.pagination.sortDesc = [false]
             }
         },
         rowClick(item, headers) {
             // if (this.$scopedSlots['expandable']) this.toggleRow(item.id);
-            this.onRowClick && this.onRowClick(item, headers);
+            this.onRowClick && this.onRowClick(item, headers)
         },
         cellClick(item, header) {
-            this.onCellClick && this.onCellClick(item, header);
+            this.onCellClick && this.onCellClick(item, header)
         },
         toggleRow(id) {
-            if (!this.$scopedSlots['expandable']) return;
+            if (!this.$scopedSlots['expandable']) return
 
-            const isOpen = this.expandedRows.includes(id);
+            const isOpen = this.expandedRows.includes(id)
 
             if (isOpen) {
-                this.expandedRows = this.expandedRows.filter(i => i !== id);
+                this.expandedRows = this.expandedRows.filter(i => i !== id)
             } else {
-                this.expandedRows.push(id);
+                this.expandedRows.push(id)
             }
         },
         getValue(item, header) {
             const value =
                 item[header.value] || item[header.value] === 0
                     ? item[header.value].text || item[header.value]
-                    : 'n/a';
+                    : 'n/a'
 
-            return this.$typy(header.format).isFunction ? header.format(value) : value;
+            return this.$typy(header.format).isFunction ? header.format(value) : value
         },
         columnToggle() {
-            this.isColumnToggleVisible = !this.isColumnToggleVisible;
+            this.isColumnToggleVisible = !this.isColumnToggleVisible
         },
     },
-};
+}
 </script>

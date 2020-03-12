@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import LineChart from 'components/LineChart.vue';
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import LineChart from 'components/LineChart.vue'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default {
-    name: 'ThreadsChartContainer',
+    name: 'threads-chart-container',
     components: {
         'line-chart': LineChart,
     },
@@ -44,7 +44,7 @@ export default {
                     ],
                 },
             },
-        };
+        }
     },
     computed: {
         ...mapGetters(['chartdata', 'updateCount', 'darkTheme']),
@@ -61,32 +61,32 @@ export default {
             https://vue-chartjs.org/api/#renderchart and 
             https://www.chartjs.org/docs/latest/developers/updates.html
             */
-            let chart = this.$refs.threadsChart.$data._chart;
-            const timestamp = new Date().toLocaleTimeString();
+            let chart = this.$refs.threadsChart.$data._chart
+            const timestamp = new Date().toLocaleTimeString()
 
-            chart.data.labels.push(timestamp);
+            chart.data.labels.push(timestamp)
             chart.data.datasets.forEach(dataset => {
-                dataset.data.push(Math.floor(Math.random() * 101));
-            });
+                dataset.data.push(Math.floor(Math.random() * 101))
+            })
             // remove item in data when updateCount's value is more than 4
             if (newVal > 7) {
-                chart.data.labels.shift();
+                chart.data.labels.shift()
                 chart.data.datasets.forEach(dataset => {
-                    dataset.data.shift();
-                });
+                    dataset.data.shift()
+                })
             }
-            chart.update();
+            chart.update()
         },
     },
     beforeDestroy() {
-        let chart = this.$refs.threadsChart.$data._chart;
-        chart.data.labels = [];
-        chart.data.datasets = [];
-        chart.destroy();
-        this.clearState();
+        let chart = this.$refs.threadsChart.$data._chart
+        chart.data.labels = []
+        chart.data.datasets = []
+        chart.destroy()
+        this.clearState()
     },
     methods: {
         ...mapMutations(['clearState']),
     },
-};
+}
 </script>

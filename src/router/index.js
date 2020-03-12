@@ -1,8 +1,10 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import { routes } from './routes';
+import Vue from 'vue'
+import Router from 'vue-router'
+import { routes } from './routes'
+import store from 'store'
+import { OVERLAY_LOADING } from 'store/overlayTypes'
 
-Vue.use(Router);
+Vue.use(Router)
 
 let router = new Router({
     /* 
@@ -11,25 +13,26 @@ let router = new Router({
    */
     // mode: "history",
     routes: routes,
-});
+})
 router.beforeEach(async (to, from, next) => {
     // Check if user is logged in
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    const token = user ? user.token : null;
+    const user = JSON.parse(sessionStorage.getItem('user'))
+    const token = user ? user.token : null
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
-            next({
-                path: '/login',
-                params: { nextUrl: to.fullPath },
-            });
+            store.commit('showOverlay', OVERLAY_LOADING)
+            // next({
+            //     path: '/login',
+            //     params: { nextUrl: to.fullPath },
+            // })
         } else {
-            next();
+            next()
         }
     } else {
         // console.log("public route", to);
         // If user is already authenticated redirect to dashboard
-        token ? next('/dashboard') : next();
+        token ? next('/dashboard') : next()
     }
-});
-export default router;
+})
+export default router

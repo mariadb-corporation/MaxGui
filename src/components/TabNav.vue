@@ -23,32 +23,32 @@
 </template>
 
 <script>
-import store from 'store';
-import Layouts from 'layouts';
-import { mapGetters } from 'vuex';
-import SearchToCreate from 'components/SearchToCreate';
-import { routes } from 'router/routes';
+import store from 'store'
+import Layouts from 'layouts'
+import { mapGetters } from 'vuex'
+import SearchToCreate from 'components/SearchToCreate'
+import { routes } from 'router/routes'
 
 export default {
-    name: 'TabNav',
+    name: 'tab-nav',
     props: {
         tabRoutes: Array,
     },
     data() {
         return {
             activeTab: '/dashboard/services',
-        };
+        }
     },
     computed: {
         ...mapGetters(['searchKeyWord']),
         currentPath() {
-            return this.$route.path;
+            return this.$route.path
         },
         tabRoutesFilter() {
-            let self = this;
-            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord));
-            return filteredData;
+            let self = this
+            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))
+            return filteredData
         },
     },
-};
+}
 </script>

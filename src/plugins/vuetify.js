@@ -1,7 +1,7 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import icons from 'icons';
-Vue.use(Vuetify);
+import Vue from 'vue'
+import Vuetify from 'vuetify/lib'
+import icons from 'icons'
+Vue.use(Vuetify)
 
 export default new Vuetify({
     icons: {
@@ -26,4 +26,4 @@ export default new Vuetify({
             },
         },
     },
-});
+})

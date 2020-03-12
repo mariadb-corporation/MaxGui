@@ -47,30 +47,30 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import tabRoutes from 'router/tabRoutes';
+import { mapGetters, mapActions } from 'vuex'
+import tabRoutes from 'router/tabRoutes'
 
 export default {
-    name: 'Dashboard',
+    name: 'dashboard',
     data() {
         return {
             model: null,
             tabRoutes: tabRoutes,
-        };
+        }
     },
     computed: {
         ...mapGetters(['maxscaleDetails']),
     },
     created() {
-        this.fetchMaxScaleDetails();
+        this.fetchMaxScaleDetails()
     },
     methods: {
         ...mapActions(['fetchMaxScaleDetails']),
         navigate(path) {
-            this.$router.push(path);
+            this.$router.push(path)
         },
     },
-};
+}
 </script>
 
 <style scoped lang="scss">

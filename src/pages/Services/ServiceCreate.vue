@@ -252,10 +252,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    name: 'ServerCreate',
+    name: 'server-create',
     props: {
         value: Boolean,
         closeModal: Function,
@@ -304,36 +304,36 @@ export default {
                     data: [],
                 },
             },
-        };
+        }
     },
     computed: {
         ...mapGetters(['allServicesInfo']),
         computeShowDialog: {
             // get value from props
             get() {
-                return this.value;
+                return this.value
             },
             // set the value to show property in data
             set(value) {
-                this.show = value;
+                this.show = value
             },
         },
         modalTitle: function() {
-            let title = '';
+            let title = ''
             switch (this.mode) {
                 case 'create':
-                    title = 'Add a ';
-                    break;
+                    title = 'Add a '
+                    break
                 case 'update':
-                    title = 'Update ';
+                    title = 'Update '
             }
-            return title;
+            return title
         },
     },
     watch: {
         serviceId: function(newVal, oldVal) {
             // add hyphens when ever input have whitespace
-            this.serviceId = newVal.split(' ').join('-');
+            this.serviceId = newVal.split(' ').join('-')
         },
         // mode: function(newVal) {
 
@@ -344,20 +344,20 @@ export default {
 
         validateServiceId(val) {
             if (!val) {
-                return 'Service name is required';
+                return 'Service name is required'
             } else if (this.allServicesInfo.idArr.includes(val)) {
-                return 'Service name is already registered';
+                return 'Service name is already registered'
             }
-            return true;
+            return true
         },
         addRelationshipType(type) {
             switch (type) {
                 case 'filters':
-                    this.relationships.filters.data.push({ type: 'filters', id: '' });
-                    break;
+                    this.relationships.filters.data.push({ type: 'filters', id: '' })
+                    break
                 case 'servers':
-                    this.relationships.servers.data.push({ type: 'servers', id: '' });
-                    break;
+                    this.relationships.servers.data.push({ type: 'servers', id: '' })
+                    break
             }
         },
         /**
@@ -369,33 +369,33 @@ export default {
                 case 'filters':
                     this.relationships.filters.data = this.relationships.filters.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
                 case 'servers':
                     this.relationships.servers.data = this.relationships.servers.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
             }
         },
 
         handleSave() {
-            this.$refs.form.validate();
+            this.$refs.form.validate()
             if (this.isValid) {
                 // these parameters need to have null value if it is not set
                 this.parameters.version_string = this.$help.treatEmptyStringAsNull(
                     this.parameters.version_string
-                );
+                )
                 this.createOrUpdateService({
                     mode: 'post',
                     id: this.serviceId,
                     router: this.router,
                     relationships: this.relationships,
                     parameters: this.parameters,
-                });
-                this.closeModal();
+                })
+                this.closeModal()
             }
         },
     },
-};
+}
 </script>

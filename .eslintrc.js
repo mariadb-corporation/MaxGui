@@ -16,6 +16,7 @@ module.exports = {
 
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'no-unused-vars': 0,
         'comma-dangle': 0,
         'no-tabs': 2,
@@ -57,7 +58,7 @@ module.exports = {
         'vue/attribute-hyphenation': 0,
         'vue/require-default-prop': 0,
         'vue/no-template-shadow': 0,
-        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'vue/name-property-casing': ['error', 'kebab-case'],
     },
 
     overrides: [
@@ -82,4 +83,4 @@ module.exports = {
         'prettier/vue',
         '@vue/prettier',
     ],
-};
+}

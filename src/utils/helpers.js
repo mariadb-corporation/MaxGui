@@ -1,15 +1,15 @@
-import Vue from 'vue';
-import { cloneDeep } from 'lodash';
+import Vue from 'vue'
+import { cloneDeep } from 'lodash'
 
-const { t } = require('typy');
+const { t } = require('typy')
 
 export function deepClone(obj) {
-    return cloneDeep(obj);
+    return cloneDeep(obj)
 }
 export function range(start, end) {
-    if (!t(start).isNumber || !t(end).isNumber) return;
+    if (!t(start).isNumber || !t(end).isNumber) return
 
-    return Math.floor(Math.random() * (end - start + 1)) + start;
+    return Math.floor(Math.random() * (end - start + 1)) + start
 }
 
 /**
@@ -18,16 +18,16 @@ export function range(start, end) {
  */
 export function hasChild(val) {
     if ((typeof val === 'object' || Array.isArray(val) === 'array') && val !== null) {
-        return true;
+        return true
     }
-    return false;
+    return false
 }
 
 export function treatEmptyStringAsNull(val) {
     if (val === '') {
-        return null;
+        return null
     }
-    return val;
+    return val
 }
 
 /**
@@ -37,28 +37,28 @@ export function treatEmptyStringAsNull(val) {
 export function handleNull(val) {
     // render null string
     if (val == null) {
-        return 'null';
+        return 'null'
     }
     // check if it is object,
     if (this.hasChild(val)) {
-        return ''; // set empty string
+        return '' // set empty string
     } else {
-        return val;
+        return val
     }
 }
 export function handleEmptyString(val) {
-    return val === '' ? '""' : val;
+    return val === '' ? '""' : val
 }
 export function delay(t, v) {
     return new Promise(function(resolve) {
-        setTimeout(resolve.bind(null, v), t);
-    });
+        setTimeout(resolve.bind(null, v), t)
+    })
 }
 export function dynamicColors() {
-    let r = Math.floor(Math.random() * 255);
-    let g = Math.floor(Math.random() * 255);
-    let b = Math.floor(Math.random() * 255);
-    return 'rgb(' + r + ',' + g + ',' + b + ')';
+    let r = Math.floor(Math.random() * 255)
+    let g = Math.floor(Math.random() * 255)
+    let b = Math.floor(Math.random() * 255)
+    return 'rgb(' + r + ',' + g + ',' + b + ')'
 }
 
 /**
@@ -66,9 +66,9 @@ export function dynamicColors() {
  * @return {Array} An array of error string
  */
 export function getErrorsArr(error) {
-    let errorsArr = [error];
-    error.response.data && (errorsArr = error.response.data.errors.map(ele => `${ele.detail}`));
-    return errorsArr;
+    let errorsArr = [error]
+    error.response.data && (errorsArr = error.response.data.errors.map(ele => `${ele.detail}`))
+    return errorsArr
 }
 Object.defineProperties(Vue.prototype, {
     $help: {
@@ -83,7 +83,7 @@ Object.defineProperties(Vue.prototype, {
                 treatEmptyStringAsNull,
                 getErrorsArr,
                 deepClone,
-            };
+            }
         },
     },
-});
+})

@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 
 export default {
-    name: 'BaseDialog',
+    name: 'base-dialog',
     props: {
         maxWidth: String,
         value: Boolean,
@@ -39,20 +39,20 @@ export default {
     data() {
         return {
             show: false,
-        };
+        }
     },
     computed: {
         ...mapGetters(['darkTheme']),
         computeShowDialog: {
             // get value from props
             get() {
-                return this.value;
+                return this.value
             },
             // set the value to show property in data
             set(value) {
-                this.show = value;
+                this.show = value
                 if (value === false) {
-                    this.cancel();
+                    this.cancel()
                 }
             },
         },
@@ -60,16 +60,16 @@ export default {
 
     methods: {
         cancel() {
-            this.onCancel && this.onCancel();
+            this.onCancel && this.onCancel()
 
             // unit event testing
-            this.$emit('cancelClick', false);
+            this.$emit('cancelClick', false)
         },
         save() {
-            this.onSave && this.onSave();
+            this.onSave && this.onSave()
         },
     },
-};
+}
 </script>
 
 <style lang="scss" scoped>

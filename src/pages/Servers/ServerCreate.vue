@@ -229,10 +229,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    name: 'ServiceCreate',
+    name: 'service-create',
     props: {
         value: Boolean,
         closeModal: Function,
@@ -271,31 +271,31 @@ export default {
                     data: [],
                 },
             },
-        };
+        }
     },
     computed: {
         ...mapGetters(['allServersInfo']),
         computeShowDialog: {
             // get value from props
             get() {
-                return this.value;
+                return this.value
             },
             // set the value to show property in data
             set(value) {
-                this.show = value;
+                this.show = value
             },
         },
     },
     watch: {
         serverId: function(newVal, oldVal) {
             // add hyphens when ever input have whitespace
-            this.serverId = newVal.split(' ').join('-');
+            this.serverId = newVal.split(' ').join('-')
         },
         radioGroup: function(newVal, oldVal) {
             if (newVal === 'address') {
-                this.parameters.socket = null;
+                this.parameters.socket = null
             } else {
-                this.parameters.address = '127.0.0.1';
+                this.parameters.address = '127.0.0.1'
             }
         },
     },
@@ -303,28 +303,28 @@ export default {
         ...mapActions(['createOrUpdateServer']),
         validatePortNumber(val) {
             if (!val) {
-                return 'port number is required';
+                return 'port number is required'
             } else if (this.allServersInfo.portNumArr.includes(val)) {
-                return 'port number is already in use';
+                return 'port number is already in use'
             }
-            return true;
+            return true
         },
         validateServerId(val) {
             if (!val) {
-                return 'id is required';
+                return 'id is required'
             } else if (this.allServersInfo.idArr.includes(val)) {
-                return 'id is already registered';
+                return 'id is already registered'
             }
-            return true;
+            return true
         },
         addRelationship(type) {
             switch (type) {
                 case 'services':
-                    this.relationships.services.data.push({ type: 'services', id: '' });
-                    break;
+                    this.relationships.services.data.push({ type: 'services', id: '' })
+                    break
                 case 'monitors':
-                    this.relationships.monitors.data.push({ type: 'monitors', id: '' });
-                    break;
+                    this.relationships.monitors.data.push({ type: 'monitors', id: '' })
+                    break
             }
         },
         /**
@@ -336,46 +336,44 @@ export default {
                 case 'services':
                     this.relationships.services.data = this.relationships.services.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
                 case 'monitors':
                     this.relationships.monitors.data = this.relationships.monitors.data.filter(
                         item => item.id !== targetId
-                    );
-                    break;
+                    )
+                    break
             }
         },
 
         handleCreate() {
-            this.$refs.form.validate();
+            this.$refs.form.validate()
             if (this.isValid) {
-                this.closeModal();
+                this.closeModal()
 
                 // these parameters need to have null value if it is not set
-                this.parameters.socket = this.$help.treatEmptyStringAsNull(this.parameters.socket);
+                this.parameters.socket = this.$help.treatEmptyStringAsNull(this.parameters.socket)
                 this.parameters.authenticator = this.$help.treatEmptyStringAsNull(
                     this.parameters.authenticator
-                );
-                this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(
-                    this.parameters.ssl_key
-                );
+                )
+                this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(this.parameters.ssl_key)
                 this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(
                     this.parameters.ssl_cert
-                );
+                )
                 this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(
                     this.parameters.ssl_ca_cert
-                );
+                )
 
                 this.createOrUpdateServer({
                     mode: 'post',
                     id: this.serverId,
                     relationships: this.relationships,
                     parameters: this.parameters,
-                });
+                })
             }
         },
     },
-};
+}
 </script>
 
 <style lang="scss">

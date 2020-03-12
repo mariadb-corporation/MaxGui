@@ -21,7 +21,7 @@
 
 <script>
 export default {
-    name: 'SearchBox',
+    name: 'search-box',
     props: {
         width: String,
         focus: Boolean,
@@ -37,26 +37,26 @@ export default {
     data() {
         return {
             value: '',
-        };
+        }
     },
     watch: {
         focus(val) {
-            if (val) this.$refs['search-input'].focus();
+            if (val) this.$refs['search-input'].focus()
         },
     },
     methods: {
         onInput(e) {
-            this.value = e.target.value;
-            this.$emit('input', e.target.value);
+            this.value = e.target.value
+            this.$emit('input', e.target.value)
         },
         clearInput() {
             if (this.value.length) {
-                this.value = '';
-                this.$emit('input', '');
+                this.value = ''
+                this.$emit('input', '')
             }
         },
     },
-};
+}
 </script>
 <style lang="scss" scopped>
 .center {

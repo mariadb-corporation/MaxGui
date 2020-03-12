@@ -1,36 +1,36 @@
-import Alerts from 'icons/Alerts';
-import ArrowDown from 'icons/ArrowDown'; // MaxScale new icons
-import ArrowRight from 'icons/ArrowRight';
-import Backup from 'icons/Backup';
-import Close from 'icons/Close';
-import Comments from 'icons/Comments';
-import ConnectivityAlert from 'icons/ConnectivityAlert';
-import ConnectivityBad from 'icons/ConnectivityBad';
-import ConnectivityOk from 'icons/ConnectivityOk';
-import Delete from 'icons/Delete';
-import Edit from 'icons/Edit';
-import HealthAlert from 'icons/HealthAlert';
-import HealthBad from 'icons/HealthBad';
-import HealthOk from 'icons/HealthOk';
-import Monitoring from 'icons/Monitoring';
-import Paused from 'icons/Paused';
-import QuestionCircle from 'icons/QuestionCircle';
-import Reload from 'icons/Reload';
-import Reports from 'icons/Reports'; // MaxScale new icons
-import Restore from 'icons/Restore';
-import Running from 'icons/Running';
-import Search from 'icons/Search'; // MaxScale new icons
-import Security from 'icons/Security';
-import Settings from 'icons/Settings'; // MaxScale new icons
-import StatusError from 'icons/StatusError';
-import StatusInfo from 'icons/StatusInfo';
-import StatusOk from 'icons/StatusOk';
-import StatusWarning from 'icons/StatusWarning';
-import Stopped from 'icons/Stopped';
-import Table from 'icons/Table';
-import Tachometer from 'icons/Tachometer'; // MaxScale new icons
-import User from 'icons/User';
-import Users from 'icons/Users';
+import Alerts from 'icons/Alerts'
+import ArrowDown from 'icons/ArrowDown' // MaxScale new icons
+import ArrowRight from 'icons/ArrowRight'
+import Backup from 'icons/Backup'
+import Close from 'icons/Close'
+import Comments from 'icons/Comments'
+import ConnectivityAlert from 'icons/ConnectivityAlert'
+import ConnectivityBad from 'icons/ConnectivityBad'
+import ConnectivityOk from 'icons/ConnectivityOk'
+import Delete from 'icons/Delete'
+import Edit from 'icons/Edit'
+import HealthAlert from 'icons/HealthAlert'
+import HealthBad from 'icons/HealthBad'
+import HealthOk from 'icons/HealthOk'
+import Monitoring from 'icons/Monitoring'
+import Paused from 'icons/Paused'
+import QuestionCircle from 'icons/QuestionCircle'
+import Reload from 'icons/Reload'
+import Reports from 'icons/Reports' // MaxScale new icons
+import Restore from 'icons/Restore'
+import Running from 'icons/Running'
+import Search from 'icons/Search' // MaxScale new icons
+import Security from 'icons/Security'
+import Settings from 'icons/Settings' // MaxScale new icons
+import StatusError from 'icons/StatusError'
+import StatusInfo from 'icons/StatusInfo'
+import StatusOk from 'icons/StatusOk'
+import StatusWarning from 'icons/StatusWarning'
+import Stopped from 'icons/Stopped'
+import Table from 'icons/Table'
+import Tachometer from 'icons/Tachometer' // MaxScale new icons
+import User from 'icons/User'
+import Users from 'icons/Users'
 
 export default {
     alerts: {
@@ -132,4 +132,4 @@ export default {
     users: {
         component: Users,
     },
-};
+}

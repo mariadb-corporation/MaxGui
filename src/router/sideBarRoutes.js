@@ -1,8 +1,8 @@
 // Sidebar components
-import Dashboard from 'pages/Dashboard';
-import Statistics from 'pages/Statistics';
-import Users from 'pages/Users';
-import Settings from 'pages/Settings';
+import Dashboard from 'pages/Dashboard'
+import Statistics from 'pages/Statistics'
+import Users from 'pages/Users'
+import Settings from 'pages/Settings'
 
 export default [
     // Sidebar Routes
@@ -39,4 +39,4 @@ export default [
         },
         name: 'settings',
     },
-];
+]

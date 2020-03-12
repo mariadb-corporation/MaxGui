@@ -59,7 +59,7 @@
 
 <script>
 export default {
-    name: 'DeleteModal',
+    name: 'delete-modal',
     props: {
         title: String,
         item: Object,
@@ -69,13 +69,13 @@ export default {
     data() {
         return {
             deleteDialog: false,
-        };
+        }
     },
     methods: {
         handleDelete() {
-            this.deleteDialog = false;
-            this.dispatchDelete(this.item.id);
+            this.deleteDialog = false
+            this.dispatchDelete(this.item.id)
         },
     },
-};
+}
 </script>
