@@ -29,7 +29,7 @@
             </template>
             <v-list>
                 <v-list-item @click="handleLogout">
-                    <v-list-item-title>logout</v-list-item-title>
+                    <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-menu>

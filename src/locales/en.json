@@ -20,7 +20,7 @@
     "update": "Update",
     "actions": "Actions",
     "delete": "Delete",
-
+    "logout": "Logout",
     "save": "Save",
     "errors": {
         "usernameRequired": "Username is required.",

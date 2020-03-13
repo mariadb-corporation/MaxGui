@@ -436,7 +436,7 @@ export default {
                         )
                         break
                     case 'patch':
-                        console.log('update')
+                    // console.log('update')
                 }
 
                 this.createOrUpdateService({

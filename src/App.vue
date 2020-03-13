@@ -4,8 +4,8 @@
         <navigation v-if="user && user.token" />
         <snackbars v-if="user && user.token" />
         <overlay />
-        <v-content v-if="user && user.token">
-            <v-container fluid class="v-content-padding">
+        <v-content>
+            <v-container v-if="user && user.token" fluid class="v-content-padding">
                 <search-to-create
                     :isTabRoute="checkIsTabRoute()"
                     :currentRoute="currentRoute"
@@ -16,15 +16,15 @@
                 </h1>
 
                 <TabNav :tabRoutes="tabRoutes" />
-                <transition name="fade">
+                <transition name="fade" mode="out-in">
                     <router-view v-if="!checkIsTabRoute()" />
                 </transition>
             </v-container>
+            <!-- Public routes -->
+            <transition v-else name="fade" mode="out-in">
+                <router-view />
+            </transition>
         </v-content>
-        <!-- Public routes -->
-        <transition v-if="!user" name="fade">
-            <router-view />
-        </transition>
     </v-app>
 </template>
 
@@ -49,6 +49,7 @@ export default {
     data() {
         return {
             tabRoutes: tabRoutes,
+            prevHeight: 0,
         }
     },
     computed: {
@@ -82,13 +83,15 @@ export default {
 }
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
-
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.3s ease;
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    transition-timing-function: ease;
 }
+
 .fade-enter,
-.fade-leave-to {
+.fade-leave-active {
     opacity: 0;
 }
 </style>

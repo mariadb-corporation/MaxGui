@@ -111,7 +111,6 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import { OVERLAY_LOADING } from 'store/overlayTypes'
 
 export default {
     name: 'login',
@@ -162,12 +161,12 @@ export default {
     methods: {
         ...mapMutations(['setUser', 'showOverlay', 'hideOverlay']),
         ...mapActions(['login']),
+
         async handleSubmit() {
             if (!this.$refs.form.validate()) {
                 return
             }
             this.isLoading = true
-            this.showOverlay(OVERLAY_LOADING)
             try {
                 let self = this
                 let res = await self.axios.get(`/v1/auth`, { auth: self.credential })
@@ -177,12 +176,9 @@ export default {
                 await sessionStorage.setItem('user', JSON.stringify(userObj))
                 self.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`
                 self.$router.push('dashboard')
-
-                setTimeout(function() {
-                    self.hideOverlay()
-                }, 4000)
             } catch (error) {
                 this.displayOneError = true
+                this.hideOverlay()
                 if (error.response) {
                     this.errorMessage =
                         error.response.status === 401
