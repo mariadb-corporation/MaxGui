@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { routes } from './routes'
+import { OVERLAY_LOADING } from 'store/overlayTypes'
+import store from 'store'
+import { delay } from 'utils/helpers'
 
 Vue.use(Router)
 
@@ -19,6 +22,10 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
+            store.commit('showOverlay', OVERLAY_LOADING)
+            await delay(2000).then(() => {
+                return store.commit('hideOverlay')
+            })
             next({
                 path: '/login',
                 params: { nextUrl: to.fullPath },

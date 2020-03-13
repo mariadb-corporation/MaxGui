@@ -11,6 +11,7 @@ export default [
         component: Dashboard,
         meta: {
             requiresAuth: true,
+            keepAlive: true,
         },
         name: 'dashboard',
     },

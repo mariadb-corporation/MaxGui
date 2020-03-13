@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { delay, dynamicColors, getErrorsArr } from 'utils/helpers'
+import { delay, dynamicColors } from 'utils/helpers'
 
 export default {
     state: {
@@ -58,10 +58,6 @@ export default {
                         return dispatch('fetchThreadsAsync')
                     }))
             } catch (error) {
-                await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
-                })
                 !state.isDestroyed &&
                     (await delay(5000).then(() => {
                         return dispatch('fetchThreadsAsync')

@@ -1,11 +1,11 @@
 <template>
-    <v-container v-resize="onResize" class="container--fluid login-wrapper fill-height">
-        <v-row>
-            <v-col cols="12" align="center" justify="center">
+    <v-container v-resize="onResize" class="pa-0 ma-0 container--fluid login-wrapper fill-height ">
+        <v-row class="pa-0 ma-0 ">
+            <v-col class="pa-0 ma-0 " cols="12" align="center">
                 <div class="logo">
                     <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                    <span class="ml-2 white--text">
-                        <b>{{ config.productName }} </b>
+                    <span style="font-weight:600" class="ml-2 white--text">
+                        {{ config.productName }}
                     </span>
                 </div>
                 <v-card
@@ -159,7 +159,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations(['setUser', 'showOverlay', 'hideOverlay']),
+        ...mapMutations(['setUser']),
         ...mapActions(['login']),
 
         async handleSubmit() {
@@ -178,8 +178,8 @@ export default {
                 self.$router.push('dashboard')
             } catch (error) {
                 this.displayOneError = true
-                this.hideOverlay()
-                if (error.response) {
+
+                if (error) {
                     this.errorMessage =
                         error.response.status === 401
                             ? this.$t('errors.wrongCredentials')

@@ -2,17 +2,6 @@
 @import '~vuetify/src/styles/settings/_variables';
 
 $body-font-family: 'azo-sans-web', adrianna, serif;
-$font-weights: map-deep-merge(
-    (
-        'thin': 100,
-        'light': 350,
-        'regular': 400,
-        'medium': 600,
-        'bold': 700,
-        'black': 900,
-    ),
-    $font-weights
-);
 
 $headings: (
     'h1': (

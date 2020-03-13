@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { getErrorsArr } from '@/utils/helpers'
 
 export default {
     state: {
@@ -23,16 +22,9 @@ export default {
         // },
     },
     actions: {
-        async fetchServices({ commit, state }) {
-            try {
-                let res = await Vue.axios.get(`/v1/services`)
-                await commit('setServices', res.data.data)
-            } catch (error) {
-                await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
-                })
-            }
+        async fetchServices({ commit }) {
+            let res = await Vue.axios.get(`/v1/services`)
+            await commit('setServices', res.data.data)
         },
         //-----------------------------------------------Service----------------------------------------------
         /**
@@ -60,54 +52,41 @@ export default {
                     relationships: serviceData.relationships,
                 },
             }
-            try {
-                let res
-                let message
-                switch (serviceData.mode) {
-                    case 'post':
-                        res = await Vue.axios.post(`/v1/services/`, payload)
-                        message = [`Service ${serviceData.id} is created`]
-                        break
-                    case 'patch':
-                        res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload)
-                        message = [`Service ${serviceData.id} is updated`]
-                        break
-                }
 
-                // response ok
-                if (res.status === 204) {
-                    await commit('showMessage', {
-                        text: message,
-                        type: 'success',
-                    })
-                    await dispatch('fetchServices')
-                    await dispatch('fetchServers')
-                }
-            } catch (error) {
+            let res
+            let message
+            switch (serviceData.mode) {
+                case 'post':
+                    res = await Vue.axios.post(`/v1/services/`, payload)
+                    message = [`Service ${serviceData.id} is created`]
+                    break
+                case 'patch':
+                    res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload)
+                    message = [`Service ${serviceData.id} is updated`]
+                    break
+            }
+
+            // response ok
+            if (res.status === 204) {
                 await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
+                    text: message,
+                    type: 'success',
                 })
+                await dispatch('fetchServices')
+                await dispatch('fetchServers')
             }
         },
         /**
          * @param {String} id id of the service
          */
         async deleteServiceById({ dispatch, commit, state }, id) {
-            try {
-                let res = await Vue.axios.delete(`/v1/services/${id}`)
-                // response ok
-                if (res.status === 204) {
-                    await dispatch('fetchServices')
-                    await commit('showMessage', {
-                        text: [`Service ${id} is deleted`],
-                        type: 'success',
-                    })
-                }
-            } catch (error) {
+            let res = await Vue.axios.delete(`/v1/services/${id}`)
+            // response ok
+            if (res.status === 204) {
+                await dispatch('fetchServices')
                 await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
+                    text: [`Service ${id} is deleted`],
+                    type: 'success',
                 })
             }
         },

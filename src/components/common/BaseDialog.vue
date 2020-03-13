@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 
 export default {
     name: 'base-dialog',
@@ -59,14 +60,19 @@ export default {
     },
 
     methods: {
+        ...mapMutations(['showMessage', 'showOverlay', 'hideOverlay']),
         cancel() {
             this.onCancel && this.onCancel()
 
             // unit event testing
             this.$emit('cancelClick', false)
         },
-        save() {
-            this.onSave && this.onSave()
+        async save() {
+            if (this.onSave) {
+                this.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+                await this.onSave()
+                this.hideOverlay()
+            }
         },
     },
 }

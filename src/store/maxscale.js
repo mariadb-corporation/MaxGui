@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { getErrorsArr } from '@/utils/helpers'
 
 export default {
     state: {
@@ -15,15 +14,8 @@ export default {
     },
     actions: {
         async fetchMaxScaleDetails({ commit, state }) {
-            try {
-                let res = await Vue.axios.get(`/v1/maxscale`)
-                await commit('setMaxScaleDetails', res.data.data.attributes)
-            } catch (error) {
-                await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
-                })
-            }
+            let res = await Vue.axios.get(`/v1/maxscale`)
+            await commit('setMaxScaleDetails', res.data.data.attributes)
         },
     },
     getters: {

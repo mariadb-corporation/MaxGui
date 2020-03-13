@@ -1,17 +1,23 @@
 <template>
     <v-app>
-        <top-header v-if="user && user.token" :user="user" />
-        <navigation v-if="user && user.token" />
-        <snackbars v-if="user && user.token" />
         <overlay />
+        <template v-if="user && user.token">
+            <top-header :user="user" />
+            <navigation />
+            <snackbars />
+        </template>
         <v-content>
-            <v-container v-if="user && user.token" fluid class="v-content-padding">
+            <div class="fill-height" :class="[user && user.token ? 'v-content-padding' : '']">
                 <search-to-create
+                    v-if="user && user.token"
                     :isTabRoute="checkIsTabRoute()"
                     :currentRoute="currentRoute"
                     :tabRoutes="tabRoutes"
                 />
-                <h1 class="text-navigation display-1 text-capitalize page-title">
+                <h1
+                    v-if="user && user.token"
+                    class="text-navigation display-1 text-capitalize page-title"
+                >
                     {{ currentRoute }}
                 </h1>
 
@@ -19,11 +25,7 @@
                 <transition name="fade" mode="out-in">
                     <router-view v-if="!checkIsTabRoute()" />
                 </transition>
-            </v-container>
-            <!-- Public routes -->
-            <transition v-else name="fade" mode="out-in">
-                <router-view />
-            </transition>
+            </div>
         </v-content>
     </v-app>
 </template>
@@ -31,7 +33,7 @@
 <script>
 import store from 'store'
 import Layouts from 'layouts'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import SearchToCreate from 'components/SearchToCreate'
 import { routes } from 'router/routes'
 import TabNav from 'components/TabNav'
@@ -49,7 +51,6 @@ export default {
     data() {
         return {
             tabRoutes: tabRoutes,
-            prevHeight: 0,
         }
     },
     computed: {
@@ -58,8 +59,9 @@ export default {
             return this.$route.name
         },
     },
-
     methods: {
+        ...mapMutations(['showOverlay', 'hideOverlay']),
+
         // check if currentRoute is a tabRoute
         checkIsTabRoute() {
             let arr = this.tabRoutes

@@ -18,7 +18,7 @@
             maxWidth="470px"
         >
             <template v-slot:title>
-                <h3 class="color text-navigation font-weight-light">{{ title }}</h3>
+                <h3 style="font-weight:350" class="color text-navigation ">{{ title }}</h3>
             </template>
 
             <template v-slot:body>

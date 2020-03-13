@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { getErrorsArr } from '@/utils/helpers'
 
 export default {
     state: {
@@ -15,15 +14,8 @@ export default {
     },
     actions: {
         async fetchServers({ commit, state }) {
-            try {
-                let res = await Vue.axios.get(`/v1/servers`)
-                await commit('setServers', res.data.data)
-            } catch (error) {
-                await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
-                })
-            }
+            let res = await Vue.axios.get(`/v1/servers`)
+            await commit('setServers', res.data.data)
         },
         /**
          * @param {Object} serverData Server object
@@ -41,54 +33,40 @@ export default {
                     relationships: serverData.relationships,
                 },
             }
-            try {
-                let res
-                let message
-                switch (serverData.mode) {
-                    case 'post':
-                        res = await Vue.axios.post(`/v1/servers/`, payload)
-                        message = [`Server ${serverData.id} is created`]
-                        break
-                    case 'patch':
-                        res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload)
-                        message = [`Server ${serverData.id} is updated`]
-                        break
-                }
+            let res
+            let message
+            switch (serverData.mode) {
+                case 'post':
+                    res = await Vue.axios.post(`/v1/servers/`, payload)
+                    message = [`Server ${serverData.id} is created`]
+                    break
+                case 'patch':
+                    res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload)
+                    message = [`Server ${serverData.id} is updated`]
+                    break
+            }
 
-                // response ok
-                if (res.status === 204) {
-                    await commit('showMessage', {
-                        text: message,
-                        type: 'success',
-                    })
-                    await dispatch('fetchServers')
-                    await dispatch('fetchServices')
-                }
-            } catch (error) {
+            // response ok
+            if (res.status === 204) {
                 await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
+                    text: message,
+                    type: 'success',
                 })
+                await dispatch('fetchServers')
+                await dispatch('fetchServices')
             }
         },
         /**
          * @param {String} id id of the server
          */
         async deleteServerById({ dispatch, commit }, id) {
-            try {
-                let res = await Vue.axios.delete(`/v1/servers/${id}`)
-                // response ok
-                if (res.status === 204) {
-                    await dispatch('fetchServers')
-                    await commit('showMessage', {
-                        text: [`Server ${id} is deleted`],
-                        type: 'success',
-                    })
-                }
-            } catch (error) {
+            let res = await Vue.axios.delete(`/v1/servers/${id}`)
+            // response ok
+            if (res.status === 204) {
+                await dispatch('fetchServers')
                 await commit('showMessage', {
-                    text: getErrorsArr(error),
-                    type: 'error',
+                    text: [`Server ${id} is deleted`],
+                    type: 'success',
                 })
             }
         },

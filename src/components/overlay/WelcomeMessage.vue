@@ -13,7 +13,7 @@
         <div>
             {{ $t('welcomeTo') }}
         </div>
-        <div class="font-weight-medium">
+        <div style="font-weight:600">
             {{ $t('mariaDbMaxScale') }}
         </div>
     </div>
