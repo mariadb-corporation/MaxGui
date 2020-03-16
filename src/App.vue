@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <overlay />
-        <component :is="layout"> </component>
+        <component :is="$route.meta.layout"> </component>
     </v-app>
 </template>
 
@@ -17,11 +17,6 @@ export default {
         Overlay,
         AppLayout,
         NoLayout,
-    },
-    computed: {
-        layout() {
-            return this.$route.meta.layout
-        },
     },
 }
 </script>

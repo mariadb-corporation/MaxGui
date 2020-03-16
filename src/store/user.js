@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { OVERLAY_LOADING } from 'store/overlayTypes'
+import { OVERLAY_LOGOUT } from 'store/overlayTypes'
 import { delay } from 'utils/helpers'
 
 export default {
@@ -23,12 +23,13 @@ export default {
         async logout({ commit }, router) {
             commit('logout')
             sessionStorage.removeItem('user')
+            commit('setUser', {})
             delete Vue.axios.defaults.headers.common['Authorization']
-            // commit('showOverlay', OVERLAY_LOADING)
-            // await delay(10000000).then(() => {
-            //     return commit('hideOverlay')
-            // })
+            commit('showOverlay', OVERLAY_LOGOUT)
             router.push('login')
+            await delay(600).then(() => {
+                return commit('hideOverlay')
+            })
         },
     },
     getters: {

@@ -2,19 +2,23 @@
 @import 'styles/constants';
 
 .welcome-txt {
-    color: $text-subtle;
-    text-align: center;
     font-size: 30px;
 }
 </style>
 
 <template>
-    <div class="welcome-txt">
-        <div>
-            {{ $t('welcomeTo') }}
-        </div>
+    <div class="welcome-txt text-center color text-text-subtle">
+        <div>{{ greeting }}</div>
         <div style="font-weight:600">
             {{ $t('mariaDbMaxScale') }}
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    props: {
+        greeting: String,
+    },
+}
+</script>

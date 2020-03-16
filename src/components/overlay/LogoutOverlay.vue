@@ -7,7 +7,7 @@
                     <img src="@/assets/icon-globe.svg" alt="MariaDB" />
                 </div>
                 <div class="color text-accent text-center">
-                    {{ $t('initializing') }}
+                    {{ $t('loggingOut') }}
                 </div>
             </div>
         </div>

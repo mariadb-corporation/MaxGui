@@ -74,10 +74,11 @@
                         <div class="mx-auto text-center" style="width: 50%;">
                             <v-progress-circular
                                 v-if="isLoading"
-                                :size="40"
+                                :size="36"
                                 :width="5"
                                 color="primary"
                                 indeterminate
+                                class="mb-3"
                             />
                             <v-btn
                                 v-else

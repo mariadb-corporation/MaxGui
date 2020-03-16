@@ -4,6 +4,7 @@
     "mariaDbMaxScale": "MariaDB MaxScale",
     "initializing": "initializing",
     "welcome": "Welcome",
+    "loggingOut": "Logging Out",
     "username": "Username",
     "password": "Password",
     "rememberMe": "Remember me",

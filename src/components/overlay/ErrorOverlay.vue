@@ -1,20 +1,12 @@
-<style lang="scss" scoped>
-@import 'styles/constants';
-
-.text {
-    color: $error;
-}
-</style>
-
 <template>
-    <v-overlay :opacity="1" :absolute="true">
+    <v-overlay z-index="9999" :opacity="1" :absolute="true">
         <div class="overlay">
             <div class="overlay-content">
-                <WelcomeMessage />
+                <WelcomeMessage :greeting="$t('welcomeTo')" />
                 <div class="loading-icon">
                     <img src="@/assets/icon-globe-error.svg" alt="MariaDB" class="loading-icon" />
                 </div>
-                <div class="text text-center">
+                <div class="color text-error text-center">
                     {{ 'serviceUnavailable' }} <br />
                     {{ 'refreshLater' }}
                 </div>
