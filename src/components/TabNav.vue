@@ -20,11 +20,7 @@
 </template>
 
 <script>
-import store from 'store'
-import Layouts from 'layouts'
 import { mapGetters } from 'vuex'
-import SearchToCreate from 'components/SearchToCreate'
-import { routes } from 'router/routes'
 
 export default {
     name: 'tab-nav',

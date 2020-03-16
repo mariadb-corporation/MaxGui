@@ -22,8 +22,6 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
-            // login page use no-layout
-            store.commit('setLayout', 'no-layout')
             if (from.path === '/') {
                 store.commit('showOverlay', OVERLAY_LOADING)
                 await delay(600).then(() => {
@@ -38,12 +36,9 @@ router.beforeEach(async (to, from, next) => {
             if (from.path === '/login') {
                 store.commit('showOverlay', OVERLAY_LOADING)
                 await delay(1500).then(() => {
-                    return (
-                        store.commit('hideOverlay'), store.commit('setLayout', 'app-layout'), next()
-                    )
+                    return store.commit('hideOverlay'), next()
                 })
             } else {
-                store.commit('setLayout', 'app-layout')
                 next()
             }
         }

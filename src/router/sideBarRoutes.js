@@ -12,6 +12,7 @@ export default [
         meta: {
             requiresAuth: true,
             keepAlive: true,
+            layout: 'app-layout',
         },
         name: 'dashboard',
     },
@@ -21,6 +22,7 @@ export default [
         component: Statistics,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'statistics',
     },
@@ -29,6 +31,7 @@ export default [
         component: Users,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'users',
     },
@@ -37,6 +40,7 @@ export default [
         component: Settings,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'settings',
     },

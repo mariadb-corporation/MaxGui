@@ -20,7 +20,7 @@ export default {
     },
     computed: {
         layout() {
-            return this.$store.getters.layout
+            return this.$route.meta.layout
         },
     },
 }

@@ -76,7 +76,7 @@ export default {
 /* durations and timing functions.              */
 .fade-enter-active,
 .fade-leave-active {
-    transition-duration: 0.3s;
+    transition-duration: 0.2s;
     transition-property: opacity;
     transition-timing-function: ease;
 }

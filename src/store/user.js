@@ -22,7 +22,6 @@ export default {
     actions: {
         async logout({ commit }, router) {
             commit('logout')
-            commit('setLayout', 'no-layout')
             sessionStorage.removeItem('user')
             delete Vue.axios.defaults.headers.common['Authorization']
             // commit('showOverlay', OVERLAY_LOADING)

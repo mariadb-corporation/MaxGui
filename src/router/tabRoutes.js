@@ -8,6 +8,7 @@ export default [
         component: Services,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'services',
         isTabRoute: true,
@@ -17,6 +18,7 @@ export default [
         component: Servers,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'servers',
         isTabRoute: true,

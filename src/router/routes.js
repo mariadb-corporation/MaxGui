@@ -16,6 +16,7 @@ export const routes = [
         meta: {
             requiresAuth: false,
             guest: true,
+            layout: 'no-layout',
         },
     },
     ...sideBarRoutes,
@@ -26,6 +27,7 @@ export const routes = [
         component: MaxScale,
         meta: {
             requiresAuth: true,
+            layout: 'app-layout',
         },
         name: 'maxscale',
     },
