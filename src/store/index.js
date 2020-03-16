@@ -17,8 +17,12 @@ export default new Vuex.Store({
         darkTheme: localStorage.getItem('darkTheme') === 'true' ? true : false,
         searchKeyWord: '',
         overlay: false,
+        layout: 'no-layout',
     },
     mutations: {
+        setLayout(state, payload) {
+            state.layout = payload
+        },
         showOverlay(state, type) {
             state.overlay = type
         },
@@ -50,6 +54,7 @@ export default new Vuex.Store({
     getters: {
         searchKeyWord: state => state.searchKeyWord,
         darkTheme: state => state.darkTheme,
+        layout: state => state.layout,
     },
     modules: {
         user,

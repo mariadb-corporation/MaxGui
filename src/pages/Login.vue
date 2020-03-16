@@ -175,7 +175,7 @@ export default {
                 await self.setUser(userObj)
                 await sessionStorage.setItem('user', JSON.stringify(userObj))
                 self.axios.defaults.headers.common['Authorization'] = `Bearer ${userObj.token}`
-                self.$router.push('dashboard')
+                self.$router.push(self.$route.query.redirect || '/dashboard')
             } catch (error) {
                 this.displayOneError = true
 

@@ -14,7 +14,7 @@
                     <img src="@/assets/icon-globe.svg" alt="MariaDB" />
                 </div>
                 <div class="text text-center">
-                    {{ 'initializing' }}
+                    {{ $t('initializing') }}
                 </div>
             </div>
         </div>
