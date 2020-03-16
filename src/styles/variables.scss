@@ -106,3 +106,5 @@ $btn-font-sizes: map-deep-merge(
     ),
     $btn-font-sizes
 );
+// override v-menu
+$menu-content-border-radius: 10px;

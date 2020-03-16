@@ -174,7 +174,7 @@
                                             </v-icon>
                                         </v-btn>
                                         <v-text-field
-                                            id="filter_id"
+                                            :id="`filter_id-${i}`"
                                             v-model="item.id"
                                             :rules="serviceObjRules.filter_id"
                                             class="input_height_prefix"
@@ -193,7 +193,7 @@
                                     x-small
                                     @click="addRelationshipType('servers')"
                                 >
-                                    {{ $t('add') }} server
+                                    {{ $t('add') }} Server
                                 </v-btn>
                                 <div
                                     v-if="relationships.servers.data.length"
@@ -209,7 +209,7 @@
                                             <v-icon color="red" size="16">close</v-icon>
                                         </v-btn>
                                         <v-text-field
-                                            id="server_id"
+                                            :id="`server_id-${i}`"
                                             v-model="item.id"
                                             :rules="serviceObjRules.server_id"
                                             class="input_height_prefix"
@@ -250,7 +250,6 @@
                 class="px-5 text-capitalize"
                 rounded
                 depressed
-                :disabled="!isValid"
                 @click="save"
             >
                 {{ `${mode === 'post' ? $t('add') : $t('update')}` }}

@@ -73,7 +73,6 @@ export default {
                     type: 'success',
                 })
                 await dispatch('fetchServices')
-                await dispatch('fetchServers')
             }
         },
         /**

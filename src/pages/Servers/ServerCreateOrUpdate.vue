@@ -148,7 +148,7 @@
                                             <v-icon color="red" size="16">close</v-icon>
                                         </v-btn>
                                         <v-text-field
-                                            id="service_id"
+                                            :id="`service_id-${i}`"
                                             v-model="item.id"
                                             :rules="serverObjRules.service_id"
                                             class="input_height_prefix"
@@ -185,7 +185,7 @@
                                             <v-icon color="red" size="16">close</v-icon>
                                         </v-btn>
                                         <v-text-field
-                                            id="monitor_id"
+                                            :id="`monitor_id-${i}`"
                                             v-model="item.id"
                                             :rules="serverObjRules.monitor_id"
                                             class="input_height_prefix"
@@ -226,7 +226,6 @@
                 class="px-5 text-capitalize"
                 rounded
                 depressed
-                :disabled="!isValid"
                 @click="save"
             >
                 {{ `${mode === 'post' ? $t('add') : $t('update')}` }}

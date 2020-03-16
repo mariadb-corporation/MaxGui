@@ -1,5 +1,5 @@
 <template>
-    <v-row>
+    <v-row class="mt-5">
         <v-col class="pt-0" cols="10">
             <servers-table :serversData="serversData" />
         </v-col>

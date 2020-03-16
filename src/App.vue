@@ -23,7 +23,7 @@
 
                 <TabNav :tabRoutes="tabRoutes" />
                 <transition name="fade" mode="out-in">
-                    <router-view v-if="!checkIsTabRoute()" />
+                    <router-view />
                 </transition>
             </div>
         </v-content>

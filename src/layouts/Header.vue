@@ -15,7 +15,7 @@
                     <v-icon class="user-icon mr-1 white--text" style="width:30px" size="30">
                         $vuetify.icons.user
                     </v-icon>
-                    <span class="text-capitalize white--text">{{ user.username }}</span>
+                    <span class="text-capitalize white--text">{{ user ? user.username : '' }}</span>
 
                     <v-icon
                         :class="[!isProfileOpened ? 'arrow-down' : 'arrow-up']"
@@ -27,7 +27,7 @@
                     </v-icon>
                 </v-btn>
             </template>
-            <v-list>
+            <v-list class="header-dropdown-list">
                 <v-list-item @click="handleLogout">
                     <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
                 </v-list-item>
@@ -49,7 +49,7 @@
 <script>
 import { mapActions } from 'vuex'
 export default {
-    props: { user: Object },
+    props: { user: Object, default: null },
     data() {
         return {
             items: [],
@@ -121,5 +121,13 @@ export default {
 }
 .v-btn {
     letter-spacing: normal;
+}
+.header-dropdown-list {
+    border-radius: 10px;
+
+    padding: 0px;
+    .v-list-item__title {
+        font-size: 0.875rem;
+    }
 }
 </style>

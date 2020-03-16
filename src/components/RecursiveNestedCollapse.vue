@@ -32,7 +32,7 @@
                     />
                 </template>
                 <template v-else>
-                    <styled-table :data="child"></styled-table>
+                    <styled-table :data="child" />
                 </template>
             </v-expansion-panel-content>
         </v-expansion-panel>

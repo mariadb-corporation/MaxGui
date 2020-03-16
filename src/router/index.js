@@ -22,10 +22,12 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
-            store.commit('showOverlay', OVERLAY_LOADING)
-            await delay(2000).then(() => {
-                return store.commit('hideOverlay')
-            })
+            if (from.path === '/') {
+                store.commit('showOverlay', OVERLAY_LOADING)
+                await delay(2000).then(() => {
+                    return store.commit('hideOverlay')
+                })
+            }
             next({
                 path: '/login',
                 params: { nextUrl: to.fullPath },

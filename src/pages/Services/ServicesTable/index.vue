@@ -1,5 +1,5 @@
 <template>
-    <v-card :outlined="darkTheme" :dark="darkTheme" class="v-card-custom">
+    <fragment>
         <data-table
             :headers="tableHeaders"
             :data="tableRows"
@@ -37,7 +37,7 @@
             mode="patch"
             :item="chosenItem"
         />
-    </v-card>
+    </fragment>
 </template>
 
 <script>

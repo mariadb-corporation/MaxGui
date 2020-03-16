@@ -1,21 +1,17 @@
 <template>
-    <v-container>
-        <v-row>
-            <v-col cols="12"> <h2 class="text-left">Parameters</h2></v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="7">
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in genData()"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
-                />
-            </v-col>
-        </v-row>
-    </v-container>
+    <v-row>
+        <v-col cols="12"> <h2 class="text-left">Parameters</h2></v-col>
+        <v-col cols="9">
+            <recursive-nested-collapse
+                v-for="(value, propertyName) in genData()"
+                :key="propertyName"
+                :hasChild="$help.hasChild(value)"
+                :propertyName="propertyName"
+                :value="$help.handleNull(value)"
+                :child="$help.hasChild(value) ? value : {}"
+            />
+        </v-col>
+    </v-row>
 </template>
 
 <script>

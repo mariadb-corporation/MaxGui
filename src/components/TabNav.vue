@@ -7,18 +7,15 @@
             v-for="route in tabRoutesFilter"
             :key="route.path"
             :to="route.path"
-            class="color border-bottom-table-header"
+            class="color border-bottom-table-header "
         >
             {{ route.name }}
         </v-tab>
-        <v-tabs-items v-model="activeTab" class="pt-5">
+        <!-- <v-tabs-items v-model="activeTab">
             <v-tab-item v-for="route in tabRoutesFilter" :id="route.path" :key="route.name">
                 <router-view v-if="activeTab === route.path" />
             </v-tab-item>
-        </v-tabs-items>
-        <v-tab-item id="/dashboard/servers">
-            <router-view v-if="activeTab === '/dashboard/servers'" />
-        </v-tab-item>
+        </v-tabs-items> -->
     </v-tabs>
 </template>
 

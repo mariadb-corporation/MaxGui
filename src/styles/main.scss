@@ -44,6 +44,11 @@ body,
             padding: 0 24px;
             background-color: $table-border;
             text-transform: uppercase;
+            color: $small-text !important;
+            font-size: 11px;
+            &.active {
+                color: #000 !important;
+            }
             &:last-child {
                 border-radius: 0 5px 0 0;
             }
@@ -59,6 +64,8 @@ body,
                 td {
                     padding: 0 24px;
                     border-bottom: 1px solid $table-border;
+                    font-size: 14px;
+                    color: $navigation;
                     @media (max-width: 600px) {
                         border-bottom: none;
                     }
