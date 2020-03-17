@@ -6,21 +6,21 @@ export default {
     },
     mutations: {
         /**
-         * @param {Array} payload serversData array
+         * @param {Array} payload // List of server resouces
          */
         setServers(state, payload) {
             state.serversData = payload
         },
     },
     actions: {
-        async fetchServers({ commit, state }) {
+        async fetchServers({ commit }) {
             let res = await Vue.axios.get(`/v1/servers`)
             await commit('setServers', res.data.data)
         },
         /**
          * @param {Object} serverData Server object
          * @param {String} serverData.mode Mode to perform async request POST or Patch
-         * @param {String} serverData.id Id of the server
+         * @param {String} serverData.id Name of the server
          * @param {Object} serverData.relationships Relationships of the server
          * @param {Object} serverData.parameters Parameters for the server
          */
@@ -58,13 +58,39 @@ export default {
         /**
          * @param {String} id id of the server
          */
-        async deleteServerById({ dispatch, commit }, id) {
+        async destroyServer({ dispatch, commit }, id) {
             let res = await Vue.axios.delete(`/v1/servers/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchServers')
                 await commit('showMessage', {
                     text: [`Server ${id} is deleted`],
+                    type: 'success',
+                })
+            }
+        },
+        /**
+         * @param {String} id id of the server
+         * @param {String} state state of the server (master, slave, maintenance, running, synced or stale)
+         * @param {String} mode mode set or clear
+         */
+        async setOrClearServerState({ dispatch, commit }, { id, state, mode }) {
+            let res, message
+            switch (mode) {
+                case 'set':
+                    res = await Vue.axios.put(`/v1/servers/${id}/set?state=${state}`)
+                    message = [`Server ${id} is set to ${state}`]
+                    break
+                case 'clear':
+                    res = await Vue.axios.put(`/v1/servers/${id}/clear?state=${state}`)
+                    message = [`State ${state} of server ${id} is cleared`]
+                    break
+            }
+            // response ok
+            if (res.status === 204) {
+                await dispatch('fetchServers')
+                await commit('showMessage', {
+                    text: message,
                     type: 'success',
                 })
             }

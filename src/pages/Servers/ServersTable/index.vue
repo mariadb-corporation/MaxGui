@@ -20,7 +20,7 @@
                 </v-tooltip>
                 <delete-modal
                     :item="item"
-                    :dispatchDelete="() => deleteServerById(item.id)"
+                    :dispatchDelete="() => destroyServer(item.id)"
                     :title="`${$t('delete')} ${$t('server')}`"
                     :smallInfo="$t('info.serverDeleteModal')"
                 />
@@ -104,7 +104,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['deleteServerById']),
+        ...mapActions(['destroyServer']),
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item

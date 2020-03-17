@@ -78,7 +78,7 @@ export default {
         /**
          * @param {String} id id of the service
          */
-        async deleteServiceById({ dispatch, commit, state }, id) {
+        async destroyService({ dispatch, commit }, id) {
             let res = await Vue.axios.delete(`/v1/services/${id}`)
             // response ok
             if (res.status === 204) {
@@ -89,6 +89,31 @@ export default {
                 })
             }
         },
+        /**
+         * @param {String} id id of the service
+         * @param {String} mode Mode to start or stop service
+         */
+        async stopOrStartService({ dispatch, commit }, { id, mode }) {
+            let res = await Vue.axios.put(`/v1/services/${id}/${mode}`)
+            let message
+            switch (mode) {
+                case 'start':
+                    message = [`Service ${id} is started`]
+                    break
+                case 'stop':
+                    message = [`Service${id} is stopped`]
+                    break
+            }
+            // response ok
+            if (res.status === 204) {
+                await dispatch('fetchServices')
+                await commit('showMessage', {
+                    text: message,
+                    type: 'success',
+                })
+            }
+        },
+
         //---------------------------------Listeners of the service-------------------------------------------
         // async fetchListenersByService({ commit, state }, serviceId) {
         //     try {

@@ -21,7 +21,7 @@
 
                 <delete-modal
                     :item="item"
-                    :dispatchDelete="() => deleteServiceById(item.id)"
+                    :dispatchDelete="() => destroyService(item.id)"
                     :title="`${$t('delete')} ${$t('service')}`"
                     :smallInfo="$t('info.serviceDeleteModal')"
                 />
@@ -79,7 +79,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['deleteServiceById']),
+        ...mapActions(['destroyService']),
         handleOpenModal: function(item) {
             this.serviceDialog = true
             this.chosenItem = item
