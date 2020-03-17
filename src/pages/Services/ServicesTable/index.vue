@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import ServiceCreateOrUpdate from '../ServiceCreateOrUpdate'
 import ServiceRead from './ServiceRead'
 import DeleteModal from 'components/DeleteModal'
@@ -73,9 +73,6 @@ export default {
         }
     },
 
-    computed: {
-        ...mapState(['darkTheme']),
-    },
     watch: {
         servicesData: function(newVal, oldVal) {
             this.generateTableRows(newVal)

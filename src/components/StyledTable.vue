@@ -1,6 +1,5 @@
 <template v-if="data">
     <v-data-table
-        :dark="darkTheme"
         :headers="headersArr"
         :items="itemsArr"
         dense
@@ -11,8 +10,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
     name: 'styled-table',
 
@@ -26,9 +23,7 @@ export default {
             expanded: [],
         }
     },
-    computed: {
-        ...mapState(['darkTheme']),
-    },
+
     mounted() {
         const { data } = this
         if (data) {

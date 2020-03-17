@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import DeleteModal from 'components/DeleteModal'
 import ServerCreateOrUpdate from '../ServerCreateOrUpdate'
 import ServerRead from './ServerRead'
@@ -70,7 +70,6 @@ export default {
         }
     },
     computed: {
-        ...mapState(['darkTheme']),
         /**
          * @return {Array} An array of objects
          */

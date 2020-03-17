@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ServersTable from './ServersTable'
 
 export default {
@@ -17,7 +17,6 @@ export default {
     },
     computed: {
         ...mapGetters(['serversData']),
-        ...mapState(['darkTheme']),
     },
     created() {
         this.fetchServers()

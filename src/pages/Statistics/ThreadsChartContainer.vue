@@ -48,7 +48,6 @@ export default {
     },
     computed: {
         ...mapGetters(['chartdata', 'updateCount']),
-        ...mapState(['darkTheme']),
     },
 
     watch: {
@@ -84,10 +83,10 @@ export default {
         chart.data.labels = []
         chart.data.datasets = []
         chart.destroy()
-        this.clearState()
+        this.clearThreadsState()
     },
     methods: {
-        ...mapMutations(['clearState']),
+        ...mapMutations(['clearThreadsState']),
     },
 }
 </script>

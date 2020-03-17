@@ -1,7 +1,6 @@
 <template>
     <v-expansion-panels
         :class="[hasChild ? '' : 'no-pointer']"
-        :dark="darkTheme"
         :readonly="!hasChild"
         accordion
         tile
@@ -41,7 +40,6 @@
 
 <script>
 import StyledTable from 'components/StyledTable'
-import { mapState } from 'vuex'
 
 export default {
     /* This component intends to render nested objects. First level of the object will be rendered first
@@ -56,10 +54,6 @@ export default {
         child: [Object, Array],
         hasChild: Boolean,
         index: Number,
-    },
-
-    computed: {
-        ...mapState(['darkTheme']),
     },
 
     methods: {

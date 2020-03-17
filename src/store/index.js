@@ -1,7 +1,6 @@
 import Vuex from 'vuex'
 import user from 'store/user'
 import maxscale from './maxscale'
-import threads from './threads'
 import server from './server'
 import service from './service'
 import monitor from './monitor'
@@ -55,13 +54,12 @@ export default new Vuex.Store({
         darkTheme: state => state.darkTheme,
     },
     modules: {
-        user,
+        filter,
         maxscale,
+        monitor,
         server,
         service,
-        threads,
-        monitor,
-        filter,
         session,
+        user,
     },
 })
