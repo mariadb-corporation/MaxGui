@@ -13,7 +13,7 @@ export default {
         },
     },
     actions: {
-        async fetchMaxScaleDetails({ commit, state }) {
+        async fetchMaxScaleDetails({ commit }) {
             let res = await Vue.axios.get(`/v1/maxscale`)
             await commit('setMaxScaleDetails', res.data.data.attributes)
         },

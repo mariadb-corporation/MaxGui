@@ -2,8 +2,11 @@ import Vuex from 'vuex'
 import user from 'store/user'
 import maxscale from './maxscale'
 import threads from './threads'
-import servers from './servers'
-import services from './services'
+import server from './server'
+import service from './service'
+import monitor from './monitor'
+import filter from './filter'
+import session from './session'
 import { APP_CONFIG } from 'utils/constants'
 
 export default new Vuex.Store({
@@ -54,8 +57,11 @@ export default new Vuex.Store({
     modules: {
         user,
         maxscale,
-        servers,
-        services,
+        server,
+        service,
         threads,
+        monitor,
+        filter,
+        session,
     },
 })

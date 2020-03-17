@@ -3,7 +3,16 @@
 </template>
 
 <script>
-export default {}
+import { mapActions } from 'vuex'
+
+export default {
+    created() {
+        this.fetchCurrentNetworkUser()
+    },
+    methods: {
+        ...mapActions(['fetchCurrentNetworkUser']),
+    },
+}
 </script>
 
 <style lang="scss" scoped></style>
