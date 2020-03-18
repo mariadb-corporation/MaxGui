@@ -15,7 +15,6 @@
     "chart.js": "^2.9.3",
     "core-js": "^3.4.4",
     "immutability-helper": "^3.0.1",
-    "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "typy": "^3.3.0",
     "vue": "^2.6.11",

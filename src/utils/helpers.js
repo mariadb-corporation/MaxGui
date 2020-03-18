@@ -2,15 +2,6 @@ import Vue from 'vue'
 import { cloneDeep } from 'lodash'
 
 const { t } = require('typy')
-export function assertAlive(decoded) {
-    const now = Date.now().valueOf() / 1000
-    if (t(decoded.exp).isDefined && decoded.exp < now) {
-        throw new Error(`token expired: ${JSON.stringify(decoded)}`)
-    }
-    if (t(decoded.nbf).isDefined && decoded.nbf > now) {
-        throw new Error(`token not yet valid: ${JSON.stringify(decoded)}`)
-    }
-}
 
 export function deepClone(obj) {
     return cloneDeep(obj)
@@ -94,7 +85,6 @@ Object.defineProperties(Vue.prototype, {
                 treatEmptyStringAsNull,
                 getErrorsArr,
                 deepClone,
-                assertAlive,
             }
         },
     },

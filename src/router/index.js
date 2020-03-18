@@ -3,8 +3,7 @@ import Router from 'vue-router'
 import { routes } from './routes'
 import { OVERLAY_LOADING } from 'store/overlayTypes'
 import store from 'store'
-import { delay, assertAlive } from 'utils/helpers'
-const jwtDecode = require('jwt-decode')
+import { delay } from 'utils/helpers'
 
 Vue.use(Router)
 
@@ -42,13 +41,7 @@ router.beforeEach(async (to, from, next) => {
                     return store.commit('hideOverlay'), next()
                 })
             } else {
-                try {
-                    assertAlive(jwtDecode(token))
-                    next()
-                } catch (error) {
-                    console.error(error)
-                    store.dispatch('logout')
-                }
+                next()
             }
         }
     } else {
