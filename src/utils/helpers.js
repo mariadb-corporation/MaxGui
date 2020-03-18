@@ -4,10 +4,10 @@ import { cloneDeep } from 'lodash'
 const { t } = require('typy')
 export function assertAlive(decoded) {
     const now = Date.now().valueOf() / 1000
-    if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
+    if (t(decoded.exp).isDefined && decoded.exp < now) {
         throw new Error(`token expired: ${JSON.stringify(decoded)}`)
     }
-    if (typeof decoded.nbf !== 'undefined' && decoded.nbf > now) {
+    if (t(decoded.nbf).isDefined && decoded.nbf > now) {
         throw new Error(`token not yet valid: ${JSON.stringify(decoded)}`)
     }
 }
@@ -24,17 +24,18 @@ export function range(start, end) {
 
 /**
  * @param {(Object|Array.)} val Param either Object or Array. Null is ignore*
- * @returns {Boolean} A boolean value to detect wheter value is object or array
+ * @returns {Boolean} Return true if value type is object or array.
  */
 export function hasChild(val) {
-    if ((typeof val === 'object' || Array.isArray(val) === 'array') && val !== null) {
+    if (!t(val).isNull && (t(val).isObject || t(val).isArray)) {
         return true
     }
+
     return false
 }
 
 export function treatEmptyStringAsNull(val) {
-    if (val === '') {
+    if (t(val).isEmptyString) {
         return null
     }
     return val
@@ -46,10 +47,10 @@ export function treatEmptyStringAsNull(val) {
  */
 export function handleNull(val) {
     // render null string
-    if (val == null) {
+    if (t(val).isNull) {
         return 'null'
     }
-    // check if it is object,
+    // check if it is object, or array
     if (this.hasChild(val)) {
         return '' // set empty string
     } else {
@@ -57,7 +58,7 @@ export function handleNull(val) {
     }
 }
 export function handleEmptyString(val) {
-    return val === '' ? '""' : val
+    return t(val).isEmptyString ? '""' : val
 }
 export function delay(t, v) {
     return new Promise(function(resolve) {
