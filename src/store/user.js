@@ -18,8 +18,7 @@ export default {
          * @param {String} userObj.username username
          */
         setUser(state, userObj) {
-            state.user = userObj && userObj
-            sessionStorage.setItem('user', JSON.stringify(userObj))
+            state.user = userObj
         },
         // ------------------- Network users
         setCurrentNetworkUser(state, obj) {
