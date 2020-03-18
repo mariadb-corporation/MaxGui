@@ -1,4 +1,4 @@
-# vuetify-project
+# MaxGui
 
 ## Project setup
 
@@ -13,6 +13,7 @@ npm run serve
 ```
 
 ### Compiles and minifies for production
+Check [Config build path](#config-build-path) before building
 
 ```
 npm run build
@@ -29,10 +30,10 @@ Copy everything in `src/locales/en.json` file and paste to `es.json` then .... t
 Change the value of VUE_APP_I18N_LOCALE in `.env` file to the desire locale
 
 ### Developer settings
-Disable CORS when accessing the app via localhost
+#### Disable CORS to access app via localhost
 For chrome in linux: google-chrome  --user-data-dir=”/var/tmp/Chrome” --disable-web-security
 
-
+#### Config build path
 Add .env.local file that contains `buildPath=dataDir`
 `dataDir` indicates your maxscale's Data directory absolute path
 
