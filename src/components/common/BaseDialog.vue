@@ -7,7 +7,7 @@
                     <v-icon size="18" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-card-text class="px-12 py-0 pb-12">
+            <v-card-text class="px-12 pt-0 pb-12">
                 <slot name="body"></slot>
             </v-card-text>
             <v-card-actions class="px-12 py-6 color border-top-reflection">

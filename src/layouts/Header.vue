@@ -3,7 +3,9 @@
         <v-toolbar-title class="headline">
             <router-link to="/dashboard">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                <span class="ml-2 white--text"><b>MaxScale</b></span>
+                <span class="ml-2 white--text">
+                    <b>{{ $t('productName') }}</b>
+                </span>
             </router-link>
         </v-toolbar-title>
 

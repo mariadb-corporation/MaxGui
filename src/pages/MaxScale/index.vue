@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col cols="12"> <h2 class="text-left">Parameters</h2></v-col>
+        <v-col cols="12"> <h4 class="text-left">Parameters</h4></v-col>
         <v-col cols="9">
             <recursive-nested-collapse
                 v-for="(value, propertyName) in genData()"

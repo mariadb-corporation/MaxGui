@@ -22,7 +22,7 @@
 
         <v-sheet style="margin-top:35px">
             <p class="font-weight-bold title text-uppercase color text-navigation">
-                MAXSCALE DETAILS
+                {{ $t('productName') }} {{ $t('details') }}
             </p>
             <v-card class="v-card-custom px-6 py-3" outlined height="180" maxWidth="380">
                 <div v-for="(value, name) in maxscaleDetails" :key="name" class="">

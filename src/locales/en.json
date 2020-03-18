@@ -26,6 +26,7 @@
     "destroy": "Destroy",
     "logout": "Logout",
     "save": "Save",
+    "details": "Details",
     "errors": {
         "usernameRequired": "Username is required.",
         "passwordRequired": "Password is required.",
