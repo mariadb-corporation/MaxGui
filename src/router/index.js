@@ -3,7 +3,8 @@ import Router from 'vue-router'
 import { routes } from './routes'
 import { OVERLAY_LOADING } from 'store/overlayTypes'
 import store from 'store'
-import { delay } from 'utils/helpers'
+import { delay, assertAlive } from 'utils/helpers'
+const jwtDecode = require('jwt-decode')
 
 Vue.use(Router)
 
@@ -20,10 +21,12 @@ router.beforeEach(async (to, from, next) => {
     const user = JSON.parse(sessionStorage.getItem('user'))
     const token = user ? user.token : null
 
+    // Auth route
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (token === null) {
             if (from.path === '/') {
                 store.commit('showOverlay', OVERLAY_LOADING)
+
                 await delay(600).then(() => {
                     return store.commit('hideOverlay')
                 })
@@ -39,11 +42,17 @@ router.beforeEach(async (to, from, next) => {
                     return store.commit('hideOverlay'), next()
                 })
             } else {
-                next()
+                try {
+                    assertAlive(jwtDecode(token))
+                    next()
+                } catch (error) {
+                    console.error(error)
+                    store.dispatch('logout')
+                }
             }
         }
     } else {
-        // console.log("public route", to);
+        // Public route
         next()
     }
 })

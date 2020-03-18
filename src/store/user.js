@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { OVERLAY_LOGOUT } from 'store/overlayTypes'
 import { delay } from 'utils/helpers'
+import router from 'router'
 
 export default {
     state: {
@@ -39,7 +40,7 @@ export default {
         },
     },
     actions: {
-        async logout({ commit }, router) {
+        async logout({ commit }) {
             commit('logout')
             sessionStorage.removeItem('user')
             commit('setUser', {})

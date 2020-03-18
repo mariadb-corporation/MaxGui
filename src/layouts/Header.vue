@@ -65,7 +65,7 @@ export default {
     methods: {
         ...mapActions(['logout']),
         handleLogout() {
-            this.logout(this.$router)
+            this.logout()
         },
         // generateBreadcrumbs() {
         //     let pathNames = this.$router.currentRoute.fullPath.split('/').filter(x => x);
