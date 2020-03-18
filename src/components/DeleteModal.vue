@@ -9,21 +9,18 @@
                     </v-icon>
                 </v-btn>
             </template>
-            <span>Delete</span>
+            <span> {{ $t(`${type}`) }}</span>
         </v-tooltip>
         <base-dialog
             v-model="deleteDialog"
             :onCancel="() => (deleteDialog = false)"
             :onSave="handleDelete"
             maxWidth="470px"
+            :title="title"
         >
-            <template v-slot:title>
-                <h3 style="font-weight:350" class="color text-navigation ">{{ title }}</h3>
-            </template>
-
             <template v-slot:body>
                 <fragment>
-                    <p>Are you sure you want to destroy {{ item.id }} ?</p>
+                    <p>{{ $t(`confirmations.${type}`, { name: item.id }) }}</p>
                     <small>
                         {{ smallInfo }}
                     </small>
@@ -40,7 +37,7 @@
                     depressed
                     @click="cancel"
                 >
-                    Cancel
+                    {{ $t('cancel') }}
                 </v-btn>
                 <v-btn
                     small
@@ -50,7 +47,7 @@
                     depressed
                     @click="save"
                 >
-                    Delete
+                    {{ $t(`${type}`) }}
                 </v-btn>
             </template>
         </base-dialog>
@@ -61,6 +58,7 @@
 export default {
     name: 'delete-modal',
     props: {
+        type: String, // delete or destroy
         title: String,
         item: Object,
         dispatchDelete: Function,

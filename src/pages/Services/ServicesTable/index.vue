@@ -21,8 +21,9 @@
 
                 <delete-modal
                     :item="item"
+                    type="destroy"
                     :dispatchDelete="() => destroyService(item.id)"
-                    :title="`${$t('delete')} ${$t('service')}`"
+                    :title="`${$t('destroy')} ${$t('service')}`"
                     :smallInfo="$t('info.serviceDeleteModal')"
                 />
             </template>

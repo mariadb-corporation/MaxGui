@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import icons from 'icons'
+import i18n from 'plugins/i18n'
 Vue.use(Vuetify)
 
 export default new Vuetify({
@@ -25,5 +26,8 @@ export default new Vuetify({
                 accent: '#0b718c',
             },
         },
+    },
+    lang: {
+        t: (key, ...params) => i18n.t(key, params),
     },
 })

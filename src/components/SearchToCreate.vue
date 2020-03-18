@@ -29,7 +29,7 @@
                 small
                 @click.native="create"
             >
-                + Create New
+                + {{ $t('createNew') }}
             </v-btn>
         </div>
         <service-create-or-update

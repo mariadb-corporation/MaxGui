@@ -20,8 +20,9 @@
                 </v-tooltip>
                 <delete-modal
                     :item="item"
+                    type="destroy"
                     :dispatchDelete="() => destroyServer(item.id)"
-                    :title="`${$t('delete')} ${$t('server')}`"
+                    :title="`${$t('destroy')} ${$t('server')}`"
                     :smallInfo="$t('info.serverDeleteModal')"
                 />
             </template>

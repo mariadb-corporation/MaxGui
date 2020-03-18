@@ -4,209 +4,201 @@
         :onCancel="closeModal"
         :onSave="handleSave"
         maxWidth="890px"
+        :title="`${modalTitle} ${$t('server')}`"
     >
-        <template v-slot:title>
-            <h3>{{ modalTitle }}{{ $t('server') }}</h3>
-        </template>
         <template v-slot:body>
-            <fragment>
-                <v-container class="pa-0">
-                    <v-form
-                        ref="form"
-                        v-model="isValid"
-                        @keyup.native.enter="isValid && handleSave()"
-                    >
-                        <v-row>
-                            <v-col xs="12" sm="6">
-                                <v-text-field
-                                    id="id"
-                                    v-model="serverId"
-                                    :rules="serverObjRules.id"
-                                    label="Name of the server*"
-                                    name="id"
-                                    autofocus
-                                    :disabled="mode === 'patch' ? true : false"
-                                    required
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
+            <v-container class="pa-0">
+                <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleSave()">
+                    <v-row>
+                        <v-col xs="12" sm="6">
+                            <v-text-field
+                                id="id"
+                                v-model="serverId"
+                                :rules="serverObjRules.id"
+                                label="Name of the server*"
+                                name="id"
+                                autofocus
+                                :disabled="mode === 'patch' ? true : false"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
 
-                        <v-row>
-                            <v-col cols="12">
-                                <h5>{{ $t('paramtersConfig') }}</h5>
+                    <v-row>
+                        <v-col cols="12">
+                            <h5>{{ $t('paramtersConfig') }}</h5>
+                        </v-col>
+                        <fragment v-if="mode === 'post' ? true : false">
+                            <v-col xs="12" sm="6">
+                                <span>Use either address or socket</span>
+                                <v-radio-group v-model="radioGroup">
+                                    <v-radio label="Use address" value="address" />
+                                    <v-radio label="Use socket" value="socket" />
+                                </v-radio-group>
                             </v-col>
-                            <fragment v-if="mode === 'post' ? true : false">
-                                <v-col xs="12" sm="6">
-                                    <span>Use either address or socket</span>
-                                    <v-radio-group v-model="radioGroup">
-                                        <v-radio label="Use address" value="address" />
-                                        <v-radio label="Use socket" value="socket" />
-                                    </v-radio-group>
-                                </v-col>
-                                <v-col xs="12" sm="6">
-                                    <span>ssl_verify_peer_certificate</span>
-                                    <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
-                                        <v-radio :value="true" label="True" />
-                                        <v-radio :value="false" label="False" />
-                                    </v-radio-group>
-                                </v-col>
-                            </fragment>
-                            <!-- radioGroup need to have corresponding value from the item props -->
-                            <v-col v-if="radioGroup === 'address'" id="addressCol" sm="6" md="4">
+                            <v-col xs="12" sm="6">
+                                <span>ssl_verify_peer_certificate</span>
+                                <v-radio-group v-model="parameters.ssl_verify_peer_certificate">
+                                    <v-radio :value="true" label="True" />
+                                    <v-radio :value="false" label="False" />
+                                </v-radio-group>
+                            </v-col>
+                        </fragment>
+                        <!-- radioGroup need to have corresponding value from the item props -->
+                        <v-col v-if="radioGroup === 'address'" id="addressCol" sm="6" md="4">
+                            <v-text-field
+                                id="address"
+                                v-model="parameters.address"
+                                :rules="serverObjRules.address"
+                                label="address: 127.0.0.1 *"
+                                name="address"
+                                required
+                            />
+                        </v-col>
+                        <v-col v-else id="socketCol" sm="6" md="4">
+                            <v-text-field
+                                id="socket"
+                                v-model.trim="parameters.socket"
+                                :rules="serverObjRules.socket"
+                                label="socket *"
+                                name="socket"
+                                required
+                            />
+                        </v-col>
+                        <v-col v-if="radioGroup === 'address'" sm="6" md="4">
+                            <v-text-field
+                                id="port"
+                                v-model.number="parameters.port"
+                                :rules="serverObjRules.port"
+                                label="port*"
+                                type="number"
+                                min="1000"
+                                max="9999"
+                                name="port"
+                                required
+                            />
+                        </v-col>
+                        <fragment v-if="mode === 'post' ? true : false">
+                            <v-col sm="6" md="4">
                                 <v-text-field
-                                    id="address"
-                                    v-model="parameters.address"
-                                    :rules="serverObjRules.address"
-                                    label="address: 127.0.0.1 *"
-                                    name="address"
-                                    required
+                                    id="ssl_cert"
+                                    v-model.trim="parameters.ssl_cert"
+                                    label="ssl_cert"
+                                    name="ssl_cert"
                                 />
                             </v-col>
-                            <v-col v-else id="socketCol" sm="6" md="4">
+                            <v-col sm="6" md="4">
                                 <v-text-field
-                                    id="socket"
-                                    v-model.trim="parameters.socket"
-                                    :rules="serverObjRules.socket"
-                                    label="socket *"
-                                    name="socket"
-                                    required
+                                    id="ssl_ca_cert"
+                                    v-model.trim="parameters.ssl_ca_cert"
+                                    label="ssl_ca_cert"
+                                    name="ssl_ca_cert"
                                 />
                             </v-col>
-                            <v-col v-if="radioGroup === 'address'" sm="6" md="4">
+                            <v-col sm="6" md="4">
+                                <v-select
+                                    id="ssl_version"
+                                    v-model="parameters.ssl_version"
+                                    :items="ssl_versionItems"
+                                    name="ssl_version"
+                                    label="ssl_version"
+                                />
+                            </v-col>
+
+                            <v-col sm="6" md="4">
                                 <v-text-field
-                                    id="port"
-                                    v-model.number="parameters.port"
-                                    :rules="serverObjRules.port"
-                                    label="port*"
+                                    id="ssl_cert_verify_depth"
+                                    v-model.number="parameters.ssl_cert_verify_depth"
+                                    label="ssl_cert_verify_depth"
                                     type="number"
-                                    min="1000"
-                                    max="9999"
-                                    name="port"
-                                    required
+                                    min="1"
+                                    name="ssl_cert_verify_depth"
                                 />
                             </v-col>
-                            <fragment v-if="mode === 'post' ? true : false">
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="ssl_cert"
-                                        v-model.trim="parameters.ssl_cert"
-                                        label="ssl_cert"
-                                        name="ssl_cert"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="ssl_ca_cert"
-                                        v-model.trim="parameters.ssl_ca_cert"
-                                        label="ssl_ca_cert"
-                                        name="ssl_ca_cert"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-select
-                                        id="ssl_version"
-                                        v-model="parameters.ssl_version"
-                                        :items="ssl_versionItems"
-                                        name="ssl_version"
-                                        label="ssl_version"
-                                    />
-                                </v-col>
+                        </fragment>
+                    </v-row>
 
-                                <v-col sm="6" md="4">
+                    <v-row>
+                        <v-col xs="12" sm="12">
+                            <h5>{{ $t('relationshipsConfig') }}</h5>
+                        </v-col>
+                        <v-col xs="12" sm="6">
+                            <v-btn color="primary" x-small @click="addRelationship('services')">
+                                {{ $t('add') }} Service
+                            </v-btn>
+                            <div
+                                v-if="relationships.services.data.length"
+                                class="input-div-wrapper"
+                            >
+                                <div v-for="(item, i) in relationships.services.data" :key="i">
+                                    <v-btn
+                                        class="delete"
+                                        right
+                                        icon
+                                        x-small
+                                        @click="deleteRelationship('services', item.id)"
+                                    >
+                                        <v-icon color="red" size="16">close</v-icon>
+                                    </v-btn>
                                     <v-text-field
-                                        id="ssl_cert_verify_depth"
-                                        v-model.number="parameters.ssl_cert_verify_depth"
-                                        label="ssl_cert_verify_depth"
-                                        type="number"
-                                        min="1"
-                                        name="ssl_cert_verify_depth"
+                                        :id="`service_id-${i}`"
+                                        v-model="item.id"
+                                        :rules="serverObjRules.service_id"
+                                        class="input_height_prefix"
+                                        label="Service id"
+                                        name="service_id"
+                                        dense
+                                        outlined
+                                        required
                                     />
-                                </v-col>
-                            </fragment>
-                        </v-row>
-
-                        <v-row>
-                            <v-col xs="12" sm="12">
-                                <h5>{{ $t('relationshipsConfig') }}</h5>
-                            </v-col>
-                            <v-col xs="12" sm="6">
-                                <v-btn color="primary" x-small @click="addRelationship('services')">
-                                    {{ $t('add') }} Service
-                                </v-btn>
-                                <div
-                                    v-if="relationships.services.data.length"
-                                    class="input-div-wrapper"
-                                >
-                                    <div v-for="(item, i) in relationships.services.data" :key="i">
-                                        <v-btn
-                                            class="delete"
-                                            right
-                                            icon
-                                            x-small
-                                            @click="deleteRelationship('services', item.id)"
-                                        >
-                                            <v-icon color="red" size="16">close</v-icon>
-                                        </v-btn>
-                                        <v-text-field
-                                            :id="`service_id-${i}`"
-                                            v-model="item.id"
-                                            :rules="serverObjRules.service_id"
-                                            class="input_height_prefix"
-                                            label="Service id"
-                                            name="service_id"
-                                            dense
-                                            outlined
-                                            required
-                                        />
-                                    </div>
                                 </div>
-                            </v-col>
-                            <v-col xs="12" sm="6">
-                                <v-btn
-                                    v-if="relationships.monitors.data.length == 0"
-                                    color="primary"
-                                    x-small
-                                    @click="addRelationship('monitors')"
-                                >
-                                    {{ $t('add') }} Monitor
-                                </v-btn>
-                                <div v-else style="height:20px" />
-                                <div
-                                    v-if="relationships.monitors.data.length"
-                                    class="input-div-wrapper"
-                                >
-                                    <div v-for="(item, i) in relationships.monitors.data" :key="i">
-                                        <v-btn
-                                            class="delete"
-                                            icon
-                                            x-small
-                                            @click="deleteRelationship('monitors', item.id)"
-                                        >
-                                            <v-icon color="red" size="16">close</v-icon>
-                                        </v-btn>
-                                        <v-text-field
-                                            :id="`monitor_id-${i}`"
-                                            v-model="item.id"
-                                            :rules="serverObjRules.monitor_id"
-                                            class="input_height_prefix"
-                                            dense
-                                            label="Monitor id"
-                                            name="monitor_id"
-                                            outlined
-                                            required
-                                        />
-                                    </div>
+                            </div>
+                        </v-col>
+                        <v-col xs="12" sm="6">
+                            <v-btn
+                                v-if="relationships.monitors.data.length == 0"
+                                color="primary"
+                                x-small
+                                @click="addRelationship('monitors')"
+                            >
+                                {{ $t('add') }} Monitor
+                            </v-btn>
+                            <div v-else style="height:20px" />
+                            <div
+                                v-if="relationships.monitors.data.length"
+                                class="input-div-wrapper"
+                            >
+                                <div v-for="(item, i) in relationships.monitors.data" :key="i">
+                                    <v-btn
+                                        class="delete"
+                                        icon
+                                        x-small
+                                        @click="deleteRelationship('monitors', item.id)"
+                                    >
+                                        <v-icon color="red" size="16">close</v-icon>
+                                    </v-btn>
+                                    <v-text-field
+                                        :id="`monitor_id-${i}`"
+                                        v-model="item.id"
+                                        :rules="serverObjRules.monitor_id"
+                                        class="input_height_prefix"
+                                        dense
+                                        label="Monitor id"
+                                        name="monitor_id"
+                                        outlined
+                                        required
+                                    />
                                 </div>
-                            </v-col>
-                        </v-row>
-                    </v-form>
-                </v-container>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-form>
                 <b>
                     <small>
                         {{ $t('info.createOrUpdateForm') }}
                     </small>
                 </b>
-            </fragment>
+            </v-container>
         </template>
         <template v-slot:actions="{ cancel, save }">
             <v-btn

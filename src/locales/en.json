@@ -17,17 +17,25 @@
     "relationshipsConfig": "Relationships configurations",
     "enable": "Enable",
     "add": "Add",
+    "createNew": "Create New",
     "close": "Close",
     "cancel": "Cancel",
     "update": "Update",
     "actions": "Actions",
     "delete": "Delete",
+    "destroy": "Destroy",
     "logout": "Logout",
     "save": "Save",
     "errors": {
         "usernameRequired": "Username is required.",
         "passwordRequired": "Password is required.",
-        "wrongCredentials": "Incorrect password or username"
+        "wrongCredentials": "Incorrect password or username",
+        "serviceUnavailable": "MaxScale is temporarily unavailable.",
+        "refreshLater": "Please refresh in a few monutes."
+    },
+    "confirmations": {
+        "delete": "Are you sure you want to delete {name}?",
+        "destroy": "Are you sure you want to destroy {name}?"
     },
     "loading": {
         "threadsData": "Loading threads data"
@@ -38,9 +46,9 @@
         "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
     "$vuetify": {
+        "badge": "Badge",
         "close": "Close",
         "dataIterator": {
-            "pageText": "{0}-{1} of {2}",
             "noResultsText": "No matching records found",
             "loadingText": "Loading items..."
         },
@@ -50,7 +58,8 @@
                 "sortDescending": ": Sorted descending. Activate to remove sorting.",
                 "sortAscending": ": Sorted ascending. Activate to sort descending.",
                 "sortNone": ": Not sorted. Activate to sort ascending."
-            }
+            },
+            "sortBy": "Sort by"
         },
         "dataFooter": {
             "itemsPerPageText": "Items per page:",
@@ -67,10 +76,21 @@
         "noDataText": "No data available",
         "carousel": {
             "prev": "Previous visual",
-            "next": "Next visual"
+            "next": "Next visual",
+            "ariaLabel": {
+                "delimiter": "Carousel slide {0} of {1}"
+            }
         },
         "calendar": {
             "moreEvents": "{0} more"
+        },
+        "fileInput": {
+            "counter": "{0} files",
+            "counterSize": "{0} files ({1} in total)"
+        },
+        "timePicker": {
+            "am": "AM",
+            "pm": "PM"
         }
     }
 }

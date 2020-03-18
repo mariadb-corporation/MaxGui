@@ -4,233 +4,209 @@
         :onCancel="closeModal"
         :onSave="handleSave"
         maxWidth="890px"
+        :title="`${modalTitle} ${$t('service')}`"
     >
-        <template v-slot:title>
-            <h3>{{ modalTitle }}{{ $t('service') }}</h3>
-        </template>
         <template v-slot:body>
-            <fragment>
-                <v-container class="pa-0">
-                    <v-form
-                        ref="form"
-                        v-model="isValid"
-                        @keyup.native.enter="isValid && handleSave()"
-                    >
-                        <v-row>
-                            <v-col xs="12" sm="6">
-                                <v-text-field
-                                    id="id"
-                                    v-model="serviceId"
-                                    :rules="serviceObjRules.id"
-                                    label="Name of the service*"
-                                    name="id"
-                                    autofocus
-                                    :disabled="mode === 'patch' ? true : false"
-                                    required
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
+            <v-container class="pa-0">
+                <v-form ref="form" v-model="isValid" @keyup.native.enter="isValid && handleSave()">
+                    <v-row>
+                        <v-col xs="12" sm="6">
+                            <v-text-field
+                                id="id"
+                                v-model="serviceId"
+                                :rules="serviceObjRules.id"
+                                label="Name of the service*"
+                                name="id"
+                                autofocus
+                                :disabled="mode === 'patch' ? true : false"
+                                required
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
 
-                        <v-row>
-                            <v-col id="router" sm="6" md="4">
-                                <v-select
-                                    id="router"
-                                    v-model="router"
-                                    :items="routing_module"
-                                    :rules="serviceObjRules.router"
-                                    name="router"
-                                    label="The router module to use*"
-                                    :disabled="mode === 'patch' ? true : false"
-                                    required
+                    <v-row>
+                        <v-col id="router" sm="6" md="4">
+                            <v-select
+                                id="router"
+                                v-model="router"
+                                :items="routing_module"
+                                :rules="serviceObjRules.router"
+                                name="router"
+                                label="The router module to use*"
+                                :disabled="mode === 'patch' ? true : false"
+                                required
+                            />
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <h5>{{ $t('paramtersConfig') }}</h5>
+                        </v-col>
+                        <v-col sm="6" md="4">
+                            <v-text-field
+                                id="user"
+                                v-model.trim="parameters.user"
+                                :rules="serviceObjRules.user"
+                                label="The user to be*"
+                                name="user"
+                                required
+                            />
+                        </v-col>
+                        <v-col sm="6" md="4">
+                            <v-text-field
+                                id="password"
+                                v-model.trim="parameters.password"
+                                :rules="serviceObjRules.password"
+                                label="The password to use*"
+                                name="password"
+                                required
+                            />
+                        </v-col>
+                        <!-- parameters show only for post mode -->
+                        <fragment v-if="mode === 'post' ? true : false">
+                            <v-col sm="6" md="4">
+                                <v-text-field
+                                    id="version_string"
+                                    v-model.trim="parameters.version_string"
+                                    label="version_string"
+                                    name="version_string"
                                 />
                             </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <h5>{{ $t('paramtersConfig') }}</h5>
+                            <v-col
+                                v-for="(param, name) in parameters"
+                                :key="name"
+                                :style="`display:${typeof param === 'boolean' ? 'block' : 'none'}`"
+                                cols="12"
+                                sm="12"
+                                md="6"
+                            >
+                                <v-checkbox
+                                    v-if="typeof param === 'boolean'"
+                                    v-model="parameters[name]"
+                                    :label="`${$t('enable')} ${name}`"
+                                    dense
+                                />
                             </v-col>
                             <v-col sm="6" md="4">
                                 <v-text-field
-                                    id="user"
-                                    v-model.trim="parameters.user"
-                                    :rules="serviceObjRules.user"
-                                    label="The user to be*"
-                                    name="user"
-                                    required
+                                    id="connection_timeout"
+                                    v-model.number.trim="parameters.connection_timeout"
+                                    label="connection_timeout"
+                                    type="number"
+                                    min="0"
+                                    name="connection_timeout"
                                 />
                             </v-col>
                             <v-col sm="6" md="4">
                                 <v-text-field
-                                    id="password"
-                                    v-model.trim="parameters.password"
-                                    :rules="serviceObjRules.password"
-                                    label="The password to use*"
-                                    name="password"
-                                    required
+                                    id="max_connections"
+                                    v-model.number.trim="parameters.max_connections"
+                                    label="max_connections"
+                                    type="number"
+                                    min="0"
+                                    name="max_connections"
                                 />
                             </v-col>
-                            <!-- parameters show only for post mode -->
-                            <fragment v-if="mode === 'post' ? true : false">
-                                <v-col sm="6" md="4">
+                            <v-col sm="6" md="4">
+                                <v-text-field
+                                    id="retain_last_statements"
+                                    v-model.number.trim="parameters.retain_last_statements"
+                                    label="retain_last_statements"
+                                    type="number"
+                                    name="retain_last_statements"
+                                />
+                            </v-col>
+                            <v-col sm="6" md="4">
+                                <v-text-field
+                                    id="connection_keepalive"
+                                    v-model.number.trim="parameters.connection_keepalive"
+                                    label="connection_keepalive"
+                                    type="number"
+                                    name="connection_keepalive"
+                                />
+                            </v-col>
+                            <v-col sm="6" md="4">
+                                <v-text-field
+                                    id="net_write_timeout"
+                                    v-model.number.trim="parameters.net_write_timeout"
+                                    label="net_write_timeout"
+                                    type="number"
+                                    name="net_write_timeout"
+                                />
+                            </v-col>
+                        </fragment>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <h5>{{ $t('relationshipsConfig') }}</h5>
+                        </v-col>
+                        <v-col xs="12" sm="6">
+                            <v-btn color="primary" x-small @click="addRelationshipType('filters')">
+                                {{ $t('add') }} filter
+                            </v-btn>
+                            <div v-if="relationships.filters.data.length" class="input-div-wrapper">
+                                <div v-for="(item, i) in relationships.filters.data" :key="i">
+                                    <v-btn
+                                        class="delete"
+                                        right
+                                        icon
+                                        x-small
+                                        @click="deleteRelationshipType('filters', item.id)"
+                                    >
+                                        <v-icon color="red" size="16">
+                                            close
+                                        </v-icon>
+                                    </v-btn>
                                     <v-text-field
-                                        id="version_string"
-                                        v-model.trim="parameters.version_string"
-                                        label="version_string"
-                                        name="version_string"
-                                    />
-                                </v-col>
-                                <v-col
-                                    v-for="(param, name) in parameters"
-                                    :key="name"
-                                    :style="
-                                        `display:${typeof param === 'boolean' ? 'block' : 'none'}`
-                                    "
-                                    cols="12"
-                                    sm="12"
-                                    md="6"
-                                >
-                                    <v-checkbox
-                                        v-if="typeof param === 'boolean'"
-                                        v-model="parameters[name]"
-                                        :label="`${$t('enable')} ${name}`"
+                                        :id="`filter_id-${i}`"
+                                        v-model="item.id"
+                                        :rules="serviceObjRules.filter_id"
+                                        class="input_height_prefix"
+                                        label="filter name"
+                                        name="filter_id"
                                         dense
+                                        outlined
+                                        required
                                     />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="connection_timeout"
-                                        v-model.number.trim="parameters.connection_timeout"
-                                        label="connection_timeout"
-                                        type="number"
-                                        min="0"
-                                        name="connection_timeout"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="max_connections"
-                                        v-model.number.trim="parameters.max_connections"
-                                        label="max_connections"
-                                        type="number"
-                                        min="0"
-                                        name="max_connections"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="retain_last_statements"
-                                        v-model.number.trim="parameters.retain_last_statements"
-                                        label="retain_last_statements"
-                                        type="number"
-                                        name="retain_last_statements"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="connection_keepalive"
-                                        v-model.number.trim="parameters.connection_keepalive"
-                                        label="connection_keepalive"
-                                        type="number"
-                                        name="connection_keepalive"
-                                    />
-                                </v-col>
-                                <v-col sm="6" md="4">
-                                    <v-text-field
-                                        id="net_write_timeout"
-                                        v-model.number.trim="parameters.net_write_timeout"
-                                        label="net_write_timeout"
-                                        type="number"
-                                        name="net_write_timeout"
-                                    />
-                                </v-col>
-                            </fragment>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <h5>{{ $t('relationshipsConfig') }}</h5>
-                            </v-col>
-                            <v-col xs="12" sm="6">
-                                <v-btn
-                                    color="primary"
-                                    x-small
-                                    @click="addRelationshipType('filters')"
-                                >
-                                    {{ $t('add') }} filter
-                                </v-btn>
-                                <div
-                                    v-if="relationships.filters.data.length"
-                                    class="input-div-wrapper"
-                                >
-                                    <div v-for="(item, i) in relationships.filters.data" :key="i">
-                                        <v-btn
-                                            class="delete"
-                                            right
-                                            icon
-                                            x-small
-                                            @click="deleteRelationshipType('filters', item.id)"
-                                        >
-                                            <v-icon color="red" size="16">
-                                                close
-                                            </v-icon>
-                                        </v-btn>
-                                        <v-text-field
-                                            :id="`filter_id-${i}`"
-                                            v-model="item.id"
-                                            :rules="serviceObjRules.filter_id"
-                                            class="input_height_prefix"
-                                            label="filter name"
-                                            name="filter_id"
-                                            dense
-                                            outlined
-                                            required
-                                        />
-                                    </div>
                                 </div>
-                            </v-col>
-                            <v-col xs="12" sm="6">
-                                <v-btn
-                                    color="primary"
-                                    x-small
-                                    @click="addRelationshipType('servers')"
-                                >
-                                    {{ $t('add') }} Server
-                                </v-btn>
-                                <div
-                                    v-if="relationships.servers.data.length"
-                                    class="input-div-wrapper"
-                                >
-                                    <div v-for="(item, i) in relationships.servers.data" :key="i">
-                                        <v-btn
-                                            class="delete"
-                                            icon
-                                            x-small
-                                            @click="deleteRelationshipType('servers', item.id)"
-                                        >
-                                            <v-icon color="red" size="16">close</v-icon>
-                                        </v-btn>
-                                        <v-text-field
-                                            :id="`server_id-${i}`"
-                                            v-model="item.id"
-                                            :rules="serviceObjRules.server_id"
-                                            class="input_height_prefix"
-                                            dense
-                                            label="server name"
-                                            name="server_id"
-                                            outlined
-                                            required
-                                        />
-                                    </div>
+                            </div>
+                        </v-col>
+                        <v-col xs="12" sm="6">
+                            <v-btn color="primary" x-small @click="addRelationshipType('servers')">
+                                {{ $t('add') }} Server
+                            </v-btn>
+                            <div v-if="relationships.servers.data.length" class="input-div-wrapper">
+                                <div v-for="(item, i) in relationships.servers.data" :key="i">
+                                    <v-btn
+                                        class="delete"
+                                        icon
+                                        x-small
+                                        @click="deleteRelationshipType('servers', item.id)"
+                                    >
+                                        <v-icon color="red" size="16">close</v-icon>
+                                    </v-btn>
+                                    <v-text-field
+                                        :id="`server_id-${i}`"
+                                        v-model="item.id"
+                                        :rules="serviceObjRules.server_id"
+                                        class="input_height_prefix"
+                                        dense
+                                        label="server name"
+                                        name="server_id"
+                                        outlined
+                                        required
+                                    />
                                 </div>
-                            </v-col>
-                        </v-row>
-                    </v-form>
-                    <b>
-                        <small>
-                            {{ $t('info.createOrUpdateForm') }}
-                        </small>
-                    </b>
-                </v-container>
-            </fragment>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-form>
+                <b>
+                    <small>
+                        {{ $t('info.createOrUpdateForm') }}
+                    </small>
+                </b>
+            </v-container>
         </template>
         <template v-slot:actions="{ cancel, save }">
             <v-btn

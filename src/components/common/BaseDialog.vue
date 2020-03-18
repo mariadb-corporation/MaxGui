@@ -2,22 +2,22 @@
     <v-dialog v-model="computeShowDialog" :max-width="maxWidth" content-class="base-dialog">
         <v-card class="v-card-custom">
             <v-card-title class="px-12 pt-10 pb-5">
+                <h3 style="font-weight:350" class="color text-navigation ">{{ title }}</h3>
                 <v-btn class="close" icon @click="cancel">
-                    <v-icon size="18"> $vuetify.icons.close</v-icon>
+                    <v-icon size="18" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
-                <slot name="title"> </slot>
             </v-card-title>
-            <v-card-text class="px-12 pb-7">
+            <v-card-text class="px-12 py-0 pb-12">
                 <slot name="body"></slot>
             </v-card-text>
-            <v-card-actions class="px-12 pt-7 pb-8 color border-top-reflection">
+            <v-card-actions class="px-12 py-6 color border-top-reflection">
                 <v-spacer></v-spacer>
                 <slot :cancel="cancel" :save="save" name="actions">
                     <v-btn class="cancel" color="primary" outlined depressed @click="cancel">
-                        Cancel
+                        {{ $t('cancel') }}
                     </v-btn>
                     <v-btn class="save" color="primary" depressed @click="save">
-                        Save
+                        {{ $t('save') }}
                     </v-btn>
                 </slot>
             </v-card-actions>
@@ -33,6 +33,7 @@ export default {
     name: 'base-dialog',
     props: {
         maxWidth: String,
+        title: String,
         value: Boolean,
         onCancel: Function,
         onSave: Function,
@@ -83,6 +84,9 @@ export default {
         position: absolute;
         top: 12px;
         right: 18px;
+    }
+    svg.v-icon {
+        width: 18px;
     }
 }
 </style>

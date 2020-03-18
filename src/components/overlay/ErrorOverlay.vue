@@ -7,8 +7,8 @@
                     <img src="@/assets/icon-globe-error.svg" alt="MariaDB" class="loading-icon" />
                 </div>
                 <div class="color text-error text-center">
-                    {{ 'serviceUnavailable' }} <br />
-                    {{ 'refreshLater' }}
+                    {{ $t('errors.serviceUnavailable') }} <br />
+                    {{ $t('errors.refreshLater') }}
                 </div>
             </div>
         </div>

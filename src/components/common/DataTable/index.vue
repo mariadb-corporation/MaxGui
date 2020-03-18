@@ -15,6 +15,7 @@
         :sort-desc="sortDesc"
         :search="search"
         item-key="name"
+        :dense="dense"
     >
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
@@ -50,7 +51,10 @@
                         display searchbox and toggle icon as the last th item
                         Only display in large tablet to laptop md
                      -->
-                    <th v-if="windowSize.x > 960" style="padding-left:12px; padding-right:12px">
+                    <th
+                        v-if="windowSize.x > 960 && hasColumnToggle"
+                        style="padding-left:12px; padding-right:12px"
+                    >
                         <div
                             v-if="hasSearch || hasColumnToggle"
                             style="width:100%;"
@@ -220,11 +224,12 @@ export default {
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
         hasSearch: { type: Boolean, default: false },
-        hasColumnToggle: { type: Boolean, default: true },
+        hasColumnToggle: { type: Boolean, default: false },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, default: 10 },
         page: { type: Number, default: 1 },
+        dense: { type: Boolean, default: false },
     },
     data() {
         return {
