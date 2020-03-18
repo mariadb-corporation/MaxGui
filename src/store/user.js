@@ -19,6 +19,7 @@ export default {
          */
         setUser(state, userObj) {
             state.user = userObj && userObj
+            sessionStorage.setItem('user', JSON.stringify(userObj))
         },
         // ------------------- Network users
         setCurrentNetworkUser(state, obj) {
@@ -45,10 +46,9 @@ export default {
             sessionStorage.removeItem('user')
             commit('setUser', {})
             delete Vue.axios.defaults.headers.common['Authorization']
-            commit('showOverlay', OVERLAY_LOGOUT)
-            router.push('login')
-            await delay(2000).then(() => {
-                return commit('hideOverlay')
+            await commit('showOverlay', OVERLAY_LOGOUT)
+            await delay(1500).then(() => {
+                return commit('hideOverlay'), router.push('login')
             })
         },
         // --------------------------------------------------- Network users -------------------------------------

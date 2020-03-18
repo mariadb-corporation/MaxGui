@@ -24,6 +24,7 @@ import ErrorOverlay from './ErrorOverlay'
 import LoadingTransparentOverlay from './LoadingTransparentOverlay'
 import LoadingOverlay from './LoadingOverlay'
 import LogoutOverlay from './LogoutOverlay'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'overlay',
@@ -34,17 +35,28 @@ export default {
         'logout-overlay': LogoutOverlay,
     },
     computed: {
+        ...mapGetters(['overlay']),
         transparentLoading() {
-            return this.$store.state.overlay === OVERLAY_TRANSPARENT_LOADING
+            return this.overlay === OVERLAY_TRANSPARENT_LOADING
         },
         loading() {
-            return this.$store.state.overlay === OVERLAY_LOADING
+            return this.overlay === OVERLAY_LOADING
         },
         logingOut() {
-            return this.$store.state.overlay === OVERLAY_LOGOUT
+            return this.overlay === OVERLAY_LOGOUT
         },
         error() {
-            return this.$store.state.overlay === OVERLAY_ERROR
+            return this.overlay === OVERLAY_ERROR
+        },
+    },
+    watch: {
+        overlay: function(newVal) {
+            let body = document.getElementsByTagName('BODY')[0]
+            if (newVal) {
+                body.style.overflow = 'hidden'
+            } else {
+                body.style.overflow = 'initial'
+            }
         },
     },
 }

@@ -174,7 +174,6 @@ export default {
                 // temporary user's name, it is using username for name
                 let userObj = { username: self.credential.username, token: res.data.meta.token }
                 await self.setUser(userObj)
-                await sessionStorage.setItem('user', JSON.stringify(userObj))
                 self.axios.defaults.headers.common[
                     'Authorization'
                 ] = `Bearer ${res.data.meta.token}`

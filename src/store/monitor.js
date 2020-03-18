@@ -15,7 +15,6 @@ export default {
     actions: {
         async fetchAllMonitors({ commit }) {
             let res = await Vue.axios.get(`/v1/monitors`)
-            console.log('res.data.data', res.data.data)
             await commit('setAllMonitors', res.data.data)
         },
         /**

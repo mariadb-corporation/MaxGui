@@ -52,6 +52,7 @@ export default new Vuex.Store({
     getters: {
         searchKeyWord: state => state.searchKeyWord,
         darkTheme: state => state.darkTheme,
+        overlay: state => state.overlay,
     },
     modules: {
         filter,
