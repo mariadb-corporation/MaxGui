@@ -23,6 +23,10 @@ npm run build
 ```
 npm run lint
 ```
+### App translation
+Create a json file in `src/locales`. For example: `es.json`
+Copy everything in `src/locales/en.json` file and paste to `es.json` then .... translate it
+Change the value of VUE_APP_I18N_LOCALE in `.env` file to the desire locale
 
 ### Developer settings
 Disable CORS when accessing the app via localhost
@@ -30,19 +34,17 @@ For chrome in linux: google-chrome  --user-data-dir=”/var/tmp/Chrome” --disa
 
 
 Add .env.local file that contains `buildPath=dataDir`
-dataDir indicates your maxscale's Data directory absolute path
+`dataDir` indicates your maxscale's Data directory absolute path
 
 After compiling and minifying for production, the GUI can be accessed via
-[http://127.0.0.1:8989/v1/](http://127.0.0.1:8989/v1/).
+http://`admin_host`:`admin_port`
+
+`admin_host`: The network interface where the REST API listens on. The default value is the IPv4 address 127.0.0.1 which only listens for local connections.
+
+`admin_port`:The port where the REST API listens on. The default value is port 8989
+
+The default is: [http://127.0.0.1:8989](http://127.0.0.1:8989)
 If maxscale is running, you need to shut it down and then start it again
-
-`admin_host`
-
-The network interface where the REST API listens on. The default value is the IPv4 address 127.0.0.1 which only listens for local connections.
-
-`admin_port`
-
-The port where the REST API listens on. The default value is port 8989
 
 ### browserslist
 
