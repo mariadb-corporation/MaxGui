@@ -1,16 +1,7 @@
 <template>
-    <fragment>
-        <loading-transparent-overlay v-if="transparentLoading" />
-        <v-fade-transition>
-            <loading-overlay v-if="loading" />
-        </v-fade-transition>
-        <v-fade-transition>
-            <logout-overlay v-if="logingOut" />
-        </v-fade-transition>
-        <v-fade-transition>
-            <error-overlay v-if="error" />
-        </v-fade-transition>
-    </fragment>
+    <v-fade-transition>
+        <component :is="currentOverLay" :key="overlay" />
+    </v-fade-transition>
 </template>
 
 <script>
@@ -28,25 +19,21 @@ import { mapGetters } from 'vuex'
 
 export default {
     name: 'overlay',
-    components: {
-        'error-overlay': ErrorOverlay,
-        'loading-overlay': LoadingOverlay,
-        'loading-transparent-overlay': LoadingTransparentOverlay,
-        'logout-overlay': LogoutOverlay,
-    },
     computed: {
         ...mapGetters(['overlay']),
-        transparentLoading() {
-            return this.overlay === OVERLAY_TRANSPARENT_LOADING
-        },
-        loading() {
-            return this.overlay === OVERLAY_LOADING
-        },
-        logingOut() {
-            return this.overlay === OVERLAY_LOGOUT
-        },
-        error() {
-            return this.overlay === OVERLAY_ERROR
+        currentOverLay: function() {
+            switch (this.overlay) {
+                case OVERLAY_TRANSPARENT_LOADING:
+                    return LoadingTransparentOverlay
+                case OVERLAY_LOADING:
+                    return LoadingOverlay
+                case OVERLAY_LOGOUT:
+                    return LogoutOverlay
+                case OVERLAY_ERROR:
+                    return ErrorOverlay
+                default:
+                    return false
+            }
         },
     },
     watch: {
