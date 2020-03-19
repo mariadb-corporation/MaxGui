@@ -15,17 +15,6 @@ let apiClient = axios.create({
     },
 })
 
-// Add a request interceptor
-apiClient.interceptors.request.use(
-    config => {
-        // Do something before request is sent
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`
-        }
-        return config
-    },
-    error => Promise.reject(error)
-)
 apiClient.interceptors.response.use(
     response => {
         return response

@@ -30,11 +30,35 @@
                         <b class="text-capitalize" style="width:45%">
                             {{ name.split('_').join(' ') }}</b
                         >
-                        <div style="width:55%;max-width:180px" class="d-inline-block text-truncate">
-                            {{ value }}
+                        <v-tooltip v-if="name === 'commit'" v-model="showTooltip" top>
+                            <template v-slot:activator="{ on: { dblclick } }">
+                                <div
+                                    style="width:55%;max-width:180px"
+                                    class="d-inline-block text-truncate"
+                                    @dblclick="dblclick, copyToClipboard(value)"
+                                >
+                                    {{ value }}
+                                </div>
+                            </template>
+                            <span>Copied to clipboard</span>
+                        </v-tooltip>
+                        <div
+                            v-else-if="name === 'uptime'"
+                            style="width:55%;max-width:180px"
+                            class="d-inline-block text-truncate"
+                        >
+                            {{ duration }}
+                        </div>
+                        <div
+                            v-else
+                            style="width:55%;max-width:180px"
+                            class="d-inline-block text-truncate"
+                        >
+                            {{ formatValue(value, name) }}
                         </div>
                     </span>
                 </div>
+
                 <router-link
                     :to="{ name: 'maxscale', params: { parameters: maxscaleDetails.parameters } }"
                     class="no-underline"
@@ -56,10 +80,29 @@ export default {
         return {
             model: null,
             tabRoutes: tabRoutes,
+            showTooltip: false,
+            uptime: null,
+            duration: null,
         }
     },
     computed: {
         ...mapGetters(['maxscaleDetails']),
+    },
+
+    watch: {
+        showTooltip: function(newVal) {
+            if (newVal) {
+                let self = this
+                setTimeout(() => (self.showTooltip = false), 1500)
+            }
+        },
+        maxscaleDetails: function(newVal) {
+            this.uptime = newVal.uptime
+            this.duration = this.$moment.duration(newVal.uptime, 'seconds').format()
+            setInterval(() => {
+                this.updateUpTime()
+            }, 1000)
+        },
     },
     created() {
         this.fetchMaxScaleDetails()
@@ -68,6 +111,20 @@ export default {
         ...mapActions(['fetchMaxScaleDetails']),
         navigate(path) {
             this.$router.push(path)
+        },
+        formatValue(value, name) {
+            if (name === 'started_at' || name === 'activated_at') {
+                return this.$moment(value).format('HH:mm:ss MM/DD/YYYY')
+            }
+            return value
+        },
+        copyToClipboard(value) {
+            document.execCommand('copy')
+            this.showTooltip = true
+        },
+        updateUpTime() {
+            this.uptime = this.uptime + 1
+            this.duration = this.$moment.duration(this.uptime, 'seconds').format()
         },
     },
 }
