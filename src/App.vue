@@ -10,6 +10,8 @@ import store from 'store'
 import AppLayout from 'layouts/AppLayout'
 import NoLayout from 'layouts/NoLayout'
 import Overlay from './components/overlay/Index'
+import Logger from 'utils/logging'
+const logger = new Logger('main')
 
 export default {
     store,
@@ -17,6 +19,10 @@ export default {
         Overlay,
         AppLayout,
         NoLayout,
+    },
+    async created() {
+        logger.info(this.$store.state.config.asciiLogo)
+        logger.info(`Loaded Version: ${process.env.VUE_APP_VERSION}`)
     },
 }
 </script>

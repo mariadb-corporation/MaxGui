@@ -46,6 +46,10 @@
         "serverDeleteModal": "Make sure it is not used by any services or monitors.",
         "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
+    "dashboard": "Dashboard",
+    "statistics": "Statistics",
+    "users": "Users",
+    "settings": "Settings",
     "$vuetify": {
         "badge": "Badge",
         "close": "Close",
