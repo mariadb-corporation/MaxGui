@@ -175,10 +175,10 @@ export default {
                 let userObj = { username: self.credential.username, token: res.data.meta.token }
                 await self.setUser(userObj)
                 sessionStorage.setItem('user', JSON.stringify(userObj))
-                self.axios.defaults.headers.common[
+                await (self.axios.defaults.headers.common[
                     'Authorization'
-                ] = `Bearer ${res.data.meta.token}`
-                self.$router.push(self.$route.query.redirect || '/dashboard')
+                ] = `Bearer ${res.data.meta.token}`)
+                await self.$router.push(self.$route.query.redirect || '/dashboard')
             } catch (error) {
                 this.displayOneError = true
 

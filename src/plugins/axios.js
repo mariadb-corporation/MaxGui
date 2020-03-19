@@ -12,6 +12,7 @@ let apiClient = axios.create({
     baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : process.env.VUE_APP_API,
     headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
     },
 })
 
