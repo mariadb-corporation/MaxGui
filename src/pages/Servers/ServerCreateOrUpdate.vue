@@ -345,9 +345,9 @@ export default {
                 //First set serverId from item props
                 this.serverId = this.item.id
                 this.radioGroup = parameters.address ? 'address' : 'socket'
-                // deep object copy or using this.$help.deepClone from lodash
-                this.parameters = this.$help.deepClone(parameters)
-                this.relationships = this.$help.deepClone(relationships)
+                // deep object copy or using this.$_.cloneDeep from lodash
+                this.parameters = this.$_.cloneDeep(parameters)
+                this.relationships = this.$_.cloneDeep(relationships)
                 if (this.relationships.services === undefined) {
                     this.$set(this.relationships, 'services', { data: [] })
                 }
@@ -414,12 +414,6 @@ export default {
                         // these parameters need to have null value if it is not set
                         this.parameters.socket = this.$help.treatEmptyStringAsNull(
                             this.parameters.socket
-                        )
-                        this.parameters.authenticator = this.$help.treatEmptyStringAsNull(
-                            this.parameters.authenticator
-                        )
-                        this.parameters.ssl_key = this.$help.treatEmptyStringAsNull(
-                            this.parameters.ssl_key
                         )
                         this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(
                             this.parameters.ssl_cert

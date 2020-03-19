@@ -12,7 +12,7 @@
                     :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
-            <v-col v-if="!isEmpty(getCurrentServer.relationships)" cols="12">
+            <v-col v-if="!$_.isEmpty(getCurrentServer.relationships)" cols="12">
                 <h5>Relationshis</h5>
                 <recursive-nested-collapse
                     v-for="(value, propertyName) in getCurrentServer.relationships"
@@ -30,7 +30,6 @@
 <script>
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters } from 'vuex'
-import { isEmpty, cloneDeep } from 'lodash'
 
 export default {
     name: 'server-read',
@@ -47,15 +46,7 @@ export default {
          * @returns {Object} A deep clone object from vuex state
          */
         getCurrentServer: function() {
-            return cloneDeep(this.serversDataMap.get(this.id))
-        },
-    },
-    methods: {
-        isEmpty(obj) {
-            return isEmpty(obj)
-        },
-        cloneDeep() {
-            return cloneDeep()
+            return this.$_.cloneDeep(this.serversDataMap.get(this.id))
         },
     },
 }

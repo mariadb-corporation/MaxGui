@@ -1,15 +1,8 @@
 import Vue from 'vue'
-import { cloneDeep } from 'lodash'
-
-const { t } = require('typy')
-
-export function deepClone(obj) {
-    return cloneDeep(obj)
-}
+import _ from 'lodash'
 
 export function range(start, end) {
-    if (!t(start).isNumber || !t(end).isNumber) return
-
+    if (_.isNaN(start) || _.isNaN(end)) return
     return Math.floor(Math.random() * (end - start + 1)) + start
 }
 
@@ -18,7 +11,9 @@ export function range(start, end) {
  * @returns {Boolean} Return true if value type is object or array.
  */
 export function hasChild(val) {
-    if (!t(val).isNull && (t(val).isObject || t(val).isArray)) {
+    //_.isObject => true if val is array or object
+    //https://lodash.com/docs/4.17.15#isObject
+    if (_.isObject(val)) {
         return true
     }
 
@@ -26,7 +21,7 @@ export function hasChild(val) {
 }
 
 export function treatEmptyStringAsNull(val) {
-    if (t(val).isEmptyString) {
+    if (_.isEmpty(val)) {
         return null
     }
     return val
@@ -38,7 +33,7 @@ export function treatEmptyStringAsNull(val) {
  */
 export function handleNull(val) {
     // render null string
-    if (t(val).isNull) {
+    if (_.isNull(val)) {
         return 'null'
     }
     // check if it is object, or array
@@ -49,7 +44,7 @@ export function handleNull(val) {
     }
 }
 export function handleEmptyString(val) {
-    return t(val).isEmptyString ? '""' : val
+    return val === '' ? '""' : val
 }
 export function delay(t, v) {
     return new Promise(function(resolve) {
@@ -84,7 +79,6 @@ Object.defineProperties(Vue.prototype, {
                 delay,
                 treatEmptyStringAsNull,
                 getErrorsArr,
-                deepClone,
             }
         },
     },

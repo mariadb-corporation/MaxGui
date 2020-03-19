@@ -73,9 +73,8 @@
                                 />
                             </v-col>
                             <v-col
-                                v-for="(param, name) in parameters"
+                                v-for="(param, name) in booleanParams"
                                 :key="name"
-                                :style="`display:${typeof param === 'boolean' ? 'block' : 'none'}`"
                                 cols="12"
                                 sm="12"
                                 md="6"
@@ -85,6 +84,7 @@
                                     v-model="parameters[name]"
                                     :label="`${$t('enable')} ${name}`"
                                     dense
+                                    hide-details
                                 />
                             </v-col>
                             <v-col sm="6" md="4">
@@ -236,7 +236,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
 export default {
     name: 'service-create-or-update',
     props: {
@@ -324,6 +323,9 @@ export default {
         getCurrentService: function() {
             return this.servicesDataMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
         },
+        booleanParams: function() {
+            return this.$_.pickBy(this.parameters, this.$_.isBoolean)
+        },
     },
     watch: {
         /**
@@ -347,10 +349,10 @@ export default {
                 } = this.getCurrentService
                 //First set serviceID from item props
                 this.serviceId = this.item.id
-                // deep object copy or using this.$help.deepClone from lodash
-                this.parameters = this.$help.deepClone(parameters)
-                this.relationships = this.$help.deepClone(relationships)
-                this.router = this.$help.deepClone(router)
+                // deep object copy or using this.$_.cloneDeep from lodash
+                this.parameters = this.$_.cloneDeep(parameters)
+                this.relationships = this.$_.cloneDeep(relationships)
+                this.router = this.$_.cloneDeep(router)
                 if (this.relationships.filters === undefined) {
                     this.$set(this.relationships, 'filters', { data: [] })
                 }
@@ -362,6 +364,7 @@ export default {
     },
     methods: {
         ...mapActions(['createOrUpdateService']),
+
         //ONLY AVAILABLE FOR POST MODE
         validateServiceId(val) {
             if (!val) {
