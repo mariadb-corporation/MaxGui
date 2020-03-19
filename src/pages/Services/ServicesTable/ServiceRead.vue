@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="getCurrentService" class="">
-        <v-row justify="center">
+        <v-row>
             <v-col cols="12">
                 <h5>Attributes</h5>
                 <recursive-nested-collapse

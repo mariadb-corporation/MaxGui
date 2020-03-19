@@ -1,7 +1,7 @@
 <template>
-    <v-row>
-        <v-col cols="12"> <h4 class="text-left">Parameters</h4></v-col>
-        <v-col cols="9">
+    <fragment>
+        <h4 class="text-left">Parameters</h4>
+        <v-sheet max-width="600">
             <recursive-nested-collapse
                 v-for="(value, propertyName) in genData()"
                 :key="propertyName"
@@ -10,8 +10,8 @@
                 :value="$help.handleNull(value)"
                 :child="$help.hasChild(value) ? value : {}"
             />
-        </v-col>
-    </v-row>
+        </v-sheet>
+    </fragment>
 </template>
 
 <script>
@@ -39,9 +39,9 @@ export default {
         ...mapActions(['fetchMaxScaleDetails']),
         genData() {
             if (this.$route.params.parameters) {
-                return this.$help.deepClone(this.$route.params.parameters)
+                return this.$_.cloneDeep(this.$route.params.parameters)
             }
-            return this.$help.deepClone(this.maxscaleDetails.parameters)
+            return this.$_.cloneDeep(this.maxscaleDetails.parameters)
         },
     },
 }

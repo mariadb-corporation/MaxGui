@@ -97,6 +97,7 @@ export default {
             }
         },
         maxscaleDetails: function(newVal) {
+            console.log(newVal)
             this.uptime = newVal.uptime
             this.duration = this.$moment.duration(newVal.uptime, 'seconds').format()
             setInterval(() => {

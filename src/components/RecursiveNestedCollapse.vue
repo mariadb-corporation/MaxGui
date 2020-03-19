@@ -8,11 +8,11 @@
         <v-expansion-panel>
             <v-expansion-panel-header v-if="propertyName !== 'links'" :ripple="hasChild">
                 <b>{{ propertyName }}</b>
-                <template v-if="!hasChild">
+                <fragment v-if="!hasChild">
                     {{ $help.handleEmptyString(value) }}
-                </template>
+                </fragment>
                 <template v-slot:actions>
-                    <v-icon size="16" color="primary">{{ hasChild ? '$expand' : '' }}</v-icon>
+                    <v-icon size="24" color="primary">{{ hasChild ? '$expand' : '' }}</v-icon>
                 </template>
             </v-expansion-panel-header>
 
@@ -20,7 +20,7 @@
                 v-if="$help.hasChild(child)"
                 class="v-expansion-panel-content__scrollable"
             >
-                <template v-if="childIsObj(child) || propertyName === 'listeners'">
+                <fragment v-if="childIsObj(child) || propertyName === 'listeners'">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
                         :key="childPropertyName"
@@ -29,10 +29,10 @@
                         :value="$help.handleNull(childValue)"
                         :child="$help.hasChild(childValue) ? childValue : {}"
                     />
-                </template>
-                <template v-else>
+                </fragment>
+                <fragment v-else>
                     <compute-table :data="child" />
-                </template>
+                </fragment>
             </v-expansion-panel-content>
         </v-expansion-panel>
     </v-expansion-panels>
