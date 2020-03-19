@@ -170,7 +170,7 @@ export default {
             this.isLoading = true
             try {
                 let self = this
-                let res = await self.axios.get(`/v1/auth`, { auth: self.credential })
+                let res = await self.axios.get(`/auth`, { auth: self.credential })
                 // temporary user's name, it is using username for name
                 let userObj = { username: self.credential.username, token: res.data.meta.token }
                 await self.setUser(userObj)

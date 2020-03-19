@@ -14,7 +14,7 @@ export default {
     },
     actions: {
         async fetchAllFilters({ commit }) {
-            let res = await Vue.axios.get(`/v1/filters`)
+            let res = await Vue.axios.get(`/filters`)
             await commit('setFilters', res.data.data)
         },
 
@@ -25,7 +25,7 @@ export default {
          * @param {Object} object.parameters Filter parameters
          */
         async createFilter({ dispatch, commit }, object) {
-            let res = await Vue.axios.post(`/v1/filters`, {
+            let res = await Vue.axios.post(`/filters`, {
                 data: {
                     id: object.id,
                     type: 'filters',
@@ -51,7 +51,7 @@ export default {
          * be done via the services resource.
          */
         async destroyFilter({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/v1/filters/${id}`)
+            let res = await Vue.axios.delete(`/filters/${id}`)
             if (res.status === 204) {
                 await dispatch('fetchAllFilters')
                 await commit('showMessage', {

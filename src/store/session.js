@@ -14,7 +14,7 @@ export default {
     },
     actions: {
         async fetchAllSessions({ commit }) {
-            let res = await Vue.axios.get(`/v1/sessions`)
+            let res = await Vue.axios.get(`/sessions`)
             await commit('setSessions', res.data.data)
         },
     },

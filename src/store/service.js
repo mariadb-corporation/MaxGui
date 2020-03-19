@@ -23,7 +23,7 @@ export default {
     },
     actions: {
         async fetchServices({ commit }) {
-            let res = await Vue.axios.get(`/v1/services`)
+            let res = await Vue.axios.get(`/services`)
             await commit('setServices', res.data.data)
         },
         //-----------------------------------------------Service----------------------------------------------
@@ -57,11 +57,11 @@ export default {
             let message
             switch (serviceData.mode) {
                 case 'post':
-                    res = await Vue.axios.post(`/v1/services/`, payload)
+                    res = await Vue.axios.post(`/services/`, payload)
                     message = [`Service ${serviceData.id} is created`]
                     break
                 case 'patch':
-                    res = await Vue.axios.patch(`/v1/services/${serviceData.id}`, payload)
+                    res = await Vue.axios.patch(`/services/${serviceData.id}`, payload)
                     message = [`Service ${serviceData.id} is updated`]
                     break
             }
@@ -79,7 +79,7 @@ export default {
          * @param {String} id id of the service
          */
         async destroyService({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/v1/services/${id}`)
+            let res = await Vue.axios.delete(`/services/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchServices')
@@ -94,7 +94,7 @@ export default {
          * @param {String} mode Mode to start or stop service
          */
         async stopOrStartService({ dispatch, commit }, { id, mode }) {
-            let res = await Vue.axios.put(`/v1/services/${id}/${mode}`)
+            let res = await Vue.axios.put(`/services/${id}/${mode}`)
             let message
             switch (mode) {
                 case 'start':
@@ -117,7 +117,7 @@ export default {
         //---------------------------------Listeners of the service-------------------------------------------
         // async fetchListenersByService({ commit, state }, serviceId) {
         //     try {
-        //         let res = await Vue.axios.get(`/v1/services${serviceId}/listeners`);
+        //         let res = await Vue.axios.get(`/services${serviceId}/listeners`);
         //         await commit('setListenersByService', { data: res.data.data, id: serviceId });
         //     } catch (error) {
         // let errorsArr = [error];

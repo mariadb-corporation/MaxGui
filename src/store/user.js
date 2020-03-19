@@ -52,7 +52,7 @@ export default {
         },
         // --------------------------------------------------- Network users -------------------------------------
         async fetchCurrentNetworkUser({ dispatch, commit, state }) {
-            let res = await Vue.axios.get(`/v1/users/inet/${state.user.username}`)
+            let res = await Vue.axios.get(`/users/inet/${state.user.username}`)
             // response ok
             if (res.status === 200) {
                 let data = res.data.data
@@ -65,7 +65,7 @@ export default {
             }
         },
         async fetchAllNetworkUsers({ commit }) {
-            let res = await Vue.axios.get(`/v1/users/inet`)
+            let res = await Vue.axios.get(`/users/inet`)
             // response ok
             if (res.status === 200) {
                 commit('setAllNetworkUsers', res.data.data)
@@ -91,7 +91,7 @@ export default {
                                 attributes: { password: data.password, account: data.role },
                             },
                         }
-                        res = await Vue.axios.post(`/v1/users/inet`, payload)
+                        res = await Vue.axios.post(`/users/inet`, payload)
                         message = [`Network User ${data.id} is created`]
                     }
                     break
@@ -102,7 +102,7 @@ export default {
                                 attributes: { password: data.password },
                             },
                         }
-                        res = await Vue.axios.patch(`/v1/users/inet/${data.id}`, payload)
+                        res = await Vue.axios.patch(`/users/inet/${data.id}`, payload)
                         message = [`Network User ${data.id} is updated`]
                     }
                     break
@@ -120,7 +120,7 @@ export default {
          * @param {String} id id of the network user
          */
         async deleteNetworkUserById({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/v1/users/inet/${id}`)
+            let res = await Vue.axios.delete(`/users/inet/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllNetworkUsers')
@@ -132,14 +132,14 @@ export default {
         },
         // --------------------------------------------------- Unix accounts -------------------------------------
         async fetchAllUNIXAccounts({ commit }) {
-            let res = await Vue.axios.get(`/v1/users/unix`)
+            let res = await Vue.axios.get(`/users/unix`)
             // response ok
             if (res.status === 200) {
                 commit('setAllUNIXAccounts', res.data.data)
             }
         },
         async enableUNIXAccount({ commit, dispatch }, { id, role }) {
-            let res = await Vue.axios.get(`/v1/users/unix`, {
+            let res = await Vue.axios.get(`/users/unix`, {
                 data: {
                     id: id,
                     type: 'unix',
@@ -161,7 +161,7 @@ export default {
          * @param {String} id id of the UNIX user
          */
         async disableUNIXAccount({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/v1/users/unix/${id}`)
+            let res = await Vue.axios.delete(`/users/unix/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllUNIXAccounts')
@@ -173,7 +173,7 @@ export default {
         },
         // --------------------------------------------------- All users -----------------------------------------
         async fetchAllUsers({ commit }) {
-            let res = await Vue.axios.get(`/v1/users`)
+            let res = await Vue.axios.get(`/users`)
             // response ok
             if (res.status === 200) {
                 commit('setAllUsers', res.data.data)

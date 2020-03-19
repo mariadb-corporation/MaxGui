@@ -44,13 +44,13 @@ export default {
     },
     actions: {
         async fetchMaxScaleDetails({ commit }) {
-            let res = await Vue.axios.get(`/v1/maxscale`)
+            let res = await Vue.axios.get(`/maxscale`)
             await commit('setMaxScaleDetails', res.data.data.attributes)
         },
         // ---------------------------- last two second threads--------------------------
         async fetchThreads({ dispatch, commit, state }) {
             try {
-                let res = await Vue.axios.get(`/v1/maxscale/threads`)
+                let res = await Vue.axios.get(`/maxscale/threads`)
                 // console.log("state.threads", state.threads.length);
                 // console.log("res.data.data", res.data.data.length);
                 if (state.threads.length !== res.data.data.length) {

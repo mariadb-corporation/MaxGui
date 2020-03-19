@@ -14,7 +14,7 @@ export default {
     },
     actions: {
         async fetchAllMonitors({ commit }) {
-            let res = await Vue.axios.get(`/v1/monitors`)
+            let res = await Vue.axios.get(`/monitors`)
             await commit('setAllMonitors', res.data.data)
         },
         /**
@@ -53,13 +53,13 @@ export default {
             switch (data.mode) {
                 case 'post':
                     {
-                        res = await Vue.axios.post(`/v1/monitors`, payload)
+                        res = await Vue.axios.post(`/monitors`, payload)
                         message = [`Monitor ${data.id} is created`]
                     }
                     break
                 case 'patch':
                     {
-                        res = await Vue.axios.patch(`/v1/monitors/${data.id}`, payload)
+                        res = await Vue.axios.patch(`/monitors/${data.id}`, payload)
                         message = [`Monitor ${data.id} is updated`]
                     }
                     break
@@ -83,17 +83,17 @@ export default {
                 case 'destroy':
                     /*  Destroy a created monitor. 
                     The monitor must not have relationships to any servers in order to be destroyed. */
-                    res = await Vue.axios.delete(`/v1/monitors/${id}/stop`)
+                    res = await Vue.axios.delete(`/monitors/${id}/stop`)
                     message = [`Monitor ${id} is destroyed`]
                     break
                 case 'stop':
                     //Stops a started monitor.
-                    res = await Vue.axios.put(`/v1/monitors/${id}/stop`)
+                    res = await Vue.axios.put(`/monitors/${id}/stop`)
                     message = [`Monitor ${id} is stopped`]
                     break
                 case 'start':
                     //Starts a stopped monitor.
-                    res = await Vue.axios.put(`/v1/monitors/${id}/start`)
+                    res = await Vue.axios.put(`/monitors/${id}/start`)
                     message = [`Monitor ${id} is started`]
                     break
             }

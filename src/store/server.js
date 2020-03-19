@@ -14,7 +14,7 @@ export default {
     },
     actions: {
         async fetchServers({ commit }) {
-            let res = await Vue.axios.get(`/v1/servers`)
+            let res = await Vue.axios.get(`/servers`)
             await commit('setServers', res.data.data)
         },
         /**
@@ -37,11 +37,11 @@ export default {
             let message
             switch (serverData.mode) {
                 case 'post':
-                    res = await Vue.axios.post(`/v1/servers/`, payload)
+                    res = await Vue.axios.post(`/servers/`, payload)
                     message = [`Server ${serverData.id} is created`]
                     break
                 case 'patch':
-                    res = await Vue.axios.patch(`/v1/servers/${serverData.id}`, payload)
+                    res = await Vue.axios.patch(`/servers/${serverData.id}`, payload)
                     message = [`Server ${serverData.id} is updated`]
                     break
             }
@@ -59,7 +59,7 @@ export default {
          * @param {String} id id of the server
          */
         async destroyServer({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/v1/servers/${id}`)
+            let res = await Vue.axios.delete(`/servers/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchServers')
@@ -78,11 +78,11 @@ export default {
             let res, message
             switch (mode) {
                 case 'set':
-                    res = await Vue.axios.put(`/v1/servers/${id}/set?state=${state}`)
+                    res = await Vue.axios.put(`/servers/${id}/set?state=${state}`)
                     message = [`Server ${id} is set to ${state}`]
                     break
                 case 'clear':
-                    res = await Vue.axios.put(`/v1/servers/${id}/clear?state=${state}`)
+                    res = await Vue.axios.put(`/servers/${id}/clear?state=${state}`)
                     message = [`State ${state} of server ${id} is cleared`]
                     break
             }
