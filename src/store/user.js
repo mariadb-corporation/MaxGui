@@ -182,5 +182,7 @@ export default {
     },
     getters: {
         user: state => state.user,
+        currentNetworkUser: state => state.currentNetworkUser,
+        allUsers: state => state.allUsers,
     },
 }

@@ -58,7 +58,7 @@ export default {
         checkIsTabRoute() {
             let arr = this.tabRoutes
             let isTabRoute = false
-            for (let i = 0; i < arr.length; i++) {
+            for (let i = arr.length - 1; i >= 0; --i) {
                 if (arr[i].name === this.currentRoute) {
                     isTabRoute = true
                 }

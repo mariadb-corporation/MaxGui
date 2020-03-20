@@ -121,7 +121,7 @@ export default {
         isKeyWordMatchTabRoutes(keyword) {
             let arr = this.tabRoutes.slice()
             let match = false
-            for (let i = 0; i < arr.length; i++) {
+            for (let i = arr.length - 1; i >= 0; --i) {
                 if (arr[i].name === keyword) {
                     match = false
                     break

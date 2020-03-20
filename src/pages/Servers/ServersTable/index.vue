@@ -77,7 +77,7 @@ export default {
         generateTableRows: function() {
             if (this.serversData) {
                 let itemsArr = []
-                for (let n = 0; n < this.serversData.length; n++) {
+                for (let n = this.serversData.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row
                      * @property {String} id - Id of the server

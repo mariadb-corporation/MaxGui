@@ -84,7 +84,7 @@ export default {
                 let arr = []
                 let lineColors = []
                 let pointColors = []
-                for (let i = 0; i < threads.length; i++) {
+                for (let i = threads.length - 1; i >= 0; --i) {
                     lineColors.push(dynamicColors())
                     pointColors.push(dynamicColors())
                     let obj = {

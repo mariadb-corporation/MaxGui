@@ -25,7 +25,7 @@ export default {
                 keyNames.forEach(element => {
                     headersArr.push({ align: 'left', text: element, value: element })
                 })
-                for (let n = 0; n < data.length; n++) {
+                for (let n = data.length - 1; n >= 0; --n) {
                     let keyValues = Object.values(data[n])
                     itemsArr.push(data[n])
                 }

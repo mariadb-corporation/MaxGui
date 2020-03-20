@@ -2,9 +2,9 @@
     <fragment>
         <data-table
             :headers="tableHeaders"
-            :data="tableRows"
+            :data="generateTableRows"
             :sortDesc="false"
-            :loading="!tableRows.length"
+            :loading="!generateTableRows.length"
             :singleExpand="false"
             :showExpand="true"
             sortBy="id"
@@ -68,34 +68,23 @@ export default {
                 { text: 'Servers', value: 'servers' },
                 { text: 'Actions', align: 'center', value: '', sortable: false },
             ],
-            tableRows: [],
             serviceDialog: false,
             chosenItem: null,
         }
     },
-
-    watch: {
-        servicesData: function(newVal, oldVal) {
-            this.generateTableRows(newVal)
-        },
-    },
-    methods: {
-        ...mapActions(['destroyService']),
-        handleOpenModal: function(item) {
-            this.serviceDialog = true
-            this.chosenItem = item
-        },
+    computed: {
         /**
          * @return {Array} An array of objects
          */
-        generateTableRows: function(servicesData) {
+        generateTableRows: function() {
             /**
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            if (servicesData) {
+            if (this.servicesData) {
                 let itemsArr = []
-                for (let n = 0; n < servicesData.length; n++) {
+                const { servicesData } = this
+                for (let n = servicesData.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row
                      * @property {String} row.id - Service's name
@@ -120,9 +109,16 @@ export default {
                     }
                     itemsArr.push(row)
                 }
-                return (this.tableRows = itemsArr)
+                return itemsArr
             }
             return []
+        },
+    },
+    methods: {
+        ...mapActions(['destroyService']),
+        handleOpenModal: function(item) {
+            this.serviceDialog = true
+            this.chosenItem = item
         },
     },
 }

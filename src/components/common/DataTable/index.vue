@@ -210,7 +210,7 @@ export default {
     name: 'data-table',
     components: { DataTableHeaderMobile },
     /* SLOTS available for data-table */
-    // :name="header.value" // slot :name equals to header.value
+    // :name="header.value" // slot aka item
     // name="actions" :data="{ item }"
     // name="expandable"   :data="{ item }"
     // name="expandIndicator" :expanded Boolean
