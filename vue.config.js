@@ -1,5 +1,4 @@
 const path = require('path')
-
 process.env.VUE_APP_VERSION = require('./package.json').version
 
 module.exports = {
@@ -12,7 +11,19 @@ module.exports = {
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },
-        devServer: { progress: false, port: 8000 },
+        devServer: {
+            progress: false,
+            port: 8000,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                '^/': {
+                    changeOrigin: true,
+                    target: process.env.VUE_APP_API,
+                },
+            },
+        },
     },
 
     // css: {

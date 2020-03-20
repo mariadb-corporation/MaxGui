@@ -5,11 +5,9 @@ import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
 
 const location = window.location
-const user = JSON.parse(sessionStorage.getItem('user'))
-let token = user && user.token
 
 let apiClient = axios.create({
-    baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : process.env.VUE_APP_API,
+    baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
     headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
