@@ -13,7 +13,7 @@
             <template v-slot:actions="{ data: { item } }">
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon color="primary" v-on="on" @click="handleOpenModal(item)">
+                        <v-btn icon color="primary" v-on="on" @click.stop="handleOpenModal(item)">
                             <v-icon size="16">$vuetify.icons.edit</v-icon>
                         </v-btn>
                     </template>

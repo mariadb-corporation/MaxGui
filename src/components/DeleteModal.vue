@@ -3,7 +3,7 @@
         <!-- Dialog activator -->
         <v-tooltip top>
             <template v-slot:activator="{ on }">
-                <v-btn color="#eb5757" icon v-on="on" @click="deleteDialog = true">
+                <v-btn color="#eb5757" icon v-on="on" @click.stop="deleteDialog = true">
                     <v-icon size="16" color="#eb5757">
                         $vuetify.icons.delete
                     </v-icon>

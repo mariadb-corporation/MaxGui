@@ -1,6 +1,4 @@
 <style lang="scss" scoped>
-@import 'styles/constants';
-
 .welcome-txt {
     font-size: 30px;
 }
