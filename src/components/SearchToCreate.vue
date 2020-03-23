@@ -59,7 +59,6 @@ export default {
     props: {
         tabRoutes: { type: Array, default: () => [], required: true },
         currentRoute: { type: String, default: '', required: true },
-        isTabRoute: { type: Boolean, default: false, required: true },
     },
 
     data() {
@@ -81,14 +80,14 @@ export default {
         searchKeyWord: function(newVal) {
             /*Display create button when the current route belongs to tabRoute, 
             when search keyword is empty, currentRoute is */
-            if (newVal === '' && this.isTabRoute) {
+            if (newVal === '') {
                 this.isBtnDisabled = false
             } else {
-                this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newVal)
+                this.isBtnDisabled = this.isMatchTabRoutes(newVal)
             }
         },
         currentRoute: function(newRoute) {
-            this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newRoute)
+            this.isBtnDisabled = this.isMatchTabRoutes(newRoute)
         },
         $route: function(to, from) {
             // Clear local search and global search state when route changes
@@ -97,7 +96,7 @@ export default {
         },
     },
     created() {
-        this.isBtnDisabled = this.isKeyWordMatchTabRoutes(this.currentRoute)
+        this.isBtnDisabled = this.isMatchTabRoutes(this.currentRoute)
     },
 
     methods: {
@@ -118,7 +117,7 @@ export default {
                     this.serverDialog = true
             }
         },
-        isKeyWordMatchTabRoutes(keyword) {
+        isMatchTabRoutes(keyword) {
             let arr = this.tabRoutes.slice()
             let match = false
             for (let i = arr.length - 1; i >= 0; --i) {

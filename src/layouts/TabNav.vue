@@ -1,7 +1,7 @@
 <template>
     <v-tabs>
         <v-tab
-            v-for="route in tabRoutesFilter"
+            v-for="route in tabRoutes"
             :key="route.path"
             :to="route.path"
             class="color border-bottom-table-header "
@@ -29,13 +29,13 @@ export default {
     //         activeTab: '/dashboard/services',
     //     }
     // },
-    computed: {
-        ...mapGetters(['searchKeyWord']),
-        tabRoutesFilter() {
-            let self = this
-            let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))
-            return filteredData
-        },
-    },
+    // computed: {
+    //     ...mapGetters(['searchKeyWord']),
+    //     tabRoutesFilter() {
+    //         let self = this
+    //         let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))
+    //         return filteredData
+    //     },
+    // },
 }
 </script>
