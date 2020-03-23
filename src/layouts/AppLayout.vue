@@ -1,20 +1,27 @@
 <template>
     <fragment>
         <top-header :user="user" />
-        <navigation />
+        <navigation :currentRoute="currentRoute" :currentPath="currentPath" />
         <snackbars />
         <v-content>
             <div class="fill-height v-content-padding">
                 <search-to-create
-                    :isTabRoute="checkIsTabRoute()"
+                    v-if="checkIsTabRoute() || currentRoute === 'dashboard'"
                     :currentRoute="currentRoute"
                     :tabRoutes="tabRoutes"
                 />
                 <h1 class="text-navigation display-1 text-capitalize page-title">
                     {{ currentRoute }}
+                    {{ $_.isUndefined($route.params.id) ? '' : $route.params.id }}
                 </h1>
 
-                <TabNav :tabRoutes="tabRoutes" />
+                <TabNav
+                    v-if="
+                        currentPath !== '/dashboard/maxscale' &&
+                            currentPath.match(/^(\/dashboard\/?)\w+/g)
+                    "
+                    :tabRoutes="tabRoutes"
+                />
                 <transition name="fade" mode="out-in">
                     <router-view v-if="$route.meta.requiresAuth" />
                 </transition>
@@ -51,6 +58,9 @@ export default {
         ...mapGetters(['user']),
         currentRoute() {
             return this.$route.name
+        },
+        currentPath() {
+            return this.$route.path
         },
     },
     methods: {

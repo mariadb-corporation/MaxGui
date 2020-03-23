@@ -1,10 +1,10 @@
 <template>
-    <v-container v-if="getCurrentServer" class="">
+    <v-container v-if="currentServer" fluid>
         <v-row>
-            <v-col cols="12">
+            <v-col cols="6">
                 <h5>Attributes</h5>
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in getCurrentServer.attributes"
+                    v-for="(value, propertyName) in currentServer.attributes"
                     :key="propertyName"
                     :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
@@ -12,10 +12,10 @@
                     :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
-            <v-col v-if="!$_.isEmpty(getCurrentServer.relationships)" cols="12">
+            <v-col v-if="!$_.isEmpty(currentServer.relationships)" cols="6">
                 <h5>Relationshis</h5>
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in getCurrentServer.relationships"
+                    v-for="(value, propertyName) in currentServer.relationships"
                     :key="propertyName"
                     :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
@@ -29,7 +29,7 @@
 
 <script>
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
     name: 'server-read',
@@ -41,13 +41,19 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['serversDataMap']),
-        /**
-         * @returns {Object} A deep clone object from vuex state
-         */
-        getCurrentServer: function() {
-            return this.$_.cloneDeep(this.serversDataMap.get(this.id))
-        },
+        ...mapGetters(['currentServer']),
+        // /**
+        //  * @returns {Object} A deep clone object from vuex state
+        //  */
+        // getCurrentServer: function() {
+        //     return this.$_.cloneDeep(this.serversDataMap.get(this.id))
+        // },
+    },
+    created() {
+        this.fetchServerById(this.$route.params.id)
+    },
+    methods: {
+        ...mapActions(['fetchServerById']),
     },
 }
 </script>

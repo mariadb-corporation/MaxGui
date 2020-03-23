@@ -6,8 +6,9 @@
             :sortDesc="false"
             :loading="!generateTableRows.length"
             :singleExpand="false"
-            :showExpand="true"
+            :showExpand="false"
             sortBy="id"
+            :onRowClick="onRowClick"
         >
             <template v-slot:actions="{ data: { item } }">
                 <v-tooltip top>
@@ -27,9 +28,9 @@
                     :smallInfo="$t('info.serviceDeleteModal')"
                 />
             </template>
-            <template v-slot:expandable="{ data: { item } }">
+            <!-- <template v-slot:expandable="{ data: { item } }">
                 <service-read :id="item.id" />
-            </template>
+            </template> -->
         </data-table>
 
         <service-create-or-update
@@ -44,13 +45,13 @@
 <script>
 import { mapActions } from 'vuex'
 import ServiceCreateOrUpdate from '../ServiceCreateOrUpdate'
-import ServiceRead from './ServiceRead'
+// import ServiceRead from './ServiceRead'
 import DeleteModal from 'components/DeleteModal'
 
 export default {
     name: 'services-table',
     components: {
-        ServiceRead,
+        // ServiceRead,
         ServiceCreateOrUpdate,
         DeleteModal,
     },
@@ -119,6 +120,9 @@ export default {
         handleOpenModal: function(item) {
             this.serviceDialog = true
             this.chosenItem = item
+        },
+        onRowClick(item, header) {
+            this.$router.push('/dashboard/service/' + item.id)
         },
     },
 }

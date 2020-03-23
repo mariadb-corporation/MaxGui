@@ -6,8 +6,9 @@
             :sortDesc="false"
             :loading="!generateTableRows.length"
             :singleExpand="false"
-            :showExpand="true"
+            :showExpand="false"
             sortBy="id"
+            :onRowClick="onRowClick"
         >
             <template v-slot:actions="{ data: { item } }">
                 <v-tooltip top>
@@ -26,9 +27,9 @@
                     :smallInfo="$t('info.serverDeleteModal')"
                 />
             </template>
-            <template v-slot:expandable="{ data: { item } }">
+            <!-- <template v-slot:expandable="{ data: { item } }">
                 <server-read :id="item.id" />
-            </template>
+            </template> -->
         </data-table>
         <server-create-or-update
             v-model="serverDialog"
@@ -43,14 +44,14 @@
 import { mapActions } from 'vuex'
 import DeleteModal from 'components/DeleteModal'
 import ServerCreateOrUpdate from '../ServerCreateOrUpdate'
-import ServerRead from './ServerRead'
+// import ServerRead from './ServerRead'
 
 export default {
     name: 'servers-table',
     components: {
         DeleteModal,
         ServerCreateOrUpdate,
-        ServerRead,
+        // ServerRead,
     },
     props: {
         serversData: Array,
@@ -109,6 +110,9 @@ export default {
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item
+        },
+        onRowClick(item, header) {
+            this.$router.push('/dashboard/server/' + item.id)
         },
     },
 }

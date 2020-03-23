@@ -13,6 +13,7 @@ export default [
         name: 'services',
         isTabRoute: true,
     },
+
     {
         path: '/dashboard/servers',
         component: Servers,

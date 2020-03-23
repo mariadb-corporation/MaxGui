@@ -2,6 +2,8 @@ import Login from 'pages/Login'
 import sideBarRoutes from './sideBarRoutes'
 import tabRoutes from './tabRoutes'
 import MaxScale from 'pages/MaxScale'
+import ServiceRead from 'pages/Services/ServicesTable/ServiceRead'
+import ServerRead from 'pages/Servers/ServersTable/ServerRead'
 
 export const routes = [
     {
@@ -30,5 +32,23 @@ export const routes = [
             layout: 'app-layout',
         },
         name: 'maxscale',
+    },
+    {
+        path: '/dashboard/service/:id',
+        component: ServiceRead,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
+        name: 'service',
+    },
+    {
+        path: '/dashboard/server/:id',
+        component: ServerRead,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
+        name: 'server',
     },
 ]

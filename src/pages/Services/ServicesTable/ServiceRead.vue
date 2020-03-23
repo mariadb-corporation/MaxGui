@@ -1,10 +1,10 @@
 <template>
-    <v-container v-if="getCurrentService" class="">
+    <v-container v-if="currentService" fluid>
         <v-row>
-            <v-col cols="12">
+            <v-col cols="6">
                 <h5>Attributes</h5>
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in getCurrentService.attributes"
+                    v-for="(value, propertyName) in currentService.attributes"
                     :key="propertyName"
                     :hasChild="$help.hasChild(value)"
                     :propertyName="propertyName"
@@ -12,16 +12,20 @@
                     :child="$help.hasChild(value) ? value : {}"
                 />
             </v-col>
-            <v-col v-if="!$_.isEmpty(getCurrentService.relationships)" cols="12">
+            <v-col v-if="!$_.isEmpty(currentService.relationships)" cols="6">
                 <h5>Relationships</h5>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in getCurrentService.relationships"
+                <fragment
+                    v-for="(value, propertyName) in currentService.relationships"
                     :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
-                />
+                >
+                    <recursive-nested-collapse
+                        v-if="propertyName !== 'services'"
+                        :hasChild="$help.hasChild(value)"
+                        :propertyName="propertyName"
+                        :value="$help.handleNull(value)"
+                        :child="$help.hasChild(value) ? value : {}"
+                    />
+                </fragment>
             </v-col>
         </v-row>
     </v-container>
@@ -29,25 +33,29 @@
 
 <script>
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
     name: 'service-read',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },
-    props: {
-        id: String,
-    },
 
     computed: {
-        ...mapGetters(['servicesDataMap']),
-        /**
-         * @returns {Object} A deep clone object from vuex state
-         */
-        getCurrentService: function() {
-            return this.$_.cloneDeep(this.servicesDataMap.get(this.id))
-        },
+        ...mapGetters(['currentService']),
+        // /**
+        //  * @returns {Object} A deep clone object from vuex state
+        //  */
+        // getCurrentService: function() {
+        //     console.log('this.$route.params.id', this.$route.params.id)
+        //     return this.$_.cloneDeep(this.servicesDataMap.get(this.$route.params.id))
+        // },
+    },
+    created() {
+        this.fetchServiceById(this.$route.params.id)
+    },
+    methods: {
+        ...mapActions(['fetchServiceById']),
     },
 }
 </script>

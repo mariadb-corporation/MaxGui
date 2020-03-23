@@ -4,6 +4,7 @@ export default {
     state: {
         servicesData: [],
         // listenersByServiceIdMap: new Map(),
+        currentService: {},
     },
     mutations: {
         /**
@@ -11,6 +12,9 @@ export default {
          */
         setServices(state, payload) {
             state.servicesData = payload
+        },
+        setCurrentService(state, payload) {
+            state.currentService = payload
         },
         // /**
         //  * @param {Object} payload payload object
@@ -22,6 +26,12 @@ export default {
         // },
     },
     actions: {
+        async fetchServiceById({ commit, state }, id) {
+            let res = await Vue.axios.get(`/services/${id}`, {
+                auth: state.credentials,
+            })
+            commit('setCurrentService', res.data.data)
+        },
         async fetchServices({ commit }) {
             let res = await Vue.axios.get(`/services`)
             await commit('setServices', res.data.data)
@@ -133,6 +143,7 @@ export default {
     },
     getters: {
         servicesData: state => state.servicesData,
+        currentService: state => state.currentService,
         servicesDataMap: state => {
             let map = new Map()
             state.servicesData.forEach(ele => {

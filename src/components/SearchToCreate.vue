@@ -59,7 +59,6 @@ export default {
     props: {
         tabRoutes: { type: Array, default: () => [] },
         currentRoute: { type: String, default: '' },
-        isTabRoute: { type: Boolean, default: false },
     },
 
     data() {
@@ -81,7 +80,7 @@ export default {
         searchKeyWord: function(newVal) {
             /*Display create button when the current route belongs to tabRoute, 
             when search keyword is empty, currentRoute is */
-            if (newVal === '' && this.isTabRoute) {
+            if (newVal === '') {
                 this.isBtnDisabled = false
             } else {
                 this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newVal)

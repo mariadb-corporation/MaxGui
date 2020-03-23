@@ -1,8 +1,5 @@
 <template>
-    <v-tabs
-        v-if="currentPath !== '/dashboard/maxscale' && currentPath.match(/^(\/dashboard\/?)\w+/g)"
-        v-model="activeTab"
-    >
+    <v-tabs>
         <v-tab
             v-for="route in tabRoutesFilter"
             :key="route.path"
@@ -27,16 +24,13 @@ export default {
     props: {
         tabRoutes: Array,
     },
-    data() {
-        return {
-            activeTab: '/dashboard/services',
-        }
-    },
+    // data() {
+    //     return {
+    //         activeTab: '/dashboard/services',
+    //     }
+    // },
     computed: {
         ...mapGetters(['searchKeyWord']),
-        currentPath() {
-            return this.$route.path
-        },
         tabRoutesFilter() {
             let self = this
             let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))

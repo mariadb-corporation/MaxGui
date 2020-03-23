@@ -45,6 +45,10 @@ import { APP_CONFIG } from 'utils/constants'
 
 export default {
     name: 'navigation',
+    props: {
+        currentPath: { type: String, required: true },
+        currentRoute: { type: String, required: true },
+    },
     data() {
         return {
             isMini: true,
@@ -52,14 +56,7 @@ export default {
             version: process.env.VUE_APP_VERSION || '',
         }
     },
-    computed: {
-        currentPath() {
-            return this.$route.path
-        },
-        currentRoute() {
-            return this.$route.name
-        },
-    },
+
     methods: {
         navigate({ route, url }) {
             if (url) {
@@ -80,7 +77,7 @@ export default {
     }
 
     .navitem {
-        transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; // same easing as the nav drawer open/close animation
+        // transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; // same easing as the nav drawer open/close animation
         height: 52px;
         &:hover {
             background: rgba(0, 0, 0, 0.14) !important;

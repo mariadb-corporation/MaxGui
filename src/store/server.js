@@ -3,6 +3,7 @@ import Vue from 'vue'
 export default {
     state: {
         serversData: [],
+        currentServer: {},
     },
     mutations: {
         /**
@@ -11,8 +12,17 @@ export default {
         setServers(state, payload) {
             state.serversData = payload
         },
+        setCurrentServer(state, payload) {
+            state.currentServer = payload
+        },
     },
     actions: {
+        async fetchServerById({ commit, state }, id) {
+            let res = await Vue.axios.get(`/servers/${id}`, {
+                auth: state.credentials,
+            })
+            commit('setCurrentServer', res.data.data)
+        },
         async fetchServers({ commit }) {
             let res = await Vue.axios.get(`/servers`)
             await commit('setServers', res.data.data)
@@ -98,6 +108,7 @@ export default {
     },
     getters: {
         serversData: state => state.serversData,
+        currentServer: state => state.currentServer,
         serversDataMap: state => {
             let map = new Map()
             state.serversData.forEach(ele => {

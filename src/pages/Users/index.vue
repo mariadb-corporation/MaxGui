@@ -74,7 +74,6 @@ export default {
     },
     created() {
         this.fetchCurrentNetworkUser()
-        // console.log('currentNetworkUser', this.currentNetworkUser)
     },
 
     methods: {
