@@ -5,11 +5,13 @@
         <snackbars />
         <v-content>
             <div class="fill-height v-content-padding">
-                <search-to-create
-                    v-if="checkIsTabRoute() || currentRoute === 'dashboard'"
-                    :currentRoute="currentRoute"
-                    :tabRoutes="tabRoutes"
-                />
+                <div v-show="checkIsTabRoute() || currentRoute === 'dashboard'">
+                    <search-to-create
+                        :isTabRoute="checkIsTabRoute()"
+                        :currentRoute="currentRoute"
+                        :tabRoutes="tabRoutes"
+                    />
+                </div>
                 <h1 class="text-navigation display-1 text-capitalize page-title">
                     {{ currentRoute }}
                     {{ $_.isUndefined($route.params.id) ? '' : $route.params.id }}
@@ -57,6 +59,7 @@ export default {
     computed: {
         ...mapGetters(['user']),
         currentRoute() {
+            console.log('isTabRoute', this.$route.name === 'dashboard')
             return this.$route.name
         },
         currentPath() {
@@ -73,6 +76,7 @@ export default {
                     isTabRoute = true
                 }
             }
+
             return isTabRoute
         },
     },

@@ -57,8 +57,9 @@ export default {
         ServerCreateOrUpdate,
     },
     props: {
-        tabRoutes: { type: Array, default: () => [] },
-        currentRoute: { type: String, default: '' },
+        tabRoutes: { type: Array, default: () => [], required: true },
+        currentRoute: { type: String, default: '', required: true },
+        isTabRoute: { type: Boolean, default: false, required: true },
     },
 
     data() {
@@ -80,7 +81,7 @@ export default {
         searchKeyWord: function(newVal) {
             /*Display create button when the current route belongs to tabRoute, 
             when search keyword is empty, currentRoute is */
-            if (newVal === '') {
+            if (newVal === '' && this.isTabRoute) {
                 this.isBtnDisabled = false
             } else {
                 this.isBtnDisabled = this.isKeyWordMatchTabRoutes(newVal)
