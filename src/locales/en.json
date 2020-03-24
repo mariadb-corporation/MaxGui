@@ -13,6 +13,7 @@
     "lastTwoSecondsThreads": "Last two second threads",
     "service": "Service",
     "server": "Server",
+    "monitor": "Monitor",
     "paramtersConfig": "Parameters configurations",
     "relationshipsConfig": "Relationships configurations",
     "enable": "Enable",
@@ -44,6 +45,7 @@
     "info": {
         "createOrUpdateForm": "Empty value in non-required fileds will be treated as null. *indicates required field.",
         "serverDeleteModal": "Make sure it is not used by any services or monitors.",
+        "monitorDeleteModal": "The monitor must not have relationships to any servers in order to be destroyed.",
         "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
     "dashboard": "Dashboard",

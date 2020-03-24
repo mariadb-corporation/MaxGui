@@ -3,6 +3,7 @@ import Vue from 'vue'
 export default {
     state: {
         allMonitors: [],
+        currentMonitor: {},
     },
     mutations: {
         /**
@@ -11,11 +12,18 @@ export default {
         setAllMonitors(state, payload) {
             state.allMonitors = payload
         },
+        setCurrentMonitor(state, payload) {
+            state.currentMonitor = payload
+        },
     },
     actions: {
         async fetchAllMonitors({ commit }) {
             let res = await Vue.axios.get(`/monitors`)
             await commit('setAllMonitors', res.data.data)
+        },
+        async fetchMonitorById({ commit }, id) {
+            let res = await Vue.axios.get(`/monitors/${id}`)
+            await commit('setCurrentMonitor', res.data.data)
         },
         /**
          * @param {Object} data Monitor data object
@@ -83,7 +91,7 @@ export default {
                 case 'destroy':
                     /*  Destroy a created monitor. 
                     The monitor must not have relationships to any servers in order to be destroyed. */
-                    res = await Vue.axios.delete(`/monitors/${id}/stop`)
+                    res = await Vue.axios.delete(`/monitors/${id}`)
                     message = [`Monitor ${id} is destroyed`]
                     break
                 case 'stop':
@@ -109,5 +117,6 @@ export default {
     },
     getters: {
         allMonitors: state => state.allMonitors,
+        currentMonitor: state => state.currentMonitor,
     },
 }

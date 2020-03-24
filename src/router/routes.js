@@ -4,6 +4,7 @@ import tabRoutes from './tabRoutes'
 import MaxScale from 'pages/MaxScale'
 import ServiceRead from 'pages/Services/ServicesTable/ServiceRead'
 import ServerRead from 'pages/Servers/ServersTable/ServerRead'
+import MonitorRead from 'pages/Monitors/MonitorsTable/MonitorRead'
 
 export const routes = [
     {
@@ -50,5 +51,14 @@ export const routes = [
             layout: 'app-layout',
         },
         name: 'server',
+    },
+    {
+        path: '/dashboard/monitor/:id',
+        component: MonitorRead,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
+        name: 'monitor',
     },
 ]

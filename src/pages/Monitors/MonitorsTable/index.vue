@@ -4,34 +4,31 @@
             :headers="tableHeaders"
             :data="generateTableRows"
             :sortDesc="false"
-            :loading="!generateTableRows.length"
+            :loading="isLoading"
             :singleExpand="false"
             :showExpand="false"
             sortBy="id"
             :onRowClick="onRowClick"
         >
             <template v-slot:actions="{ data: { item } }">
-                <v-tooltip top>
+                <!-- <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn icon color="primary" v-on="on" @click.stop="handleOpenModal(item)">
                             <v-icon size="16">$vuetify.icons.edit</v-icon>
                         </v-btn>
                     </template>
-                    <span>{{ `${$t('server')} ${$t('update')}` }}</span>
-                </v-tooltip>
+                    <span>{{ `${$t('monitor')} ${$t('update')}` }}</span>
+                </v-tooltip> -->
                 <delete-modal
                     :item="item"
                     type="destroy"
-                    :dispatchDelete="() => destroyServer(item.id)"
-                    :title="`${$t('destroy')} ${$t('server')}`"
-                    :smallInfo="$t('info.serverDeleteModal')"
+                    :dispatchDelete="() => monitorManipulate({ id: item.id, mode: 'destroy' })"
+                    :title="`${$t('destroy')} ${$t('monitor')}`"
+                    :smallInfo="$t('info.monitorDeleteModal')"
                 />
             </template>
-            <!-- <template v-slot:expandable="{ data: { item } }">
-                <server-read :id="item.id" />
-            </template> -->
         </data-table>
-        <server-create-or-update
+        <monitor-create-or-update
             v-model="serverDialog"
             :close-modal="() => (serverDialog = false)"
             mode="patch"
@@ -43,28 +40,24 @@
 <script>
 import { mapActions } from 'vuex'
 import DeleteModal from 'components/DeleteModal'
-import ServerCreateOrUpdate from '../ServerCreateOrUpdate'
-// import ServerRead from './ServerRead'
+import MonitorCreateOrUpdate from '../MonitorCreateOrUpdate'
 
 export default {
-    name: 'servers-table',
+    name: 'monitors-table',
     components: {
         DeleteModal,
-        ServerCreateOrUpdate,
-        // ServerRead,
+        MonitorCreateOrUpdate,
     },
     props: {
-        serversData: Array,
+        allMonitors: Array,
     },
     data() {
         return {
             //State
             tableHeaders: [
-                { text: 'Server', value: 'id' },
-                { text: 'Address', value: 'address' },
-                { text: 'Port', value: 'port' },
-                { text: 'Connections', value: 'connections' },
+                { text: 'Monitor', value: 'id' },
                 { text: 'State', value: 'state' },
+                { text: 'Servers', value: 'server_info' },
                 { text: 'Actions', align: 'center', sortable: false },
             ],
             serverDialog: false,
@@ -72,31 +65,38 @@ export default {
         }
     },
     computed: {
+        isLoading: function() {
+            // loading while populating the data schema
+            if (this.allMonitors.length && !this.generateTableRows.length) {
+                return true
+            }
+            return false
+        },
         /**
          * @return {Array} An array of objects
          */
         generateTableRows: function() {
-            if (this.serversData) {
+            if (this.allMonitors.length) {
                 let itemsArr = []
-                for (let n = this.serversData.length - 1; n >= 0; --n) {
+                for (let n = this.allMonitors.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row
-                     * @property {String} id - Id of the server
-                     * @property {String} address - Server's address
-                     * @property {Number} port - Server's port
-                     * @property {Number} connections - Number of connections to the server
-                     * @property {String} state - Server's state
+                     * @property {String} id - Id of the monitor
+                     * @property {String} state - state
+                     * @property {Number} server_info - List of servers is monitored
                      */
                     const {
                         id,
-                        attributes: { state, parameters, statistics },
-                    } = this.serversData[n]
+                        attributes: {
+                            state,
+                            monitor_diagnostics: { server_info },
+                        },
+                    } = this.allMonitors[n]
+                    let serversList = server_info ? server_info.map(item => ` ${item.name}`) : []
                     let row = {
                         id: id,
-                        address: parameters.address,
-                        port: parameters.port,
-                        connections: statistics.connections,
                         state: state,
+                        server_info: serversList.toString(),
                     }
                     itemsArr.push(row)
                 }
@@ -106,13 +106,13 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['destroyServer']),
+        ...mapActions(['monitorManipulate']),
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item
         },
         onRowClick(item, header) {
-            this.$router.push('/dashboard/server/' + item.id)
+            this.$router.push('/dashboard/monitor/' + item.id)
         },
     },
 }

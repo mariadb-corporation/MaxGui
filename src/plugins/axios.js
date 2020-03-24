@@ -14,6 +14,20 @@ let apiClient = axios.create({
     },
 })
 
+apiClient.interceptors.request.use(
+    config => {
+        const user = JSON.parse(sessionStorage.getItem('user'))
+        let token = user && user.token
+
+        console.log('token', token)
+        // Add token before request is sent
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`
+        }
+        return config
+    },
+    error => Promise.reject(error)
+)
 apiClient.interceptors.response.use(
     response => {
         return response
@@ -21,6 +35,8 @@ apiClient.interceptors.response.use(
     error => {
         if (error.response.status === 401) {
             store.dispatch('logout')
+            delete axios.defaults.headers.common['Authorization']
+
             return Promise.reject(error)
         } else {
             store.commit('showMessage', {
