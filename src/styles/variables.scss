@@ -2,7 +2,17 @@
 @import '~vuetify/src/styles/settings/_variables';
 
 $body-font-family: 'azo-sans-web', adrianna, serif;
-
+$font-weights: map-merge(
+    $font-weights,
+    (
+        'thin': 100,
+        'light': 350,
+        'regular': 400,
+        'medium': 550,
+        'bold': 700,
+        'black': 900,
+    )
+);
 $headings: (
     'h1': (
         'size': 3.125rem,
@@ -87,24 +97,21 @@ $code-color: #525a65 !important;
 // override v-card
 $card-text-font-size: map-deep-get($headings, 'subtitle-2', 'size');
 $card-text-line-height: 1.125rem;
+// override v-dialog
+$dialog-border-radius: 0.625rem;
+
 @import '~vuetify/src/components/VBtn/variables';
 
 $btn-font-sizes: map-merge(
     $btn-font-sizes,
     (
-        'default': 18px,
-    )
-);
-
-$btn-font-sizes: map-deep-merge(
-    (
         'x-small': 0.75rem,
-        'small': 0.875,
+        'small': 0.875rem,
         'default': 1.125rem,
         'large': 1.125rem,
         'x-large': 1.5rem,
-    ),
-    $btn-font-sizes
+    )
 );
+
 // override v-menu
 $menu-content-border-radius: 10px;

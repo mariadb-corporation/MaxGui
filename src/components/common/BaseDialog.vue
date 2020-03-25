@@ -1,22 +1,47 @@
 <template>
-    <v-dialog v-model="computeShowDialog" :max-width="maxWidth" content-class="base-dialog">
+    <v-dialog
+        v-model="computeShowDialog"
+        overlay-color="#424F62"
+        overlay-opacity="0.6"
+        :max-width="maxWidth"
+        content-class="base-dialog"
+    >
         <v-card class="v-card-custom">
-            <v-card-title class="px-12 pt-10 pb-5">
-                <h3 style="font-weight:350" class="color text-navigation ">{{ title }}</h3>
+            <v-card-title class="v-card-title_padding">
+                <h3 class="font-weight-light color text-navigation ">
+                    {{ title }}
+                </h3>
                 <v-btn class="close" icon @click="cancel">
                     <v-icon size="18" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-card-text class="px-12 pt-0 pb-12">
+            <v-card-text class="v-card-text_padding">
                 <slot name="body"></slot>
             </v-card-text>
-            <v-card-actions class="px-12 py-6 color border-top-reflection">
+            <v-card-actions class="v-card-actions_padding color border-top-reflection">
                 <v-spacer></v-spacer>
                 <slot :cancel="cancel" :save="save" name="actions">
-                    <v-btn class="cancel" color="primary" outlined depressed @click="cancel">
+                    <v-btn
+                        small
+                        height="36"
+                        color="primary"
+                        class="cancel font-weight-medium px-7 text-capitalize"
+                        rounded
+                        outlined
+                        depressed
+                        @click="cancel"
+                    >
                         {{ $t('cancel') }}
                     </v-btn>
-                    <v-btn class="save" color="primary" depressed @click="save">
+                    <v-btn
+                        small
+                        height="36"
+                        color="primary"
+                        class="save font-weight-medium px-7 text-capitalize"
+                        rounded
+                        depressed
+                        @click="save"
+                    >
                         {{ $t('save') }}
                     </v-btn>
                 </slot>
@@ -83,10 +108,20 @@ export default {
     .close {
         position: absolute;
         top: 12px;
-        right: 18px;
+        right: 12px;
+        svg.v-icon {
+            width: 18px;
+        }
     }
-    svg.v-icon {
-        width: 18px;
+    $paddingLeft: 62px;
+    .v-card-title_padding {
+        padding: 52px $paddingLeft 20px;
+    }
+    .v-card-text_padding {
+        padding: 0px $paddingLeft 48px;
+    }
+    .v-card-actions_padding {
+        padding: 30px $paddingLeft 36px;
     }
 }
 </style>

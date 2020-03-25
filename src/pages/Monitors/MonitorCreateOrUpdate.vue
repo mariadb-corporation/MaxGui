@@ -261,14 +261,14 @@ export default {
             // server object attributes input values below here
             serverId: null, // patch mode need to set when get the item props
             parameters: {
-                address: '127.0.0.1',
-                socket: null,
-                port: null,
-                ssl_cert: null,
-                ssl_ca_cert: null,
-                ssl_version: 'MAX',
+                user: 'maxuser',
+                password: 'maxpwd',
+                monitor_interval: null,
+                backend_connect_timeout: null,
+                backend_write_timeout: null,
+                backend_read_timeout: 'MAX',
                 ssl_cert_verify_depth: 9,
-                ssl_verify_peer_certificate: false,
+                backend_connect_attempts: false,
             },
             relationships: {
                 services: {

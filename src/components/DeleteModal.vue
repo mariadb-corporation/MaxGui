@@ -15,7 +15,7 @@
             v-model="deleteDialog"
             :onCancel="() => (deleteDialog = false)"
             :onSave="handleDelete"
-            maxWidth="470px"
+            maxWidth="466px"
             :title="title"
         >
             <template v-slot:body>
@@ -30,8 +30,9 @@
             <template v-slot:actions="{ cancel, save }">
                 <v-btn
                     small
+                    height="36"
                     color="primary"
-                    class="px-5 text-capitalize"
+                    class="font-weight-medium px-7 text-capitalize"
                     rounded
                     outlined
                     depressed
@@ -41,8 +42,9 @@
                 </v-btn>
                 <v-btn
                     small
+                    height="36"
                     color="primary"
-                    class="px-5 text-capitalize"
+                    class="font-weight-medium px-7 text-capitalize"
                     rounded
                     depressed
                     @click="save"

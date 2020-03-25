@@ -7,7 +7,7 @@
 <template>
     <div class="welcome-txt text-center color text-text-subtle">
         <div>{{ greeting }}</div>
-        <div style="font-weight:600">
+        <div class="font-weight-medium">
             {{ $t('mariaDbMaxScale') }}
         </div>
     </div>

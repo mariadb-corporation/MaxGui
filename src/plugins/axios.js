@@ -18,8 +18,6 @@ apiClient.interceptors.request.use(
     config => {
         const user = JSON.parse(sessionStorage.getItem('user'))
         let token = user && user.token
-
-        console.log('token', token)
         // Add token before request is sent
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`

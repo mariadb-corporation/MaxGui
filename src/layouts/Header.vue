@@ -3,8 +3,8 @@
         <v-toolbar-title class="headline">
             <router-link to="/dashboard">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                <span class="ml-2 white--text">
-                    <b>{{ $t('productName') }}</b>
+                <span class="font-weight-medium  white--text">
+                    {{ $t('productName') }}
                 </span>
             </router-link>
         </v-toolbar-title>
@@ -111,7 +111,7 @@ export default {
         position: relative;
         vertical-align: middle;
         font-size: 18px;
-        font-weight: bold;
+        font-family: 'azo-sans-web';
     }
 }
 .arrow-up {

@@ -4,7 +4,7 @@
             <v-col class="pa-0 ma-0 " cols="12" align="center">
                 <div class="logo">
                     <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                    <span style="font-weight:600" class="ml-2 white--text">
+                    <span class="font-weight-medium ml-2 white--text">
                         {{ config.productName }}
                     </span>
                 </div>
