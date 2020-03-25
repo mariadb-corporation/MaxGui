@@ -1,16 +1,15 @@
 import Login from 'pages/Login'
 import sideBarRoutes from './sideBarRoutes'
-import tabRoutes from './tabRoutes'
 import MaxScale from 'pages/MaxScale'
-import ServiceRead from 'pages/Services/ServicesTable/ServiceRead'
-import ServerRead from 'pages/Servers/ServersTable/ServerRead'
-import MonitorRead from 'pages/Monitors/MonitorsTable/MonitorRead'
+import ServiceDetail from 'pages/Services/ServiceDetail'
+import ServerDetail from 'pages/Servers/ServerDetail'
+import MonitorDetail from 'pages/Monitors/MonitorDetail'
 
 export const routes = [
     {
         path: '*',
         name: 'default',
-        redirect: '/dashboard',
+        redirect: '/dashboard/servers',
     },
     {
         path: '/login',
@@ -23,7 +22,7 @@ export const routes = [
         },
     },
     ...sideBarRoutes,
-    ...tabRoutes,
+
     // route but doesn't include in tabRoutes or sideBarRoutes
     {
         path: '/dashboard/maxscale',
@@ -36,7 +35,7 @@ export const routes = [
     },
     {
         path: '/dashboard/service/:id',
-        component: ServiceRead,
+        component: ServiceDetail,
         meta: {
             requiresAuth: true,
             layout: 'app-layout',
@@ -45,7 +44,7 @@ export const routes = [
     },
     {
         path: '/dashboard/server/:id',
-        component: ServerRead,
+        component: ServerDetail,
         meta: {
             requiresAuth: true,
             layout: 'app-layout',
@@ -54,7 +53,7 @@ export const routes = [
     },
     {
         path: '/dashboard/monitor/:id',
-        component: MonitorRead,
+        component: MonitorDetail,
         meta: {
             requiresAuth: true,
             layout: 'app-layout',

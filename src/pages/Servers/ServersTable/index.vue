@@ -27,9 +27,6 @@
                     :smallInfo="$t('info.serverDeleteModal')"
                 />
             </template>
-            <!-- <template v-slot:expandable="{ data: { item } }">
-                <server-read :id="item.id" />
-            </template> -->
         </data-table>
         <server-create-or-update
             v-model="serverDialog"
@@ -44,14 +41,12 @@
 import { mapActions } from 'vuex'
 import DeleteModal from 'components/DeleteModal'
 import ServerCreateOrUpdate from '../ServerCreateOrUpdate'
-// import ServerRead from './ServerRead'
 
 export default {
     name: 'servers-table',
     components: {
         DeleteModal,
         ServerCreateOrUpdate,
-        // ServerRead,
     },
     props: {
         serversData: Array,

@@ -28,9 +28,6 @@
                     :smallInfo="$t('info.serviceDeleteModal')"
                 />
             </template>
-            <!-- <template v-slot:expandable="{ data: { item } }">
-                <service-read :id="item.id" />
-            </template> -->
         </data-table>
 
         <service-create-or-update
@@ -45,13 +42,11 @@
 <script>
 import { mapActions } from 'vuex'
 import ServiceCreateOrUpdate from '../ServiceCreateOrUpdate'
-// import ServiceRead from './ServiceRead'
 import DeleteModal from 'components/DeleteModal'
 
 export default {
     name: 'services-table',
     components: {
-        // ServiceRead,
         ServiceCreateOrUpdate,
         DeleteModal,
     },

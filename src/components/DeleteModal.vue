@@ -32,7 +32,7 @@
                     small
                     height="36"
                     color="primary"
-                    class="font-weight-medium px-7 text-capitalize"
+                    class="font-weight-regular px-7 text-capitalize"
                     rounded
                     outlined
                     depressed
@@ -44,7 +44,7 @@
                     small
                     height="36"
                     color="primary"
-                    class="font-weight-medium px-7 text-capitalize"
+                    class="font-weight-regular px-7 text-capitalize"
                     rounded
                     depressed
                     @click="save"

@@ -5,6 +5,16 @@ import Monitors from 'pages/Monitors'
 export default [
     // Tab Routes
     {
+        path: '/dashboard/servers',
+        component: Servers,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
+        name: 'servers',
+        isTabRoute: true,
+    },
+    {
         path: '/dashboard/services',
         component: Services,
         meta: {
@@ -15,16 +25,6 @@ export default [
         isTabRoute: true,
     },
 
-    {
-        path: '/dashboard/servers',
-        component: Servers,
-        meta: {
-            requiresAuth: true,
-            layout: 'app-layout',
-        },
-        name: 'servers',
-        isTabRoute: true,
-    },
     {
         path: '/dashboard/monitors',
         component: Monitors,

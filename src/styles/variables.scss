@@ -8,7 +8,7 @@ $font-weights: map-merge(
         'thin': 100,
         'light': 350,
         'regular': 400,
-        'medium': 550,
+        'medium': 500,
         'bold': 700,
         'black': 900,
     )
@@ -112,6 +112,7 @@ $btn-font-sizes: map-merge(
         'x-large': 1.5rem,
     )
 );
+$btn-letter-spacing: -0.1px;
 
 // override v-menu
 $menu-content-border-radius: 10px;

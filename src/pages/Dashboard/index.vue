@@ -1,6 +1,20 @@
 <template>
     <div>
-        <v-sheet max-width="90%">
+        <portal to="page-title">
+            <h4
+                style="margin-bottom: 0px; line-height: 10px;"
+                class="color text-navigation text-navigation display-1 text-capitalize page-title"
+            >
+                {{ pageTitle }}
+            </h4>
+            <span
+                style="padding-left: 2px;font-size: 14px; line-height: 46px;"
+                class="color text-field-text"
+            >
+                Uptime {{ duration }}
+            </span>
+        </portal>
+        <!-- <v-sheet max-width="90%">
             <v-slide-group v-model="model" center-active>
                 <v-slide-item v-for="route in tabRoutes" :key="route.name" class="slide-nav-item">
                     <v-card
@@ -18,8 +32,9 @@
                     </v-card>
                 </v-slide-item>
             </v-slide-group>
-        </v-sheet>
-
+        </v-sheet> -->
+        <tab-nav :tabRoutes="tabRoutes" />
+        <!-- 
         <v-sheet style="margin-top:35px">
             <p class="font-weight-bold title text-uppercase color text-navigation">
                 {{ $t('productName') }} {{ $t('details') }}
@@ -66,16 +81,20 @@
                     <span class="text-capitalize" style="width:45%"> Parameters</span>
                 </router-link>
             </v-card>
-        </v-sheet>
+        </v-sheet> -->
     </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
+import TabNav from './TabNav'
 
 export default {
     name: 'dashboard',
+    components: {
+        TabNav,
+    },
     data() {
         return {
             model: null,
@@ -87,6 +106,11 @@ export default {
     },
     computed: {
         ...mapGetters(['maxscaleDetails']),
+        pageTitle: function() {
+            let version =
+                this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
+            return `MariaDB ${this.$t('productName')} ${version}`
+        },
     },
 
     watch: {
@@ -109,9 +133,9 @@ export default {
     },
     methods: {
         ...mapActions(['fetchMaxScaleDetails']),
-        navigate(path) {
-            this.$router.push(path)
-        },
+        // navigate(path) {
+        //     this.$router.push(path)
+        // },
         formatValue(value, name) {
             if (name === 'started_at' || name === 'activated_at') {
                 return this.$moment(value).format('HH:mm:ss MM/DD/YYYY')

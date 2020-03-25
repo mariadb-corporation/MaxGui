@@ -1,12 +1,12 @@
 <template>
     <fragment>
-        <div class="d-flex flex-wrap" style="margin-bottom: 25px">
+        <div class="d-flex flex-wrap align-center">
             <v-text-field
                 id="search"
                 v-model="search"
-                class="search-restyle"
+                class="search-restyle mr-4"
                 name="search"
-                dense
+                height="39"
                 outlined
                 required
                 placeholder="Search"
@@ -18,13 +18,13 @@
             >
                 <v-icon slot="append" size="16">$vuetify.icons.search</v-icon>
             </v-text-field>
-            <v-spacer />
+
             <v-btn
                 :disabled="isBtnDisabled"
                 outlined
+                height="39"
                 rounded
-                color="accent"
-                class="text-capitalize"
+                class="color text-accent-dark text-capitalize px-8 font-weight-medium"
                 depressed
                 small
                 @click.native="create"
@@ -134,9 +134,24 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .search-restyle {
-    max-width: 460px;
-    height: 30px;
+    max-width: 175px;
+
+    .v-input__slot {
+        min-height: 0 !important;
+        padding: 0px 10px 0px 15px !important;
+    }
+    input {
+        font-size: 12px !important;
+    }
+    .v-input__append-inner {
+        margin-top: 12px !important;
+    }
+}
+.search-restyle.primary--text {
+    svg {
+        color: $primary;
+    }
 }
 </style>

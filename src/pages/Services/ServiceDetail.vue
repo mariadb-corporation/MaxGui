@@ -1,5 +1,6 @@
 <template>
     <v-container v-if="currentService" fluid>
+        <details-page-title />
         <v-row>
             <v-col cols="6">
                 <h5>Attributes</h5>
@@ -36,7 +37,7 @@ import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-    name: 'service-read',
+    name: 'service-detail',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },

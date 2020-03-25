@@ -1,5 +1,6 @@
 <template>
-    <v-container v-if="currentMonitor" fluid>
+    <v-container v-if="currentMonitor" fluid class="pl-8">
+        <details-page-title />
         <v-row>
             <v-col cols="6">
                 <h5>Attributes</h5>
@@ -32,7 +33,6 @@ import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-    name: 'monitor-read',
     components: {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },

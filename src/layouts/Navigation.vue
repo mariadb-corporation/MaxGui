@@ -17,20 +17,22 @@
             <v-list>
                 <template v-for="item in items">
                     <v-list-item
-                        :key="item.title"
-                        :class="{ navitem: true, active: currentPath.includes(item.route) }"
+                        :key="item.name"
+                        :class="{ navitem: true, active: currentPath.includes(item.path) }"
                         @click="navigate(item)"
                     >
                         <v-list-item-icon class="mx-0">
-                            <v-icon :size="item.size" color="white">{{ item.icon }}</v-icon>
+                            <v-icon :size="item.meta.size" color="white">{{
+                                item.meta.icon
+                            }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title style=" font-size: 0.875rem; color: white;">{{
-                                item.title
-                            }}</v-list-item-title>
+                            <v-list-item-title style=" font-size: 0.875rem; color: white;">
+                                {{ $t(`${item.name}`) }}
+                            </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-divider :key="`divider-${item.title}`"></v-divider>
+                    <v-divider :key="`divider-${item.name}`"></v-divider>
                 </template>
             </v-list>
             <div class="version caption text-center font-weight-bold white--text">
@@ -41,30 +43,28 @@
 </template>
 
 <script>
-import { APP_CONFIG } from 'utils/constants'
-
+import sideBarRoutes from 'router/sideBarRoutes'
 export default {
     name: 'navigation',
     props: {
         currentPath: { type: String, required: true },
-        currentRoute: { type: String, required: true },
     },
     data() {
         return {
             isMini: true,
-            items: APP_CONFIG.navigation.maxscale,
+            items: sideBarRoutes,
             version: process.env.VUE_APP_VERSION || '',
         }
     },
 
     methods: {
-        navigate({ route, url }) {
+        navigate({ path, url }) {
             if (url) {
                 return window.open(url)
             }
 
-            if (route && route !== this.currentRoute) {
-                this.$router.push({ name: route })
+            if (path && path !== this.currentPath) {
+                this.$router.push(path)
             }
         },
     },
