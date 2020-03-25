@@ -47,7 +47,7 @@ export default {
             delete Vue.axios.defaults.headers.common['Authorization']
             await commit('showOverlay', OVERLAY_LOGOUT)
             await delay(1500).then(() => {
-                return commit('hideOverlay'), router.push('login')
+                return commit('hideOverlay'), router.push('/login')
             })
         },
         // --------------------------------------------------- Network users -------------------------------------

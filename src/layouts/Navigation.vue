@@ -16,9 +16,10 @@
         >
             <v-list>
                 <template v-for="item in items">
+                    <!-- includes(item.name) for partial active  -->
                     <v-list-item
                         :key="item.name"
-                        :class="{ navitem: true, active: currentPath.includes(item.path) }"
+                        :class="{ navitem: true, active: currentPath.includes(item.name) }"
                         @click="navigate(item)"
                     >
                         <v-list-item-icon class="mx-0">

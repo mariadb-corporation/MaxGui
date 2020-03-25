@@ -178,7 +178,7 @@ export default {
                 await (self.axios.defaults.headers.common[
                     'Authorization'
                 ] = `Bearer ${res.data.meta.token}`)
-                await self.$router.push(self.$route.query.redirect || '/dashboard')
+                await self.$router.push(self.$route.query.redirect || '/dashboard/servers')
             } catch (error) {
                 this.displayOneError = true
 

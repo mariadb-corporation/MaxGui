@@ -1,7 +1,7 @@
 <template>
     <v-app-bar height="52px" class="header pl-12 pr-2" fixed clipped-left app flat color="#003545">
         <v-toolbar-title class="headline">
-            <router-link to="/dashboard">
+            <router-link to="/dashboard/servers">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
                 <span class="font-weight-medium  white--text">
                     {{ $t('productName') }}

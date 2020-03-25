@@ -22,7 +22,6 @@ export const routes = [
         },
     },
     ...sideBarRoutes,
-
     // route but doesn't include in tabRoutes or sideBarRoutes
     {
         path: '/dashboard/maxscale',

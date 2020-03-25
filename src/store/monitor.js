@@ -117,6 +117,7 @@ export default {
     },
     getters: {
         allMonitors: state => state.allMonitors,
+
         currentMonitor: state => state.currentMonitor,
     },
 }
