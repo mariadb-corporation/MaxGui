@@ -34,7 +34,6 @@
                             pagination.sortDesc[0] ? 'desc' : 'asc',
                             header.value === pagination.sortBy[0] ? 'active' : '',
                         ]"
-                        :style="`${header.text === 'Actions' ? 'padding:0px;' : ''}`"
                         @click="changeSort(header.value)"
                     >
                         <div class="d-inline-flex justify-center align-center">
@@ -120,9 +119,12 @@
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
             >
+                <!--
+                   
+                    -->
                 <fragment v-for="(header, i) in visibleHeaders" :key="i">
                     <td
-                        v-if="!$_.isUndefined(item[header.value])"
+                        v-if="!$_.isUndefined(item[header.value]) || header.text === 'Actions'"
                         :rowspan="i < colsHasRowSpan ? item.rowspan : 1"
                         :class="[
                             header.value,
@@ -186,16 +188,14 @@
                             </div>
                         </template>
                     </td>
-                    <!-- Extra table data item when search bar or toggle icon are visible -->
-                    <td
-                        v-if="windowSize.x > 960 && (hasSearch || hasColumnToggle)"
-                        :style="
-                            `${
-                                headers[headers.length - 1].text === 'Actions' ? 'padding:0px;' : ''
-                            }`
-                        "
-                    />
                 </fragment>
+                <!-- Extra table data item when search bar or toggle icon are visible -->
+                <td
+                    v-if="windowSize.x > 960 && (hasSearch || hasColumnToggle)"
+                    :style="
+                        `${headers[headers.length - 1].text === 'Actions' ? 'padding:0px;' : ''}`
+                    "
+                />
             </tr>
             <!-- optional expandable row -->
             <tr v-if="expandedRows.includes(item.id)" class="expanded-row">
@@ -229,8 +229,8 @@ export default {
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
-        hasSearch: { type: Boolean, default: false },
-        hasColumnToggle: { type: Boolean, default: false },
+        hasSearch: { type: Boolean, default: true },
+        hasColumnToggle: { type: Boolean, default: true },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, default: 10 },
