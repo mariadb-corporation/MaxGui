@@ -124,8 +124,6 @@
                     -->
                 <fragment v-for="(header, i) in visibleHeaders" :key="i">
                     <td
-                        v-if="!$_.isUndefined(item[header.value]) || header.text === 'Actions'"
-                        :rowspan="i < colsHasRowSpan ? item.rowspan : 1"
                         :class="[
                             header.value,
                             header.tdClass || header.class,

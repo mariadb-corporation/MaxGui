@@ -180,16 +180,13 @@ export default {
                             }
                             switch (this.isAsc) {
                                 case true:
-                                    if (serverIndex === 0) {
-                                        row.monitorId = monitorId
-                                        row.monitorState = monitorState
-                                    }
+                                    row.monitorId = monitorId
+                                    row.monitorState = monitorState
+
                                     break
                                 case false:
-                                    if (serverIndex === lastIndex) {
-                                        row.monitorId = monitorId
-                                        row.monitorState = monitorState
-                                    }
+                                    row.monitorId = monitorId
+                                    row.monitorState = monitorState
                             }
 
                             monitorInfo.push(row)
