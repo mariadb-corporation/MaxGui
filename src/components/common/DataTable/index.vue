@@ -30,7 +30,7 @@
                         :width="header.width"
                         :class="[
                             header.align && `text-${header.align}`,
-                            header.sortable !== false ? 'pointer sortable' : '',
+                            header.sortable !== false ? 'pointer sortable' : 'no-pointerEvent',
                             pagination.sortDesc[0] ? 'desc' : 'asc',
                             header.value === pagination.sortBy[0] ? 'active' : '',
                         ]"
@@ -222,6 +222,7 @@ export default {
         headers: { type: Array },
         data: { type: Array },
         colsHasRowSpan: { type: Number, default: 0 },
+        rowSpanSortMethod: { type: Function, default: null },
         sortBy: { type: String },
         sortDesc: { type: Boolean },
         loading: { type: Boolean, default: false },
@@ -283,11 +284,20 @@ export default {
         },
         changeSort(column) {
             // TODO: support multiple column sorting
-            if (this.pagination.sortBy[0] === column) {
-                this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
+            if (!this.rowSpanSortMethod) {
+                if (this.pagination.sortBy[0] === column) {
+                    this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
+                } else {
+                    this.pagination.sortBy = [column]
+                    this.pagination.sortDesc = [false]
+                }
             } else {
-                this.pagination.sortBy = [column]
-                this.pagination.sortDesc = [false]
+                /*  rowspan sort here, 
+                    Currently DataTable doesn't handle rowspan sorting. The parent component is actually 
+                    sorting the data and passing it via data props to DataTable.
+                    Todo: support rowSpanSortMethod in this DataTable component
+                 */
+                this.rowSpanSortMethod()
             }
         },
         rowClick(item, headers) {

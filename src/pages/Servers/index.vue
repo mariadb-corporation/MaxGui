@@ -9,6 +9,7 @@
                 :showExpand="false"
                 :onRowClick="onRowClick"
                 :colsHasRowSpan="2"
+                :rowSpanSortMethod="rowSpanSortHandle"
             >
                 <template v-slot:actions="{ data: { item } }">
                     <v-tooltip top>
@@ -69,6 +70,7 @@ export default {
             ],
             serverDialog: false,
             chosenItem: null,
+            isAsc: true,
         }
     },
     computed: {
@@ -118,32 +120,56 @@ export default {
         getData: function() {
             if (this.allMonitors) {
                 let monitorInfo = []
+                /*  First loop through monitors to get associated(linked) servers ID
+                    and monitor's id and monitor's state
+                    This loop direction is affected by asc/desc mode
+                */
+                // for (let i = this.allMonitors.length - 1; i >= 0; --i) {
+                let monitorIndex = this.isAsc ? 0 : this.allMonitors.length - 1
 
-                for (let i = 0; i < this.allMonitors.length; i++) {
+                for (
+                    monitorIndex;
+                    this.isAsc ? monitorIndex < this.allMonitors.length : monitorIndex >= 0;
+                    this.isAsc ? ++monitorIndex : --monitorIndex
+                ) {
                     const {
                         id: monitorId,
                         attributes: { state: monitorState },
                         relationships: {
-                            servers: { data },
+                            servers: { data: linkedServers },
                         },
-                    } = this.allMonitors[i]
+                    } = this.allMonitors[monitorIndex]
+                    // Get array of obj linked servers based on linkedServers array of IDs
                     let serversArr = []
-                    if (data.length) {
-                        for (let l = 0; l < data.length; l++) {
-                            serversArr.push(this.serversDataMap.get(data[l].id))
+                    if (linkedServers.length) {
+                        for (let l = linkedServers.length - 1; l >= 0; --l) {
+                            serversArr.push(this.serversDataMap.get(linkedServers[l].id))
                         }
                     }
+                    /*  Loop through serversArr of objects to add value to row
+                        This loop direction is affected by asc/desc mode
+                        Asc or desc mode is changes here, if it asc mode, the monitorID and monitorState
+                        should be add to row object at the first index to have "rowspan" mode, otherwise
+                        those attributes should be added at the last index
+                   */
                     if (serversArr.length) {
-                        for (let n = 0; n < serversArr.length; n++) {
+                        let lastIndex = serversArr.length - 1
+                        let serverIndex = this.isAsc ? 0 : lastIndex
+                        for (
+                            serverIndex;
+                            this.isAsc ? serverIndex < serversArr.length : serverIndex >= 0;
+                            this.isAsc ? ++serverIndex : --serverIndex
+                        ) {
                             const {
                                 id: serverId,
                                 attributes: { state: serverState, parameters, statistics },
-                            } = serversArr[n]
+                            } = serversArr[serverIndex]
 
                             let row
-                            // only add these two attribute to row once, since it has rowspan > 1
+                            /*   only add these two attribute to index 0 for asc mode, last index if desc mode
+                             since it has rowspan > 1 */
                             //   monitorId: monitorId,
-                            //                                     monitorState: monitorState,
+                            //  monitorState: monitorState,
                             row = {
                                 serverId: serverId,
                                 rowspan: serversArr.length,
@@ -152,17 +178,24 @@ export default {
                                 serverConnections: statistics.connections,
                                 serverState: serverState,
                             }
-                            if (n === 0) {
-                                row.monitorId = monitorId
-                                row.monitorState = monitorState
+                            switch (this.isAsc) {
+                                case true:
+                                    if (serverIndex === 0) {
+                                        row.monitorId = monitorId
+                                        row.monitorState = monitorState
+                                    }
+                                    break
+                                case false:
+                                    if (serverIndex === lastIndex) {
+                                        row.monitorId = monitorId
+                                        row.monitorState = monitorState
+                                    }
                             }
 
-                            console.log('row', row)
                             monitorInfo.push(row)
                         }
                     }
                 }
-
                 return monitorInfo
             }
             return []
@@ -181,6 +214,10 @@ export default {
         },
         onRowClick(item, header) {
             // this.$router.push('/dashboard/server/' + item.id)
+        },
+        rowSpanSortHandle() {
+            console.log('rowSpanSortHandle')
+            this.isAsc = !this.isAsc
         },
     },
 }
