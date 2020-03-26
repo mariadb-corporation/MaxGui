@@ -272,7 +272,7 @@ export default {
         },
         changeSort(column) {
             // TODO: support multiple column sorting
-
+            console.log('this.pagination.sortBy[0]', this.pagination.sortBy[0], column)
             if (this.pagination.sortBy[0] === column) {
                 this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
             } else {

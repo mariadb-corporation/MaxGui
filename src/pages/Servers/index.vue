@@ -11,6 +11,35 @@
                 :search="searchKeyWord"
                 sortBy="monitorId"
             >
+                <template v-slot:monitorId="{ data: { item: { monitorId } } }">
+                    <router-link :to="`/dashboard/monitor/${monitorId}`" class="no-underline">
+                        <span>{{ monitorId }} </span>
+                    </router-link>
+                </template>
+                <template v-slot:monitorState="{ data: { item: { monitorState } } }">
+                    <icon-sprite-sheet
+                        size="13"
+                        class="status-icon"
+                        :frame="monitorStateIcon(monitorState)"
+                    >
+                        status
+                    </icon-sprite-sheet>
+                    <span>{{ monitorState }} </span>
+                </template>
+                <template v-slot:serverId="{ data: { item: { serverId } } }">
+                    <router-link :to="`/dashboard/server/${serverId}`" class="no-underline">
+                        <span>{{ serverId }} </span>
+                    </router-link>
+                </template>
+                <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
+                    <icon-sprite-sheet
+                        size="13"
+                        class="status-icon"
+                        :frame="serverStateIcon(serverStatus)"
+                    >
+                        status
+                    </icon-sprite-sheet>
+                </template>
                 <!-- <template v-slot:actions="{ data: { item } }">
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
@@ -60,9 +89,10 @@ export default {
             //State
             tableHeaders: [
                 { text: 'Monitor', value: 'monitorId' },
-                { text: 'State', sortable: true, value: 'monitorState' },
+                { text: 'State', value: 'monitorState' },
 
                 { text: 'Servers', sortable: false, value: 'serverId' },
+                { text: 'Status', sortable: false, value: 'serverStatus' },
                 { text: 'Address', sortable: false, value: 'serverAddress' },
                 { text: 'Port', sortable: false, value: 'serverPort' },
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
@@ -112,6 +142,7 @@ export default {
                                 monitorState: monitorState,
                                 rowspan: serversArr.length,
                                 serverId: serverId,
+                                serverStatus: serverState,
                                 serverAddress: parameters.address,
                                 serverPort: parameters.port,
                                 serverConnections: statistics.connections,
@@ -119,9 +150,7 @@ export default {
                             }
                             /*  only visible the td rowspan on the first index, others row needs to have the data
                             but don't neccessary to visible, this makes rowspan work and preserves searching function */
-                            if (index !== 0) {
-                                row.hidden = true
-                            }
+                            if (index !== 0) row.hidden = true
                             if (index === lastIndex) row.isLastRow = true
 
                             monitorInfo.push(row)
@@ -133,16 +162,22 @@ export default {
             return []
         },
     },
-    async created() {
-        await this.fetchServers()
-        await this.fetchAllMonitors()
-    },
 
     methods: {
-        ...mapActions(['fetchServers', 'destroyServer', 'fetchAllMonitors']),
+        ...mapActions(['destroyServer']),
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item
+        },
+        monitorStateIcon(monitorState) {
+            if (monitorState.includes('Running')) return 2
+            if (monitorState.includes('Stopped')) return 1
+            else return ''
+        },
+        serverStateIcon(serverStatus) {
+            if (serverStatus.includes('Running')) return 2
+            if (serverStatus.includes('Down')) return 1
+            else return ''
         },
     },
 }

@@ -18,11 +18,5 @@ export default {
     computed: {
         ...mapGetters(['servicesData']),
     },
-    created() {
-        this.fetchServices()
-    },
-    methods: {
-        ...mapActions(['fetchServices']),
-    },
 }
 </script>

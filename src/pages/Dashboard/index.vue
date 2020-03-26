@@ -7,12 +7,7 @@
             >
                 {{ pageTitle }}
             </h4>
-            <span
-                style="padding-left: 2px;font-size: 14px; line-height: 46px;"
-                class="color text-field-text"
-            >
-                Uptime {{ duration }}
-            </span>
+            <span class="field-text-info color text-field-text"> Uptime {{ duration }} </span>
         </portal>
         <!-- <v-sheet max-width="90%">
             <v-slide-group v-model="model" center-active>
@@ -128,11 +123,19 @@ export default {
             }, 1000)
         },
     },
-    created() {
-        this.fetchMaxScaleDetails()
+    async created() {
+        await this.fetchMaxScaleDetails()
+        await this.fetchServers()
+        await this.fetchAllMonitors()
+        await this.fetchServices()
     },
     methods: {
-        ...mapActions(['fetchMaxScaleDetails']),
+        ...mapActions([
+            'fetchAllMonitors',
+            'fetchMaxScaleDetails',
+            'fetchServices',
+            'fetchServers',
+        ]),
         // navigate(path) {
         //     this.$router.push(path)
         // },

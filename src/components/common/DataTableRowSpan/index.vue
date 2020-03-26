@@ -2,7 +2,8 @@
     <v-data-table
         :headers="headers"
         :items="data"
-        hide-default-footer
+        :hide-default-footer="data.length <= 10"
+        :footer-props="{ 'items-per-page-options': [] }"
         :hide-default-header="true"
         :class="['data-table-rowspan', tableClass]"
         :loading="loading"
@@ -46,14 +47,9 @@
         </template>
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
-        <template v-slot:body="{ items }">
-            <template slot="no-results">
-                <tr>
-                    {{
-                        $t('$vuetify.dataIterator.noResultsText')
-                    }}
-                </tr>
-            </template>
+
+        <!-- This tbody loop will break searching function and others .. urgh -->
+        <!-- <template v-slot:body="{ items }">
             <template v-for="(section, index) in getFormatedItems(items)">
                 <tbody :key="index">
                     <tr
@@ -69,24 +65,17 @@
                             :class="[
                                 header.value,
                                 header.tdClass || header.class,
-                                i < numOfColsHasRowSpan ? 'data-table-full_rowspan-feat' : '',
+                                i < numOfColsHasRowSpan && 'data-table-full_rowspan-feat',
+                                item.hidden && i < numOfColsHasRowSpan && 'hide',
+                                i === numOfColsHasRowSpan && 'color border-left-table-border',
                             ]"
-                            :style="
-                                `${
-                                    i === numOfColsHasRowSpan
-                                        ? 'border-left: 1px solid #e7eef1;'
-                                        : ''
-                                }
-                    ${item.hidden && i < numOfColsHasRowSpan ? 'display:none' : ''}
-                    `
-                            "
                             @click="cellClick(item, headers)"
                         >
                             <div>
                                 <slot :name="header.value" :data="{ item, header }">
-                                    <!-- no content for the corresponding header, usually this is an error -->
+                                     no content for the corresponding header, usually this is an error
                                     <span v-if="$_.isUndefined(item[header.value])"></span>
-                                    <!-- regular cell -->
+                                    regular cell 
                                     <span v-else>{{ getValue(item, header) }} </span>
                                 </slot>
                             </div>
@@ -94,6 +83,57 @@
                     </tr>
                 </tbody>
             </template>
+        </template> -->
+        <!-- This will have ugly hover effect, but searching function will work ... partially, 
+        when rowspan enable, The td that is hidden, then when searching, those td will still be hidden.. urgh
+         -->
+        <template v-slot:item="{ item }">
+            <tr :key="item.id" :class="{ 'last-row': item.isLastRow }">
+                <td
+                    v-for="(header, i) in headers"
+                    :key="i"
+                    :ref="i < numOfColsHasRowSpan ? 'rowGroup' : null"
+                    :rowspan="i < numOfColsHasRowSpan ? item.rowspan : null"
+                    :scope="i < numOfColsHasRowSpan ? 'rowgroup' : 'cell'"
+                    :class="[
+                        item.hidden && i < numOfColsHasRowSpan && 'hide',
+                        !item.hidden &&
+                            i < numOfColsHasRowSpan &&
+                            `rowspan-${item.rowspan.toString()}`,
+                        header.value,
+                        header.tdClass || header.class,
+                        i < numOfColsHasRowSpan && 'data-table-full_rowspan-feat',
+
+                        i === numOfColsHasRowSpan && 'color border-left-table-border',
+                    ]"
+                    @click="cellClick(item, headers)"
+                    @mouseover="
+                        e =>
+                            mouseOver(
+                                e,
+                                i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
+                                `rowspan-${item.rowspan.toString()}`
+                            )
+                    "
+                    @mouseleave="
+                        e =>
+                            mouseLeave(
+                                e,
+                                i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
+                                `rowspan-${item.rowspan.toString()}`
+                            )
+                    "
+                >
+                    <div>
+                        <slot :name="header.value" :data="{ item, header }">
+                            <!-- no content for the corresponding header, usually this is an error  -->
+                            <span v-if="$_.isUndefined(item[header.value])"></span>
+                            <!-- regular cell  -->
+                            <span v-else>{{ getValue(item, header) }} </span>
+                        </slot>
+                    </div>
+                </td>
+            </tr>
         </template>
     </v-data-table>
 </template>
@@ -137,7 +177,7 @@ export default {
     methods: {
         changeSort(column) {
             // TODO: support multiple column sorting
-            console.log('this.pagination.sortBy[0]', this.pagination.sortBy[0])
+
             if (this.pagination.sortBy[0] === column) {
                 this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
             } else {
@@ -170,6 +210,29 @@ export default {
             //remove last empty array
             sections.pop()
             return sections
+        },
+        filterSearch(value, search, item) {
+            console.log('search.includes(value)', search.includes(value))
+            if (!search.includes(value)) {
+                console.log(item)
+            }
+            return value != null && search != null && !search.includes(value)
+        },
+        mouseOver: function(e, type, rowspanClass) {
+            if (type === 'cell') {
+                let elements = this.$refs.rowGroup.filter((ele, i) =>
+                    ele.attributes.class.value.includes(rowspanClass)
+                )
+                elements.forEach(ele => (ele.style.backgroundColor = '#eeeeee '))
+            }
+        },
+        mouseLeave: function(e, type, rowspanClass) {
+            if (type === 'cell') {
+                let elements = this.$refs.rowGroup.filter((ele, i) =>
+                    ele.attributes.class.value.includes(rowspanClass)
+                )
+                elements.forEach(ele => (ele.style.backgroundColor = ''))
+            }
         },
     },
 }
@@ -263,9 +326,7 @@ export default {
                 }
             }
         }
-        //Zebra stripping hover effect :D
-        tbody:hover td[scope='rowgroup'],
-        tr:hover td {
+        tr:hover td[scope='cell'] {
             background-color: #eeeeee !important;
         }
     }
