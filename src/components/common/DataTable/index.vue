@@ -55,19 +55,10 @@
                         style="padding-left:12px; padding-right:12px"
                     >
                         <div
-                            v-if="hasSearch || hasColumnToggle"
+                            v-if="hasColumnToggle"
                             style="width:100%;"
                             class="d-flex align-center "
                         >
-                            <search-box
-                                v-if="hasSearch && !isColumnToggleVisible"
-                                v-model="search"
-                                class="color text-text border-text-subtle"
-                                position="right"
-                                width="140px"
-                                @click.native.stop
-                            />
-
                             <!--column toggle icon-->
 
                             <v-icon
@@ -120,78 +111,77 @@
                 @click="rowClick(item, headers, visibleHeaders)"
             >
                 <!--
-                   
+                     v-if="!$_.isUndefined(item[header.value]) || header.text === 'Actions'"
                     -->
-                <fragment v-for="(header, i) in visibleHeaders" :key="i">
-                    <td
-                        v-if="!$_.isUndefined(item[header.value]) || header.text === 'Actions'"
-                        :rowspan="i < colsHasRowSpan ? item.rowspan : 1"
-                        :class="[
-                            header.value,
-                            header.tdClass || header.class,
-                            windowSize.x < 600 && 'v-data-table__mobile-row',
-                        ]"
-                        :style="`${i === colsHasRowSpan ? 'border-left: 1px solid #e7eef1;' : ''}`"
-                        @click="cellClick(item, headers, visibleHeaders)"
-                    >
-                        <template>
-                            <!--
+
+                <td
+                    v-for="(header, i) in visibleHeaders"
+                    :key="i"
+                    :rowspan="i < numOfColsHasRowSpan ? item.rowspan : 1"
+                    :class="[
+                        header.value,
+                        header.tdClass || header.class,
+                        windowSize.x < 600 && 'v-data-table__mobile-row',
+                    ]"
+                    :style="
+                        `${i === numOfColsHasRowSpan ? 'border-left: 1px solid #e7eef1;' : ''}
+                    ${item.hidden && i < numOfColsHasRowSpan ? 'display:none' : ''}
+                    `
+                    "
+                    @click="cellClick(item, headers, visibleHeaders)"
+                >
+                    <!--
                             Display header in  table data for Mobile view 
                             as thead will be removed when windowSize.x < 600 
                         -->
-                            <div v-if="windowSize.x < 600" class="v-data-table__mobile-row__header">
-                                {{ header.text }}
-                            </div>
-                            <!-- Adde mobile class when windowSize.x < 600 -->
-                            <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
-                                <slot :name="header.value" :data="{ item, header }">
-                                    <!-- no content for the corresponding header, usually this is an error -->
-                                    <span v-if="$_.isUndefined(item[header.value])"></span>
-                                    <!-- regular cell -->
-                                    <span v-else>{{ getValue(item, header) }}</span>
-                                </slot>
-                                <!-- Actions slot includes expandIndicator slot -->
-                                <div
-                                    v-if="header.text === 'Actions'"
-                                    :class="`d-flex justify-${header.align}`"
-                                >
-                                    <slot :data="{ item }" name="actions" />
-                                    <!-- expandle activator -->
-                                    <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                            <v-btn
-                                                v-if="$scopedSlots['expandable']"
-                                                icon
-                                                color="primary"
-                                                v-on="on"
-                                                @click="toggleRow(item.id)"
+                    <div v-if="windowSize.x < 600" class="v-data-table__mobile-row__header">
+                        {{ header.text }}
+                    </div>
+                    <!-- Adde mobile class when windowSize.x < 600 -->
+                    <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
+                        <slot :name="header.value" :data="{ item, header }">
+                            <!-- no content for the corresponding header, usually this is an error -->
+                            <span v-if="$_.isUndefined(item[header.value])"></span>
+                            <!-- regular cell -->
+                            <span v-else>{{ getValue(item, header) }}</span>
+                        </slot>
+                        <!-- Actions slot includes expandIndicator slot -->
+                        <div
+                            v-if="header.text === 'Actions'"
+                            :class="`d-flex justify-${header.align}`"
+                        >
+                            <slot :data="{ item }" name="actions" />
+                            <!-- expandle activator -->
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        v-if="$scopedSlots['expandable']"
+                                        icon
+                                        color="primary"
+                                        v-on="on"
+                                        @click="toggleRow(item.id)"
+                                    >
+                                        <!-- optional expand indicator icon -->
+                                        <slot
+                                            :expanded="expandedRows.includes(item.id)"
+                                            name="expandIndicator"
+                                        >
+                                            <v-icon v-if="!expandedRows.includes(item.id)" size="24"
+                                                >keyboard_arrow_down</v-icon
                                             >
-                                                <!-- optional expand indicator icon -->
-                                                <slot
-                                                    :expanded="expandedRows.includes(item.id)"
-                                                    name="expandIndicator"
-                                                >
-                                                    <v-icon
-                                                        v-if="!expandedRows.includes(item.id)"
-                                                        size="24"
-                                                        >keyboard_arrow_down</v-icon
-                                                    >
-                                                    <v-icon v-else size="24"
-                                                        >keyboard_arrow_up</v-icon
-                                                    >
-                                                </slot>
-                                            </v-btn>
-                                        </template>
-                                        <span>Show detailed information</span>
-                                    </v-tooltip>
-                                </div>
-                            </div>
-                        </template>
-                    </td>
-                </fragment>
-                <!-- Extra table data item when search bar or toggle icon are visible -->
+                                            <v-icon v-else size="24">keyboard_arrow_up</v-icon>
+                                        </slot>
+                                    </v-btn>
+                                </template>
+                                <span>Show detailed information</span>
+                            </v-tooltip>
+                        </div>
+                    </div>
+                </td>
+
+                <!-- Extra table data item when toggle icon are visible -->
                 <td
-                    v-if="windowSize.x > 960 && (hasSearch || hasColumnToggle)"
+                    v-if="windowSize.x > 960 && hasColumnToggle"
                     :style="
                         `${headers[headers.length - 1].text === 'Actions' ? 'padding:0px;' : ''}`
                     "
@@ -221,15 +211,14 @@ export default {
     props: {
         headers: { type: Array },
         data: { type: Array },
-        colsHasRowSpan: { type: Number, default: 0 },
-        rowSpanSortMethod: { type: Function, default: null },
+        numOfColsHasRowSpan: { type: Number, default: 0 },
         sortBy: { type: String },
+        search: { type: String, default: '' },
         sortDesc: { type: Boolean },
         loading: { type: Boolean, default: false },
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
-        hasSearch: { type: Boolean, default: true },
         hasColumnToggle: { type: Boolean, default: true },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
@@ -244,7 +233,6 @@ export default {
                 y: 0,
             },
             expandedRows: [],
-            search: '',
             pagination: {},
             visible: [],
             isColumnToggleVisible: false,
@@ -284,20 +272,12 @@ export default {
         },
         changeSort(column) {
             // TODO: support multiple column sorting
-            if (!this.rowSpanSortMethod) {
-                if (this.pagination.sortBy[0] === column) {
-                    this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
-                } else {
-                    this.pagination.sortBy = [column]
-                    this.pagination.sortDesc = [false]
-                }
+
+            if (this.pagination.sortBy[0] === column) {
+                this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
             } else {
-                /*  rowspan sort here, 
-                    Currently DataTable doesn't handle rowspan sorting. The parent component is actually 
-                    sorting the data and passing it via data props to DataTable.
-                    Todo: support rowSpanSortMethod in this DataTable component
-                 */
-                this.rowSpanSortMethod()
+                this.pagination.sortBy = [column]
+                this.pagination.sortDesc = [false]
             }
         },
         rowClick(item, headers) {

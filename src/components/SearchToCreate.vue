@@ -74,16 +74,14 @@ export default {
     },
     watch: {
         search: function(newVal) {
-            let keyword = newVal.toLowerCase()
-            this.setSearchKeyWord(keyword)
-        },
-        searchKeyWord: function(newVal) {
+            // let keyword = newVal.toLowerCase()
+            this.setSearchKeyWord(newVal)
             /*Display create button when the current route belongs to tabRoute, 
             when search keyword is empty, currentRoute is */
             if (newVal === '') {
                 this.isBtnDisabled = false
             } else {
-                this.isBtnDisabled = this.isMatchTabRoutes(newVal)
+                this.isBtnDisabled = this.isMatchTabRoutes(newVal.toLowerCase())
             }
         },
         currentRoute: function(newRoute) {
@@ -102,8 +100,8 @@ export default {
     methods: {
         ...mapMutations(['setSearchKeyWord']),
         create() {
-            if (this.searchKeyWord && !this.isBtnDisabled) {
-                this.createType(this.searchKeyWord)
+            if (this.search && !this.isBtnDisabled) {
+                this.createType(this.search.toLowerCase())
             } else {
                 this.createType(this.currentRoute)
             }
