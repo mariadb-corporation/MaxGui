@@ -7,7 +7,7 @@ export default {
         isDestroyed: false,
         threads: [],
         updateCount: 1,
-        chartdata: {
+        threadsChartData: {
             labels: [],
             datasets: [],
         },
@@ -24,7 +24,7 @@ export default {
             state.threads = payload
         },
         setThreadsChartData(state, payload) {
-            state.chartdata = payload
+            state.threadsChartData = payload
         },
         updateCount(state) {
             state.updateCount += 1
@@ -34,7 +34,7 @@ export default {
         },
         clearThreadsState(state) {
             state.isDestroyed = true
-            state.chartdata = {
+            state.threadsChartData = {
                 labels: [],
                 datasets: [],
             }
@@ -96,7 +96,7 @@ export default {
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,
-                        data: [],
+                        data: [{ x: Date.now(), y: 100 }],
                     }
                     arr.push(obj)
                 }
@@ -109,7 +109,7 @@ export default {
     },
     getters: {
         maxscaleDetails: state => state.maxscaleDetails,
-        chartdata: state => state.chartdata,
+        threadsChartData: state => state.threadsChartData,
         updateCount: state => state.updateCount,
     },
 }

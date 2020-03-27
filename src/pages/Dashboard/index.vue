@@ -42,7 +42,10 @@
                         {{ $t('threadUsage') }}
                     </p>
                     <v-card outlined class="fill-height pt-2">
-                        <mini-threads-chart-container v-if="chartdata.datasets.length" />
+                        <mini-threads-chart-container
+                            v-if="threadsChartData.datasets.length"
+                            :onRefresh="updatingThreads"
+                        />
                     </v-card>
                 </div>
             </v-slide-item>
@@ -122,7 +125,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['maxscaleDetails', 'chartdata']),
+        ...mapGetters(['maxscaleDetails', 'threadsChartData']),
         pageTitle: function() {
             let version =
                 this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
@@ -179,6 +182,15 @@ export default {
         updateUpTime() {
             this.uptime = this.uptime + 1
             this.duration = this.$moment.duration(this.uptime, 'seconds').format()
+        },
+        updatingThreads(chart) {
+            chart.data.datasets.forEach(function(dataset) {
+                dataset.data.push({
+                    x: Date.now(),
+                    y: Math.round(Math.random() * 100),
+                })
+            })
+            chart.update()
         },
     },
 }

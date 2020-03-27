@@ -1,6 +1,6 @@
 <template>
     <div style="width:100%">
-        <line-chart ref="threadsChart" :chartData="chartdata" :options="options" />
+        <line-chart ref="threadsChart" :chartData="threadsChartData" :options="options" />
     </div>
 </template>
 
@@ -17,63 +17,28 @@ export default {
     data() {
         return {
             options: {
-                showLines: true,
-                responsive: true,
-                // animation: {
-                //     duration: 250 * 1.5,
-                //     easing: "linear"
-                // },
-                maintainAspectRatio: false,
-
-                scales: {
-                    xAxes: [
-                        {
-                            type: 'realtime',
-
-                            realtime: {
-                                onRefresh: function(chart) {
-                                    chart.data.datasets.forEach(function(dataset) {
-                                        dataset.data.push({
-                                            x: Date.now(),
-                                            y: Math.round(Math.random() * 100),
-                                        })
-                                    })
-                                },
-
-                                duration: 20000,
-                                refresh: 1000,
-                                delay: 2000,
-                            },
+                plugins: {
+                    streaming: {
+                        onRefresh: function(chart) {
+                            chart.data.datasets.forEach(function(dataset) {
+                                dataset.data.push({
+                                    x: Date.now(),
+                                    y: Math.round(Math.random() * 100),
+                                })
+                            })
                         },
-                    ],
-                    yAxes: [
-                        {
-                            display: true,
-                            ticks: {
-                                max: 100,
-                                min: 0,
-                            },
-                        },
-                    ],
-                },
-                tooltips: {
-                    mode: 'nearest',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: false,
+                    },
                 },
             },
         }
     },
     computed: {
-        ...mapGetters(['chartdata', 'updateCount']),
+        ...mapGetters(['threadsChartData', 'updateCount']),
     },
 
     watch: {
         /*
-        Update chartData by adding new data whenever updateCount's value changes
+        Update threadsChartData by adding new data whenever updateCount's value changes
         this prevents parent component rerender
          */
         // updateCount: function(newVal, oldVal) {

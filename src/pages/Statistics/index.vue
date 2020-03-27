@@ -4,7 +4,7 @@
             <v-card width="100%" class="v-card-custom pa-6">
                 <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
                 <br />
-                <threads-chart-container v-if="chartdata.datasets.length" />
+                <threads-chart-container v-if="threadsChartData.datasets.length" />
                 <div v-else>
                     <p>{{ $t('loading.threadsData') }}</p>
                     <v-progress-linear color="primary accent-4" indeterminate rounded height="6" />
@@ -23,7 +23,7 @@ export default {
         ThreadsChartContainer,
     },
     computed: {
-        ...mapGetters(['chartdata']),
+        ...mapGetters(['threadsChartData']),
     },
     created() {
         this.resetDestroyState()
