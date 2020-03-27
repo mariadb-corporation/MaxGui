@@ -212,7 +212,6 @@ export default {
             // this.$router.push('/dashboard/server/' + item.id)
         },
         rowSpanSortHandle() {
-            console.log('rowSpanSortHandle')
             this.isRowSpanAsc = !this.isRowSpanAsc
         },
     },

@@ -24,13 +24,26 @@ export default {
                 //     easing: "linear"
                 // },
                 maintainAspectRatio: false,
-                tooltips: {
-                    enabled: true,
-                },
+
                 scales: {
                     xAxes: [
                         {
-                            display: true,
+                            type: 'realtime',
+
+                            realtime: {
+                                onRefresh: function(chart) {
+                                    chart.data.datasets.forEach(function(dataset) {
+                                        dataset.data.push({
+                                            x: Date.now(),
+                                            y: Math.round(Math.random() * 100),
+                                        })
+                                    })
+                                },
+
+                                duration: 20000,
+                                refresh: 1000,
+                                delay: 2000,
+                            },
                         },
                     ],
                     yAxes: [
@@ -43,6 +56,14 @@ export default {
                         },
                     ],
                 },
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: false,
+                },
             },
         }
     },
@@ -51,32 +72,31 @@ export default {
     },
 
     watch: {
-        /* 
+        /*
         Update chartData by adding new data whenever updateCount's value changes
         this prevents parent component rerender
          */
-        updateCount: function(newVal, oldVal) {
-            /*
-            Check Docs for syntax to access chartjs instance 
-            https://vue-chartjs.org/api/#renderchart and 
-            https://www.chartjs.org/docs/latest/developers/updates.html
-            */
-            let chart = this.$refs.threadsChart.$data._chart
-            const timestamp = new Date().toLocaleTimeString()
-
-            chart.data.labels.push(timestamp)
-            chart.data.datasets.forEach(dataset => {
-                dataset.data.push(Math.floor(Math.random() * 101))
-            })
-            // remove item in data when updateCount's value is more than 4
-            if (newVal > 7) {
-                chart.data.labels.shift()
-                chart.data.datasets.forEach(dataset => {
-                    dataset.data.shift()
-                })
-            }
-            chart.update()
-        },
+        // updateCount: function(newVal, oldVal) {
+        //     /*
+        //     Check Docs for syntax to access chartjs instance
+        //     https://vue-chartjs.org/api/#renderchart and
+        //     https://www.chartjs.org/docs/latest/developers/updates.html
+        //     */
+        //     let chart = this.$refs.threadsChart.$data._chart
+        //     const timestamp = new Date().toLocaleTimeString()
+        //     chart.data.labels.push(timestamp)
+        //     chart.data.datasets.forEach(dataset => {
+        //         dataset.data.push(Math.floor(Math.random() * 101))
+        //     })
+        //     // remove item in data when updateCount's value is more than 4
+        //     if (newVal > 7) {
+        //         chart.data.labels.shift()
+        //         chart.data.datasets.forEach(dataset => {
+        //             dataset.data.shift()
+        //         })
+        //     }
+        //     chart.update()
+        // },
     },
     beforeDestroy() {
         let chart = this.$refs.threadsChart.$data._chart

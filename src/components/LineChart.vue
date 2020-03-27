@@ -1,5 +1,6 @@
 <script>
 import { Line, mixins } from 'vue-chartjs'
+import 'chartjs-plugin-streaming'
 const { reactiveProp, reactiveData } = mixins
 
 export default {

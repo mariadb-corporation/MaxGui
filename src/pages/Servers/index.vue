@@ -1,6 +1,6 @@
 <template>
     <v-row class="mt-0">
-        <v-col class="pt-0" cols="10">
+        <v-col class="pt-0" cols="12">
             <data-table-rowspan
                 :headers="tableHeaders"
                 :data="getData"
@@ -39,6 +39,37 @@
                     >
                         status
                     </icon-sprite-sheet>
+                </template>
+                <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
+                    <fragment v-if="servicesIdArr.length < 2">
+                        <template v-for="serviceId in servicesIdArr">
+                            <router-link
+                                :key="serviceId"
+                                :to="`/dashboard/service/${serviceId}`"
+                                class="no-underline"
+                            >
+                                <span>{{ serviceId }} </span>
+                            </router-link>
+                        </template>
+                    </fragment>
+                    <template v-else>
+                        <v-tooltip left transition="fade-transition">
+                            <template v-slot:activator="{ on }">
+                                <span class="pointer color text-links" v-on="on">
+                                    {{ servicesIdArr.length }} {{ $t('services').toLowerCase() }}
+                                </span>
+                            </template>
+                            <template v-for="serviceId in servicesIdArr">
+                                <router-link
+                                    :key="serviceId"
+                                    :to="`/dashboard/service/${serviceId}`"
+                                    class="no-underline"
+                                >
+                                    <span>{{ serviceId }} </span>
+                                </router-link>
+                            </template>
+                        </v-tooltip>
+                    </template>
                 </template>
                 <!-- <template v-slot:actions="{ data: { item } }">
                     <v-tooltip top>
@@ -97,6 +128,7 @@ export default {
                 { text: 'Port', sortable: false, value: 'serverPort' },
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
                 { text: 'State', sortable: false, value: 'serverState' },
+                { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ],
             serverDialog: false,
             chosenItem: null,
@@ -135,8 +167,11 @@ export default {
                             const {
                                 id: serverId,
                                 attributes: { state: serverState, parameters, statistics },
+                                relationships: { services: { data: servicesData = [] } = {} },
                             } = serversArr[index]
-
+                            let servicesIdArr = servicesData
+                                ? servicesData.map(item => `${item.id}`)
+                                : []
                             let row = {
                                 monitorId: monitorId,
                                 monitorState: monitorState,
@@ -147,6 +182,7 @@ export default {
                                 serverPort: parameters.port,
                                 serverConnections: statistics.connections,
                                 serverState: serverState,
+                                servicesIdArr: servicesIdArr,
                             }
                             /*  only visible the td rowspan on the first index, others row needs to have the data
                             but don't neccessary to visible, this makes rowspan work and preserves searching function */
@@ -176,7 +212,7 @@ export default {
         },
         serverStateIcon(serverStatus) {
             if (serverStatus.includes('Running')) return 2
-            if (serverStatus.includes('Down')) return 1
+            if (serverStatus.includes('Down')) return 0
             else return ''
         },
     },

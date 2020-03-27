@@ -212,11 +212,10 @@ export default {
             return sections
         },
         filterSearch(value, search, item) {
-            console.log('search.includes(value)', search.includes(value))
-            if (!search.includes(value)) {
-                console.log(item)
-            }
-            return value != null && search != null && !search.includes(value)
+            // if (!search.includes(value)) {
+            //     console.log(item)
+            // }
+            // return value != null && search != null && !search.includes(value)
         },
         mouseOver: function(e, type, rowspanClass) {
             if (type === 'cell') {
