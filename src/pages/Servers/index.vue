@@ -1,17 +1,77 @@
 <template>
     <v-row class="mt-0">
-        <v-col class="pt-0" cols="10">
-            <data-table
+        <v-col class="pt-0" cols="12">
+            <data-table-rowspan
                 :headers="tableHeaders"
                 :data="getData"
                 :sortDesc="false"
                 :singleExpand="false"
                 :showExpand="false"
-                :onRowClick="onRowClick"
-                :colsHasRowSpan="2"
-                :rowSpanSortMethod="rowSpanSortHandle"
+                :numOfColsHasRowSpan="2"
+                :search="searchKeyWord"
+                sortBy="monitorId"
             >
-                <template v-slot:actions="{ data: { item } }">
+                <template v-slot:monitorId="{ data: { item: { monitorId } } }">
+                    <router-link :to="`/dashboard/monitor/${monitorId}`" class="no-underline">
+                        <span>{{ monitorId }} </span>
+                    </router-link>
+                </template>
+                <template v-slot:monitorState="{ data: { item: { monitorState } } }">
+                    <icon-sprite-sheet
+                        size="13"
+                        class="status-icon"
+                        :frame="monitorStateIcon(monitorState)"
+                    >
+                        status
+                    </icon-sprite-sheet>
+                    <span>{{ monitorState }} </span>
+                </template>
+                <template v-slot:serverId="{ data: { item: { serverId } } }">
+                    <router-link :to="`/dashboard/server/${serverId}`" class="no-underline">
+                        <span>{{ serverId }} </span>
+                    </router-link>
+                </template>
+                <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
+                    <icon-sprite-sheet
+                        size="13"
+                        class="status-icon"
+                        :frame="serverStateIcon(serverStatus)"
+                    >
+                        status
+                    </icon-sprite-sheet>
+                </template>
+                <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
+                    <fragment v-if="servicesIdArr.length < 2">
+                        <template v-for="serviceId in servicesIdArr">
+                            <router-link
+                                :key="serviceId"
+                                :to="`/dashboard/service/${serviceId}`"
+                                class="no-underline"
+                            >
+                                <span>{{ serviceId }} </span>
+                            </router-link>
+                        </template>
+                    </fragment>
+                    <template v-else>
+                        <v-tooltip left transition="fade-transition">
+                            <template v-slot:activator="{ on }">
+                                <span class="pointer color text-links" v-on="on">
+                                    {{ servicesIdArr.length }} {{ $t('services').toLowerCase() }}
+                                </span>
+                            </template>
+                            <template v-for="serviceId in servicesIdArr">
+                                <router-link
+                                    :key="serviceId"
+                                    :to="`/dashboard/service/${serviceId}`"
+                                    class="no-underline"
+                                >
+                                    <span>{{ serviceId }} </span>
+                                </router-link>
+                            </template>
+                        </v-tooltip>
+                    </template>
+                </template>
+                <!-- <template v-slot:actions="{ data: { item } }">
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
                             <v-btn
@@ -32,162 +92,102 @@
                         :title="`${$t('destroy')} ${$t('server')}`"
                         :smallInfo="$t('info.serverDeleteModal')"
                     />
-                </template>
-            </data-table>
-            <server-create-or-update
+                </template> -->
+            </data-table-rowspan>
+            <!-- <server-create-or-update
                 v-model="serverDialog"
                 :close-modal="() => (serverDialog = false)"
                 mode="patch"
                 :item="chosenItem"
-            />
+            /> -->
         </v-col>
     </v-row>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import DeleteModal from 'components/DeleteModal'
-import ServerCreateOrUpdate from './ServerCreateOrUpdate'
+// import DeleteModal from 'components/DeleteModal'
+// import ServerCreateOrUpdate from './ServerCreateOrUpdate'
 
 export default {
     name: 'servers',
-    components: {
-        DeleteModal,
-        ServerCreateOrUpdate,
-    },
+    // components: {
+    //     DeleteModal,
+    //     ServerCreateOrUpdate,
+    // },
     data() {
         return {
             //State
             tableHeaders: [
                 { text: 'Monitor', value: 'monitorId' },
-                { text: 'State', sortable: false, value: 'monitorState' },
+                { text: 'State', value: 'monitorState' },
 
                 { text: 'Servers', sortable: false, value: 'serverId' },
+                { text: 'Status', sortable: false, value: 'serverStatus' },
                 { text: 'Address', sortable: false, value: 'serverAddress' },
                 { text: 'Port', sortable: false, value: 'serverPort' },
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
                 { text: 'State', sortable: false, value: 'serverState' },
+                { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ],
             serverDialog: false,
             chosenItem: null,
-            isAsc: true,
+            isRowSpanAsc: true,
         }
     },
     computed: {
-        ...mapGetters(['serversDataMap', 'allMonitors']),
-        /**
-         * @return {Array} An array of objects
-         */
-        // generateTableRows: function() {
-        //     if (this.serversData) {
-        //         let itemsArr = []
-        //         for (let n = this.serversData.length - 1; n >= 0; --n) {
-        //             /**
-        //              * @typedef {Object} row
-        //              * @property {String} id - Id of the server
-        //              * @property {String} address - Server's address
-        //              * @property {Number} port - Server's port
-        //              * @property {Number} connections - Number of connections to the server
-        //              * @property {String} state - Server's state
-        //              */
-        //             const {
-        //                 id,
-        //                 attributes: { state, parameters, statistics },
-        //             } = this.serversData[n]
-        //             let row = {
-        //                 id: id,
-        //                 address: parameters.address,
-        //                 port: parameters.port,
-        //                 connections: statistics.connections,
-        //                 state: state,
-        //             }
-        //             itemsArr.push(row)
-        //         }
-        //         return itemsArr
-        //     }
-        //     return []
-        // },
-        getNumberOfRows: function() {
-            let rowsNum = 0
-            if (this.allMonitors) {
-                for (let n = this.allMonitors.length - 1; n >= 0; --n) {
-                    rowsNum += this.allMonitors.relationships.servers.data.length
-                }
-                return rowsNum
-            }
-            return rowsNum
-        },
+        ...mapGetters(['serversDataMap', 'allMonitors', 'searchKeyWord']),
+
         getData: function() {
             if (this.allMonitors) {
                 let monitorInfo = []
                 /*  First loop through monitors to get associated(linked) servers ID
                     and monitor's id and monitor's state
-                    This loop direction is affected by asc/desc mode
                 */
-                // for (let i = this.allMonitors.length - 1; i >= 0; --i) {
-                let monitorIndex = this.isAsc ? 0 : this.allMonitors.length - 1
-
-                for (
-                    monitorIndex;
-                    this.isAsc ? monitorIndex < this.allMonitors.length : monitorIndex >= 0;
-                    this.isAsc ? ++monitorIndex : --monitorIndex
-                ) {
+                for (let n = 0; n < this.allMonitors.length; ++n) {
                     const {
                         id: monitorId,
                         attributes: { state: monitorState },
                         relationships: {
                             servers: { data: linkedServers },
                         },
-                    } = this.allMonitors[monitorIndex]
+                    } = this.allMonitors[n]
                     // Get array of obj linked servers based on linkedServers array of IDs
                     let serversArr = []
                     if (linkedServers.length) {
-                        for (let l = linkedServers.length - 1; l >= 0; --l) {
+                        for (let l = 0; l < linkedServers.length; ++l) {
                             serversArr.push(this.serversDataMap.get(linkedServers[l].id))
                         }
                     }
-                    /*  Loop through serversArr of objects to add value to row
-                        This loop direction is affected by asc/desc mode
-                        Asc or desc mode is changes here, if it asc mode, the monitorID and monitorState
-                        should be add to row object at the first index to have "rowspan" mode, otherwise
-                        those attributes should be added at the last index
-                   */
+                    /*  Loop through serversArr of objects to add value to row*/
                     if (serversArr.length) {
                         let lastIndex = serversArr.length - 1
-                        let serverIndex = this.isAsc ? 0 : lastIndex
-                        for (
-                            serverIndex;
-                            this.isAsc ? serverIndex < serversArr.length : serverIndex >= 0;
-                            this.isAsc ? ++serverIndex : --serverIndex
-                        ) {
+
+                        for (let index = 0; index < serversArr.length; ++index) {
                             const {
                                 id: serverId,
                                 attributes: { state: serverState, parameters, statistics },
-                            } = serversArr[serverIndex]
-
-                            let row
-                            /*   only add these two attribute to index 0 for asc mode, last index if desc mode
-                             since it has rowspan > 1 */
-                            //   monitorId: monitorId,
-                            //  monitorState: monitorState,
-                            row = {
-                                serverId: serverId,
+                                relationships: { services: { data: servicesData = [] } = {} },
+                            } = serversArr[index]
+                            let servicesIdArr = servicesData
+                                ? servicesData.map(item => `${item.id}`)
+                                : []
+                            let row = {
+                                monitorId: monitorId,
+                                monitorState: monitorState,
                                 rowspan: serversArr.length,
+                                serverId: serverId,
+                                serverStatus: serverState,
                                 serverAddress: parameters.address,
                                 serverPort: parameters.port,
                                 serverConnections: statistics.connections,
                                 serverState: serverState,
+                                servicesIdArr: servicesIdArr,
                             }
-                            switch (this.isAsc) {
-                                case true:
-                                    row.monitorId = monitorId
-                                    row.monitorState = monitorState
-
-                                    break
-                                case false:
-                                    row.monitorId = monitorId
-                                    row.monitorState = monitorState
-                            }
+                            /*  only visible the td rowspan on the first index, others row needs to have the data
+                            but don't neccessary to visible, this makes rowspan work and preserves searching function */
+                            if (index !== 0) row.hidden = true
+                            if (index === lastIndex) row.isLastRow = true
 
                             monitorInfo.push(row)
                         }
@@ -198,23 +198,22 @@ export default {
             return []
         },
     },
-    async created() {
-        await this.fetchServers()
-        await this.fetchAllMonitors()
-    },
 
     methods: {
-        ...mapActions(['fetchServers', 'destroyServer', 'fetchAllMonitors']),
+        ...mapActions(['destroyServer']),
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item
         },
-        onRowClick(item, header) {
-            // this.$router.push('/dashboard/server/' + item.id)
+        monitorStateIcon(monitorState) {
+            if (monitorState.includes('Running')) return 2
+            if (monitorState.includes('Stopped')) return 1
+            else return ''
         },
-        rowSpanSortHandle() {
-            console.log('rowSpanSortHandle')
-            this.isAsc = !this.isAsc
+        serverStateIcon(serverStatus) {
+            if (serverStatus.includes('Running')) return 2
+            if (serverStatus.includes('Down')) return 0
+            else return ''
         },
     },
 }

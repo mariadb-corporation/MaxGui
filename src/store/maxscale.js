@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { delay, dynamicColors } from 'utils/helpers'
+import { delay, dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
     state: {
@@ -66,10 +66,10 @@ export default {
 
                 // LOOP polling
 
-                !state.isDestroyed &&
-                    (await delay(1000).then(() => {
-                        return dispatch('fetchThreads')
-                    }))
+                // !state.isDestroyed &&
+                //     (await delay(2000).then(() => {
+                //         return dispatch('fetchThreads')
+                //     }))
             } catch (error) {
                 !state.isDestroyed &&
                     (await delay(5000).then(() => {
@@ -83,25 +83,25 @@ export default {
             if (threads) {
                 let arr = []
                 let lineColors = []
-                let pointColors = []
-                for (let i = threads.length - 1; i >= 0; --i) {
-                    lineColors.push(dynamicColors())
-                    pointColors.push(dynamicColors())
+                //threads.length
+                for (let i = 0; i < threads.length; ++i) {
+                    lineColors.push(dynamicColors(i))
+                    let indexOfOpacity = lineColors[i].lastIndexOf(')') - 1
                     let obj = {
+                        label: `THREAD ID - ${threads[i].id}`,
                         id: `THREAD ID - ${threads[i].id}`,
                         type: 'line',
-                        label: `THREAD ID - ${threads[i].id}`,
-                        backgroundColor: 'rgba(0,0,0,0)', // background of the line
+                        // background of the line
+                        backgroundColor: strReplaceAt(lineColors[i], indexOfOpacity, '0.2'),
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
-                        borderWidth: 2,
-                        lineTension: 0.25,
-                        data: [Math.floor(Math.random() * 100)],
+                        borderWidth: 1,
+                        lineTension: 0,
+                        data: [],
                     }
                     arr.push(obj)
                 }
                 let threadsChartDataSchema = {
                     datasets: arr,
-                    labels: [new Date().toLocaleTimeString()],
                 }
                 commit('setThreadsChartData', threadsChartDataSchema)
             }

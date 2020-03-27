@@ -11,7 +11,7 @@ tbody tr.stripe {
 }
 
 .no-underline {
-    text-decoration: none;
+    text-decoration: none !important;
 }
 .overflow-helper {
     overflow: scroll;
@@ -28,4 +28,10 @@ tbody tr.stripe {
 }
 .no-pointerEvent {
     pointer-events: none !important;
+}
+
+.field-text-info {
+    padding-left: 2px;
+    font-size: 14px;
+    line-height: 46px;
 }

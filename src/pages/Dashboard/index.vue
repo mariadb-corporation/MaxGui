@@ -7,32 +7,47 @@
             >
                 {{ pageTitle }}
             </h4>
-            <span
-                style="padding-left: 2px;font-size: 14px; line-height: 46px;"
-                class="color text-field-text"
-            >
-                Uptime {{ duration }}
-            </span>
+            <span class="field-text-info color text-field-text"> Uptime {{ duration }} </span>
         </portal>
-        <!-- <v-sheet max-width="90%">
-            <v-slide-group v-model="model" center-active>
-                <v-slide-item v-for="route in tabRoutes" :key="route.name" class="slide-nav-item">
-                    <v-card
-                        class="v-card-custom"
-                        outlined
-                        height="85"
-                        width="145"
-                        @click="navigate(route.path)"
-                    >
-                        <v-row class="fill-height" align="center" justify="center">
-                            <p class="caption text-uppercase color text-primary">
-                                {{ route.name }}
-                            </p>
-                        </v-row>
+
+        <v-slide-group v-model="model" width="100%" class="mb-5" center-active>
+            <v-slide-item>
+                <div style="width:25%" class="slide-nav-item d-flex flex-column">
+                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                        {{ $t('users') }}
+                    </p>
+                    <v-card outlined class="fill-height pt-2"> </v-card>
+                </div>
+            </v-slide-item>
+            <v-slide-item>
+                <div style="width:25%" class="slide-nav-item d-flex flex-column">
+                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                        {{ $t('sessions') }}
+                    </p>
+
+                    <v-card outlined class="fill-height pt-2"> </v-card>
+                </div>
+            </v-slide-item>
+            <v-slide-item>
+                <div style="width:25%" class="slide-nav-item d-flex flex-column">
+                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                        {{ $t('dcb') }}
+                    </p>
+                    <v-card outlined class="fill-height pt-2"> </v-card>
+                </div>
+            </v-slide-item>
+            <v-slide-item>
+                <div style="width:25%;" class="slide-nav-item d-flex flex-column">
+                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                        {{ $t('threadUsage') }}
+                    </p>
+                    <v-card outlined class="fill-height pt-2">
+                        <mini-threads-chart-container v-if="chartdata.datasets.length" />
                     </v-card>
-                </v-slide-item>
-            </v-slide-group>
-        </v-sheet> -->
+                </div>
+            </v-slide-item>
+        </v-slide-group>
+
         <tab-nav :tabRoutes="tabRoutes" />
         <!-- 
         <v-sheet style="margin-top:35px">
@@ -86,14 +101,16 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'
+import MiniThreadsChartContainer from 'pages/Statistics/MiniThreadsChartContainer'
 
 export default {
     name: 'dashboard',
     components: {
         TabNav,
+        MiniThreadsChartContainer,
     },
     data() {
         return {
@@ -105,7 +122,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['maxscaleDetails']),
+        ...mapGetters(['maxscaleDetails', 'chartdata']),
         pageTitle: function() {
             let version =
                 this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
@@ -128,14 +145,27 @@ export default {
             }, 1000)
         },
     },
-    created() {
-        this.fetchMaxScaleDetails()
+    async created() {
+        await this.fetchMaxScaleDetails()
+        await this.resetDestroyState()
+        await this.fetchThreads()
+        await this.fetchServers()
+        await this.fetchAllMonitors()
+        await this.fetchServices()
     },
     methods: {
-        ...mapActions(['fetchMaxScaleDetails']),
-        // navigate(path) {
-        //     this.$router.push(path)
-        // },
+        ...mapActions([
+            'fetchMaxScaleDetails',
+            'fetchThreads',
+            'fetchServers',
+            'fetchAllMonitors',
+            'fetchServices',
+        ]),
+        ...mapMutations(['resetDestroyState']),
+
+        navigate(path) {
+            this.$router.push(path)
+        },
         formatValue(value, name) {
             if (name === 'started_at' || name === 'activated_at') {
                 return this.$moment(value).format('HH:mm:ss MM/DD/YYYY')
@@ -156,7 +186,7 @@ export default {
 
 <style scoped lang="scss">
 .slide-nav-item {
-    margin: 0px 5px;
+    margin: 0px 7px;
     &:first-of-type {
         margin-left: 0px;
     }

@@ -51,13 +51,30 @@ export function delay(t, v) {
         setTimeout(resolve.bind(null, v), t)
     })
 }
-export function dynamicColors() {
+export function dynamicColors(dataIndex) {
+    const palette = [
+        'rgba(171,199,74,1)',
+        'rgba(14,100,136,1)',
+        'rgba(150,221,207,1)',
+        'rgba(47,153,163,1)',
+        'rgba(0,53,69,1)',
+        'rgba(45,156,219,1)',
+        'rgba(125,208,18,1)',
+        'rgba(66,79,98,1)',
+        'rgba(245,157,52,1)',
+    ]
     let r = Math.floor(Math.random() * 255)
     let g = Math.floor(Math.random() * 255)
     let b = Math.floor(Math.random() * 255)
-    return 'rgb(' + r + ',' + g + ',' + b + ')'
+    // return 'rgb(' + r + ',' + g + ',' + b + ')'
+
+    return palette[dataIndex % palette.length]
 }
 
+export function strReplaceAt(str, index, chr) {
+    if (index > str.length - 1) return str
+    return str.substr(0, index) + chr + str.substr(index + 1)
+}
 /**
  * @param {Object} error Error object that returns from try catch
  * @return {Array} An array of error string
@@ -79,6 +96,7 @@ Object.defineProperties(Vue.prototype, {
                 delay,
                 treatEmptyStringAsNull,
                 getErrorsArr,
+                strReplaceAt,
             }
         },
     },

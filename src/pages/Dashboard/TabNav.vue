@@ -7,6 +7,10 @@
             class="color border-bottom-table-header "
         >
             {{ route.name }}
+
+            <span class="field-text-info color text-field-text">
+                ({{ getTotal(route.name) }})
+            </span>
         </v-tab>
         <v-tabs-items v-model="activeTab">
             <v-tab-item v-for="route in tabRoutes" :id="route.path" :key="route.name" class="pt-5">
@@ -27,10 +31,11 @@ export default {
     data() {
         return {
             activeTab: '/dashboard/servers',
+            total: null,
         }
     },
     computed: {
-        ...mapGetters(['searchKeyWord']),
+        ...mapGetters(['searchKeyWord', 'serversData', 'servicesData']),
 
         // tabRoutesFilter() {
         //     let self = this
@@ -43,6 +48,19 @@ export default {
     watch: {
         $route: function(to, from) {
             this.activeTab = to
+        },
+    },
+    methods: {
+        getTotal(name) {
+            let total = null
+            switch (name) {
+                case 'servers':
+                    total = this.serversData.length
+                    break
+                case 'services':
+                    total = this.servicesData.length
+            }
+            return total
         },
     },
 }
