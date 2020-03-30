@@ -16,7 +16,9 @@
                     <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
                         {{ $t('users') }}
                     </p>
-                    <v-card outlined class="fill-height pt-2"> </v-card>
+                    <v-card outlined class="fill-height pt-2">
+                        <users-chart-container />
+                    </v-card>
                 </div>
             </v-slide-item>
             <v-slide-item>
@@ -42,10 +44,7 @@
                         {{ $t('threadUsage') }}
                     </p>
                     <v-card outlined class="fill-height pt-2">
-                        <mini-threads-chart-container
-                            v-if="threadsChartData.datasets.length"
-                            :onRefresh="updatingThreads"
-                        />
+                        <threads-chart-container :isMiniChart="true" />
                     </v-card>
                 </div>
             </v-slide-item>
@@ -104,16 +103,18 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'
-import MiniThreadsChartContainer from 'pages/Statistics/MiniThreadsChartContainer'
+import ThreadsChartContainer from 'pages/Statistics/ThreadsChartContainer'
+import UsersChartContainer from 'pages/Users/UsersChartContainer'
 
 export default {
     name: 'dashboard',
     components: {
         TabNav,
-        MiniThreadsChartContainer,
+        ThreadsChartContainer,
+        UsersChartContainer,
     },
     data() {
         return {
@@ -125,7 +126,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['maxscaleDetails', 'threadsChartData']),
+        ...mapGetters(['maxscaleDetails']),
         pageTitle: function() {
             let version =
                 this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
@@ -150,8 +151,6 @@ export default {
     },
     async created() {
         await this.fetchMaxScaleDetails()
-        await this.resetDestroyState()
-        await this.fetchThreads()
         await this.fetchServers()
         await this.fetchAllMonitors()
         await this.fetchServices()
@@ -159,12 +158,10 @@ export default {
     methods: {
         ...mapActions([
             'fetchMaxScaleDetails',
-            'fetchThreads',
             'fetchServers',
             'fetchAllMonitors',
             'fetchServices',
         ]),
-        ...mapMutations(['resetDestroyState']),
 
         navigate(path) {
             this.$router.push(path)
@@ -182,15 +179,6 @@ export default {
         updateUpTime() {
             this.uptime = this.uptime + 1
             this.duration = this.$moment.duration(this.uptime, 'seconds').format()
-        },
-        updatingThreads(chart) {
-            chart.data.datasets.forEach(function(dataset) {
-                dataset.data.push({
-                    x: Date.now(),
-                    y: Math.round(Math.random() * 100),
-                })
-            })
-            chart.update()
         },
     },
 }

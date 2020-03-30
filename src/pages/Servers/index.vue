@@ -144,14 +144,15 @@ export default {
                 /*  First loop through monitors to get associated(linked) servers ID
                     and monitor's id and monitor's state
                 */
-                for (let n = 0; n < this.allMonitors.length; ++n) {
+                let allMonitors = this.$_.cloneDeep(this.allMonitors)
+                for (let n = 0; n < allMonitors.length; ++n) {
                     const {
                         id: monitorId,
                         attributes: { state: monitorState },
                         relationships: {
                             servers: { data: linkedServers },
                         },
-                    } = this.allMonitors[n]
+                    } = allMonitors[n]
                     // Get array of obj linked servers based on linkedServers array of IDs
                     let serversArr = []
                     if (linkedServers.length) {

@@ -25,13 +25,11 @@ export default {
     computed: {
         ...mapGetters(['threadsChartData']),
     },
-    created() {
-        this.resetDestroyState()
-        this.fetchThreads()
+    async created() {
+        await this.fetchThreads()
     },
     methods: {
         ...mapActions(['fetchThreads']),
-        ...mapMutations(['resetDestroyState']),
     },
 }
 </script>

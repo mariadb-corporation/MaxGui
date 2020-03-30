@@ -6,9 +6,7 @@ export default {
         maxscaleDetails: {},
         isDestroyed: false,
         threads: [],
-        updateCount: 1,
         threadsChartData: {
-            labels: [],
             datasets: [],
         },
     },
@@ -26,21 +24,6 @@ export default {
         setThreadsChartData(state, payload) {
             state.threadsChartData = payload
         },
-        updateCount(state) {
-            state.updateCount += 1
-        },
-        resetDestroyState(state) {
-            state.isDestroyed = false
-        },
-        clearThreadsState(state) {
-            state.isDestroyed = true
-            state.threadsChartData = {
-                labels: [],
-                datasets: [],
-            }
-            state.threads = []
-            state.updateCount = 1
-        },
     },
     actions: {
         async fetchMaxScaleDetails({ commit }) {
@@ -48,34 +31,11 @@ export default {
             await commit('setMaxScaleDetails', res.data.data.attributes)
         },
         // ---------------------------- last two second threads--------------------------
-        async fetchThreads({ dispatch, commit, state }) {
-            try {
-                let res = await Vue.axios.get(`/maxscale/threads`)
-                // console.log("state.threads", state.threads.length);
-                // console.log("res.data.data", res.data.data.length);
-                if (state.threads.length !== res.data.data.length) {
-                    //set threads
-                    commit('setThreads', res.data.data)
-                    //  generate DataSet Schema
-                    await dispatch('genDataSetSchema')
-                } else {
-                    //set threads
-                    commit('setThreads', res.data.data)
-                    await commit('updateCount')
-                }
-
-                // LOOP polling
-
-                // !state.isDestroyed &&
-                //     (await delay(2000).then(() => {
-                //         return dispatch('fetchThreads')
-                //     }))
-            } catch (error) {
-                !state.isDestroyed &&
-                    (await delay(5000).then(() => {
-                        return dispatch('fetchThreads')
-                    }))
-            }
+        async fetchThreads({ dispatch, commit }) {
+            let res = await Vue.axios.get(`/maxscale/threads`)
+            commit('setThreads', res.data.data)
+            //  generate DataSet Schema
+            await dispatch('genDataSetSchema')
         },
 
         genDataSetSchema({ commit, state }) {
@@ -96,7 +56,7 @@ export default {
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,
-                        data: [{ x: Date.now(), y: 100 }],
+                        data: [{ x: Date.now(), y: Math.round(Math.random() * 100) }],
                     }
                     arr.push(obj)
                 }
@@ -110,6 +70,5 @@ export default {
     getters: {
         maxscaleDetails: state => state.maxscaleDetails,
         threadsChartData: state => state.threadsChartData,
-        updateCount: state => state.updateCount,
     },
 }
