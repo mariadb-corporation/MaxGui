@@ -6,7 +6,7 @@
         :items="data"
         :hide-default-header="true"
         :hide-default-footer="data.length <= 10"
-        :footer-props="{ 'items-per-page-options': [4, 10, 15] }"
+        :footer-props="{ 'items-per-page-options': [] }"
         :class="['data-table-rowspan', tableClass]"
         :loading="loading"
         :options.sync="pagination"
@@ -180,23 +180,19 @@ export default {
 
             for (let i = 0; i < itemsId.length; ++i) {
                 let group = groupedId[`${itemsId[i]}`]
+                for (let n = 0; n < group.length; ++n) {
+                    group[n].hidden = group[n].originalHidden
+                    group[n].alterableRowspan = group[n].originalRowSpan
+                }
                 // when searching or pagination, use current items to mutate
                 //Add this.isSearching || still breaks the rowspan view in some cases
-                if (this.isPaginationChanged) {
+                if (this.isSearching || this.isPaginationChanged) {
                     // mutate object
+                    /* if group length is one ------> alterableRowspan property needs to be 1 */
+                    if (group.length === 1) {
+                        group[0].alterableRowspan = 1
+                    }
                     group[0].hidden && (group[0].hidden = false)
-                    /*  Loop through each group to change alterableRowspan value if group length is one
-                    ------> alterableRowspan property needs to be 1 */
-                    for (let n = 0; n < group.length; ++n) {
-                        if (group.length === 1) {
-                            group[0].alterableRowspan = 1
-                        }
-                    }
-                } else {
-                    for (let n = 0; n < group.length; ++n) {
-                        group[n].hidden = group[n].originalHidden
-                        group[n].alterableRowspan = group[n].originalRowSpan
-                    }
                 }
             }
         },
