@@ -1,10 +1,10 @@
 <template>
     <line-chart
-        v-if="threadsChartData.datasets.length"
-        id="threads-Chart"
-        ref="threadsChart"
-        :styles="isMiniChart ? { height: '85px' } : null"
-        :chartData="threadsChartData"
+        v-if="sessionsChartData.datasets.length"
+        id="sessions-Chart"
+        ref="sessionsChart"
+        :styles="{ height: '85px' }"
+        :chartData="sessionsChartData"
         :options="options"
     />
 </template>
@@ -14,12 +14,9 @@ import LineChart from 'components/LineChart.vue'
 import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
-    name: 'threads-chart-container',
+    name: 'sessions-chart',
     components: {
         'line-chart': LineChart,
-    },
-    props: {
-        isMiniChart: Boolean,
     },
     data() {
         return {
@@ -39,7 +36,7 @@ export default {
                             realtime: {
                                 duration: 20000,
                                 refresh: 5000, // onRefresh callback will be called every 5000 ms
-                                // delay of 5000 ms, so upcoming values are known before plotting a line
+                                // delay of 1000 ms, so upcoming values are known before plotting a line
                                 delay: 5000,
                             },
                         },
@@ -47,44 +44,48 @@ export default {
                     yAxes: [
                         {
                             ticks: {
-                                max: 100,
-                                min: 0,
+                                maxTicksLimit: 3,
                             },
                         },
                     ],
                 },
                 plugins: {
                     streaming: {
-                        onRefresh: this.updatingThreads,
+                        onRefresh: this.updatingChart,
                     },
                 },
             },
         }
     },
     computed: {
-        ...mapGetters(['threadsChartData']),
+        ...mapGetters(['sessionsChartData', 'sessions']),
+    },
+    created() {
+        this.fetchAllSessions()
+        this.genDataSetSchema()
     },
 
-    created() {
-        this.fetchThreads()
-    },
     beforeDestroy() {
-        let chart = this.$refs.threadsChart.$data._chart
+        let chart = this.$refs.sessionsChart.$data._chart
         chart.data.labels = []
         chart.data.datasets = []
         chart.destroy()
     },
     methods: {
-        ...mapActions(['fetchThreads']),
-        updatingThreads(chart) {
-            this.fetchThreads()
+        ...mapActions(['fetchAllSessions', 'genDataSetSchema']),
+        updatingChart(chart) {
+            //  LOOP polling
+            this.fetchAllSessions()
+            let self = this
             chart.data.datasets.forEach(function(dataset) {
                 dataset.data.push({
                     x: Date.now(),
-                    y: Math.round(Math.random() * 100),
+                    y: Math.round(Math.random() * 100), //self.sessions.length,
                 })
             })
-            chart.update()
+            chart.update({
+                preservation: true,
+            })
         },
     },
 }

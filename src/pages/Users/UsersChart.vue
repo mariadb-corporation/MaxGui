@@ -14,7 +14,7 @@ import LineChart from 'components/LineChart.vue'
 import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
-    name: 'users-chart-container',
+    name: 'users-chart',
     components: {
         'line-chart': LineChart,
     },

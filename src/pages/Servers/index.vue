@@ -9,11 +9,11 @@
                 :showExpand="false"
                 :numOfColsHasRowSpan="2"
                 :search="searchKeyWord"
-                sortBy="monitorId"
+                sortBy="id"
             >
-                <template v-slot:monitorId="{ data: { item: { monitorId } } }">
-                    <router-link :to="`/dashboard/monitor/${monitorId}`" class="no-underline">
-                        <span>{{ monitorId }} </span>
+                <template v-slot:id="{ data: { item: { id } } }">
+                    <router-link :to="`/dashboard/monitor/${id}`" class="no-underline">
+                        <span class="font-weight-bold">{{ id }} </span>
                     </router-link>
                 </template>
                 <template v-slot:monitorState="{ data: { item: { monitorState } } }">
@@ -27,7 +27,10 @@
                     <span>{{ monitorState }} </span>
                 </template>
                 <template v-slot:serverId="{ data: { item: { serverId } } }">
-                    <router-link :to="`/dashboard/server/${serverId}`" class="no-underline">
+                    <fragment v-if="!serverId">
+                        <span>n/a </span>
+                    </fragment>
+                    <router-link v-else :to="`/dashboard/server/${serverId}`" class="no-underline">
                         <span>{{ serverId }} </span>
                     </router-link>
                 </template>
@@ -41,7 +44,11 @@
                     </icon-sprite-sheet>
                 </template>
                 <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
-                    <fragment v-if="servicesIdArr.length < 2">
+                    <fragment v-if="servicesIdArr.length === 0">
+                        <span>n/a </span>
+                    </fragment>
+
+                    <fragment v-else-if="servicesIdArr.length < 2">
                         <template v-for="serviceId in servicesIdArr">
                             <router-link
                                 :key="serviceId"
@@ -52,11 +59,13 @@
                             </router-link>
                         </template>
                     </fragment>
+
                     <template v-else>
                         <v-tooltip left transition="fade-transition">
                             <template v-slot:activator="{ on }">
                                 <span class="pointer color text-links" v-on="on">
-                                    {{ servicesIdArr.length }} {{ $t('services').toLowerCase() }}
+                                    {{ servicesIdArr.length }}
+                                    {{ $t('services').toLowerCase() }}
                                 </span>
                             </template>
                             <template v-for="serviceId in servicesIdArr">
@@ -119,7 +128,7 @@ export default {
         return {
             //State
             tableHeaders: [
-                { text: 'Monitor', value: 'monitorId' },
+                { text: 'Monitor', value: 'id' },
                 { text: 'State', value: 'monitorState' },
 
                 { text: 'Servers', sortable: false, value: 'serverId' },
@@ -133,6 +142,7 @@ export default {
             serverDialog: false,
             chosenItem: null,
             isRowSpanAsc: true,
+            rowsPerPageArr: [],
         }
     },
     computed: {
@@ -149,21 +159,20 @@ export default {
                     const {
                         id: monitorId,
                         attributes: { state: monitorState },
-                        relationships: {
-                            servers: { data: linkedServers },
-                        },
+                        relationships: { servers: { data: linkedServers = [] } = {} },
                     } = allMonitors[n]
                     // Get array of obj linked servers based on linkedServers array of IDs
                     let serversArr = []
                     if (linkedServers.length) {
                         for (let l = 0; l < linkedServers.length; ++l) {
-                            serversArr.push(this.serversDataMap.get(linkedServers[l].id))
+                            let serversLinked = this.serversDataMap.get(linkedServers[l].id)
+                            serversArr.push(serversLinked)
                         }
                     }
+
                     /*  Loop through serversArr of objects to add value to row*/
                     if (serversArr.length) {
                         let lastIndex = serversArr.length - 1
-
                         for (let index = 0; index < serversArr.length; ++index) {
                             const {
                                 id: serverId,
@@ -174,9 +183,12 @@ export default {
                                 ? servicesData.map(item => `${item.id}`)
                                 : []
                             let row = {
-                                monitorId: monitorId,
+                                id: monitorId,
                                 monitorState: monitorState,
-                                rowspan: serversArr.length,
+                                originalRowSpan: serversArr.length,
+                                alterableRowspan: serversArr.length,
+                                originalHidden: false,
+                                hidden: false,
                                 serverId: serverId,
                                 serverStatus: serverState,
                                 serverAddress: parameters.address,
@@ -185,13 +197,34 @@ export default {
                                 serverState: serverState,
                                 servicesIdArr: servicesIdArr,
                             }
-                            /*  only visible the td rowspan on the first index, others row needs to have the data
-                            but don't neccessary to visible, this makes rowspan work and preserves searching function */
-                            if (index !== 0) row.hidden = true
-                            if (index === lastIndex) row.isLastRow = true
+                            /*  only visible the td alterableRowspan on the first index, others row needs to have
+                                the data but don't neccessary to visible,
+                                this makes alterableRowspan work and preserves searching function
+                            */
+                            if (index !== 0) {
+                                row.hidden = true
+                                row.originalHidden = true
+                            }
 
                             monitorInfo.push(row)
                         }
+                    } else {
+                        let row = {
+                            id: monitorId,
+                            monitorState: monitorState,
+                            originalRowSpan: 1,
+                            alterableRowspan: 1,
+                            originalHidden: false,
+                            hidden: false,
+                            serverId: null,
+                            serverStatus: null,
+                            serverAddress: null,
+                            serverPort: null,
+                            serverConnections: null,
+                            serverState: null,
+                            servicesIdArr: [],
+                        }
+                        monitorInfo.push(row)
                     }
                 }
                 return monitorInfo
@@ -212,9 +245,11 @@ export default {
             else return ''
         },
         serverStateIcon(serverStatus) {
-            if (serverStatus.includes('Running')) return 2
-            if (serverStatus.includes('Down')) return 0
-            else return ''
+            if (serverStatus) {
+                if (serverStatus.includes('Running')) return 2
+                if (serverStatus.includes('Down')) return 0
+                else return ''
+            } else return ''
         },
     },
 }

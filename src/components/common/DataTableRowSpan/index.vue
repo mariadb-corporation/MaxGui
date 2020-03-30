@@ -1,20 +1,23 @@
 <template>
+    <!-- :hide-default-footer="data.length <= 10"
+     :footer-props="{ 'items-per-page-options': [1, 2, 4, 8, 16] }" -->
     <v-data-table
         :headers="headers"
         :items="data"
-        :hide-default-footer="data.length <= 10"
-        :footer-props="{ 'items-per-page-options': [] }"
         :hide-default-header="true"
+        :hide-default-footer="data.length <= 10"
+        :footer-props="{ 'items-per-page-options': [4, 10, 15] }"
         :class="['data-table-rowspan', tableClass]"
         :loading="loading"
         :options.sync="pagination"
-        :items-per-page="itemsPerPage"
         :page="page"
         :sort-by="sortBy"
         :sort-desc="sortDesc"
         :search="search"
         item-key="name"
         :dense="dense"
+        @current-items="currentItems"
+        @update:page="updatePagination"
     >
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
@@ -48,58 +51,18 @@
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
 
-        <!-- This tbody loop will break searching function and others .. urgh -->
-        <!-- <template v-slot:body="{ items }">
-            <template v-for="(section, index) in getFormatedItems(items)">
-                <tbody :key="index">
-                    <tr
-                        v-for="item in section"
-                        :key="item.id"
-                        :class="{ 'last-row': item.isLastRow }"
-                    >
-                        <td
-                            v-for="(header, i) in headers"
-                            :key="i"
-                            :rowspan="i < numOfColsHasRowSpan ? item.rowspan : 1"
-                            :scope="i < numOfColsHasRowSpan ? 'rowgroup' : 'cell'"
-                            :class="[
-                                header.value,
-                                header.tdClass || header.class,
-                                i < numOfColsHasRowSpan && 'data-table-full_rowspan-feat',
-                                item.hidden && i < numOfColsHasRowSpan && 'hide',
-                                i === numOfColsHasRowSpan && 'color border-left-table-border',
-                            ]"
-                            @click="cellClick(item, headers)"
-                        >
-                            <div>
-                                <slot :name="header.value" :data="{ item, header }">
-                                     no content for the corresponding header, usually this is an error
-                                    <span v-if="$_.isUndefined(item[header.value])"></span>
-                                    regular cell 
-                                    <span v-else>{{ getValue(item, header) }} </span>
-                                </slot>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </template>
-        </template> -->
-        <!-- This will have ugly hover effect, but searching function will work ... partially, 
-        when rowspan enable, The td that is hidden, then when searching, those td will still be hidden.. urgh
-         -->
-        <template v-slot:item="{ item }">
-            <tr :key="item.id" :class="{ 'last-row': item.isLastRow }">
+        <template v-slot:item="{ item, index }">
+            <tr :key="item.serverId" :class="{ 'last-row': index === data.length - 1 }">
                 <td
                     v-for="(header, i) in headers"
                     :key="i"
-                    :ref="i < numOfColsHasRowSpan ? 'rowGroup' : null"
-                    :rowspan="i < numOfColsHasRowSpan ? item.rowspan : null"
+                    :ref="i < numOfColsHasRowSpan ? 'rowGroup' : 'cell'"
+                    :rowspan="i < numOfColsHasRowSpan ? item.alterableRowspan : null"
                     :scope="i < numOfColsHasRowSpan ? 'rowgroup' : 'cell'"
                     :class="[
                         item.hidden && i < numOfColsHasRowSpan && 'hide',
-                        !item.hidden &&
-                            i < numOfColsHasRowSpan &&
-                            `rowspan-${item.rowspan.toString()}`,
+
+                        i < numOfColsHasRowSpan ? `${item.id}-alterableRowspan` : `${item.id}-cell`,
                         header.value,
                         header.tdClass || header.class,
                         i < numOfColsHasRowSpan && 'data-table-full_rowspan-feat',
@@ -109,18 +72,20 @@
                     @click="cellClick(item, headers)"
                     @mouseover="
                         e =>
-                            mouseOver(
+                            mouse(
                                 e,
+                                'mouseOver',
                                 i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
-                                `rowspan-${item.rowspan.toString()}`
+                                item.id
                             )
                     "
                     @mouseleave="
                         e =>
-                            mouseLeave(
+                            mouse(
                                 e,
+                                'mouseLeave',
                                 i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
-                                `rowspan-${item.rowspan.toString()}`
+                                item.id
                             )
                     "
                 >
@@ -157,16 +122,26 @@ export default {
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
         onCellClick: { type: Function },
-        itemsPerPage: { type: Number, default: 10 },
+        itemsPerPage: { type: Number, defalut: 10 },
         page: { type: Number, default: 1 },
         dense: { type: Boolean, default: false },
     },
+
     data() {
         return {
             pagination: {},
+            isSearching: false,
+            isPaginationChanged: false,
+            currentPage: 1,
         }
     },
+
     watch: {
+        search: function(val) {
+            if (val !== '') this.isSearching = true
+            else this.isSearching = false
+        },
+
         pagination: {
             handler(val) {
                 this.$emit('pagination', val)
@@ -174,10 +149,59 @@ export default {
             deep: true,
         },
     },
+
     methods: {
+        updatePagination(page) {
+            if (this.currentPage !== page) {
+                this.isPaginationChanged = true
+                this.currentPage = page
+            }
+        },
+        groupBy(OurArray, property) {
+            return OurArray.reduce(function(accumulator, object) {
+                // get the value of our object(age in our case) to use for group    the array as the array key
+                const key = object[property]
+                /*  if the current value is similar to the key(age) don't accumulate
+                the transformed array and leave it empty */
+                if (!accumulator[key]) {
+                    accumulator[key] = []
+                }
+                // add the value to the array
+                accumulator[key].push(object)
+                // return the transformed array
+                return accumulator
+                // Also we also set the initial value of reduce() to an empty object
+            }, {})
+        },
+        currentItems(items) {
+            let uniqueSet = new Set(items.map(item => item.id))
+            let groupedId = this.groupBy(items, 'id')
+            let itemsId = [...uniqueSet]
+
+            for (let i = 0; i < itemsId.length; ++i) {
+                let group = groupedId[`${itemsId[i]}`]
+                // when searching or pagination, use current items to mutate
+                //Add this.isSearching || still breaks the rowspan view in some cases
+                if (this.isPaginationChanged) {
+                    // mutate object
+                    group[0].hidden && (group[0].hidden = false)
+                    /*  Loop through each group to change alterableRowspan value if group length is one
+                    ------> alterableRowspan property needs to be 1 */
+                    for (let n = 0; n < group.length; ++n) {
+                        if (group.length === 1) {
+                            group[0].alterableRowspan = 1
+                        }
+                    }
+                } else {
+                    for (let n = 0; n < group.length; ++n) {
+                        group[n].hidden = group[n].originalHidden
+                        group[n].alterableRowspan = group[n].originalRowSpan
+                    }
+                }
+            }
+        },
         changeSort(column) {
             // TODO: support multiple column sorting
-
             if (this.pagination.sortBy[0] === column) {
                 this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
             } else {
@@ -195,42 +219,28 @@ export default {
                     : 'n/a'
             return this.$_.isFunction(header.format) ? header.format(value) : value
         },
-        getFormatedItems: function(items) {
-            let sections = [[]]
-
-            let index = 0
-
-            items.forEach(item => {
-                sections[index].push(item)
-                if (item.isLastRow) {
-                    index++
-                    sections[index] = []
-                }
-            })
-            //remove last empty array
-            sections.pop()
-            return sections
-        },
         filterSearch(value, search, item) {
             // if (!search.includes(value)) {
             //     console.log(item)
             // }
             // return value != null && search != null && !search.includes(value)
         },
-        mouseOver: function(e, type, rowspanClass) {
-            if (type === 'cell') {
+        mouse: function(e, mouseType, target, rowspanId) {
+            if (target === 'cell') {
                 let elements = this.$refs.rowGroup.filter((ele, i) =>
-                    ele.attributes.class.value.includes(rowspanClass)
+                    ele.attributes.class.value.includes(`${rowspanId}-alterableRowspan`)
                 )
-                elements.forEach(ele => (ele.style.backgroundColor = '#eeeeee '))
-            }
-        },
-        mouseLeave: function(e, type, rowspanClass) {
-            if (type === 'cell') {
-                let elements = this.$refs.rowGroup.filter((ele, i) =>
-                    ele.attributes.class.value.includes(rowspanClass)
+
+                elements.forEach(
+                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#eeeeee' : '')
                 )
-                elements.forEach(ele => (ele.style.backgroundColor = ''))
+            } else if (target === 'rowgroup') {
+                let elements = this.$refs.cell.filter((ele, i) =>
+                    ele.attributes.class.value.includes(`${rowspanId}-cell`)
+                )
+                elements.forEach(
+                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#eeeeee' : '')
+                )
             }
         },
     },
@@ -305,9 +315,7 @@ export default {
                         }
                     }
                 }
-                // td[scope='cell']:hover {
-                //     background-color: #eeeeee !important;
-                // }
+
                 &:hover {
                     td.actions button {
                         opacity: 1;
@@ -324,9 +332,6 @@ export default {
                     }
                 }
             }
-        }
-        tr:hover td[scope='cell'] {
-            background-color: #eeeeee !important;
         }
     }
 }

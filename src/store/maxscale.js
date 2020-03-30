@@ -31,11 +31,9 @@ export default {
             await commit('setMaxScaleDetails', res.data.data.attributes)
         },
         // ---------------------------- last two second threads--------------------------
-        async fetchThreads({ dispatch, commit }) {
-            let res = await Vue.axios.get(`/maxscale/threads`)
+        async fetchThreads({ commit }) {
+            let res = await Vue.axios.get(`/maxscale/threads?fields[threads]=stats`)
             commit('setThreads', res.data.data)
-            //  generate DataSet Schema
-            await dispatch('genDataSetSchema')
         },
 
         genDataSetSchema({ commit, state }) {
@@ -70,5 +68,6 @@ export default {
     getters: {
         maxscaleDetails: state => state.maxscaleDetails,
         threadsChartData: state => state.threadsChartData,
+        threads: state => state.threads,
     },
 }

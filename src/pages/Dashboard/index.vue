@@ -17,7 +17,7 @@
                         {{ $t('users') }}
                     </p>
                     <v-card outlined class="fill-height pt-2">
-                        <users-chart-container />
+                        <users-chart />
                     </v-card>
                 </div>
             </v-slide-item>
@@ -27,7 +27,7 @@
                         {{ $t('sessions') }}
                     </p>
 
-                    <v-card outlined class="fill-height pt-2"> </v-card>
+                    <v-card outlined class="fill-height pt-2"> <sessions-chart /></v-card>
                 </div>
             </v-slide-item>
             <v-slide-item>
@@ -44,7 +44,7 @@
                         {{ $t('threadUsage') }}
                     </p>
                     <v-card outlined class="fill-height pt-2">
-                        <threads-chart-container :isMiniChart="true" />
+                        <threads-chart :isMiniChart="true" />
                     </v-card>
                 </div>
             </v-slide-item>
@@ -106,15 +106,17 @@
 import { mapGetters, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'
-import ThreadsChartContainer from 'pages/Statistics/ThreadsChartContainer'
-import UsersChartContainer from 'pages/Users/UsersChartContainer'
+import ThreadsChart from 'pages/Statistics/ThreadsChart'
+import UsersChart from 'pages/Users/UsersChart'
+import SessionsChart from 'pages/Sessions/SessionsChart'
 
 export default {
     name: 'dashboard',
     components: {
         TabNav,
-        ThreadsChartContainer,
-        UsersChartContainer,
+        ThreadsChart,
+        UsersChart,
+        SessionsChart,
     },
     data() {
         return {

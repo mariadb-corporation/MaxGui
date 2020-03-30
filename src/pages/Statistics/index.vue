@@ -4,7 +4,7 @@
             <v-card width="100%" class="v-card-custom pa-6">
                 <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
                 <br />
-                <threads-chart-container v-if="threadsChartData.datasets.length" />
+                <threads-chart v-if="threadsChartData.datasets.length" />
                 <div v-else>
                     <p>{{ $t('loading.threadsData') }}</p>
                     <v-progress-linear color="primary accent-4" indeterminate rounded height="6" />
@@ -16,11 +16,11 @@
 
 <script>
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
-import ThreadsChartContainer from './ThreadsChartContainer'
+import ThreadsChart from './ThreadsChart'
 
 export default {
     components: {
-        ThreadsChartContainer,
+        ThreadsChart,
     },
     computed: {
         ...mapGetters(['threadsChartData']),
