@@ -50,7 +50,7 @@ body,
                     color: $small-text !important;
                     font-size: 11px;
                     border-bottom: none !important;
-                    &.active {
+                    &.active * {
                         color: #000 !important;
                     }
                     &:last-child {
@@ -69,6 +69,10 @@ body,
         tbody {
             tr {
                 pointer-events: none !important;
+                .v-data-table__mobile-row {
+                    border-right: thin solid $table-border !important;
+                    border-left: thin solid $table-border !important;
+                }
                 td {
                     pointer-events: all !important;
                     padding: 0 24px;

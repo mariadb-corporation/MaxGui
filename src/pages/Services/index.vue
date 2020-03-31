@@ -1,7 +1,65 @@
 <template>
     <v-row class="mt-0">
         <v-col class="pt-0" cols="12">
-            <services-table :servicesData="servicesData" />
+            <data-table
+                :headers="tableHeaders"
+                :data="generateTableRows"
+                :sortDesc="false"
+                :loading="!generateTableRows.length"
+                sortBy="id"
+            >
+                <template v-slot:append-id>
+                    <span class="ml-1 color text-field-text"> ({{ servicesData.length }}) </span>
+                </template>
+                <template v-slot:state="{ data: { item: { state } } }">
+                    <icon-sprite-sheet
+                        size="13"
+                        class="status-icon"
+                        :frame="serviceStateIcon(state)"
+                    >
+                        status
+                    </icon-sprite-sheet>
+                </template>
+                <template v-slot:servers="{ data: { item: { servers } } }">
+                    <fragment v-if="servers.length === 0">
+                        <span>n/a </span>
+                    </fragment>
+
+                    <fragment v-else-if="servers.length < 4">
+                        <template v-for="(serverId, i) in servers">
+                            <router-link
+                                :key="serverId"
+                                :to="`/dashboard/servers/${serverId}`"
+                                class="no-underline"
+                            >
+                                <span>
+                                    {{ serverId }}{{ i !== servers.length - 1 ? ', ' : '' }}
+                                </span>
+                            </router-link>
+                        </template>
+                    </fragment>
+
+                    <template v-else>
+                        <v-tooltip top transition="fade-transition">
+                            <template v-slot:activator="{ on }">
+                                <span class="pointer color text-links" v-on="on">
+                                    {{ servers.length }}
+                                    {{ $t('servers').toLowerCase() }}
+                                </span>
+                            </template>
+                            <template v-for="serverId in servers">
+                                <router-link
+                                    :key="serverId"
+                                    :to="`/dashboard/servers/${serverId}`"
+                                    class="no-underline"
+                                >
+                                    <span>{{ serverId }} </span>
+                                </router-link>
+                            </template>
+                        </v-tooltip>
+                    </template>
+                </template>
+            </data-table>
         </v-col>
     </v-row>
 </template>
@@ -20,15 +78,72 @@
  * Public License.
  */
 import { mapGetters, mapActions } from 'vuex'
-import ServicesTable from './ServicesTable'
 
 export default {
     name: 'services',
-    components: {
-        ServicesTable,
+
+    data() {
+        return {
+            tableHeaders: [
+                { text: 'Service', value: 'id' },
+                { text: 'Status', value: 'state' },
+                { text: 'Router', value: 'router' },
+                { text: 'Connections', value: 'connections' },
+                { text: 'Total Connections', value: 'total_connections' },
+                { text: 'Servers', value: 'servers' },
+            ],
+        }
     },
     computed: {
         ...mapGetters(['servicesData']),
+        /**
+         * @return {Array} An array of objects
+         */
+        generateTableRows: function() {
+            /**
+             * @param {Array} itemsArr
+             *  Elements are {Object} row
+             */
+            if (this.servicesData) {
+                let itemsArr = []
+                const { servicesData } = this
+                for (let n = servicesData.length - 1; n >= 0; --n) {
+                    /**
+                     * @typedef {Object} row
+                     * @property {String} row.id - Service's name
+                     * @property {String} row.router - Server's address
+                     * @property {Number} row.total_connections - Server's address
+                     * @property {Number} row.connections - Number of connections to the server
+                     * @property {Array} row,servers - Server's state
+                     */
+                    const {
+                        id,
+                        attributes: { state, router, connections, total_connections },
+                        relationships: { servers: { data: serversData = [] } = {} },
+                    } = servicesData[n] || {}
+
+                    let serversList = serversData ? serversData.map(item => `${item.id}`) : []
+                    let row = {
+                        id: id,
+                        state: state,
+                        router: router,
+                        connections: connections,
+                        total_connections: total_connections,
+                        servers: serversList,
+                    }
+                    itemsArr.push(row)
+                }
+                return itemsArr
+            }
+            return []
+        },
+    },
+    methods: {
+        serviceStateIcon(monitorState) {
+            if (monitorState.includes('Started')) return 2
+            if (monitorState.includes('Stopped')) return 0
+            else return ''
+        },
     },
 }
 </script>

@@ -37,6 +37,7 @@
                     >
                         <div class="d-inline-flex justify-center align-center">
                             <span>{{ header.text }}</span>
+                            <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
                                 v-if="header.sortable !== false"
                                 size="7"

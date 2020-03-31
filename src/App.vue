@@ -32,6 +32,12 @@ export default {
         AppLayout,
         NoLayout,
     },
+    mounted() {
+        let overlay = document.getElementById('global-overlay')
+        if (overlay) {
+            overlay.style.display = 'none'
+        }
+    },
     async created() {
         logger.info(this.$store.state.config.asciiLogo)
         logger.info(`Loaded Version: ${process.env.VUE_APP_VERSION}`)

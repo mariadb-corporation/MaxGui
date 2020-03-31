@@ -12,8 +12,12 @@
                 :loading="!getData.length"
                 sortBy="id"
             >
+                <template v-slot:append-id>
+                    <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
+                </template>
+
                 <template v-slot:id="{ data: { item: { id } } }">
-                    <router-link :to="`/dashboard/monitor/${id}`" class="no-underline">
+                    <router-link :to="`/dashboard/monitors/${id}`" class="no-underline">
                         <span class="font-weight-bold">{{ id }} </span>
                     </router-link>
                 </template>
@@ -31,7 +35,7 @@
                     <fragment v-if="!serverId">
                         <span>n/a </span>
                     </fragment>
-                    <router-link v-else :to="`/dashboard/server/${serverId}`" class="no-underline">
+                    <router-link v-else :to="`/dashboard/servers/${serverId}`" class="no-underline">
                         <span>{{ serverId }} </span>
                     </router-link>
                 </template>
@@ -53,7 +57,7 @@
                         <template v-for="serviceId in servicesIdArr">
                             <router-link
                                 :key="serviceId"
-                                :to="`/dashboard/service/${serviceId}`"
+                                :to="`/dashboard/services/${serviceId}`"
                                 class="no-underline"
                             >
                                 <span>{{ serviceId }} </span>
@@ -62,7 +66,7 @@
                     </fragment>
 
                     <template v-else>
-                        <v-tooltip left transition="fade-transition">
+                        <v-tooltip top transition="fade-transition">
                             <template v-slot:activator="{ on }">
                                 <span class="pointer color text-links" v-on="on">
                                     {{ servicesIdArr.length }}
@@ -72,7 +76,7 @@
                             <template v-for="serviceId in servicesIdArr">
                                 <router-link
                                     :key="serviceId"
-                                    :to="`/dashboard/service/${serviceId}`"
+                                    :to="`/dashboard/services/${serviceId}`"
                                     class="no-underline"
                                 >
                                     <span>{{ serviceId }} </span>
@@ -106,10 +110,12 @@ export default {
     components: {
         RowspanDataTable,
     },
-    data() {
-        return {
-            tableHeaders: [
-                { text: 'Monitor', value: 'id' },
+
+    computed: {
+        ...mapGetters(['serversDataMap', 'allMonitors', 'searchKeyWord']),
+        tableHeaders: function() {
+            return [
+                { text: `Monitor`, value: 'id' },
                 { text: 'State', value: 'monitorState' },
 
                 { text: 'Servers', sortable: false, value: 'serverId' },
@@ -119,11 +125,8 @@ export default {
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
                 { text: 'State', sortable: false, value: 'serverState' },
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
-            ],
-        }
-    },
-    computed: {
-        ...mapGetters(['serversDataMap', 'allMonitors', 'searchKeyWord']),
+            ]
+        },
 
         getData: function() {
             if (this.allMonitors) {
@@ -132,6 +135,7 @@ export default {
                     and monitor's id and monitor's state
                 */
                 let allMonitors = this.$_.cloneDeep(this.allMonitors)
+
                 for (let n = 0; n < allMonitors.length; ++n) {
                     const {
                         id: monitorId,

@@ -8,6 +8,7 @@
                     small
                 >
                     <span>{{ item.text }}</span>
+
                     <v-icon size="7" class="ml-2">$vuetify.icons.arrowDown</v-icon>
                 </v-chip>
             </template>

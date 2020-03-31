@@ -38,6 +38,7 @@
                     >
                         <div class="d-inline-flex justify-center align-center">
                             <span>{{ header.text }}</span>
+                            <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
                                 v-if="header.sortable !== false"
                                 size="7"
@@ -220,7 +221,7 @@ export default {
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
-        hasColumnToggle: { type: Boolean, default: true },
+        hasColumnToggle: { type: Boolean, default: false },
         onRowClick: { type: Function },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, default: 10 },

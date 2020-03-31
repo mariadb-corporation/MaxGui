@@ -45,7 +45,7 @@ export const routes = [
         name: 'maxscale',
     },
     {
-        path: '/dashboard/service/:id',
+        path: '/dashboard/services/:id',
         component: ServiceDetail,
         meta: {
             requiresAuth: true,
@@ -54,7 +54,7 @@ export const routes = [
         name: 'service',
     },
     {
-        path: '/dashboard/server/:id',
+        path: '/dashboard/servers/:id',
         component: ServerDetail,
         meta: {
             requiresAuth: true,
@@ -63,7 +63,7 @@ export const routes = [
         name: 'server',
     },
     {
-        path: '/dashboard/monitor/:id',
+        path: '/dashboard/monitors/:id',
         component: MonitorDetail,
         meta: {
             requiresAuth: true,
