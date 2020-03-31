@@ -1,7 +1,7 @@
 <template>
     <v-row class="mt-0">
         <v-col class="pt-0" cols="12">
-            <data-table-rowspan
+            <rowspan-data-table
                 :headers="tableHeaders"
                 :data="getData"
                 :sortDesc="false"
@@ -9,6 +9,7 @@
                 :showExpand="false"
                 :numOfColsHasRowSpan="2"
                 :search="searchKeyWord"
+                :loading="!getData.length"
                 sortBy="id"
             >
                 <template v-slot:id="{ data: { item: { id } } }">
@@ -80,35 +81,7 @@
                         </v-tooltip>
                     </template>
                 </template>
-                <!-- <template v-slot:actions="{ data: { item } }">
-                    <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                            <v-btn
-                                icon
-                                color="primary"
-                                v-on="on"
-                                @click.stop="handleOpenModal(item)"
-                            >
-                                <v-icon size="16">$vuetify.icons.edit</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>{{ `${$t('server')} ${$t('update')}` }}</span>
-                    </v-tooltip>
-                    <delete-modal
-                        :item="item"
-                        type="destroy"
-                        :dispatchDelete="() => destroyServer(item.id)"
-                        :title="`${$t('destroy')} ${$t('server')}`"
-                        :smallInfo="$t('info.serverDeleteModal')"
-                    />
-                </template> -->
-            </data-table-rowspan>
-            <!-- <server-create-or-update
-                v-model="serverDialog"
-                :close-modal="() => (serverDialog = false)"
-                mode="patch"
-                :item="chosenItem"
-            /> -->
+            </rowspan-data-table>
         </v-col>
     </v-row>
 </template>
@@ -127,18 +100,14 @@
  * Public License.
  */
 import { mapGetters, mapActions } from 'vuex'
-// import DeleteModal from 'components/DeleteModal'
-// import ServerCreateOrUpdate from './ServerCreateOrUpdate'
 
+import RowspanDataTable from 'components/RowspanDataTable'
 export default {
-    name: 'servers',
-    // components: {
-    //     DeleteModal,
-    //     ServerCreateOrUpdate,
-    // },
+    components: {
+        RowspanDataTable,
+    },
     data() {
         return {
-            //State
             tableHeaders: [
                 { text: 'Monitor', value: 'id' },
                 { text: 'State', value: 'monitorState' },
@@ -151,10 +120,6 @@ export default {
                 { text: 'State', sortable: false, value: 'serverState' },
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ],
-            serverDialog: false,
-            chosenItem: null,
-            isRowSpanAsc: true,
-            rowsPerPageArr: [],
         }
     },
     computed: {
@@ -247,10 +212,6 @@ export default {
 
     methods: {
         ...mapActions(['destroyServer']),
-        handleOpenModal: function(item) {
-            this.serverDialog = true
-            this.chosenItem = item
-        },
         monitorStateIcon(monitorState) {
             if (monitorState.includes('Running')) return 2
             if (monitorState.includes('Stopped')) return 1

@@ -40,40 +40,49 @@ body,
         text-decoration: underline;
     }
     table {
-        th {
-            padding: 0 24px;
-            background-color: $table-border;
-            text-transform: uppercase;
-            color: $small-text !important;
-            font-size: 11px;
-            &.active {
-                color: #000 !important;
-            }
-            &:last-child {
-                border-radius: 0 5px 0 0;
-            }
-            &:first-child {
-                border-radius: 5px 0 0 0;
-            }
-            .toggle-icon {
-                color: inherit;
+        thead {
+            tr {
+                box-shadow: -7px 5px 7px -7px rgba(0, 0, 0, 0.1) !important;
+                th {
+                    padding: 0 24px;
+                    background-color: $table-border;
+                    text-transform: uppercase;
+                    color: $small-text !important;
+                    font-size: 11px;
+                    border-bottom: none !important;
+                    &.active {
+                        color: #000 !important;
+                    }
+                    &:last-child {
+                        border-radius: 0 5px 0 0;
+                    }
+                    &:first-child {
+                        border-radius: 5px 0 0 0;
+                    }
+                    .toggle-icon {
+                        color: inherit;
+                    }
+                }
             }
         }
+
         tbody {
             tr {
+                pointer-events: none !important;
                 td {
+                    pointer-events: all !important;
                     padding: 0 24px;
-                    border-bottom: 1px solid $table-border;
+                    border-bottom: thin solid $table-border !important;
                     font-size: 14px;
                     color: $navigation;
                     @media (max-width: 600px) {
                         border-bottom: none;
                     }
-                    &:last-child {
-                        border-right: 1px solid $table-border;
+                    &:last-child:not(.hide) {
+                        border-right: thin solid $table-border !important;
                     }
-                    &:first-child {
-                        border-left: 1px solid $table-border;
+                    &:first-child:not(.hide) {
+                        border-left: thin solid $table-border !important;
                     }
                     .cell-accent {
                         height: 100%;
@@ -119,6 +128,9 @@ body,
                 }
             }
         }
+    }
+    .v-data-footer {
+        border-top: thin solid rgba(0, 0, 0, 0) !important;
     }
 }
 input:-webkit-autofill,

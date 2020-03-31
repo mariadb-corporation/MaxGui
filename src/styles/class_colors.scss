@@ -38,8 +38,5 @@ $colors: (
         &.border-top-#{$name} {
             border-top: 1px solid $value !important;
         }
-        &.border-left-#{$name} {
-            border-left: 1px solid $value !important;
-        }
     }
 }

@@ -1,13 +1,12 @@
 <template>
-    <!-- :hide-default-footer="data.length <= 10"
+    <!--:hide-default-footer="data.length <= 10"
      :footer-props="{ 'items-per-page-options': [1, 2, 4, 8, 16] }" -->
     <v-data-table
         :headers="headers"
         :items="data"
         :hide-default-header="true"
         :hide-default-footer="data.length <= 10"
-        :footer-props="{ 'items-per-page-options': [] }"
-        :class="[tableClass]"
+        :class="['rowspan-table', tableClass]"
         :loading="loading"
         :options.sync="pagination"
         :page="page"
@@ -16,6 +15,7 @@
         :search="search"
         item-key="name"
         :dense="dense"
+        :items-per-page="itemsPerPage"
         @current-items="currentItems"
         @update:page="updatePagination"
     >
@@ -51,8 +51,12 @@
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
 
-        <template v-slot:item="{ item }">
-            <tr :key="item.serverId">
+        <template v-slot:item="{ item, index }">
+            <tr
+                :class="{
+                    'last-row': index === currentPageItems.length - 1,
+                }"
+            >
                 <td
                     v-for="(header, i) in headers"
                     :key="i"
@@ -60,14 +64,20 @@
                     :rowspan="i < numOfColsHasRowSpan ? item.alterableRowspan : null"
                     :class="[
                         item.hidden && i < numOfColsHasRowSpan && 'hide',
-
                         i < numOfColsHasRowSpan ? `${item.id}-alterableRowspan` : `${item.id}-cell`,
                         header.value,
                         header.tdClass || header.class,
-                        i < numOfColsHasRowSpan && 'data-table-full_rowspan-feat',
-
-                        i === numOfColsHasRowSpan && 'color border-left-table-border',
+                        i === numOfColsHasRowSpan && 'border-left-thin',
                     ]"
+                    :style="
+                        `${
+                            i < numOfColsHasRowSpan &&
+                            index === currentPageItems.length - 1 - numOfColsHasRowSpan
+                                ? 'border-bottom: thin solid #e7eef1'
+                                : ''
+                        }
+                    `
+                    "
                     @click="cellClick(item, headers)"
                     @mouseover="
                         e =>
@@ -115,7 +125,7 @@
  * Public License.
  */
 export default {
-    name: 'data-table-rowspan',
+    name: 'rowspan-data-table',
     /* SLOTS available for data-table */
     // :name="header.value" // slot aka item
     // name="actions" :data="{ item }"
@@ -124,14 +134,19 @@ export default {
     props: {
         headers: { type: Array },
         data: { type: Array },
-        numOfColsHasRowSpan: { type: Number, default: 0 },
+        /* 
+        To enable rowspan table structure, each object in data array needs to have the following properties     
+            originalRowSpan: Number,  // This won't be alterd in any cases
+            alterableRowspan: Number, // This will be alterd when filtering or changing pagnination values
+            originalHidden: Boolean, // This won't be alterd in any cases
+            hidden: Boolean // This will be alterd when filtering or changing pagnination values
+        */
+        numOfColsHasRowSpan: { type: Number, default: 0 }, // rowspan feature
         sortBy: { type: String },
         search: { type: String, default: '' },
         sortDesc: { type: Boolean },
         loading: { type: Boolean, default: false },
-        singleExpand: { type: Boolean, default: false },
-        showExpand: { type: Boolean, default: false },
-        tableClass: { type: String, default: 'data-table-rowspan' },
+        tableClass: { type: String, default: 'data-table-full' },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, defalut: 10 },
         page: { type: Number, default: 1 },
@@ -144,6 +159,7 @@ export default {
             isSearching: false,
             isPaginationChanged: false,
             currentPage: 1,
+            currentPageItems: null,
         }
     },
 
@@ -170,7 +186,7 @@ export default {
         },
         groupBy(OurArray, property) {
             return OurArray.reduce(function(accumulator, object) {
-                // get the value of our object(age in our case) to use for group    the array as the array key
+                // get the value of our object(age in our case) to use for group the array as the array key
                 const key = object[property]
                 /*  if the current value is similar to the key(age) don't accumulate
                 the transformed array and leave it empty */
@@ -206,6 +222,7 @@ export default {
                     group[0].hidden && (group[0].hidden = false)
                 }
             }
+            this.currentPageItems = items
         },
         changeSort(column) {
             // TODO: support multiple column sorting
@@ -226,13 +243,9 @@ export default {
                     : 'n/a'
             return this.$_.isFunction(header.format) ? header.format(value) : value
         },
-        filterSearch(value, search, item) {
-            // if (!search.includes(value)) {
-            //     console.log(item)
-            // }
-            // return value != null && search != null && !search.includes(value)
-        },
+
         mouse: function(e, mouseType, target, rowspanId) {
+            // Make associated td elements to have the same hover effect
             if (target === 'cell') {
                 let elements = this.$refs.rowGroup.filter((ele, i) =>
                     ele.attributes.class.value.includes(`${rowspanId}-alterableRowspan`)
@@ -254,82 +267,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.data-table-rowspan {
-    a:hover {
-        text-decoration: underline;
+.rowspan-table {
+    .last-row td {
+        border-bottom: thin solid $table-border !important;
     }
-    table {
-        th {
-            padding: 0 24px;
-            background-color: $table-border;
-            text-transform: uppercase;
-            color: $small-text !important;
-            font-size: 11px;
-            &.active {
-                color: #000 !important;
-            }
-            &:last-child {
-                border-radius: 0 5px 0 0;
-            }
-            &:first-child {
-                border-radius: 5px 0 0 0;
-            }
-            .toggle-icon {
-                color: inherit;
-            }
-        }
-        tbody {
-            tr {
-                pointer-events: none !important;
-                td {
-                    pointer-events: all !important;
-                    padding: 0 24px;
-                    border-bottom: 1px solid $table-border;
-                    font-size: 14px;
-                    color: $navigation;
-                    @media (max-width: 600px) {
-                        border-bottom: none;
-                    }
-                    &:last-child {
-                        border-right: 1px solid $table-border;
-                    }
-                    &:first-child {
-                        border-left: 1px solid $table-border;
-                    }
-                    .cell-accent {
-                        height: 100%;
-                        padding: 0 24px;
-                        margin-left: -24px;
-                        display: flex;
-                        border-left: 8px solid #828282;
-                        &.info-accent {
-                            border-color: $accent;
-                        }
-                        &.success-accent {
-                            border-color: $success;
-                        }
-                        &.error-accent {
-                            border-color: $error;
-                        }
-                        &.warning-accent {
-                            border-color: $warning;
-                        }
-                    }
-                    &.actions {
-                        text-align: right;
-                        button {
-                            opacity: 0;
-                        }
-                    }
-                }
-
-                &:hover {
-                    td.actions button {
-                        opacity: 1;
-                    }
-                }
-            }
-        }
+    .border-left-thin {
+        border-left: thin solid $table-border !important;
     }
 }
 </style>

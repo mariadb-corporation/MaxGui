@@ -110,24 +110,14 @@
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
             >
-                <!--
-                     v-if="!$_.isUndefined(item[header.value]) || header.text === 'Actions'"
-                    -->
-
                 <td
                     v-for="(header, i) in visibleHeaders"
                     :key="i"
-                    :rowspan="i < numOfColsHasRowSpan ? item.rowspan : 1"
                     :class="[
                         header.value,
                         header.tdClass || header.class,
                         windowSize.x < 600 && 'v-data-table__mobile-row',
                     ]"
-                    :style="
-                        `${i === numOfColsHasRowSpan ? 'border-left: 1px solid #e7eef1;' : ''}
-                    ${item.hidden && i < numOfColsHasRowSpan ? 'display:none' : ''}
-                    `
-                    "
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
                     <!--
@@ -223,7 +213,6 @@ export default {
     props: {
         headers: { type: Array },
         data: { type: Array },
-        numOfColsHasRowSpan: { type: Number, default: 0 },
         sortBy: { type: String },
         search: { type: String, default: '' },
         sortDesc: { type: Boolean },
