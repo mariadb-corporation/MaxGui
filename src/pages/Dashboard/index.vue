@@ -10,7 +10,7 @@
             <span class="field-text-info color text-field-text"> Uptime {{ duration }} </span>
         </portal>
 
-        <v-slide-group v-model="model" width="100%" class="mb-5" center-active>
+        <v-slide-group v-model="model" width="100%" class="mt-5 mb-5" center-active>
             <v-slide-item>
                 <div style="width:25%" class="slide-nav-item d-flex flex-column">
                     <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
@@ -26,7 +26,6 @@
                     <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
                         {{ $t('sessions') }}
                     </p>
-
                     <v-card outlined class="fill-height pt-2"> <sessions-chart /></v-card>
                 </div>
             </v-slide-item>
@@ -103,6 +102,18 @@
 </template>
 
 <script>
+/*
+ * Copyright (c) 2020 MariaDB Corporation Ab
+ *
+ * Use of this software is governed by the Business Source License included
+ * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
+ *
+ * Change Date: 2024-07-01
+ *
+ * On the date above, in accordance with the Business Source License, use
+ * of this software will be governed by version 2 or later of the General
+ * Public License.
+ */
 import { mapGetters, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'

@@ -7,7 +7,7 @@
         :hide-default-header="true"
         :hide-default-footer="data.length <= 10"
         :footer-props="{ 'items-per-page-options': [] }"
-        :class="['data-table-rowspan', tableClass]"
+        :class="[tableClass]"
         :loading="loading"
         :options.sync="pagination"
         :page="page"
@@ -51,14 +51,13 @@
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
 
-        <template v-slot:item="{ item, index }">
-            <tr :key="item.serverId" :class="{ 'last-row': index === data.length - 1 }">
+        <template v-slot:item="{ item }">
+            <tr :key="item.serverId">
                 <td
                     v-for="(header, i) in headers"
                     :key="i"
                     :ref="i < numOfColsHasRowSpan ? 'rowGroup' : 'cell'"
                     :rowspan="i < numOfColsHasRowSpan ? item.alterableRowspan : null"
-                    :scope="i < numOfColsHasRowSpan ? 'rowgroup' : 'cell'"
                     :class="[
                         item.hidden && i < numOfColsHasRowSpan && 'hide',
 
@@ -103,6 +102,18 @@
     </v-data-table>
 </template>
 <script>
+/*
+ * Copyright (c) 2020 MariaDB Corporation Ab
+ *
+ * Use of this software is governed by the Business Source License included
+ * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
+ *
+ * Change Date: 2024-07-01
+ *
+ * On the date above, in accordance with the Business Source License, use
+ * of this software will be governed by version 2 or later of the General
+ * Public License.
+ */
 export default {
     name: 'data-table-rowspan',
     /* SLOTS available for data-table */
@@ -120,7 +131,7 @@ export default {
         loading: { type: Boolean, default: false },
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
-        tableClass: { type: String, default: 'data-table-full' },
+        tableClass: { type: String, default: 'data-table-rowspan' },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, defalut: 10 },
         page: { type: Number, default: 1 },
@@ -242,7 +253,7 @@ export default {
     },
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .data-table-rowspan {
     a:hover {
         text-decoration: underline;
@@ -315,16 +326,6 @@ export default {
                 &:hover {
                     td.actions button {
                         opacity: 1;
-                    }
-                }
-                &.last-row {
-                    td {
-                        &:last-child {
-                            border-radius: 0 0 5px 0;
-                        }
-                        &:first-child {
-                            border-radius: 0 0 0 5px;
-                        }
                     }
                 }
             }

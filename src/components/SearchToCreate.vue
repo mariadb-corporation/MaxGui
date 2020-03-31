@@ -21,8 +21,9 @@
 
             <v-btn
                 :disabled="isBtnDisabled"
+                width="160"
                 outlined
-                height="39"
+                height="36"
                 rounded
                 class="color text-accent-dark text-capitalize px-8 font-weight-medium"
                 depressed
@@ -46,6 +47,18 @@
 </template>
 
 <script>
+/*
+ * Copyright (c) 2020 MariaDB Corporation Ab
+ *
+ * Use of this software is governed by the Business Source License included
+ * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
+ *
+ * Change Date: 2024-07-01
+ *
+ * On the date above, in accordance with the Business Source License, use
+ * of this software will be governed by version 2 or later of the General
+ * Public License.
+ */
 import { mapMutations, mapGetters } from 'vuex'
 import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
 import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'

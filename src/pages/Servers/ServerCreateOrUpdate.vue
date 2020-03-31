@@ -26,7 +26,7 @@
 
                     <v-row>
                         <v-col cols="12">
-                            <h5>{{ $t('paramtersConfig') }}</h5>
+                            <h5>{{ $t('parametersConfig') }}</h5>
                         </v-col>
                         <fragment v-if="mode === 'post' ? true : false">
                             <v-col xs="12" sm="6">
