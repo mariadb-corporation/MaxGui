@@ -3,13 +3,13 @@
         <v-col class="pt-0" cols="12">
             <rowspan-data-table
                 :headers="tableHeaders"
-                :data="getData"
-                :sortDesc="false"
+                :data="dataProcessing"
+                :sortDesc="true"
                 :singleExpand="false"
                 :showExpand="false"
                 :numOfColsHasRowSpan="2"
                 :search="searchKeyWord"
-                :loading="!getData.length"
+                :loading="!dataProcessing.length"
                 sortBy="id"
             >
                 <template v-slot:append-id>
@@ -17,28 +17,38 @@
                 </template>
 
                 <template v-slot:id="{ data: { item: { id } } }">
-                    <router-link :to="`/dashboard/monitors/${id}`" class="no-underline">
+                    <router-link
+                        v-if="id !== 'Not monitored'"
+                        :to="`/dashboard/monitors/${id}`"
+                        class="no-underline"
+                    >
                         <span class="font-weight-bold">{{ id }} </span>
                     </router-link>
+                    <span v-else>{{ id }} </span>
                 </template>
+
                 <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-                    <icon-sprite-sheet
-                        size="13"
-                        class="status-icon"
-                        :frame="monitorStateIcon(monitorState)"
-                    >
-                        status
-                    </icon-sprite-sheet>
-                    <span>{{ monitorState }} </span>
+                    <fragment v-if="monitorState">
+                        <icon-sprite-sheet
+                            size="13"
+                            class="status-icon"
+                            :frame="monitorStateIcon(monitorState)"
+                        >
+                            status
+                        </icon-sprite-sheet>
+                        <span>{{ monitorState }} </span>
+                    </fragment>
                 </template>
+
                 <template v-slot:serverId="{ data: { item: { serverId } } }">
                     <fragment v-if="!serverId">
-                        <span>n/a </span>
+                        <span>Null</span>
                     </fragment>
                     <router-link v-else :to="`/dashboard/servers/${serverId}`" class="no-underline">
                         <span>{{ serverId }} </span>
                     </router-link>
                 </template>
+
                 <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
                     <icon-sprite-sheet
                         size="13"
@@ -48,9 +58,10 @@
                         status
                     </icon-sprite-sheet>
                 </template>
+
                 <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
                     <fragment v-if="servicesIdArr.length === 0">
-                        <span>n/a </span>
+                        <span>No service</span>
                     </fragment>
 
                     <fragment v-else-if="servicesIdArr.length < 2">
@@ -112,12 +123,17 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['monitorsDataMap', 'allServersMap', 'allMonitors', 'searchKeyWord']),
+        ...mapGetters([
+            'allMonitorsMap',
+            'allServers',
+            'allServersMap',
+            'allMonitors',
+            'searchKeyWord',
+        ]),
         tableHeaders: function() {
             return [
                 { text: `Monitor`, value: 'id' },
                 { text: 'State', value: 'monitorState' },
-
                 { text: 'Servers', sortable: false, value: 'serverId' },
                 { text: 'Status', sortable: false, value: 'serverStatus' },
                 { text: 'Address', sortable: false, value: 'serverAddress' },
@@ -128,94 +144,80 @@ export default {
             ]
         },
         dataProcessing: function() {
-            return null
-        },
-        getData: function() {
-            if (this.allMonitors) {
-                let monitorInfo = []
-                /*  First loop through monitors to get associated(linked) servers ID
-                    and monitor's id and monitor's state
-                */
-                let allMonitors = this.$_.cloneDeep(this.allMonitors)
+            if (this.allServers.length && this.allMonitorsMap.size) {
+                let serverInfo = []
+                let allServers = this.$_.cloneDeep(this.allServers)
 
-                for (let n = 0; n < allMonitors.length; ++n) {
+                for (let index = 0; index < allServers.length; ++index) {
                     const {
-                        id: monitorId,
-                        attributes: { state: monitorState },
-                        relationships: { servers: { data: linkedServers = [] } = {} },
-                    } = allMonitors[n]
-                    // Get array of obj linked servers based on linkedServers array of IDs
-                    let serversArr = []
-                    if (linkedServers.length) {
-                        for (let l = 0; l < linkedServers.length; ++l) {
-                            let serversLinked = this.allServersMap.get(linkedServers[l].id)
-                            serversArr.push(serversLinked)
-                        }
-                    }
+                        id: serverId,
+                        attributes: { state: serverState, parameters, statistics },
+                        relationships: {
+                            services: { data: servicesData = [] } = {},
+                            monitors: { data: linkedMonitors = [] } = {},
+                        },
+                    } = allServers[index]
+                    let servicesIdArr = servicesData ? servicesData.map(item => `${item.id}`) : []
 
-                    /*  Loop through serversArr of objects to add value to row*/
-                    if (serversArr.length) {
-                        let lastIndex = serversArr.length - 1
-                        for (let index = 0; index < serversArr.length; ++index) {
-                            const {
-                                id: serverId,
-                                attributes: { state: serverState, parameters, statistics },
-                                relationships: { services: { data: servicesData = [] } = {} },
-                            } = serversArr[index]
-                            let servicesIdArr = servicesData
-                                ? servicesData.map(item => `${item.id}`)
-                                : []
-                            let row = {
-                                id: monitorId,
-                                monitorState: monitorState,
-                                originalRowSpan: serversArr.length,
-                                alterableRowspan: serversArr.length,
-                                originalHidden: false,
-                                hidden: false,
-                                serverId: serverId,
-                                serverStatus: serverState,
-                                serverAddress: parameters.address,
-                                serverPort: parameters.port,
-                                serverConnections: statistics.connections,
-                                serverState: serverState,
-                                servicesIdArr: servicesIdArr,
-                            }
-                            /*  only visible the td alterableRowspan on the first index, others row needs to have
-                                the data but don't neccessary to visible,
-                                this makes alterableRowspan work and preserves searching function
-                            */
-                            if (index !== 0) {
-                                row.hidden = true
-                                row.originalHidden = true
-                            }
-
-                            monitorInfo.push(row)
-                        }
-                    } else {
+                    if (linkedMonitors.length) {
+                        // The linkedMonitors is always an array with one element -> get monitor at index 0
+                        let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
                         let row = {
-                            id: monitorId,
-                            monitorState: monitorState,
-                            originalRowSpan: 1,
-                            alterableRowspan: 1,
+                            id: monitorLinked.id, // aka monitorId
+                            monitorState: monitorLinked.attributes.state,
                             originalHidden: false,
                             hidden: false,
-                            serverId: null,
-                            serverStatus: null,
-                            serverAddress: null,
-                            serverPort: null,
-                            serverConnections: null,
-                            serverState: null,
-                            servicesIdArr: [],
+                            serverId: serverId,
+                            serverStatus: serverState,
+                            serverAddress: parameters.address,
+                            serverPort: parameters.port,
+                            serverConnections: statistics.connections,
+                            serverState: serverState,
+                            servicesIdArr: servicesIdArr,
                         }
-                        monitorInfo.push(row)
+                        serverInfo.push(row)
+                    } else {
+                        let row = {
+                            id: 'Not monitored',
+                            monitorState: null,
+                            originalHidden: false,
+                            hidden: false,
+                            serverId: serverId,
+                            serverStatus: serverState,
+                            serverAddress: parameters.address,
+                            serverPort: parameters.port,
+                            serverConnections: statistics.connections,
+                            serverState: serverState,
+                            servicesIdArr: servicesIdArr,
+                        }
+                        serverInfo.push(row)
                     }
                 }
-                return monitorInfo
+                // get all unique monitorId
+                let uniqueSet = new Set(serverInfo.map(server => server.id))
+                let monitorIds = [...uniqueSet]
+                let groupByMonitors = this.$help.groupBy(serverInfo, 'id')
+                for (let i = 0; i < monitorIds.length; ++i) {
+                    let group = groupByMonitors[`${monitorIds[i]}`]
+
+                    for (let n = 0; n < group.length; ++n) {
+                        group[n].alterableRowspan = group.length
+                        group[n].originalRowSpan = group.length
+                        if (n !== 0) {
+                            group[n].originalHidden = true
+                            group[n].hidden = true
+                        }
+                    }
+                }
+
+                return serverInfo
             }
             return []
         },
     },
-
+    created() {
+        this.dataProcessing
+    },
     methods: {
         ...mapActions(['destroyServer']),
         monitorStateIcon(monitorState) {
