@@ -14,7 +14,7 @@ import Vue from 'vue'
 
 export default {
     state: {
-        servicesData: [],
+        allServices: [],
         // listenersByServiceIdMap: new Map(),
         currentService: {},
     },
@@ -23,7 +23,7 @@ export default {
          * @param {Array} payload payload Array
          */
         setServices(state, payload) {
-            state.servicesData = payload
+            state.allServices = payload
         },
         setCurrentService(state, payload) {
             state.currentService = payload
@@ -44,7 +44,7 @@ export default {
             })
             commit('setCurrentService', res.data.data)
         },
-        async fetchServices({ commit }) {
+        async fetchAllServices({ commit }) {
             let res = await Vue.axios.get(`/services`)
             await commit('setServices', res.data.data)
         },
@@ -94,7 +94,7 @@ export default {
                     text: message,
                     type: 'success',
                 })
-                await dispatch('fetchServices')
+                await dispatch('fetchAllServices')
             }
         },
         /**
@@ -104,7 +104,7 @@ export default {
             let res = await Vue.axios.delete(`/services/${id}`)
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchServices')
+                await dispatch('fetchAllServices')
                 await commit('showMessage', {
                     text: [`Service ${id} is deleted`],
                     type: 'success',
@@ -128,7 +128,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchServices')
+                await dispatch('fetchAllServices')
                 await commit('showMessage', {
                     text: message,
                     type: 'success',
@@ -154,11 +154,11 @@ export default {
         // },
     },
     getters: {
-        servicesData: state => state.servicesData,
+        allServices: state => state.allServices,
         currentService: state => state.currentService,
-        servicesDataMap: state => {
+        allServicesMap: state => {
             let map = new Map()
-            state.servicesData.forEach(ele => {
+            state.allServices.forEach(ele => {
                 map.set(ele.id, ele)
             })
             return map
@@ -166,7 +166,7 @@ export default {
 
         allServicesInfo: state => {
             let idArr = []
-            return state.servicesData.reduce((accumulator, _, index, array) => {
+            return state.allServices.reduce((accumulator, _, index, array) => {
                 idArr.push(array[index].id)
                 return (accumulator = { idArr: idArr })
             }, [])

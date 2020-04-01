@@ -15,17 +15,17 @@ import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
     state: {
-        sessions: [],
+        allSessions: [],
         sessionsChartData: {
             datasets: [],
         },
     },
     mutations: {
         /**
-         * @param {Array} payload  // Array of sessions resources
+         * @param {Array} payload  // Array of allSessions resources
          */
         setSessions(state, payload) {
-            state.sessions = payload
+            state.allSessions = payload
         },
         setSessionsChartData(state, payload) {
             state.sessionsChartData = payload
@@ -37,8 +37,8 @@ export default {
             await commit('setSessions', res.data.data)
         },
         genDataSetSchema({ commit, state }) {
-            const { sessions } = state
-            if (sessions) {
+            const { allSessions } = state
+            if (allSessions) {
                 let lineColors = dynamicColors(0)
 
                 let indexOfOpacity = lineColors.lastIndexOf(')') - 1
@@ -64,7 +64,7 @@ export default {
         },
     },
     getters: {
-        sessions: state => state.sessions,
+        allSessions: state => state.allSessions,
         sessionsChartData: state => state.sessionsChartData,
     },
 }

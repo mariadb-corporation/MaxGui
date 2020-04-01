@@ -306,7 +306,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServicesInfo', 'servicesDataMap']),
+        ...mapGetters(['allServicesInfo', 'allServicesMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -333,7 +333,7 @@ export default {
          * @returns {Object} Return object service
          */
         getCurrentService: function() {
-            return this.servicesDataMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
+            return this.allServicesMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
         },
         booleanParams: function() {
             return this.$_.pickBy(this.parameters, this.$_.isBoolean)

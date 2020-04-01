@@ -1,104 +1,96 @@
 <template>
-    <v-row class="mt-0">
-        <v-col class="pt-0" cols="12">
-            <rowspan-data-table
-                :headers="tableHeaders"
-                :data="dataProcessing"
-                :sortDesc="true"
-                :singleExpand="false"
-                :showExpand="false"
-                :numOfColsHasRowSpan="2"
-                :search="searchKeyWord"
-                :loading="!dataProcessing.length"
-                sortBy="id"
-            >
-                <template v-slot:append-id>
-                    <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
-                </template>
+    <rowspan-data-table
+        :headers="tableHeaders"
+        :data="dataProcessing"
+        :sortDesc="true"
+        :singleExpand="false"
+        :showExpand="false"
+        :numOfColsHasRowSpan="2"
+        :search="searchKeyWord"
+        :loading="!isloaded"
+        sortBy="id"
+    >
+        <template v-slot:append-id>
+            <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
+        </template>
 
-                <template v-slot:id="{ data: { item: { id } } }">
+        <template v-slot:id="{ data: { item: { id } } }">
+            <router-link
+                v-if="id !== 'Not monitored'"
+                :to="`/dashboard/monitors/${id}`"
+                class="no-underline"
+            >
+                <span class="font-weight-bold">{{ id }} </span>
+            </router-link>
+            <span v-else>{{ id }} </span>
+        </template>
+
+        <template v-slot:monitorState="{ data: { item: { monitorState } } }">
+            <fragment v-if="monitorState !== 'null'">
+                <icon-sprite-sheet
+                    size="13"
+                    class="status-icon"
+                    :frame="monitorStateIcon(monitorState)"
+                >
+                    status
+                </icon-sprite-sheet>
+                <span>{{ monitorState }} </span>
+            </fragment>
+        </template>
+
+        <template v-slot:serverId="{ data: { item: { serverId } } }">
+            <fragment v-if="!serverId">
+                <span>Null</span>
+            </fragment>
+            <router-link v-else :to="`/dashboard/servers/${serverId}`" class="no-underline">
+                <span>{{ serverId }} </span>
+            </router-link>
+        </template>
+
+        <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
+            <icon-sprite-sheet size="13" class="status-icon" :frame="serverStateIcon(serverStatus)">
+                status
+            </icon-sprite-sheet>
+        </template>
+
+        <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
+            <fragment v-if="servicesIdArr.length === 0">
+                <span>No service</span>
+            </fragment>
+
+            <fragment v-else-if="servicesIdArr.length < 2">
+                <template v-for="serviceId in servicesIdArr">
                     <router-link
-                        v-if="id !== 'Not monitored'"
-                        :to="`/dashboard/monitors/${id}`"
+                        :key="serviceId"
+                        :to="`/dashboard/services/${serviceId}`"
                         class="no-underline"
                     >
-                        <span class="font-weight-bold">{{ id }} </span>
-                    </router-link>
-                    <span v-else>{{ id }} </span>
-                </template>
-
-                <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-                    <fragment v-if="monitorState !== 'null'">
-                        <icon-sprite-sheet
-                            size="13"
-                            class="status-icon"
-                            :frame="monitorStateIcon(monitorState)"
-                        >
-                            status
-                        </icon-sprite-sheet>
-                        <span>{{ monitorState }} </span>
-                    </fragment>
-                </template>
-
-                <template v-slot:serverId="{ data: { item: { serverId } } }">
-                    <fragment v-if="!serverId">
-                        <span>Null</span>
-                    </fragment>
-                    <router-link v-else :to="`/dashboard/servers/${serverId}`" class="no-underline">
-                        <span>{{ serverId }} </span>
+                        <span>{{ serviceId }} </span>
                     </router-link>
                 </template>
+            </fragment>
 
-                <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
-                    <icon-sprite-sheet
-                        size="13"
-                        class="status-icon"
-                        :frame="serverStateIcon(serverStatus)"
-                    >
-                        status
-                    </icon-sprite-sheet>
-                </template>
-
-                <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
-                    <fragment v-if="servicesIdArr.length === 0">
-                        <span>No service</span>
-                    </fragment>
-
-                    <fragment v-else-if="servicesIdArr.length < 2">
-                        <template v-for="serviceId in servicesIdArr">
-                            <router-link
-                                :key="serviceId"
-                                :to="`/dashboard/services/${serviceId}`"
-                                class="no-underline"
-                            >
-                                <span>{{ serviceId }} </span>
-                            </router-link>
-                        </template>
-                    </fragment>
-
-                    <template v-else>
-                        <v-tooltip top transition="fade-transition">
-                            <template v-slot:activator="{ on }">
-                                <span class="pointer color text-links" v-on="on">
-                                    {{ servicesIdArr.length }}
-                                    {{ $t('services').toLowerCase() }}
-                                </span>
-                            </template>
-                            <template v-for="serviceId in servicesIdArr">
-                                <router-link
-                                    :key="serviceId"
-                                    :to="`/dashboard/services/${serviceId}`"
-                                    class="no-underline"
-                                >
-                                    <span>{{ serviceId }} </span>
-                                </router-link>
-                            </template>
-                        </v-tooltip>
+            <template v-else>
+                <v-tooltip top transition="fade-transition">
+                    <template v-slot:activator="{ on }">
+                        <span class="pointer color text-links" v-on="on">
+                            {{ servicesIdArr.length }}
+                            {{ $t('services').toLowerCase() }}
+                        </span>
                     </template>
-                </template>
-            </rowspan-data-table>
-        </v-col>
-    </v-row>
+                    <template v-for="serviceId in servicesIdArr">
+                        <router-link
+                            :key="serviceId"
+                            :to="`/dashboard/services/${serviceId}`"
+                            class="no-underline"
+                        >
+                            <span>{{ serviceId }} </span>
+                        </router-link>
+                    </template>
+                </v-tooltip>
+            </template>
+        </template>
+    </rowspan-data-table>
 </template>
 
 <script>
@@ -121,17 +113,9 @@ export default {
     components: {
         RowspanDataTable,
     },
-
-    computed: {
-        ...mapGetters([
-            'allMonitorsMap',
-            'allServers',
-            'allServersMap',
-            'allMonitors',
-            'searchKeyWord',
-        ]),
-        tableHeaders: function() {
-            return [
+    data() {
+        return {
+            tableHeaders: [
                 { text: `Monitor`, value: 'id' },
                 { text: 'State', value: 'monitorState' },
                 { text: 'Servers', sortable: false, value: 'serverId' },
@@ -142,10 +126,25 @@ export default {
                 { text: 'State', sortable: false, value: 'serverState' },
                 { text: 'GTID', sortable: false, value: 'gtid' },
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
-            ]
+            ],
+        }
+    },
+    computed: {
+        ...mapGetters([
+            'allMonitorsMap',
+            'allServers',
+            'allServersMap',
+            'allMonitors',
+            'searchKeyWord',
+        ]),
+        isloaded: function() {
+            if (this.allServers.length && this.allMonitorsMap.size) {
+                return true
+            }
+            return false
         },
         dataProcessing: function() {
-            if (this.allServers.length && this.allMonitorsMap.size) {
+            if (this.isloaded) {
                 let tableRows = []
                 let allServers = this.$_.cloneDeep(this.allServers)
 
@@ -159,11 +158,11 @@ export default {
                             gtid_current_pos,
                         },
                         relationships: {
-                            services: { data: servicesData = [] } = {},
+                            services: { data: allServices = [] } = {},
                             monitors: { data: linkedMonitors = [] } = {},
                         },
                     } = allServers[index]
-                    let servicesIdArr = servicesData ? servicesData.map(item => `${item.id}`) : []
+                    let servicesIdArr = allServices ? allServices.map(item => `${item.id}`) : []
 
                     let row = {
                         originalHidden: false,

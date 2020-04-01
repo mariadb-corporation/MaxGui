@@ -6,7 +6,7 @@
             :to="route.path"
             class="color border-bottom-table-header "
         >
-            {{ route.name }}
+            {{ route.name === 'sessions' ? 'Current Sessions' : route.name }}
 
             <span class="field-text-info color text-field-text">
                 ({{ getTotal(route.name) }})
@@ -47,7 +47,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['searchKeyWord', 'allServers', 'servicesData']),
+        ...mapGetters(['searchKeyWord', 'allServers', 'allServices', 'allSessions']),
 
         // tabRoutesFilter() {
         //     let self = this
@@ -70,7 +70,10 @@ export default {
                     total = this.allServers.length
                     break
                 case 'services':
-                    total = this.servicesData.length
+                    total = this.allServices.length
+                    break
+                case 'sessions':
+                    total = this.allSessions.length || 2 // testing add 2 sessions
             }
             return total
         },

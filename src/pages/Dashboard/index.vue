@@ -166,14 +166,16 @@ export default {
         await this.fetchMaxScaleDetails()
         await this.fetchAllServers()
         await this.fetchAllMonitors()
-        await this.fetchServices()
+        await this.fetchAllSessions()
+        await this.fetchAllServices()
     },
     methods: {
         ...mapActions([
             'fetchMaxScaleDetails',
             'fetchAllServers',
             'fetchAllMonitors',
-            'fetchServices',
+            'fetchAllSessions',
+            'fetchAllServices',
         ]),
 
         navigate(path) {

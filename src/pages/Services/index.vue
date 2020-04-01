@@ -5,11 +5,11 @@
                 :headers="tableHeaders"
                 :data="generateTableRows"
                 :sortDesc="false"
-                :loading="!generateTableRows.length"
+                :loading="isloading"
                 sortBy="id"
             >
                 <template v-slot:append-id>
-                    <span class="ml-1 color text-field-text"> ({{ servicesData.length }}) </span>
+                    <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
                 </template>
                 <template v-slot:state="{ data: { item: { state } } }">
                     <icon-sprite-sheet
@@ -92,10 +92,11 @@ export default {
                 { text: 'Total Connections', value: 'total_connections' },
                 { text: 'Servers', value: 'servers' },
             ],
+            isloading: true,
         }
     },
     computed: {
-        ...mapGetters(['servicesData']),
+        ...mapGetters(['allServices']),
         /**
          * @return {Array} An array of objects
          */
@@ -104,10 +105,10 @@ export default {
              * @param {Array} itemsArr
              *  Elements are {Object} row
              */
-            if (this.servicesData) {
+            if (this.allServices) {
                 let itemsArr = []
-                const { servicesData } = this
-                for (let n = servicesData.length - 1; n >= 0; --n) {
+                const { allServices } = this
+                for (let n = allServices.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row
                      * @property {String} row.id - Service's name
@@ -120,7 +121,7 @@ export default {
                         id,
                         attributes: { state, router, connections, total_connections },
                         relationships: { servers: { data: allServers = [] } = {} },
-                    } = servicesData[n] || {}
+                    } = allServices[n] || {}
 
                     let serversList = allServers ? allServers.map(item => `${item.id}`) : []
                     let row = {
@@ -137,6 +138,11 @@ export default {
             }
             return []
         },
+    },
+    updated() {
+        if (this.allServices) {
+            this.isloading = false
+        }
     },
     methods: {
         serviceStateIcon(monitorState) {

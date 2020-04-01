@@ -12,6 +12,7 @@
  */
 import Servers from 'pages/Servers'
 import Services from 'pages/Services'
+import Sessions from 'pages/Sessions'
 
 export default [
     // Tab Routes
@@ -23,6 +24,16 @@ export default [
             layout: 'app-layout',
         },
         name: 'servers',
+        isTabRoute: true,
+    },
+    {
+        path: '/dashboard/sessions',
+        component: Sessions,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
+        name: 'sessions',
         isTabRoute: true,
     },
     {
