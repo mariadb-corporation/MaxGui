@@ -113,6 +113,14 @@ export function groupBy(OurArray, property) {
         // Also we also set the initial value of reduce() to an empty object
     }, {})
 }
+/**
+ * @param {String} str String to be sliced
+ * @param {String} char find the indexOf provided char
+ * @return {String} new String
+ */
+export function sliceStrAtChar(str, char) {
+    return str.slice(0, str.indexOf(char))
+}
 
 Object.defineProperties(Vue.prototype, {
     $help: {
@@ -128,6 +136,7 @@ Object.defineProperties(Vue.prototype, {
                 getErrorsArr,
                 strReplaceAt,
                 groupBy,
+                sliceStrAtChar,
             }
         },
     },

@@ -1,11 +1,5 @@
 <template>
-    <data-table
-        :headers="tableHeaders"
-        :data="generateTableRows"
-        :sortDesc="false"
-        :loading="!isloaded"
-        sortBy="id"
-    >
+    <data-table :headers="tableHeaders" :data="generateTableRows" :sortDesc="false" sortBy="id">
         <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
         </template>
@@ -86,12 +80,7 @@ export default {
     },
     computed: {
         ...mapGetters(['allSessions', 'allServices']),
-        isloaded: function() {
-            if (this.allSessions && this.allServices) {
-                return true
-            }
-            return false
-        },
+
         generateTableRows: function() {
             let sessionsTest = [
                 {
@@ -149,7 +138,7 @@ export default {
                     },
                 },
             ]
-            // if (this.isloaded) {
+            //   if (this.allSessions && this.allServices) {
             if (sessionsTest.length) {
                 let itemsArr = []
 

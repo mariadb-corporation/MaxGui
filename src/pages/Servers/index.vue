@@ -7,7 +7,6 @@
         :showExpand="false"
         :numOfColsHasRowSpan="2"
         :search="searchKeyWord"
-        :loading="!isloaded"
         sortBy="id"
     >
         <template v-slot:append-id>
@@ -34,7 +33,7 @@
                 >
                     status
                 </icon-sprite-sheet>
-                <span>{{ monitorState }} </span>
+                <span>{{ $help.sliceStrAtChar(monitorState, '|') }} </span>
             </fragment>
         </template>
 
@@ -137,14 +136,9 @@ export default {
             'allMonitors',
             'searchKeyWord',
         ]),
-        isloaded: function() {
-            if (this.allServers.length && this.allMonitorsMap.size) {
-                return true
-            }
-            return false
-        },
+
         dataProcessing: function() {
-            if (this.isloaded) {
+            if (this.allServers.length && this.allMonitorsMap.size) {
                 let tableRows = []
                 let allServers = this.$_.cloneDeep(this.allServers)
 
@@ -180,7 +174,12 @@ export default {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
                         row.id = monitorLinked.id // aka monitorId
-                        row.monitorState = monitorLinked.attributes.state
+                        /*  associate with monitorID will make this column sortable
+                            This is because, when two rowspan td have the same value the default sort won't recognize
+                            which td belongs to which row. The rendered result just needs to display the first part,
+                            separate by the |
+                        */
+                        row.monitorState = `${monitorLinked.attributes.state}|${monitorLinked.id}`
                     } else {
                         row.id = 'Not monitored'
                         row.monitorState = 'null' // using 'null' won't break filter result in table
@@ -188,6 +187,7 @@ export default {
                     tableRows.push(row)
                 }
                 // get all unique monitorId
+
                 let uniqueSet = new Set(tableRows.map(item => item.id))
                 let monitorIds = [...uniqueSet]
                 let groupByMonitors = this.$help.groupBy(tableRows, 'id')

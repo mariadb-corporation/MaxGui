@@ -5,7 +5,6 @@
                 :headers="tableHeaders"
                 :data="generateTableRows"
                 :sortDesc="false"
-                :loading="isloading"
                 sortBy="id"
             >
                 <template v-slot:append-id>
@@ -139,11 +138,7 @@ export default {
             return []
         },
     },
-    updated() {
-        if (this.allServices) {
-            this.isloading = false
-        }
-    },
+
     methods: {
         serviceStateIcon(monitorState) {
             if (monitorState.includes('Started')) return 2
