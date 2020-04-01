@@ -164,14 +164,14 @@ export default {
     },
     async created() {
         await this.fetchMaxScaleDetails()
-        await this.fetchServers()
+        await this.fetchAllServers()
         await this.fetchAllMonitors()
         await this.fetchServices()
     },
     methods: {
         ...mapActions([
             'fetchMaxScaleDetails',
-            'fetchServers',
+            'fetchAllServers',
             'fetchAllMonitors',
             'fetchServices',
         ]),

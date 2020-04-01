@@ -119,10 +119,10 @@ export default {
                     const {
                         id,
                         attributes: { state, router, connections, total_connections },
-                        relationships: { servers: { data: serversData = [] } = {} },
+                        relationships: { servers: { data: allServers = [] } = {} },
                     } = servicesData[n] || {}
 
-                    let serversList = serversData ? serversData.map(item => `${item.id}`) : []
+                    let serversList = allServers ? allServers.map(item => `${item.id}`) : []
                     let row = {
                         id: id,
                         state: state,

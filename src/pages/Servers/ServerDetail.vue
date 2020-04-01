@@ -47,7 +47,7 @@ export default {
         //  * @returns {Object} A deep clone object from vuex state
         //  */
         // getCurrentServer: function() {
-        //     return this.$_.cloneDeep(this.serversDataMap.get(this.id))
+        //     return this.$_.cloneDeep(this.allServersMap.get(this.id))
         // },
     },
     created() {

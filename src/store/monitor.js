@@ -129,7 +129,13 @@ export default {
     },
     getters: {
         allMonitors: state => state.allMonitors,
-
+        monitorsDataMap: state => {
+            let map = new Map()
+            state.allMonitors.forEach(ele => {
+                map.set(ele.id, ele)
+            })
+            return map
+        },
         currentMonitor: state => state.currentMonitor,
     },
 }

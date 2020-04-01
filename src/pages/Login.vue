@@ -124,6 +124,7 @@
  * Public License.
  */
 import { mapState, mapActions, mapMutations } from 'vuex'
+import axios from 'axios'
 
 export default {
     name: 'login',
@@ -180,20 +181,22 @@ export default {
                 return
             }
             this.isLoading = true
+            let self = this
             try {
-                let self = this
-                let res = await self.axios.get(`/auth`, { auth: self.credential })
+                const login = axios.create()
+                // use login axios instance, instead of showing global interceptor, show error in catch
+                let res = await login.get(`/auth`, { auth: self.credential })
                 // temporary user's name, it is using username for name
                 let userObj = { username: self.credential.username, token: res.data.meta.token }
                 await self.setUser(userObj)
                 sessionStorage.setItem('user', JSON.stringify(userObj))
+                // set headers to global axios instance
                 await (self.axios.defaults.headers.common[
                     'Authorization'
                 ] = `Bearer ${res.data.meta.token}`)
                 await self.$router.push(self.$route.query.redirect || '/dashboard/servers')
             } catch (error) {
                 this.displayOneError = true
-
                 if (error) {
                     this.errorMessage =
                         error.response.status === 401

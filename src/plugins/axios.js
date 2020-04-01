@@ -58,4 +58,5 @@ apiClient.interceptors.response.use(
         }
     }
 )
+
 Vue.use(VueAxios, apiClient)

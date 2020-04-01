@@ -112,7 +112,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['serversDataMap', 'allMonitors', 'searchKeyWord']),
+        ...mapGetters(['monitorsDataMap', 'allServersMap', 'allMonitors', 'searchKeyWord']),
         tableHeaders: function() {
             return [
                 { text: `Monitor`, value: 'id' },
@@ -127,7 +127,9 @@ export default {
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ]
         },
-
+        dataProcessing: function() {
+            return null
+        },
         getData: function() {
             if (this.allMonitors) {
                 let monitorInfo = []
@@ -146,7 +148,7 @@ export default {
                     let serversArr = []
                     if (linkedServers.length) {
                         for (let l = 0; l < linkedServers.length; ++l) {
-                            let serversLinked = this.serversDataMap.get(linkedServers[l].id)
+                            let serversLinked = this.allServersMap.get(linkedServers[l].id)
                             serversArr.push(serversLinked)
                         }
                     }

@@ -47,7 +47,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['searchKeyWord', 'serversData', 'servicesData']),
+        ...mapGetters(['searchKeyWord', 'allServers', 'servicesData']),
 
         // tabRoutesFilter() {
         //     let self = this
@@ -67,7 +67,7 @@ export default {
             let total = null
             switch (name) {
                 case 'servers':
-                    total = this.serversData.length
+                    total = this.allServers.length
                     break
                 case 'services':
                     total = this.servicesData.length

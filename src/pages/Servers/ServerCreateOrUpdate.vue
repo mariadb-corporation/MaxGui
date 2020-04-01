@@ -281,7 +281,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServersInfo', 'serversDataMap']),
+        ...mapGetters(['allServersInfo', 'allServersMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -307,7 +307,7 @@ export default {
          * @returns {Object} Return object server
          */
         getCurrentServer: function() {
-            return this.serversDataMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
+            return this.allServersMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
         },
     },
     watch: {

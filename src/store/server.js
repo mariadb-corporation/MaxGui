@@ -14,31 +14,32 @@ import Vue from 'vue'
 
 export default {
     state: {
-        serversData: [],
+        allServers: [],
         currentServer: {},
     },
     mutations: {
         /**
-         * @param {Array} payload // List of server resouces
+         * @param {Array} payload // List of server resources
          */
         setServers(state, payload) {
-            state.serversData = payload
+            state.allServers = payload
         },
         setCurrentServer(state, payload) {
             state.currentServer = payload
         },
     },
     actions: {
+        async fetchAllServers({ commit }) {
+            let res = await Vue.axios.get(`/servers`)
+            await commit('setServers', res.data.data)
+        },
         async fetchServerById({ commit, state }, id) {
             let res = await Vue.axios.get(`/servers/${id}`, {
                 auth: state.credentials,
             })
             commit('setCurrentServer', res.data.data)
         },
-        async fetchServers({ commit }) {
-            let res = await Vue.axios.get(`/servers`)
-            await commit('setServers', res.data.data)
-        },
+
         /**
          * @param {Object} serverData Server object
          * @param {String} serverData.mode Mode to perform async request POST or Patch
@@ -74,7 +75,7 @@ export default {
                     text: message,
                     type: 'success',
                 })
-                await dispatch('fetchServers')
+                await dispatch('fetchAllServers')
             }
         },
         /**
@@ -84,7 +85,7 @@ export default {
             let res = await Vue.axios.delete(`/servers/${id}`)
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchServers')
+                await dispatch('fetchAllServers')
                 await commit('showMessage', {
                     text: [`Server ${id} is deleted`],
                     type: 'success',
@@ -110,7 +111,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchServers')
+                await dispatch('fetchAllServers')
                 await commit('showMessage', {
                     text: message,
                     type: 'success',
@@ -119,11 +120,11 @@ export default {
         },
     },
     getters: {
-        serversData: state => state.serversData,
+        allServers: state => state.allServers,
         currentServer: state => state.currentServer,
-        serversDataMap: state => {
+        allServersMap: state => {
             let map = new Map()
-            state.serversData.forEach(ele => {
+            state.allServers.forEach(ele => {
                 map.set(ele.id, ele)
             })
             return map
@@ -131,7 +132,7 @@ export default {
         allServersInfo: state => {
             let idArr = []
             let portNumArr = []
-            return state.serversData.reduce((accumulator, _, index, array) => {
+            return state.allServers.reduce((accumulator, _, index, array) => {
                 idArr.push(array[index].id)
                 portNumArr.push(array[index].attributes.parameters.port)
 
