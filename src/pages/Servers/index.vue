@@ -145,7 +145,7 @@ export default {
         },
         dataProcessing: function() {
             if (this.allServers.length && this.allMonitorsMap.size) {
-                let serverInfo = []
+                let tableRows = []
                 let allServers = this.$_.cloneDeep(this.allServers)
 
                 for (let index = 0; index < allServers.length; ++index) {
@@ -175,7 +175,7 @@ export default {
                             serverState: serverState,
                             servicesIdArr: servicesIdArr,
                         }
-                        serverInfo.push(row)
+                        tableRows.push(row)
                     } else {
                         let row = {
                             id: 'Not monitored',
@@ -190,13 +190,13 @@ export default {
                             serverState: serverState,
                             servicesIdArr: servicesIdArr,
                         }
-                        serverInfo.push(row)
+                        tableRows.push(row)
                     }
                 }
                 // get all unique monitorId
-                let uniqueSet = new Set(serverInfo.map(server => server.id))
+                let uniqueSet = new Set(tableRows.map(item => item.id))
                 let monitorIds = [...uniqueSet]
-                let groupByMonitors = this.$help.groupBy(serverInfo, 'id')
+                let groupByMonitors = this.$help.groupBy(tableRows, 'id')
                 for (let i = 0; i < monitorIds.length; ++i) {
                     let group = groupByMonitors[`${monitorIds[i]}`]
 
@@ -210,14 +210,12 @@ export default {
                     }
                 }
 
-                return serverInfo
+                return tableRows
             }
             return []
         },
     },
-    created() {
-        this.dataProcessing
-    },
+
     methods: {
         ...mapActions(['destroyServer']),
         monitorStateIcon(monitorState) {
