@@ -227,6 +227,7 @@ export default {
                 item[header.value] || item[header.value] === 0
                     ? item[header.value].text || item[header.value]
                     : 'n/a'
+
             return this.$_.isFunction(header.format) ? header.format(value) : value
         },
 

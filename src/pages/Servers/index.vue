@@ -28,7 +28,7 @@
                 </template>
 
                 <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-                    <fragment v-if="monitorState">
+                    <fragment v-if="monitorState !== 'null'">
                         <icon-sprite-sheet
                             size="13"
                             class="status-icon"
@@ -140,6 +140,7 @@ export default {
                 { text: 'Port', sortable: false, value: 'serverPort' },
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
                 { text: 'State', sortable: false, value: 'serverState' },
+                { text: 'GTID', sortable: false, value: 'gtid' },
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ]
         },
@@ -151,7 +152,12 @@ export default {
                 for (let index = 0; index < allServers.length; ++index) {
                     const {
                         id: serverId,
-                        attributes: { state: serverState, parameters, statistics },
+                        attributes: {
+                            state: serverState,
+                            parameters,
+                            statistics,
+                            gtid_current_pos,
+                        },
                         relationships: {
                             services: { data: servicesData = [] } = {},
                             monitors: { data: linkedMonitors = [] } = {},
@@ -159,39 +165,28 @@ export default {
                     } = allServers[index]
                     let servicesIdArr = servicesData ? servicesData.map(item => `${item.id}`) : []
 
+                    let row = {
+                        originalHidden: false,
+                        hidden: false,
+                        serverId: serverId,
+                        serverStatus: serverState,
+                        serverAddress: parameters.address,
+                        serverPort: parameters.port,
+                        serverConnections: statistics.connections,
+                        serverState: serverState,
+                        servicesIdArr: servicesIdArr,
+                        gtid: gtid_current_pos ? gtid_current_pos : 'null',
+                    }
                     if (linkedMonitors.length) {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
-                        let row = {
-                            id: monitorLinked.id, // aka monitorId
-                            monitorState: monitorLinked.attributes.state,
-                            originalHidden: false,
-                            hidden: false,
-                            serverId: serverId,
-                            serverStatus: serverState,
-                            serverAddress: parameters.address,
-                            serverPort: parameters.port,
-                            serverConnections: statistics.connections,
-                            serverState: serverState,
-                            servicesIdArr: servicesIdArr,
-                        }
-                        tableRows.push(row)
+                        row.id = monitorLinked.id // aka monitorId
+                        row.monitorState = monitorLinked.attributes.state
                     } else {
-                        let row = {
-                            id: 'Not monitored',
-                            monitorState: null,
-                            originalHidden: false,
-                            hidden: false,
-                            serverId: serverId,
-                            serverStatus: serverState,
-                            serverAddress: parameters.address,
-                            serverPort: parameters.port,
-                            serverConnections: statistics.connections,
-                            serverState: serverState,
-                            servicesIdArr: servicesIdArr,
-                        }
-                        tableRows.push(row)
+                        row.id = 'Not monitored'
+                        row.monitorState = 'null' // using 'null' won't break filter result in table
                     }
+                    tableRows.push(row)
                 }
                 // get all unique monitorId
                 let uniqueSet = new Set(tableRows.map(item => item.id))
