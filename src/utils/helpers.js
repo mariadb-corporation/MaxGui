@@ -116,10 +116,13 @@ export function groupBy(OurArray, property) {
 /**
  * @param {String} str String to be sliced
  * @param {String} char find the indexOf provided char
+ * @param {Boolean} returnLastPart if true, slice the last part
  * @return {String} new String
  */
-export function sliceStrAtChar(str, char) {
-    return str.slice(0, str.indexOf(char))
+export function sliceStrAtChar(str, char, returnLastPart) {
+    return returnLastPart
+        ? str.slice(str.indexOf(char) + 1, str.indexOf(str.slice(-1)) + 1)
+        : str.slice(0, str.indexOf(char))
 }
 
 Object.defineProperties(Vue.prototype, {

@@ -6,7 +6,6 @@
         :items="data"
         :hide-default-header="true"
         :hide-default-footer="data.length <= 10"
-        :footer-props="{ 'items-per-page-options': [15] }"
         :class="['rowspan-table', tableClass]"
         :loading="loading"
         :options.sync="pagination"

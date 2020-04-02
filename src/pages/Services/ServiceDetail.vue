@@ -56,13 +56,6 @@ export default {
 
     computed: {
         ...mapGetters(['currentService']),
-        // /**
-        //  * @returns {Object} A deep clone object from vuex state
-        //  */
-        // getCurrentService: function() {
-        //     console.log('this.$route.params.id', this.$route.params.id)
-        //     return this.$_.cloneDeep(this.allServicesMap.get(this.$route.params.id))
-        // },
     },
     created() {
         this.fetchServiceById(this.$route.params.id)

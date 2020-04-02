@@ -64,6 +64,9 @@ body,
                     .toggle-icon {
                         color: inherit;
                     }
+                    &:not(:last-child) {
+                        width: 0px;
+                    }
                 }
                 &:not(.v-data-table__progress) {
                     th {

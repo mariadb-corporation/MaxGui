@@ -34,6 +34,7 @@
                     <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
                         {{ $t('dcb') }}
                     </p>
+                    <!-- TODO: A graph here -->
                     <v-card outlined class="fill-height pt-2"> </v-card>
                 </div>
             </v-slide-item>

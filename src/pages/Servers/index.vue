@@ -12,7 +12,12 @@
         <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
         </template>
-
+        <template v-slot:append-serverId>
+            <span class="ml-1 color text-field-text"> ({{ allServers.length }}) </span>
+        </template>
+        <template v-slot:append-servicesIdArr>
+            <span class="ml-1 color text-field-text"> ({{ allLinkedServices }}) </span>
+        </template>
         <template v-slot:id="{ data: { item: { id } } }">
             <router-link
                 v-if="id !== 'Not monitored'"
@@ -33,7 +38,7 @@
                 >
                     status
                 </icon-sprite-sheet>
-                <span>{{ $help.sliceStrAtChar(monitorState, '|') }} </span>
+                <span>{{ $help.sliceStrAtChar(monitorState, '|', true) }} </span>
             </fragment>
         </template>
 
@@ -106,8 +111,8 @@
  * Public License.
  */
 import { mapGetters, mapActions } from 'vuex'
-
 import RowspanDataTable from 'components/RowspanDataTable'
+
 export default {
     components: {
         RowspanDataTable,
@@ -126,6 +131,7 @@ export default {
                 { text: 'GTID', sortable: false, value: 'gtid' },
                 { text: 'Services', sortable: false, value: 'servicesIdArr' },
             ],
+            allLinkedServices: 0,
         }
     },
     computed: {
@@ -141,7 +147,7 @@ export default {
             if (this.allServers.length && this.allMonitorsMap.size) {
                 let tableRows = []
                 let allServers = this.$_.cloneDeep(this.allServers)
-
+                let totalServices = []
                 for (let index = 0; index < allServers.length; ++index) {
                     const {
                         id: serverId,
@@ -157,7 +163,9 @@ export default {
                         },
                     } = allServers[index]
                     let servicesIdArr = allServices ? allServices.map(item => `${item.id}`) : []
-
+                    totalServices = [...totalServices, ...servicesIdArr]
+                    let uniqueSet = new Set(totalServices)
+                    this.setTotalNumOfLinkedServices([...uniqueSet].length)
                     let row = {
                         originalHidden: false,
                         hidden: false,
@@ -179,7 +187,7 @@ export default {
                             which td belongs to which row. The rendered result just needs to display the first part,
                             separate by the |
                         */
-                        row.monitorState = `${monitorLinked.attributes.state}|${monitorLinked.id}`
+                        row.monitorState = `${monitorLinked.id}|${monitorLinked.attributes.state}`
                     } else {
                         row.id = 'Not monitored'
                         row.monitorState = 'null' // using 'null' won't break filter result in table
@@ -206,6 +214,7 @@ export default {
 
                 return tableRows
             }
+
             return []
         },
     },
@@ -223,6 +232,9 @@ export default {
                 if (serverStatus.includes('Down')) return 0
                 else return ''
             } else return ''
+        },
+        setTotalNumOfLinkedServices(total) {
+            this.allLinkedServices = total
         },
     },
 }

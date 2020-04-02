@@ -70,11 +70,11 @@ export default {
     data() {
         return {
             tableHeaders: [
-                { text: 'ID', value: 'id', width: '1%' },
-                { text: 'DB user', value: 'user', width: '1%' },
-                { text: 'Connected', value: 'connected', width: '1%' },
-                { text: 'IDLE (s)', value: 'idle', width: '1%' },
-                { text: 'Service', value: 'servicesIdArr', width: '1%' },
+                { text: 'ID', value: 'id' },
+                { text: 'DB user', value: 'user' },
+                { text: 'Connected', value: 'connected' },
+                { text: 'IDLE (s)', value: 'idle' },
+                { text: 'Service', value: 'servicesIdArr' },
             ],
         }
     },

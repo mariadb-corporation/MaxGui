@@ -1,66 +1,57 @@
 <template>
-    <v-row class="mt-0">
-        <v-col class="pt-0" cols="12">
-            <data-table
-                :headers="tableHeaders"
-                :data="generateTableRows"
-                :sortDesc="false"
-                sortBy="id"
-            >
-                <template v-slot:append-id>
-                    <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
-                </template>
-                <template v-slot:state="{ data: { item: { state } } }">
-                    <icon-sprite-sheet
-                        size="13"
-                        class="status-icon"
-                        :frame="serviceStateIcon(state)"
+    <data-table :headers="tableHeaders" :data="generateTableRows" :sortDesc="false" sortBy="id">
+        <template v-slot:append-id>
+            <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
+        </template>
+
+        <template v-slot:id="{ data: { item: { id } } }">
+            <router-link :key="id" :to="`/dashboard/services/${id}`" class="no-underline">
+                <span> {{ id }}</span>
+            </router-link>
+        </template>
+        <template v-slot:state="{ data: { item: { state } } }">
+            <icon-sprite-sheet size="13" class="status-icon" :frame="serviceStateIcon(state)">
+                status
+            </icon-sprite-sheet>
+        </template>
+        <template v-slot:servers="{ data: { item: { servers } } }">
+            <fragment v-if="servers.length === 0">
+                <span>n/a </span>
+            </fragment>
+
+            <fragment v-else-if="servers.length < 4">
+                <template v-for="(serverId, i) in servers">
+                    <router-link
+                        :key="serverId"
+                        :to="`/dashboard/servers/${serverId}`"
+                        class="no-underline"
                     >
-                        status
-                    </icon-sprite-sheet>
+                        <span> {{ serverId }}{{ i !== servers.length - 1 ? ', ' : '' }} </span>
+                    </router-link>
                 </template>
-                <template v-slot:servers="{ data: { item: { servers } } }">
-                    <fragment v-if="servers.length === 0">
-                        <span>n/a </span>
-                    </fragment>
+            </fragment>
 
-                    <fragment v-else-if="servers.length < 4">
-                        <template v-for="(serverId, i) in servers">
-                            <router-link
-                                :key="serverId"
-                                :to="`/dashboard/servers/${serverId}`"
-                                class="no-underline"
-                            >
-                                <span>
-                                    {{ serverId }}{{ i !== servers.length - 1 ? ', ' : '' }}
-                                </span>
-                            </router-link>
-                        </template>
-                    </fragment>
-
-                    <template v-else>
-                        <v-tooltip top transition="fade-transition">
-                            <template v-slot:activator="{ on }">
-                                <span class="pointer color text-links" v-on="on">
-                                    {{ servers.length }}
-                                    {{ $t('servers').toLowerCase() }}
-                                </span>
-                            </template>
-                            <template v-for="serverId in servers">
-                                <router-link
-                                    :key="serverId"
-                                    :to="`/dashboard/servers/${serverId}`"
-                                    class="no-underline"
-                                >
-                                    <span>{{ serverId }} </span>
-                                </router-link>
-                            </template>
-                        </v-tooltip>
+            <template v-else>
+                <v-tooltip top transition="fade-transition">
+                    <template v-slot:activator="{ on }">
+                        <span class="pointer color text-links" v-on="on">
+                            {{ servers.length }}
+                            {{ $t('servers').toLowerCase() }}
+                        </span>
                     </template>
-                </template>
-            </data-table>
-        </v-col>
-    </v-row>
+                    <template v-for="serverId in servers">
+                        <router-link
+                            :key="serverId"
+                            :to="`/dashboard/servers/${serverId}`"
+                            class="no-underline"
+                        >
+                            <span>{{ serverId }} </span>
+                        </router-link>
+                    </template>
+                </v-tooltip>
+            </template>
+        </template>
+    </data-table>
 </template>
 
 <script>
