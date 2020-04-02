@@ -13,6 +13,7 @@
 import Alerts from 'icons/Alerts'
 import ArrowDown from 'icons/ArrowDown' // MaxScale new icons
 import ArrowRight from 'icons/ArrowRight'
+import ArrowLeft from 'icons/ArrowLeft'
 import Backup from 'icons/Backup'
 import Close from 'icons/Close'
 import Comments from 'icons/Comments'
@@ -50,6 +51,9 @@ export default {
     },
     arrowDown: {
         component: ArrowDown,
+    },
+    arrowLeft: {
+        component: ArrowLeft,
     },
     arrowRight: {
         component: ArrowRight,

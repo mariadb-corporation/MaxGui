@@ -13,13 +13,14 @@
 import Vue from 'vue'
 
 export default {
+    namespaced: true,
     state: {
         allMonitors: [],
         currentMonitor: {},
     },
     mutations: {
         /**
-         * @param {Object} payload setMaxScaleDetails array
+         * @param {Object} payload set monitors array
          */
         setAllMonitors(state, payload) {
             state.allMonitors = payload

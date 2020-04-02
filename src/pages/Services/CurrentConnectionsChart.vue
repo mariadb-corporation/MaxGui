@@ -1,10 +1,10 @@
 <template>
     <line-chart
-        v-if="sessionsChartData.datasets.length"
-        id="sessions-Chart"
-        ref="sessionsChart"
+        v-if="totalConnectionsChartData.datasets.length"
+        id="total-connections-chart"
+        ref="totalConnectionsChart"
         :styles="{ height: '70px' }"
-        :chartData="sessionsChartData"
+        :chartData="totalConnectionsChartData"
         :options="options"
     />
 </template>
@@ -26,9 +26,12 @@ import LineChart from 'components/LineChart.vue'
 import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
-    name: 'sessions-chart',
+    name: 'current-connections-chart',
     components: {
         'line-chart': LineChart,
+    },
+    props: {
+        updatingChart: Function,
     },
     data() {
         return {
@@ -70,34 +73,20 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('session', ['sessionsChartData', 'allSessions']),
+        ...mapGetters('service', ['totalConnectionsChartData', 'currentService']),
     },
     created() {
         this.genDataSetSchema()
     },
 
     beforeDestroy() {
-        let chart = this.$refs.sessionsChart.$data._chart
+        let chart = this.$refs.totalConnectionsChart.$data._chart
         chart.data.labels = []
         chart.data.datasets = []
         chart.destroy()
     },
     methods: {
-        ...mapActions('session', ['fetchAllSessions', 'genDataSetSchema']),
-        updatingChart(chart) {
-            //  LOOP polling
-            this.fetchAllSessions()
-            let self = this
-            chart.data.datasets.forEach(function(dataset) {
-                dataset.data.push({
-                    x: Date.now(),
-                    y: Math.round(Math.random() * 100), //self.allSessions.length,
-                })
-            })
-            chart.update({
-                preservation: true,
-            })
-        },
+        ...mapActions('service', ['genDataSetSchema']),
     },
 }
 </script>

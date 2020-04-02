@@ -2,103 +2,73 @@
     <div>
         <portal to="page-title">
             <h4
-                style="margin-bottom: 0px; line-height: 10px;"
+                style="margin-bottom: 0px; line-height: normal;"
                 class="color text-navigation text-navigation display-1 text-capitalize page-title"
             >
                 {{ pageTitle }}
             </h4>
-            <span class="field-text-info color text-field-text"> Uptime {{ duration }} </span>
+            <span style="position:relative;top:-15px" class="field-text-info color text-field-text">
+                Uptime {{ duration }}
+            </span>
         </portal>
 
-        <v-slide-group v-model="model" width="100%" class="mt-5 mb-5" center-active>
+        <v-slide-group width="100%" class="mb-5" center-active>
             <v-slide-item>
-                <div style="width:25%" class="slide-nav-item d-flex flex-column">
-                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
                         {{ $t('users') }}
-                    </p>
-                    <v-card outlined class="fill-height pt-2">
+                    </template>
+                    <template v-slot:card-body>
                         <users-chart />
-                    </v-card>
-                </div>
+                    </template>
+                </outline-small-card>
             </v-slide-item>
             <v-slide-item>
-                <div style="width:25%" class="slide-nav-item d-flex flex-column">
-                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
                         {{ $t('sessions') }}
-                    </p>
-                    <v-card outlined class="fill-height pt-2"> <sessions-chart /></v-card>
-                </div>
+                    </template>
+                    <template v-slot:card-body>
+                        <sessions-chart />
+                    </template>
+                </outline-small-card>
             </v-slide-item>
+            <!-- <v-slide-item>
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
+                        {{ $t('sessions') }}
+                    </template>
+                    <template v-slot:card-body>
+                        TODO: A graph here
+                    </template>
+                </outline-small-card>
+            </v-slide-item> -->
+
             <v-slide-item>
-                <div style="width:25%" class="slide-nav-item d-flex flex-column">
-                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
-                        {{ $t('dcb') }}
-                    </p>
-                    <!-- TODO: A graph here -->
-                    <v-card outlined class="fill-height pt-2"> </v-card>
-                </div>
-            </v-slide-item>
-            <v-slide-item>
-                <div style="width:25%;" class="slide-nav-item d-flex flex-column">
-                    <p class="body-2 mb-3 text-uppercase color font-weight-bold text-navigation">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
                         {{ $t('threadUsage') }}
-                    </p>
-                    <v-card outlined class="fill-height pt-2">
+                    </template>
+                    <template v-slot:card-body>
                         <threads-chart :isMiniChart="true" />
-                    </v-card>
-                </div>
+                    </template>
+                </outline-small-card>
             </v-slide-item>
         </v-slide-group>
 
         <tab-nav :tabRoutes="tabRoutes" />
-        <!-- 
-        <v-sheet style="margin-top:35px">
-            <p class="font-weight-bold title text-uppercase color text-navigation">
-                {{ $t('productName') }} {{ $t('details') }}
-            </p>
-            <v-card class="v-card-custom px-6 py-3" outlined height="180" maxWidth="380">
-                <div v-for="(value, name) in maxscaleDetails" :key="name" class="">
-                    <span v-if="name !== 'parameters'" class="d-flex ">
-                        <b class="text-capitalize" style="width:45%">
-                            {{ name.split('_').join(' ') }}</b
-                        >
-                        <v-tooltip v-if="name === 'commit'" v-model="showTooltip" top>
-                            <template v-slot:activator="{ on: { dblclick } }">
-                                <div
-                                    style="width:55%;max-width:180px"
-                                    class="d-inline-block text-truncate"
-                                    @dblclick="dblclick, copyToClipboard(value)"
-                                >
-                                    {{ value }}
-                                </div>
-                            </template>
-                            <span>Copied to clipboard</span>
-                        </v-tooltip>
-                        <div
-                            v-else-if="name === 'uptime'"
-                            style="width:55%;max-width:180px"
-                            class="d-inline-block text-truncate"
-                        >
-                            {{ duration }}
-                        </div>
-                        <div
-                            v-else
-                            style="width:55%;max-width:180px"
-                            class="d-inline-block text-truncate"
-                        >
-                            {{ formatValue(value, name) }}
-                        </div>
-                    </span>
-                </div>
-
-                <router-link
-                    :to="{ name: 'maxscale', params: { parameters: maxscaleDetails.parameters } }"
-                    class="no-underline"
-                >
-                    <span class="text-capitalize" style="width:45%"> Parameters</span>
-                </router-link>
-            </v-card>
-        </v-sheet> -->
     </div>
 </template>
 
@@ -140,7 +110,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['maxscaleDetails']),
+        ...mapGetters('maxscale', ['maxscaleDetails']),
         pageTitle: function() {
             let version =
                 this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
@@ -164,19 +134,21 @@ export default {
         },
     },
     async created() {
-        await this.fetchMaxScaleDetails()
-        await this.fetchAllServers()
-        await this.fetchAllMonitors()
-        await this.fetchAllSessions()
-        await this.fetchAllServices()
+        await Promise.all([
+            this['maxscale/fetchMaxScaleDetails'](),
+            this['server/fetchAllServers'](),
+            this['monitor/fetchAllMonitors'](),
+            this['session/fetchAllSessions'](),
+            this['service/fetchAllServices'](),
+        ])
     },
     methods: {
         ...mapActions([
-            'fetchMaxScaleDetails',
-            'fetchAllServers',
-            'fetchAllMonitors',
-            'fetchAllSessions',
-            'fetchAllServices',
+            'maxscale/fetchMaxScaleDetails',
+            'server/fetchAllServers',
+            'monitor/fetchAllMonitors',
+            'session/fetchAllSessions',
+            'service/fetchAllServices',
         ]),
 
         navigate(path) {
@@ -202,9 +174,13 @@ export default {
 
 <style scoped lang="scss">
 .slide-nav-item {
-    margin: 0px 7px;
+    margin: 0px 8px;
+    width: 25%;
     &:first-of-type {
         margin-left: 0px;
+    }
+    ::v-deep &__card-graph {
+        padding-top: 6px;
     }
 }
 </style>

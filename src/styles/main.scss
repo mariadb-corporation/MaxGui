@@ -18,7 +18,7 @@ body,
     background-color: $background !important;
 }
 .v-content-padding {
-    padding: 40px;
+    padding: 25px 40px 40px;
 }
 .overlay {
     display: table;
@@ -65,7 +65,7 @@ body,
                         color: inherit;
                     }
                     &:not(:last-child) {
-                        width: 0px;
+                        width: 1px;
                     }
                 }
                 &:not(.v-data-table__progress) {
@@ -149,6 +149,19 @@ body,
     }
     .v-data-footer {
         border-top: thin solid rgba(0, 0, 0, 0) !important;
+    }
+}
+.table-fluid {
+    table {
+        thead {
+            tr {
+                th {
+                    &:not(:last-child) {
+                        width: 100%;
+                    }
+                }
+            }
+        }
     }
 }
 input:-webkit-autofill,

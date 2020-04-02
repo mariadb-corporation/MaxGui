@@ -12,6 +12,7 @@
  */
 import Vue from 'vue'
 import _ from 'lodash'
+import { moment } from 'plugins/moment'
 
 export function range(start, end) {
     if (_.isNaN(start) || _.isNaN(end)) return
@@ -125,6 +126,49 @@ export function sliceStrAtChar(str, char, returnLastPart) {
         : str.slice(0, str.indexOf(char))
 }
 
+// Helper functions to display icon
+export function serviceStateIcon(serviceState) {
+    if (serviceState) {
+        if (serviceState.includes('Started')) return 2
+        if (serviceState.includes('Stopped')) return 0
+        else return ''
+    } else return ''
+}
+export function serverStateIcon(serverStatus) {
+    if (serverStatus) {
+        if (serverStatus.includes('Running')) return 2
+        if (serverStatus.includes('Down')) return 0
+        else return ''
+    } else return ''
+}
+export function monitorStateIcon(monitorState) {
+    if (monitorState) {
+        if (monitorState.includes('Running')) return 2
+        if (monitorState.includes('Stopped')) return 1
+        else return ''
+    } else return ''
+}
+/**
+ * @param {String} value String date to be formatted
+ * @param {String} formatType format type
+ * @return {String} new String with HH:mm:ss MM/DD/YYYY format
+ */
+export function formatValue(value, formatType) {
+    let date = new Date(value)
+    const DATE_RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss'
+    const default_format = 'HH:mm:ss MM/DD/YYYY'
+    let format
+    switch (formatType) {
+        case 'DATE_RFC2822':
+            format = DATE_RFC2822
+            break
+        default:
+            format = default_format
+    }
+
+    return moment(date).format(format)
+}
+
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -140,6 +184,10 @@ Object.defineProperties(Vue.prototype, {
                 strReplaceAt,
                 groupBy,
                 sliceStrAtChar,
+                serviceStateIcon,
+                serverStateIcon,
+                monitorStateIcon,
+                formatValue,
             }
         },
     },

@@ -5,7 +5,7 @@
         <snackbars />
         <v-content>
             <div class="fill-height v-content-padding">
-                <div class="d-flex flex-wrap align-center">
+                <div class="d-flex flex-wrap ml-n1">
                     <portal-target name="page-title">
                         <!--
                         This component can be located anywhere in your App.
@@ -83,26 +83,12 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['user', 'maxscaleDetails']),
+        ...mapGetters('user', ['user']),
 
         currentRoute: function() {
             return this.$route.name
         },
 
-        // pageTitle: function() {
-        //     let title = this.currentRoute
-        //     if (title === 'dashboard') {
-        //         let version = !this.$_.isUndefined(this.maxscaleDetails)
-        //             ? this.maxscaleDetails.version
-        //             : ''
-        //         title = `MariaDB ${this.$t('productName')} ${version}`
-        //     }
-        //     if (!this.$_.isUndefined(this.$route.params.id)) {
-        //         title = this.$route.params.id
-        //     }
-
-        //     return title
-        // },
         currentPath: function() {
             return this.$route.path
         },

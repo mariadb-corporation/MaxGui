@@ -49,13 +49,13 @@ export default {
         'recursive-nested-collapse': RecursiveNestedCollapse,
     },
     computed: {
-        ...mapGetters(['currentMonitor']),
+        ...mapGetters('monitor', ['currentMonitor']),
     },
     created() {
         this.fetchMonitorById(this.$route.params.id)
     },
     methods: {
-        ...mapActions(['fetchMonitorById']),
+        ...mapActions('monitor', ['fetchMonitorById']),
     },
 }
 </script>

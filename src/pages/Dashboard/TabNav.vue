@@ -47,8 +47,12 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['searchKeyWord', 'allServers', 'allServices', 'allSessions']),
-
+        ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
+            allServers: 'server/allServers',
+            allSessions: 'session/allSessions',
+            allServices: 'service/allServices',
+        }),
         // tabRoutesFilter() {
         //     let self = this
         //     // let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))

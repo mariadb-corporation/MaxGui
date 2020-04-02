@@ -11,12 +11,17 @@
  * Public License.
  */
 import Vue from 'vue'
+import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
+    namespaced: true,
     state: {
         allServices: [],
         // listenersByServiceIdMap: new Map(),
         currentService: {},
+        totalConnectionsChartData: {
+            datasets: [],
+        },
     },
     mutations: {
         /**
@@ -28,14 +33,9 @@ export default {
         setCurrentService(state, payload) {
             state.currentService = payload
         },
-        // /**
-        //  * @param {Object} payload payload object
-        //  * @param {Array} payload.data Listeners of the service
-        //  * @param {String} payload.id Name of the service
-        //  */
-        // setListenersByService(state, payload) {
-        //     state.listenersByServiceIdMap = state.listenersByServiceIdMap.set(payload.id, payload.data);
-        // },
+        setTotalConnectionsChartData(state, payload) {
+            state.totalConnectionsChartData = payload
+        },
     },
     actions: {
         async fetchServiceById({ commit, state }, id) {
@@ -43,6 +43,31 @@ export default {
                 auth: state.credentials,
             })
             commit('setCurrentService', res.data.data)
+        },
+        genDataSetSchema({ commit, state }) {
+            const { currentService } = state
+            if (currentService) {
+                let lineColors = dynamicColors(0)
+                let indexOfOpacity = lineColors.lastIndexOf(')') - 1
+                let dataset = [
+                    {
+                        label: `Current connections`,
+                        type: 'line',
+                        // background of the line
+                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.2'),
+                        borderColor: lineColors,
+                        borderWidth: 1,
+                        lineTension: 0,
+                        //currentService.attributes.total_connections
+                        data: [{ x: Date.now(), y: Math.round(Math.random() * 100) }],
+                    },
+                ]
+
+                let totalConnectionsChartDataSchema = {
+                    datasets: dataset,
+                }
+                commit('setTotalConnectionsChartData', totalConnectionsChartDataSchema)
+            }
         },
         async fetchAllServices({ commit }) {
             let res = await Vue.axios.get(`/services`)
@@ -135,23 +160,6 @@ export default {
                 })
             }
         },
-
-        //---------------------------------Listeners of the service-------------------------------------------
-        // async fetchListenersByService({ commit, state }, serviceId) {
-        //     try {
-        //         let res = await Vue.axios.get(`/services${serviceId}/listeners`);
-        //         await commit('setListenersByService', { data: res.data.data, id: serviceId });
-        //     } catch (error) {
-        // let errorsArr = [error];
-        // if (error.response.data) {
-        //     errorsArr = error.response.data.errors.map(ele => `${ele.detail}`);
-        // }
-        // await commit('showMessage', {
-        //     text: errorsArr,
-        //     type: 'error',
-        // });
-        //     }
-        // },
     },
     getters: {
         allServices: state => state.allServices,
@@ -171,5 +179,6 @@ export default {
                 return (accumulator = { idArr: idArr })
             }, [])
         },
+        totalConnectionsChartData: state => state.totalConnectionsChartData,
     },
 }

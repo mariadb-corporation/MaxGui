@@ -173,8 +173,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations(['setUser']),
-        ...mapActions(['login']),
+        ...mapMutations('user', ['setUser']),
 
         async handleSubmit() {
             if (!this.$refs.form.validate()) {

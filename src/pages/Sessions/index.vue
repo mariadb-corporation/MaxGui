@@ -79,8 +79,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allSessions', 'allServices']),
-
+        ...mapGetters({
+            allSessions: 'session/allSessions',
+            allServices: 'service/allServices',
+        }),
         generateTableRows: function() {
             let sessionsTest = [
                 {

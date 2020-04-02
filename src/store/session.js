@@ -14,6 +14,7 @@ import Vue from 'vue'
 import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
+    namespaced: true,
     state: {
         allSessions: [],
         sessionsChartData: {

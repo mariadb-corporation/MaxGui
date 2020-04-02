@@ -1,6 +1,6 @@
 <template>
     <fragment>
-        <div class="d-flex flex-wrap align-center">
+        <div class="d-flex flex-wrap ">
             <v-text-field
                 id="search"
                 v-model="search"

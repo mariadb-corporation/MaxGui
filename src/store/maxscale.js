@@ -14,9 +14,9 @@ import Vue from 'vue'
 import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
+    namespaced: true,
     state: {
         maxscaleDetails: {},
-        isDestroyed: false,
         threads: [],
         threadsChartData: {
             datasets: [],

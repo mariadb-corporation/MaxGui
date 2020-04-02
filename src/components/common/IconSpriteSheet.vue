@@ -1,5 +1,7 @@
 <template>
-    <v-icon :class="iconClass" :size="size" :color="color">{{ icon }}</v-icon>
+    <v-icon :style="{ width: `${size}px` }" :class="iconClass" :size="size" :color="color">
+        {{ icon }}
+    </v-icon>
 </template>
 
 <script>

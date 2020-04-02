@@ -17,6 +17,7 @@ import { delay, dynamicColors, strReplaceAt } from 'utils/helpers'
 import router from 'router'
 
 export default {
+    namespaced: true,
     state: {
         user: JSON.parse(sessionStorage.getItem('user')),
         currentNetworkUser: null,
@@ -64,9 +65,9 @@ export default {
             sessionStorage.removeItem('user')
             commit('setUser', {})
             delete Vue.axios.defaults.headers.common['Authorization']
-            await commit('showOverlay', OVERLAY_LOGOUT)
+            await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
             await delay(1500).then(() => {
-                return commit('hideOverlay'), router.push('/login')
+                return commit('hideOverlay', null, { root: true }), router.push('/login')
             })
         },
         // --------------------------------------------------- Network users -------------------------------------
@@ -150,12 +151,11 @@ export default {
             }
         },
         // --------------------------------------------------- Unix accounts -------------------------------------
-        async fetchAllUNIXAccounts({ dispatch, commit }) {
+        async fetchAllUNIXAccounts({ commit }) {
             let res = await Vue.axios.get(`/users/unix`)
             // response ok
             if (res.status === 200) {
                 commit('setAllUNIXAccounts', res.data.data)
-                await dispatch('genDataSetSchema')
             }
         },
         async enableUNIXAccount({ commit, dispatch }, { id, role }) {

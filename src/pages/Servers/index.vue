@@ -33,8 +33,8 @@
             <fragment v-if="monitorState !== 'null'">
                 <icon-sprite-sheet
                     size="13"
-                    class="status-icon"
-                    :frame="monitorStateIcon(monitorState)"
+                    class="status-icon mr-1"
+                    :frame="$help.monitorStateIcon(monitorState)"
                 >
                     status
                 </icon-sprite-sheet>
@@ -52,7 +52,11 @@
         </template>
 
         <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
-            <icon-sprite-sheet size="13" class="status-icon" :frame="serverStateIcon(serverStatus)">
+            <icon-sprite-sheet
+                size="13"
+                class="status-icon"
+                :frame="$help.serverStateIcon(serverStatus)"
+            >
                 status
             </icon-sprite-sheet>
         </template>
@@ -135,14 +139,13 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'allMonitorsMap',
-            'allServers',
-            'allServersMap',
-            'allMonitors',
-            'searchKeyWord',
-        ]),
-
+        ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
+            allMonitorsMap: 'monitor/allMonitorsMap',
+            allMonitors: 'monitor/allMonitors',
+            allServers: 'server/allServers',
+            allServersMap: 'server/allServersMap',
+        }),
         dataProcessing: function() {
             if (this.allServers.length && this.allMonitorsMap.size) {
                 let tableRows = []
@@ -220,19 +223,6 @@ export default {
     },
 
     methods: {
-        ...mapActions(['destroyServer']),
-        monitorStateIcon(monitorState) {
-            if (monitorState.includes('Running')) return 2
-            if (monitorState.includes('Stopped')) return 1
-            else return ''
-        },
-        serverStateIcon(serverStatus) {
-            if (serverStatus) {
-                if (serverStatus.includes('Running')) return 2
-                if (serverStatus.includes('Down')) return 0
-                else return ''
-            } else return ''
-        },
         setTotalNumOfLinkedServices(total) {
             this.allLinkedServices = total
         },

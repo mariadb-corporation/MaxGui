@@ -42,13 +42,13 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['maxscaleDetails']),
+        ...mapGetters('maxscale', ['maxscaleDetails']),
     },
     created() {
-        !this.$route.params.parameters && this.fetchMaxScaleDetails()
+        !this.$route.params.parameters && this['maxscale/fetchMaxScaleDetails']()
     },
     methods: {
-        ...mapActions(['fetchMaxScaleDetails']),
+        ...mapActions(['maxscale/fetchMaxScaleDetails']),
         genData() {
             if (this.$route.params.parameters) {
                 return this.$_.cloneDeep(this.$route.params.parameters)

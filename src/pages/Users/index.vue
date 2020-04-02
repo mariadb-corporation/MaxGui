@@ -52,7 +52,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['currentNetworkUser', 'allUsers']),
+        ...mapGetters('user', ['currentNetworkUser', 'allUsers']),
         /**
          * @return {Array} An array of objects
          */
@@ -89,7 +89,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(['fetchCurrentNetworkUser']),
+        ...mapActions('user', ['fetchCurrentNetworkUser']),
         boldCurrentUser(data) {
             return {
                 'font-weight-bold':

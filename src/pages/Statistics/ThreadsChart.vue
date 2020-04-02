@@ -3,7 +3,7 @@
         v-if="threadsChartData.datasets.length"
         id="threads-Chart"
         ref="threadsChart"
-        :styles="isMiniChart ? { height: '85px' } : null"
+        :styles="isMiniChart ? { height: '70px' } : null"
         :chartData="threadsChartData"
         :options="options"
     />
@@ -74,12 +74,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['threadsChartData', 'threads']),
+        ...mapGetters('maxscale', ['threadsChartData', 'threads']),
     },
 
     async created() {
         await this.fetchThreads()
-        //  generate DataSet Schema
         await this.genDataSetSchema()
     },
     beforeDestroy() {
@@ -89,7 +88,7 @@ export default {
         chart.destroy()
     },
     methods: {
-        ...mapActions(['fetchThreads', 'genDataSetSchema']),
+        ...mapActions('maxscale', ['fetchThreads', 'genDataSetSchema']),
         updatingThreads(chart) {
             // this.threads.forEach(thread => console.log(thread.attributes.stats.load.last_second))
             this.fetchThreads()

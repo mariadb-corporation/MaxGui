@@ -10,7 +10,7 @@
             </router-link>
         </template>
         <template v-slot:state="{ data: { item: { state } } }">
-            <icon-sprite-sheet size="13" class="status-icon" :frame="serviceStateIcon(state)">
+            <icon-sprite-sheet size="13" class="status-icon" :frame="$help.serviceStateIcon(state)">
                 status
             </icon-sprite-sheet>
         </template>
@@ -86,7 +86,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServices']),
+        ...mapGetters('service', ['allServices']),
         /**
          * @return {Array} An array of objects
          */
@@ -127,14 +127,6 @@ export default {
                 return itemsArr
             }
             return []
-        },
-    },
-
-    methods: {
-        serviceStateIcon(monitorState) {
-            if (monitorState.includes('Started')) return 2
-            if (monitorState.includes('Stopped')) return 0
-            else return ''
         },
     },
 }

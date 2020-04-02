@@ -28,13 +28,13 @@ export default {
         MonitorsTable,
     },
     computed: {
-        ...mapGetters(['allMonitors']),
+        ...mapGetters('monitor', ['allMonitors']),
     },
     created() {
         this.fetchAllMonitors()
     },
     methods: {
-        ...mapActions(['fetchAllMonitors']),
+        ...mapActions('monitor', ['fetchAllMonitors']),
     },
 }
 </script>

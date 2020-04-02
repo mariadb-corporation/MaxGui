@@ -118,7 +118,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['monitorManipulate']),
+        ...mapActions('monitor', ['monitorManipulate']),
         handleOpenModal: function(item) {
             this.serverDialog = true
             this.chosenItem = item

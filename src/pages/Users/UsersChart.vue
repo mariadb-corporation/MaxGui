@@ -3,7 +3,7 @@
         v-if="usersChartData.datasets.length"
         id="users-Chart"
         ref="usersChart"
-        :styles="{ height: '85px' }"
+        :styles="{ height: '70px' }"
         :chartData="usersChartData"
         :options="options"
     />
@@ -70,10 +70,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['usersChartData', 'allUNIXAccounts']),
+        ...mapGetters('user', ['usersChartData', 'allUNIXAccounts']),
     },
-    created() {
-        this.fetchAllUNIXAccounts()
+    async created() {
+        await this.fetchAllUNIXAccounts()
+        await this.genDataSetSchema()
     },
 
     beforeDestroy() {
@@ -83,7 +84,7 @@ export default {
         chart.destroy()
     },
     methods: {
-        ...mapActions(['fetchAllUNIXAccounts']),
+        ...mapActions('user', ['fetchAllUNIXAccounts', 'genDataSetSchema']),
         updatingChart(chart) {
             //  LOOP polling
             this.fetchAllUNIXAccounts()

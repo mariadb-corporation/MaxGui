@@ -15,6 +15,7 @@ import DataTable from './DataTable'
 import SearchBox from 'components/common/SearchBox'
 import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from 'components/common/IconSpriteSheet'
+import OutlineSmallCard from 'components/common/OutlineSmallCard'
 
 export default {
     'base-dialog': BaseDialog,
@@ -22,4 +23,5 @@ export default {
     'search-box': SearchBox,
     'details-page-title': DetailsPageTitle,
     'icon-sprite-sheet': IconSpriteSheet,
+    'outline-small-card': OutlineSmallCard,
 }
