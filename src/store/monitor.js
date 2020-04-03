@@ -87,10 +87,14 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
                 await dispatch('fetchAllMonitors')
             }
         },
@@ -121,10 +125,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllMonitors')
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
     },

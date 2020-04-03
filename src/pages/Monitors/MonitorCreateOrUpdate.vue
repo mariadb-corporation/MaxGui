@@ -293,7 +293,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServersInfo', 'allServersMap']),
+        ...mapGetters('server', ['allServersInfo', 'allServersMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -370,7 +370,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['createOrUpdateServer']),
+        ...mapActions('server', ['createOrUpdateServer']),
         //ONLY AVAILABLE FOR POST MODE
         validatePortNumber(val) {
             if (!val) {

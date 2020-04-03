@@ -129,10 +129,14 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
                 await dispatch('fetchAllNetworkUsers')
             }
         },
@@ -144,10 +148,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllNetworkUsers')
-                await commit('showMessage', {
-                    text: [`Network user ${id} is deleted`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Network user ${id} is deleted`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
         // --------------------------------------------------- Unix accounts -------------------------------------
@@ -170,10 +178,14 @@ export default {
             })
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', {
-                    text: [`UNIX account ${id} is enabled`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`UNIX account ${id} is enabled`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
                 await dispatch('fetchAllUNIXAccounts')
             }
         },
@@ -185,10 +197,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllUNIXAccounts')
-                await commit('showMessage', {
-                    text: [`UNIX account ${id} is disabled`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`UNIX account ${id} is disabled`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
         // --------------------------------------------------- All users -----------------------------------------

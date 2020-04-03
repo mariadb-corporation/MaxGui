@@ -168,7 +168,50 @@ export function formatValue(value, formatType) {
 
     return moment(date).format(format)
 }
+/**
+ * @param {Object} obj Object to be converted to array
+ * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
+ */
+export function objToArrOfObj(obj) {
+    if (typeof obj === 'object') {
+        let data = []
+        let targetObj = _.cloneDeep(obj)
 
+        if (!_.isEmpty(targetObj)) {
+            Object.keys(targetObj).map(key => {
+                data.push({ id: key, value: targetObj[key] })
+            })
+            return data
+        }
+    }
+    return []
+}
+
+/**
+ * @param {Any} value Object to be converted to array
+ * @return {Any} return valid value, null becomes 'null', '' becomes "''", otherwise return 'n/a'
+ */
+export function handleValue(value) {
+    let typeOfValue = typeof value
+    let newVal
+
+    // handle typeof first
+    if (
+        typeOfValue === 'array' ||
+        typeOfValue === 'object' ||
+        typeOfValue === 'string' ||
+        typeOfValue === 'number' ||
+        typeOfValue === 'boolean'
+    ) {
+        newVal = value
+    } else {
+        newVal = 'undefined'
+    }
+    // handle typeof null object and empty string
+    if (value === null) newVal = 'null'
+    if (value === '') newVal = "''"
+    return newVal
+}
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -188,6 +231,8 @@ Object.defineProperties(Vue.prototype, {
                 serverStateIcon,
                 monitorStateIcon,
                 formatValue,
+                objToArrOfObj,
+                handleValue,
             }
         },
     },

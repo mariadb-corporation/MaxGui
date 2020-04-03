@@ -50,10 +50,14 @@ export default {
             })
             if (res.status === 204) {
                 await dispatch('fetchAllFilters')
-                await commit('showMessage', {
-                    text: [`Filter ${object.id} is created`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Filter ${object.id} is created`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
         /**
@@ -67,10 +71,14 @@ export default {
             let res = await Vue.axios.delete(`/filters/${id}`)
             if (res.status === 204) {
                 await dispatch('fetchAllFilters')
-                await commit('showMessage', {
-                    text: [`Filter ${id} is destroyed`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Filter ${id} is destroyed`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
     },

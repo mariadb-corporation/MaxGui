@@ -16,30 +16,34 @@
             <v-slide-item style="width:40%">
                 <div class="d-flex" style="width:100%">
                     <outline-small-card
-                        cardWrapper="detail-overview mt-6"
-                        cardClass="detail-overview__card "
+                        cardWrapper="detail-overview-with-graph mt-6"
+                        cardClass="detail-overview-with-graph__card "
                     >
                         <template v-slot:title>
                             {{ $t('overview') }}
                         </template>
                         <template v-slot:card-body>
-                            <span class="caption font-weight-bold color text-deep-ocean"
-                                >ROUTER</span
+                            <span
+                                class="caption text-uppercase font-weight-bold color text-deep-ocean"
                             >
-                            <span class="text-no-wrap">
+                                ROUTER
+                            </span>
+                            <span class="text-no-wrap body-2">
                                 {{ currentService.attributes.router }}
                             </span>
                         </template>
                     </outline-small-card>
                     <outline-small-card
-                        cardWrapper="detail-overview mt-6"
-                        cardClass="detail-overview__card "
+                        cardWrapper="detail-overview-with-graph mt-6"
+                        cardClass="detail-overview-with-graph__card "
                     >
                         <template v-slot:card-body>
-                            <span class="caption font-weight-bold color text-deep-ocean">
+                            <span
+                                class="caption text-uppercase font-weight-bold color text-deep-ocean"
+                            >
                                 STARTED AT
                             </span>
-                            <span class="text-no-wrap">
+                            <span class="text-no-wrap body-2">
                                 {{ $help.formatValue(currentService.attributes.started) }}
                             </span>
                         </template>
@@ -48,8 +52,8 @@
             </v-slide-item>
             <v-slide-item style="width:60%">
                 <outline-small-card
-                    cardWrapper="detail-overview ml-2 mt-6"
-                    cardClass="detail-overview__card-graph"
+                    cardWrapper="detail-overview-with-graph ml-2 mt-6"
+                    cardClass="detail-overview-with-graph__card-graph"
                 >
                     <template v-slot:title>
                         {{ $t('currentConnections') }}
@@ -65,32 +69,121 @@
                 </outline-small-card>
             </v-slide-item>
         </v-slide-group>
+        <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
-                <h5>Parameters</h5>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentService.attributes.parameters"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
+                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                    {{ $t('parameters') }}
+                </p>
+                <data-table
+                    class="table-fluid"
+                    :headers="variableValueTableHeaders"
+                    :data="tableRowProcessed('parameters')"
+                    :tdBorderLeft="true"
                 />
             </v-col>
-            <v-col v-if="!$_.isEmpty(currentService.relationships)" cols="6">
-                <h5>Relationships</h5>
-                <fragment
-                    v-for="(value, propertyName) in currentService.relationships"
-                    :key="propertyName"
+            <!-- SERVER TABLE -->
+            <v-col cols="3">
+                <server-create-or-update
+                    v-model="addServerDialog"
+                    :close-modal="() => (addServerDialog = false)"
+                    mode="post"
+                />
+                <div class="d-flex justify-center">
+                    <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('servers') }}
+                        <span class="ml-1 color text-field-text"
+                            >({{ serversLinked.length }})
+                        </span>
+                    </p>
+                    <v-spacer />
+                    <v-btn
+                        color="primary"
+                        text
+                        x-small
+                        class="text-capitalize"
+                        @click="() => (addServerDialog = true)"
+                    >
+                        + {{ $t('addServer') }}
+                    </v-btn>
+                </div>
+                <data-table
+                    :headers="serversTableHeader"
+                    :data="serversLinked"
+                    :sortDesc="false"
+                    :noDataText="$t('noServer')"
+                    sortBy="id"
+                    class="table-fluid"
                 >
-                    <recursive-nested-collapse
-                        v-if="propertyName !== 'services'"
-                        :hasChild="$help.hasChild(value)"
-                        :propertyName="propertyName"
-                        :value="$help.handleNull(value)"
-                        :child="$help.hasChild(value) ? value : {}"
-                    />
-                </fragment>
+                    <template v-slot:id="{ data: { item: { id } } }">
+                        <router-link
+                            :key="id"
+                            :to="`/dashboard/servers/${id}`"
+                            class="no-underline"
+                        >
+                            <span> {{ id }} </span>
+                        </router-link>
+                    </template>
+                    <template v-slot:state="{ data: { item: { state } } }">
+                        <icon-sprite-sheet
+                            size="13"
+                            class="status-icon"
+                            :frame="$help.serverStateIcon(state)"
+                        >
+                            status
+                        </icon-sprite-sheet>
+                    </template>
+                </data-table>
+            </v-col>
+            <!-- FILTER TABLE -->
+            <v-col cols="3">
+                <div class="d-flex justify-center">
+                    <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('filters') }}
+                        <span class="ml-1 color text-field-text">({{ filterLinked.length }}) </span>
+                    </p>
+                    <v-spacer />
+                    <v-btn
+                        color="primary"
+                        text
+                        x-small
+                        class="text-capitalize"
+                        @click="() => (addFilterDialog = true)"
+                    >
+                        + {{ $t('addFilter') }}
+                    </v-btn>
+                </div>
+                <data-table
+                    :headers="filterTableHeader"
+                    :data="filterLinked"
+                    :sortDesc="false"
+                    :noDataText="$t('noFilter')"
+                    sortBy="id"
+                    class="table-fluid"
+                >
+                    <template v-slot:id="{ data: { item: { id } } }">
+                        <router-link
+                            :key="id"
+                            :to="`/dashboard/filters/${id}`"
+                            class="no-underline"
+                        >
+                            <span> {{ id }} </span>
+                        </router-link>
+                    </template>
+                </data-table>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="6">
+                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                    {{ $t('routerDiagnostics') }}
+                </p>
+                <data-table
+                    class="table-fluid"
+                    :headers="variableValueTableHeaders"
+                    :data="tableRowProcessed('routerDiagnostics')"
+                    :tdBorderLeft="true"
+                />
             </v-col>
         </v-row>
     </v-sheet>
@@ -112,28 +205,100 @@
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
 import CurrentConnectionsChart from 'pages/Services/CurrentConnectionsChart'
+import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
 
 export default {
     name: 'service-detail',
     components: {
-        'recursive-nested-collapse': RecursiveNestedCollapse,
         CurrentConnectionsChart,
+        ServerCreateOrUpdate,
     },
     data() {
         return {
+            filterLinked: [],
+            filterTableHeader: [{ text: 'Filter', value: 'id' }],
+            serversLinked: [],
+            serversTableHeader: [
+                { text: 'Server', value: 'id' },
+                { text: 'Status', value: 'state' },
+            ],
+            addServerDialog: false,
+            addFilterDialog: false,
+            variableValueTableHeaders: [
+                { text: 'Variable', value: 'id', width: '65%' },
+                { text: 'Value', value: 'value', width: '35%' },
+            ],
             totalConnections: 100,
             currentConnections: 0,
         }
     },
     computed: {
         ...mapGetters('service', ['currentService']),
+        tableRowProcessed() {
+            return type => {
+                let currentService = this.$_.cloneDeep(this.currentService)
+                if (!this.$_.isEmpty(currentService)) {
+                    switch (type) {
+                        case 'parameters': {
+                            const { attributes: { parameters = {} } = {} } = currentService
+                            return this.$help.objToArrOfObj(parameters)
+                        }
+                        case 'routerDiagnostics': {
+                            const { attributes: { router_diagnostics = {} } = {} } = currentService
+                            return this.$help.objToArrOfObj(router_diagnostics)
+                        }
+                    }
+                }
+                return []
+            }
+        },
     },
-    created() {
-        this.fetchServiceById(this.$route.params.id)
+    watch: {
+        currentService: function(newVal) {
+            if (!this.$_.isEmpty(newVal.relationships)) {
+                let servers = newVal.relationships.servers.data
+                let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
+                // Get array of obj linked servers based on linkedServers array of IDs
+                this.fetchServerFieldsets(serversIdArr)
+
+                const {
+                    filters: { data: filterLinkedData = [] } = {},
+                } = this.currentService.relationships
+                if (this.filterLinked !== filterLinkedData) {
+                    this.filterLinked = filterLinkedData
+                        ? filterLinkedData.map(item => ({ id: item.id }))
+                        : []
+                }
+            }
+        },
+    },
+    async created() {
+        await this.fetchServiceById(this.$route.params.id)
         this.currentConnections = 10 //this.currentService.attributes.connections
     },
     methods: {
         ...mapActions('service', ['fetchServiceById']),
+        processServersLinked(arr) {
+            this.serversLinked = arr
+        },
+        async fetchServerFieldsets(idArray) {
+            try {
+                let arr = []
+                for (let i = 0; i < idArray.length; ++i) {
+                    let res = await this.axios.get(`/servers/${idArray[i]}?fields[servers]=state`)
+                    if (res.status === 200) {
+                        const {
+                            id,
+                            attributes: { state },
+                        } = res.data.data
+                        arr.push({ id: id, state: state })
+                    }
+                }
+                return this.processServersLinked(arr)
+            } catch (e) {
+                return e
+            }
+        },
         async updatingChart(chart) {
             let self = this
             // Use sparse fieldsets to fetch only necessary data
@@ -165,11 +330,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.detail-overview {
+.detail-overview-with-graph {
     width: 100%;
+    ::v-deep &__card {
+        border-radius: 0px !important;
+    }
     ::v-deep &__card,
     ::v-deep &__card-graph {
-        border-radius: 0px !important;
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -179,7 +346,7 @@ export default {
         padding-top: 6px;
     }
     &:not(:first-of-type) {
-        ::v-deep .detail-overview__card {
+        ::v-deep .detail-overview-with-graph__card {
             border-left: none !important;
         }
     }

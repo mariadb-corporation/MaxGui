@@ -33,9 +33,17 @@
                                 >
                                     {{ name.replace('_', ' ') }}
                                 </span>
-                                <span class="text-no-wrap">
+                                <router-link
+                                    v-if="name === 'monitor' && value !== 'undefined'"
+                                    :key="index"
+                                    :to="`/dashboard/monitors/${value}`"
+                                    class="body-2 no-underline"
+                                >
+                                    <span>{{ value }} </span>
+                                </router-link>
+                                <span v-else class="text-no-wrap body-2">
                                     {{
-                                        name === 'triggered_at'
+                                        name === 'triggered_at' && value !== 'undefined'
                                             ? $help.formatValue(value, 'DATE_RFC2822')
                                             : value
                                     }}
@@ -48,32 +56,50 @@
         </v-slide-group>
 
         <v-row>
+            <!-- STATISTICS TABLE -->
             <v-col cols="6">
                 <p class="body-2 font-weight-bold color text-navigation text-uppercase">
                     {{ $t('statistics') }}
                 </p>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentServer.attributes.statistics"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
+                <data-table
+                    class="table-fluid"
+                    :headers="variableValueTableHeaders"
+                    :data="tableRowProcessed('statistics')"
+                    :tdBorderLeft="true"
                 />
             </v-col>
-            <v-col v-if="!$_.isEmpty(currentServer.relationships)" cols="3">
-                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                    {{ $t('services') }}
-                    <span class="ml-1 color text-field-text"
-                        >({{ currentServer.relationships.services.data.length }})
-                    </span>
-                </p>
+            <!-- SERVICE TABLE -->
+            <v-col cols="3">
+                <service-create-or-update
+                    v-model="addToServiceDialog"
+                    :close-modal="() => (addToServiceDialog = false)"
+                    mode="post"
+                />
+                <div class="d-flex justify-center">
+                    <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('services') }}
+                        <span class="ml-1 color text-field-text"
+                            >({{ servicesLinked.length }})
+                        </span>
+                    </p>
+                    <v-spacer />
+                    <v-btn
+                        color="primary"
+                        text
+                        x-small
+                        class="text-capitalize"
+                        @click="() => (addToServiceDialog = true)"
+                    >
+                        + {{ $t('addService') }}
+                    </v-btn>
+                </div>
                 <data-table
                     :headers="servicesTableHeader"
                     :data="servicesLinked"
                     :sortDesc="false"
                     sortBy="id"
                     class="table-fluid"
+                    :noDataText="$t('noService')"
                 >
                     <template v-slot:state="{ data: { item: { state } } }">
                         <icon-sprite-sheet
@@ -86,19 +112,32 @@
                     </template>
                 </data-table>
             </v-col>
+            <!-- SLAVE SERVER IDS TABLE -->
+            <v-col cols="3">
+                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
+                    {{ $t('slaveServerIds') }}
+                    <span class="ml-1 color text-field-text">
+                        ({{ tableRowProcessed('slaveServers').length }})
+                    </span>
+                </p>
+                <data-table
+                    class="table-fluid"
+                    :headers="slaveServersTableHeaders"
+                    :data="tableRowProcessed('slaveServers')"
+                />
+            </v-col>
         </v-row>
+        <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
                 <p class="body-2 font-weight-bold color text-navigation text-uppercase">
                     {{ $t('parameters') }}
                 </p>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentServer.attributes.parameters"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
+                <data-table
+                    class="table-fluid"
+                    :headers="variableValueTableHeaders"
+                    :data="tableRowProcessed('parameters')"
+                    :tdBorderLeft="true"
                 />
             </v-col>
         </v-row>
@@ -108,22 +147,30 @@
 <script>
 import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
+import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
 
 export default {
     name: 'server-detail',
     components: {
-        'recursive-nested-collapse': RecursiveNestedCollapse,
+        // 'recursive-nested-collapse': RecursiveNestedCollapse,
+        ServiceCreateOrUpdate,
     },
     props: {
         id: String,
     },
     data() {
         return {
+            addToServiceDialog: false,
             servicesLinked: [],
             servicesTableHeader: [
                 { text: 'Service', value: 'id' },
                 { text: 'Status', value: 'state' },
             ],
+            variableValueTableHeaders: [
+                { text: 'Variable', value: 'id', width: '65%' },
+                { text: 'Value', value: 'value', width: '35%' },
+            ],
+            slaveServersTableHeaders: [{ text: 'Slave Servers', value: 'id' }],
         }
     },
     computed: {
@@ -132,19 +179,24 @@ export default {
             allServicesMap: 'service/allServicesMap',
         }),
         getTopOverviewInfo: function() {
-            let currentServer = this.$_.cloneDeep(this.currentServer)
+            let self = this
+            let currentServer = self.$_.cloneDeep(self.currentServer)
             let overviewInfo = {}
-            if (!this.$_.isEmpty(currentServer)) {
-                // Set fallback null value if properties doesnt exist
+            if (!self.$_.isEmpty(currentServer)) {
+                // Set fallback undefined value if properties doesnt exist
                 const {
                     attributes: {
                         state,
-                        last_event = null,
-                        triggered_at = null,
-                        node_id = null,
-                        parameters: { address = null, socket = null, port = null } = {},
+                        last_event = undefined,
+                        triggered_at = undefined,
+                        node_id = undefined,
+                        parameters: {
+                            address = undefined,
+                            socket = undefined,
+                            port = undefined,
+                        } = {},
                     } = {},
-                    relationships: { monitors = null } = {},
+                    relationships: { monitors = undefined } = {},
                 } = currentServer
 
                 overviewInfo = {
@@ -154,29 +206,68 @@ export default {
                     state: state,
                     last_event: last_event,
                     triggered_at: triggered_at,
-                    monitor: monitors ? monitors.data[0].id : null,
+                    monitor: monitors ? monitors.data[0].id : undefined,
                     node_id: node_id,
                 }
 
+                if (socket) {
+                    delete overviewInfo.address
+                    delete overviewInfo.port
+                } else delete overviewInfo.socket
                 Object.keys(overviewInfo).forEach(
-                    key => overviewInfo[key] == null && delete overviewInfo[key]
+                    key => (overviewInfo[key] = self.$help.handleValue(overviewInfo[key]))
                 )
             }
             return overviewInfo
         },
+        tableRowProcessed() {
+            return type => {
+                let currentServer = this.$_.cloneDeep(this.currentServer)
+                if (!this.$_.isEmpty(currentServer)) {
+                    switch (type) {
+                        case 'parameters': {
+                            const { attributes: { parameters = {} } = {} } = currentServer
+                            return this.$help.objToArrOfObj(parameters)
+                        }
+                        case 'statistics': {
+                            // Set fallback null value if properties doesnt exist
+                            const { attributes: { statistics = null } = {} } = currentServer
+                            return this.$help.objToArrOfObj(statistics)
+                        }
+                        case 'slaveServers': {
+                            const { attributes: { slave_connections = [] } = {} } = currentServer
+                            // let slave_connections_test = [1001, 1002, 1003]
+                            let data = []
+                            for (let i = 0; i < slave_connections.length; ++i) {
+                                if (typeof slave_connections[i] === 'number') {
+                                    data.push({ id: slave_connections[i] })
+                                }
+                            }
+
+                            return data
+                        }
+                    }
+                }
+                return []
+            }
+        },
+    },
+    watch: {
+        currentServer: function(newVal) {
+            if (!this.$_.isEmpty(newVal.relationships)) {
+                let services = newVal.relationships.services.data
+                let servicesIdArr = services ? services.map(item => `${item.id}`) : []
+                // Get array of obj linked servers based on linkedServers array of IDs
+                this.fetchServiceFieldsets(servicesIdArr)
+            }
+        },
     },
     async created() {
         await this.fetchServerById(this.$route.params.id)
-        if (!this.$_.isEmpty(this.currentServer.relationships)) {
-            let services = this.currentServer.relationships.services.data
-            let servicesIdArr = services ? services.map(item => `${item.id}`) : []
-            // Get array of obj linked servers based on linkedServers array of IDs
-            await this.fetchServiceFieldsets(servicesIdArr)
-        }
     },
     methods: {
         ...mapActions('server', ['fetchServerById']),
-        processData(arr) {
+        processServicesLinked(arr) {
             this.servicesLinked = arr
         },
         async fetchServiceFieldsets(idArray) {
@@ -192,7 +283,7 @@ export default {
                         arr.push({ id: id, state: state })
                     }
                 }
-                return this.processData(arr)
+                return this.processServicesLinked(arr)
             } catch (e) {
                 return e
             }
@@ -200,26 +291,3 @@ export default {
     },
 }
 </script>
-
-<style lang="scss" scoped>
-h5 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.detail-overview {
-    width: 100%;
-    ::v-deep &__card {
-        border-radius: 0px !important;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    &:not(:first-of-type) {
-        ::v-deep .detail-overview__card {
-            border-left: none !important;
-        }
-    }
-}
-</style>

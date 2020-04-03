@@ -16,6 +16,7 @@ import SearchBox from 'components/common/SearchBox'
 import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from 'components/common/IconSpriteSheet'
 import OutlineSmallCard from 'components/common/OutlineSmallCard'
+import RecursiveTable from 'components/common/RecursiveTable'
 
 export default {
     'base-dialog': BaseDialog,
@@ -24,4 +25,5 @@ export default {
     'details-page-title': DetailsPageTitle,
     'icon-sprite-sheet': IconSpriteSheet,
     'outline-small-card': OutlineSmallCard,
+    'recursive-table': RecursiveTable,
 }

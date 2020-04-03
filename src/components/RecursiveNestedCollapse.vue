@@ -1,26 +1,21 @@
 <template>
-    <v-expansion-panels
-        :class="[hasChild ? '' : 'no-pointer']"
-        :readonly="!hasChild"
-        accordion
-        tile
-    >
+    <v-expansion-panels>
         <v-expansion-panel>
             <v-expansion-panel-header v-if="propertyName !== 'links'" :ripple="hasChild">
+                <template v-slot:actions>
+                    <v-icon size="24" color="primary">{{ hasChild ? '$expand' : '' }}</v-icon>
+                </template>
                 <b>{{ propertyName }}</b>
                 <fragment v-if="!hasChild">
                     {{ $help.handleEmptyString(value) }}
                 </fragment>
-                <template v-slot:actions>
-                    <v-icon size="24" color="primary">{{ hasChild ? '$expand' : '' }}</v-icon>
-                </template>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content
                 v-if="$help.hasChild(child)"
                 class="v-expansion-panel-content__scrollable"
             >
-                <fragment v-if="childIsObj(child) || propertyName === 'listeners'">
+                <fragment v-if="childIsObj(child)">
                     <recursive-nested-collapse
                         v-for="(childValue, childPropertyName) in child"
                         :key="childPropertyName"
@@ -29,9 +24,6 @@
                         :value="$help.handleNull(childValue)"
                         :child="$help.hasChild(childValue) ? childValue : {}"
                     />
-                </fragment>
-                <fragment v-else>
-                    <compute-table :data="child" />
                 </fragment>
             </v-expansion-panel-content>
         </v-expansion-panel>
@@ -59,7 +51,7 @@ export default {
     The child props will detect whether render nested component or not
     */
     name: 'recursive-nested-collapse',
-    components: { 'compute-table': ComputeTable },
+
     props: {
         propertyName: [String, Number, Boolean],
         value: [String, Number, Boolean], // null object value has been handle by handleNull
@@ -70,7 +62,7 @@ export default {
 
     methods: {
         childIsObj(child) {
-            if (typeof child === 'object' && !Array.isArray(child)) {
+            if (typeof child === 'object' || Array.isArray(child)) {
                 return true
             }
             return false

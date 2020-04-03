@@ -306,7 +306,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['allServicesInfo', 'allServicesMap']),
+        ...mapGetters('service', ['allServicesInfo', 'allServicesMap']),
         computeShowDialog: {
             // get value from props
             get() {
@@ -375,7 +375,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['createOrUpdateService']),
+        ...mapActions('service', ['createOrUpdateService']),
 
         //ONLY AVAILABLE FOR POST MODE
         validateServiceId(val) {

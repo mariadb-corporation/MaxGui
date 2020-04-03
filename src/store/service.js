@@ -115,10 +115,14 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
                 await dispatch('fetchAllServices')
             }
         },
@@ -130,10 +134,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServices')
-                await commit('showMessage', {
-                    text: [`Service ${id} is deleted`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Service ${id} is deleted`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
         /**
@@ -154,10 +162,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServices')
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
     },

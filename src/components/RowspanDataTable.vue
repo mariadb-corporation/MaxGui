@@ -3,9 +3,9 @@
      :footer-props="{ 'items-per-page-options': [1, 2, 4, 8, 16] }" -->
     <v-data-table
         :headers="headers"
-        :items="data"
+        :items="dataProcess"
         :hide-default-header="true"
-        :hide-default-footer="data.length <= 10"
+        :hide-default-footer="dataProcess.length <= 10"
         :class="['rowspan-table', tableClass]"
         :loading="loading"
         :options.sync="pagination"
@@ -163,7 +163,17 @@ export default {
             currentPageItems: null,
         }
     },
-
+    computed: {
+        dataProcess: function() {
+            let self = this
+            let processedData = self.$_.cloneDeep(self.data)
+            for (let i = 0; i < processedData.length; ++i) {
+                let obj = processedData[i]
+                Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
+            }
+            return processedData
+        },
+    },
     watch: {
         search: function(val) {
             if (val !== '') this.isSearching = true
@@ -223,11 +233,11 @@ export default {
             this.onCellClick && this.onCellClick(item, header)
         },
         getValue(item, header) {
-            const value =
-                item[header.value] || item[header.value] === 0
-                    ? item[header.value].text || item[header.value]
-                    : 'n/a'
+            /*  data type shouldn't be handled here as it will break the filter result
+                It should be handled in computed properties
+             */
 
+            let value = item[header.value]
             return this.$_.isFunction(header.format) ? header.format(value) : value
         },
 
@@ -257,9 +267,6 @@ export default {
 .rowspan-table {
     .last-row td {
         border-bottom: thin solid $table-border !important;
-    }
-    .border-left-thin {
-        border-left: thin solid $table-border !important;
     }
 }
 </style>

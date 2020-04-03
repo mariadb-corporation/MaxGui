@@ -30,7 +30,7 @@
         </template>
 
         <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-            <fragment v-if="monitorState !== 'null'">
+            <fragment v-if="monitorState !== 'undefined'">
                 <icon-sprite-sheet
                     size="13"
                     class="status-icon mr-1"
@@ -43,10 +43,7 @@
         </template>
 
         <template v-slot:serverId="{ data: { item: { serverId } } }">
-            <fragment v-if="!serverId">
-                <span>Null</span>
-            </fragment>
-            <router-link v-else :to="`/dashboard/servers/${serverId}`" class="no-underline">
+            <router-link :to="`/dashboard/servers/${serverId}`" class="no-underline">
                 <span>{{ serverId }} </span>
             </router-link>
         </template>
@@ -179,7 +176,7 @@ export default {
                         serverConnections: statistics.connections,
                         serverState: serverState,
                         servicesIdArr: servicesIdArr,
-                        gtid: gtid_current_pos ? gtid_current_pos : 'null',
+                        gtid: gtid_current_pos,
                     }
                     if (linkedMonitors.length) {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
@@ -193,7 +190,7 @@ export default {
                         row.monitorState = `${monitorLinked.id}|${monitorLinked.attributes.state}`
                     } else {
                         row.id = 'Not monitored'
-                        row.monitorState = 'null' // using 'null' won't break filter result in table
+                        row.monitorState = undefined
                     }
                     tableRows.push(row)
                 }

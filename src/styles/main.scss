@@ -5,6 +5,7 @@
 @import 'fonts/material-icons';
 // Vuetify helper variables
 @import 'variables.scss';
+@import 'details_page';
 
 html,
 body,
@@ -37,6 +38,7 @@ body,
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 .data-table-full {
     table-layout: fixed;
+
     a:hover {
         text-decoration: underline;
     }
@@ -86,6 +88,10 @@ body,
                     border-right: thin solid $table-border !important;
                     border-left: thin solid $table-border !important;
                 }
+
+                .border-left-thin {
+                    border-left: thin solid $table-border !important;
+                }
                 td {
                     pointer-events: all !important;
                     padding: 0 35px;
@@ -102,6 +108,7 @@ body,
                     &:first-child:not(.hide) {
                         border-left: thin solid $table-border !important;
                     }
+
                     .cell-accent {
                         height: 100%;
                         padding: 0 35px;
@@ -157,13 +164,14 @@ body,
             tr {
                 th {
                     &:not(:last-child) {
-                        width: 100%;
+                        width: unset;
                     }
                 }
             }
         }
     }
 }
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

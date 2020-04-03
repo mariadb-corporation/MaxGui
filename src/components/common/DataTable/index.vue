@@ -2,8 +2,8 @@
     <v-data-table
         v-resize="onResize"
         :headers="visibleHeaders"
-        :items="data"
-        :hide-default-footer="data.length <= 10"
+        :items="dataProcess"
+        :hide-default-footer="dataProcess.length <= 10"
         :hide-default-header="true"
         :footer-props="{ 'items-per-page-options': [] }"
         :class="['data-table-full', tableClass]"
@@ -16,6 +16,7 @@
         :search="search"
         item-key="name"
         :dense="dense"
+        :no-data-text="noDataText"
     >
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
@@ -118,6 +119,7 @@
                         header.value,
                         header.tdClass || header.class,
                         windowSize.x < 600 && 'v-data-table__mobile-row',
+                        tdBorderLeft && 'border-left-thin',
                     ]"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
@@ -128,7 +130,7 @@
                     <div v-if="windowSize.x < 600" class="v-data-table__mobile-row__header">
                         {{ header.text }}
                     </div>
-                    <!-- Adde mobile class when windowSize.x < 600 -->
+                    <!-- Add mobile class when windowSize.x < 600 -->
                     <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
                         <slot :name="header.value" :data="{ item, header }">
                             <!-- no content for the corresponding header, usually this is an error -->
@@ -227,6 +229,9 @@ export default {
         itemsPerPage: { type: Number, default: 10 },
         page: { type: Number, default: 1 },
         dense: { type: Boolean, default: false },
+        noDataText: { type: String },
+        // add border left to td
+        tdBorderLeft: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -243,6 +248,15 @@ export default {
     computed: {
         visibleHeaders() {
             return this.headers.filter(header => this.visible.includes(header))
+        },
+        dataProcess: function() {
+            let self = this
+            let oriData = self.data
+            for (let i = 0; i < oriData.length; ++i) {
+                let obj = oriData[i]
+                Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
+            }
+            return oriData
         },
     },
 
@@ -300,11 +314,9 @@ export default {
             }
         },
         getValue(item, header) {
-            const value =
-                item[header.value] || item[header.value] === 0
-                    ? item[header.value].text || item[header.value]
-                    : 'n/a'
-
+            // data type shouldn't be handled here as it will break the filter result
+            // use helper function to handle value before passing the data to table
+            let value = item[header.value]
             return this.$_.isFunction(header.format) ? header.format(value) : value
         },
         columnToggle() {

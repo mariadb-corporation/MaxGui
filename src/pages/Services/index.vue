@@ -15,8 +15,8 @@
             </icon-sprite-sheet>
         </template>
         <template v-slot:servers="{ data: { item: { servers } } }">
-            <fragment v-if="servers.length === 0">
-                <span>n/a </span>
+            <fragment v-if="servers === 'undefined'">
+                <span>{{ servers }}</span>
             </fragment>
 
             <fragment v-else-if="servers.length < 4">
@@ -110,10 +110,10 @@ export default {
                     const {
                         id,
                         attributes: { state, router, connections, total_connections },
-                        relationships: { servers: { data: allServers = [] } = {} },
+                        relationships: { servers: { data: allServers = undefined } = {} },
                     } = allServices[n] || {}
 
-                    let serversList = allServers ? allServers.map(item => `${item.id}`) : []
+                    let serversList = allServers ? allServers.map(item => `${item.id}`) : allServers
                     let row = {
                         id: id,
                         state: state,

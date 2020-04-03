@@ -72,10 +72,14 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
                 await dispatch('fetchAllServers')
             }
         },
@@ -87,10 +91,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServers')
-                await commit('showMessage', {
-                    text: [`Server ${id} is deleted`],
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Server ${id} is deleted`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
         /**
@@ -113,10 +121,14 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServers')
-                await commit('showMessage', {
-                    text: message,
-                    type: 'success',
-                })
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
             }
         },
     },
