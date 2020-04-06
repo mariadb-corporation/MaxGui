@@ -34,7 +34,11 @@ body,
         text-align: center;
     }
 }
-
+.arrow-toggle {
+    .arrow-up {
+        transform: rotate(-180deg);
+    }
+}
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 .data-table-full {
     table-layout: fixed;
@@ -182,19 +186,6 @@ body,
         }
     }
 }
-// .data-table-nested {
-//     table {
-//         thead {
-//             tr {
-//                 &:not(.v-data-table__progress) {
-//                     th {
-//                         padding: 0 50px;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

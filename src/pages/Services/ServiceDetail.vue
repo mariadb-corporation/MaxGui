@@ -72,15 +72,30 @@
         <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
-                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                    {{ $t('parameters') }}
-                </p>
-                <data-table
-                    class="table-fluid"
-                    :headers="variableValueTableHeaders"
-                    :data="tableRowProcessed('parameters')"
-                    :tdBorderLeft="true"
-                />
+                <div class="mb-1 d-flex align-center">
+                    <v-btn
+                        icon
+                        class="arrow-toggle"
+                        @click="() => (showParameters = !showParameters)"
+                    >
+                        <v-icon :class="[!showParameters ? 'arrow-down' : 'arrow-up']" size="32">
+                            $expand
+                        </v-icon>
+                    </v-btn>
+                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('parameters') }}
+                    </p>
+                </div>
+                <v-expand-transition>
+                    <div v-show="showParameters">
+                        <data-table
+                            class="table-fluid"
+                            :headers="variableValueTableHeaders"
+                            :data="tableRowProcessed('parameters')"
+                            :tdBorderLeft="true"
+                        />
+                    </div>
+                </v-expand-transition>
             </v-col>
             <!-- SERVER TABLE -->
             <v-col cols="3">
@@ -89,13 +104,26 @@
                     :close-modal="() => (addServerDialog = false)"
                     mode="post"
                 />
-                <div class="d-flex justify-center">
-                    <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('servers') }}
-                        <span class="ml-1 color text-field-text"
-                            >({{ serversLinked.length }})
-                        </span>
-                    </p>
+                <div class="mb-1 d-flex align-center">
+                    <div class="d-flex align-center">
+                        <v-btn
+                            icon
+                            class="arrow-toggle"
+                            @click="() => (showServers = !showServers)"
+                        >
+                            <v-icon :class="[!showServers ? 'arrow-down' : 'arrow-up']" size="32">
+                                $expand
+                            </v-icon>
+                        </v-btn>
+                        <p
+                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
+                        >
+                            {{ $t('servers') }}
+                            <span class="ml-1 color text-field-text"
+                                >({{ serversLinked.length }})
+                            </span>
+                        </p>
+                    </div>
                     <v-spacer />
                     <v-btn
                         color="primary"
@@ -107,41 +135,56 @@
                         + {{ $t('addServer') }}
                     </v-btn>
                 </div>
-                <data-table
-                    :headers="serversTableHeader"
-                    :data="serversLinked"
-                    :sortDesc="false"
-                    :noDataText="$t('noServer')"
-                    sortBy="id"
-                    class="table-fluid"
-                >
-                    <template v-slot:id="{ data: { item: { id } } }">
-                        <router-link
-                            :key="id"
-                            :to="`/dashboard/servers/${id}`"
-                            class="no-underline"
+                <v-expand-transition>
+                    <div v-show="showServers">
+                        <data-table
+                            :headers="serversTableHeader"
+                            :data="serversLinked"
+                            :sortDesc="false"
+                            :noDataText="$t('noServer')"
+                            sortBy="id"
+                            class="table-fluid"
                         >
-                            <span> {{ id }} </span>
-                        </router-link>
-                    </template>
-                    <template v-slot:state="{ data: { item: { state } } }">
-                        <icon-sprite-sheet
-                            size="13"
-                            class="status-icon"
-                            :frame="$help.serverStateIcon(state)"
-                        >
-                            status
-                        </icon-sprite-sheet>
-                    </template>
-                </data-table>
+                            <template v-slot:id="{ data: { item: { id } } }">
+                                <router-link
+                                    :key="id"
+                                    :to="`/dashboard/servers/${id}`"
+                                    class="no-underline"
+                                >
+                                    <span> {{ id }} </span>
+                                </router-link>
+                            </template>
+                            <template v-slot:state="{ data: { item: { state } } }">
+                                <icon-sprite-sheet
+                                    size="13"
+                                    class="status-icon"
+                                    :frame="$help.serverStateIcon(state)"
+                                >
+                                    status
+                                </icon-sprite-sheet>
+                            </template>
+                        </data-table>
+                    </div>
+                </v-expand-transition>
             </v-col>
             <!-- FILTER TABLE -->
             <v-col cols="3">
-                <div class="d-flex justify-center">
-                    <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('filters') }}
-                        <span class="ml-1 color text-field-text">({{ filterLinked.length }}) </span>
-                    </p>
+                <div class="mb-1 d-flex align-center">
+                    <div class="d-flex align-center">
+                        <v-btn icon class="arrow-toggle" @click="() => (showFilter = !showFilter)">
+                            <v-icon :class="[!showFilter ? 'arrow-down' : 'arrow-up']" size="32">
+                                $expand
+                            </v-icon>
+                        </v-btn>
+                        <p
+                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
+                        >
+                            {{ $t('filters') }}
+                            <span class="ml-1 color text-field-text"
+                                >({{ filterLinked.length }})
+                            </span>
+                        </p>
+                    </div>
                     <v-spacer />
                     <v-btn
                         color="primary"
@@ -153,37 +196,59 @@
                         + {{ $t('addFilter') }}
                     </v-btn>
                 </div>
-                <data-table
-                    :headers="filterTableHeader"
-                    :data="filterLinked"
-                    :sortDesc="false"
-                    :noDataText="$t('noFilter')"
-                    sortBy="id"
-                    class="table-fluid"
-                >
-                    <template v-slot:id="{ data: { item: { id } } }">
-                        <router-link
-                            :key="id"
-                            :to="`/dashboard/filters/${id}`"
-                            class="no-underline"
+                <v-expand-transition>
+                    <div v-show="showFilter">
+                        <data-table
+                            :headers="filterTableHeader"
+                            :data="filterLinked"
+                            :sortDesc="false"
+                            :noDataText="$t('noFilter')"
+                            sortBy="id"
+                            class="table-fluid"
                         >
-                            <span> {{ id }} </span>
-                        </router-link>
-                    </template>
-                </data-table>
+                            <template v-slot:id="{ data: { item: { id } } }">
+                                <router-link
+                                    :key="id"
+                                    :to="`/dashboard/filters/${id}`"
+                                    class="no-underline"
+                                >
+                                    <span> {{ id }} </span>
+                                </router-link>
+                            </template>
+                        </data-table>
+                    </div>
+                </v-expand-transition>
             </v-col>
         </v-row>
         <v-row>
             <v-col cols="6">
-                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                    {{ $t('routerDiagnostics') }}
-                </p>
-                <data-table
-                    class="table-fluid"
-                    :headers="variableValueTableHeaders"
-                    :data="tableRowProcessed('routerDiagnostics')"
-                    :tdBorderLeft="true"
-                />
+                <div class="mb-1 d-flex align-center">
+                    <v-btn
+                        icon
+                        class="arrow-toggle"
+                        @click="() => (showRouterDiagnostics = !showRouterDiagnostics)"
+                    >
+                        <v-icon
+                            :class="[!showRouterDiagnostics ? 'arrow-down' : 'arrow-up']"
+                            size="32"
+                        >
+                            $expand
+                        </v-icon>
+                    </v-btn>
+                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('routerDiagnostics') }}
+                    </p>
+                </div>
+                <v-expand-transition>
+                    <div v-show="showRouterDiagnostics">
+                        <data-table
+                            class="table-fluid"
+                            :headers="variableValueTableHeaders"
+                            :data="tableRowProcessed('routerDiagnostics')"
+                            :tdBorderLeft="true"
+                        />
+                    </div>
+                </v-expand-transition>
             </v-col>
         </v-row>
     </v-sheet>
@@ -230,6 +295,10 @@ export default {
             ],
             totalConnections: 100,
             currentConnections: 0,
+            showRouterDiagnostics: true,
+            showFilter: true,
+            showServers: true,
+            showParameters: true,
         }
     },
     computed: {

@@ -14,22 +14,16 @@
                 <span v-if="i === 0" class="ml-1 color text-field-text">({{ data.length }})</span>
             </div>
         </div>
-        <!-- <nested-collapse
-            v-for="(item, i) in data"
-            :key="i"
-            :keyName="item.id"
-            :value="$help.handleValue(item.value)"
-            :child="$help.hasChild(item.value) ? item.value : null"
-            :headers="headers"
-            :index="i"
-        /> -->
-        <div class="tree-view">
+        <!--  -->
+        <div class="tree-view ">
             <nested-collapse
-                :keyName="data[1].id"
-                :value="$help.handleValue(data[1].value)"
-                :child="$help.hasChild(data[1].value) ? data[1].value : null"
+                v-for="(item, i) in data"
+                :key="i"
+                :keyName="item.id"
+                :value="$help.handleValue(item.value)"
+                :child="$help.hasChild(item.value) ? item.value : null"
                 :headers="headers"
-                :index="0"
+                :firstLevelRoot="true"
             />
         </div>
     </fragment>
@@ -76,5 +70,14 @@ export default {
 .tree-view {
     border-left: thin solid $table-border;
     border-right: thin solid $table-border;
+}
+::v-deep .v-treeview {
+    border-left: thin solid $table-border;
+    border-right: thin solid $table-border;
+}
+
+::v-deep .v-treeview-node__root {
+    border-bottom: thin solid $table-border !important;
+    padding-left: 18px !important;
 }
 </style>

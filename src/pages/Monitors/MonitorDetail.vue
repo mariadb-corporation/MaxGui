@@ -40,35 +40,67 @@
         <!-- MONITOR DIAGNOSTICS TABLE -->
         <v-row>
             <v-col cols="6">
-                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                    {{ $t('monitorDiagnostics') }}
-                </p>
-
-                <recursive-nested-collapse
-                    :headers="monitorDiagnosticsTableHeaders"
-                    :data="tableRowProcessed('monitorDiagnostics')"
-                />
-                <!-- <recursive-table
+                <div class="mb-1 d-flex align-center">
+                    <v-btn
+                        icon
+                        class="arrow-toggle"
+                        @click="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
+                    >
+                        <v-icon
+                            :class="[!showMonitorDiagnostics ? 'arrow-down' : 'arrow-up']"
+                            size="32"
+                        >
+                            $expand
+                        </v-icon>
+                    </v-btn>
+                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('monitorDiagnostics') }}
+                    </p>
+                </div>
+                <v-expand-transition>
+                    <div v-show="showMonitorDiagnostics">
+                        <recursive-nested-collapse
+                            :headers="monitorDiagnosticsTableHeaders"
+                            :data="tableRowProcessed('monitorDiagnostics')"
+                        />
+                    </div>
+                    <!-- <recursive-table
                     class="table-fluid"
                     :search="searchKeyWord"
                     :headers="variableValueTableHeaders"
                     :data="tableRowProcessed('monitorDiagnostics')"
                     :tdBorderLeft="true"
                 /> -->
+                </v-expand-transition>
             </v-col>
         </v-row>
         <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
-                <p class="body-2 font-weight-bold color text-navigation text-uppercase">
-                    {{ $t('parameters') }}
-                </p>
-                <data-table
-                    class="table-fluid"
-                    :headers="variableValueTableHeaders"
-                    :data="tableRowProcessed('parameters')"
-                    :tdBorderLeft="true"
-                />
+                <div class="mb-1 d-flex align-center">
+                    <v-btn
+                        icon
+                        class="arrow-toggle"
+                        @click="() => (showParameter = !showParameter)"
+                    >
+                        <v-icon :class="[!showParameter ? 'arrow-down' : 'arrow-up']" size="32">
+                            $expand
+                        </v-icon>
+                    </v-btn>
+                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
+                        {{ $t('parameters') }}
+                    </p>
+                </div>
+                <v-expand-transition>
+                    <div v-show="showParameter">
+                        <data-table
+                            class="table-fluid"
+                            :headers="variableValueTableHeaders"
+                            :data="tableRowProcessed('parameters')"
+                            :tdBorderLeft="true"
+                        />
+                    </div>
+                </v-expand-transition>
             </v-col>
         </v-row>
     </v-sheet>
@@ -100,6 +132,8 @@ export default {
                 { text: 'Servers', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%' },
             ],
+            showParameter: true,
+            showMonitorDiagnostics: true,
         }
     },
     computed: {
@@ -154,7 +188,6 @@ export default {
                                     value: obj,
                                 }
                             })
-                            // console.log('arrData', arrData)
                             return arrData
                         }
                     }
@@ -169,6 +202,34 @@ export default {
     },
     methods: {
         ...mapActions('monitor', ['fetchMonitorById']),
+        // objToArrOfObj(obj) {
+        //     if (typeof obj === 'object') {
+        //         let data = []
+        //         let self = this
+        //         let targetObj = self.$_.cloneDeep(obj)
+
+        //         if (!self.$_.isEmpty(targetObj)) {
+        //             Object.keys(targetObj).map(key => {
+        //                 let value = self.$help.handleValue(targetObj[key])
+        //                 let chilren = []
+        //                 let typeOfValue = typeof self.$help.handleValue(targetObj[key])
+        //                 if (typeOfValue === 'object') {
+        //                     value = null
+        //                 } else if (typeOfValue === 'array') {
+        //                     value = { ...value } // convert to object
+        //                 }
+        //                 data.push({
+        //                     id: key,
+        //                     name: key,
+        //                     value: value,
+        //                     children: self.objToArrOfObj(self.$help.handleValue(targetObj[key])),
+        //                 })
+        //             })
+        //             return data
+        //         }
+        //     }
+        //     return []
+        // },
     },
 }
 </script>

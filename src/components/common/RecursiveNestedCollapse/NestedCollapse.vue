@@ -1,47 +1,51 @@
 <template>
-    <fragment>
-        <div class="tree-view-node ">
-            <div class="d-flex tree-view-node__root align-center ">
-                <span
-                    class="tree-view-node__content__keyname d-flex align-center"
-                    :style="{
-                        width: headers[0].width,
-                    }"
+    <div class="treeview-node">
+        <div class="d-flex align-center treeview-node__root">
+            <div
+                class="treeview-node__content__keyname d-flex align-center"
+                :style="{
+                    width: headers[0].width,
+                }"
+            >
+                <v-btn
+                    v-if="child"
+                    icon
+                    class="arrow-toggle"
+                    :class="[firstLevelRoot ? 'ml-3' : '']"
+                    @click="toggleShow"
                 >
-                    <v-btn v-if="child" icon class="treeview-node__toggle" @click="toggleShow">
-                        <v-icon :class="[!showChild ? 'arrow-down' : 'arrow-up']" size="24">
-                            $expand
-                        </v-icon>
-                    </v-btn>
-                    <span v-else class="pl-9" />
-                    <span>{{ keyName }}</span>
-                </span>
+                    <v-icon :class="[!showChild ? 'arrow-down' : 'arrow-up']" size="24">
+                        $expand
+                    </v-icon>
+                </v-btn>
 
-                <span
-                    v-if="!child"
-                    class="pl-10 tree-view-node__content__keyValue color border-left-table-border d-flex align-center "
-                    :style="{
-                        width: headers[1].width,
-                        height: '45px',
-                    }"
-                >
-                    {{ $help.handleEmptyString(value) }}
-                </span>
+                <span :class="[child ? '' : 'ml-3']">{{ keyName }}</span>
             </div>
-            <v-expand-transition>
-                <div v-show="showChild" class="treeview-node__children">
-                    <nested-collapse
-                        v-for="(childValue, childKeyName) in child"
-                        :key="childKeyName"
-                        :keyName="childKeyName"
-                        :value="$help.handleNull(childValue)"
-                        :child="$help.hasChild(childValue) ? childValue : null"
-                        :headers="headers"
-                    />
-                </div>
-            </v-expand-transition>
+            <span
+                v-if="!child"
+                class="pl-10 treeview-node__content__keyValue color border-left-table-border d-flex align-center "
+                :style="{
+                    width: headers[1].width,
+                    height: '45px',
+                }"
+            >
+                {{ $help.handleEmptyString(value) }}
+            </span>
         </div>
-    </fragment>
+        <v-expand-transition>
+            <div v-show="showChild" class="treeview-node__children ">
+                <nested-collapse
+                    v-for="(childValue, childKeyName) in child"
+                    :key="childKeyName"
+                    :keyName="childKeyName"
+                    :value="$help.handleNull(childValue)"
+                    :child="$help.hasChild(childValue) ? childValue : null"
+                    :headers="headers"
+                    :firstLevelRoot="false"
+                />
+            </div>
+        </v-expand-transition>
+    </div>
 </template>
 
 <script>
@@ -69,6 +73,7 @@ export default {
         child: [Object, Array],
         index: Number,
         headers: Array,
+        firstLevelRoot: Boolean,
     },
     data() {
         return {
@@ -84,15 +89,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.tree-view-node {
+.treeview-node {
     &__root {
-        border-bottom: thin solid $table-border;
         min-height: 45px;
+        border-bottom: thin solid $table-border;
     }
-}
-.treeview-node__toggle {
-    .arrow-up {
-        transform: rotate(-180deg);
+    .treeview-node {
+        padding-left: 36px;
     }
 }
 </style>
