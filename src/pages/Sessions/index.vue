@@ -1,5 +1,11 @@
 <template>
-    <data-table :headers="tableHeaders" :data="generateTableRows" :sortDesc="false" sortBy="id">
+    <data-table
+        :search="searchKeyWord"
+        :headers="tableHeaders"
+        :data="generateTableRows"
+        :sortDesc="false"
+        sortBy="id"
+    >
         <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
         </template>
@@ -80,9 +86,11 @@ export default {
     },
     computed: {
         ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
             allSessions: 'session/allSessions',
             allServices: 'service/allServices',
         }),
+
         generateTableRows: function() {
             let sessionsTest = [
                 {

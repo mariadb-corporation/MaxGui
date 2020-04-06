@@ -29,7 +29,6 @@ export function hasChild(val) {
     if (_.isObject(val)) {
         return true
     }
-
     return false
 }
 
@@ -130,7 +129,7 @@ export function sliceStrAtChar(str, char, returnLastPart) {
 export function serviceStateIcon(serviceState) {
     if (serviceState) {
         if (serviceState.includes('Started')) return 2
-        if (serviceState.includes('Stopped')) return 0
+        if (serviceState.includes('Stopped') || serviceState.includes('Allocated')) return 0
         else return ''
     } else return ''
 }
@@ -179,7 +178,7 @@ export function objToArrOfObj(obj) {
 
         if (!_.isEmpty(targetObj)) {
             Object.keys(targetObj).map(key => {
-                data.push({ id: key, value: targetObj[key] })
+                data.push({ id: key, value: handleValue(targetObj[key]) })
             })
             return data
         }

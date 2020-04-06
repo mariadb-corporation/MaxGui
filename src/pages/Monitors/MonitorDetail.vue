@@ -1,31 +1,4 @@
 <template>
-    <!-- <v-container v-if="currentMonitor" fluid class="pl-8">
-        <details-page-title />
-        <v-row>
-            <v-col cols="6">
-                <h5>Attributes</h5>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentMonitor.attributes"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
-                />
-            </v-col>
-            <v-col v-if="!$_.isEmpty(currentMonitor.relationships)" cols="6">
-                <h5>Relationshis</h5>
-                <recursive-nested-collapse
-                    v-for="(value, propertyName) in currentMonitor.relationships"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
-                />
-            </v-col>
-        </v-row>
-    </v-container> -->
     <v-sheet v-if="!$_.isEmpty(currentMonitor)" class="px-6">
         <details-page-title />
         <icon-sprite-sheet
@@ -70,21 +43,18 @@
                 <p class="body-2 font-weight-bold color text-navigation text-uppercase">
                     {{ $t('monitorDiagnostics') }}
                 </p>
-                <!-- 
+
                 <recursive-nested-collapse
-                    v-for="(value, propertyName) in tableRowProcessed('monitorDiagnostics')"
-                    :key="propertyName"
-                    :hasChild="$help.hasChild(value)"
-                    :propertyName="propertyName"
-                    :value="$help.handleNull(value)"
-                    :child="$help.hasChild(value) ? value : {}"
-                /> -->
-                <recursive-table
+                    :headers="monitorDiagnosticsTableHeaders"
+                    :data="tableRowProcessed('monitorDiagnostics')"
+                />
+                <!-- <recursive-table
                     class="table-fluid"
+                    :search="searchKeyWord"
                     :headers="variableValueTableHeaders"
                     :data="tableRowProcessed('monitorDiagnostics')"
                     :tdBorderLeft="true"
-                />
+                /> -->
             </v-col>
         </v-row>
         <!-- PARAMETERS TABLE -->
@@ -117,23 +87,27 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-    components: {
-        'recursive-nested-collapse': RecursiveNestedCollapse,
-    },
     data() {
         return {
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%' },
             ],
+            monitorDiagnosticsTableHeaders: [
+                { text: 'Servers', value: 'id', width: '65%' },
+                { text: 'Value', value: 'value', width: '35%' },
+            ],
         }
     },
     computed: {
-        ...mapGetters('monitor', ['currentMonitor']),
+        ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
+            currentMonitor: 'monitor/currentMonitor',
+        }),
+
         getTopOverviewInfo: function() {
             let self = this
             let currentMonitor = self.$_.cloneDeep(self.currentMonitor)
@@ -172,12 +146,16 @@ export default {
                             const {
                                 attributes: { monitor_diagnostics: { server_info = [] } = {} } = {},
                             } = currentMonitor
-                            let objData = server_info.map(obj => ({
-                                id: obj.name,
-                                value: obj,
-                            }))
-
-                            return objData
+                            let arrData = server_info.map(obj => {
+                                let id = obj.name
+                                delete obj.name
+                                return {
+                                    id: id,
+                                    value: obj,
+                                }
+                            })
+                            // console.log('arrData', arrData)
+                            return arrData
                         }
                     }
                 }

@@ -17,6 +17,7 @@ import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from 'components/common/IconSpriteSheet'
 import OutlineSmallCard from 'components/common/OutlineSmallCard'
 import RecursiveTable from 'components/common/RecursiveTable'
+import RecursiveNestedCollapse from 'components/common/RecursiveNestedCollapse'
 
 export default {
     'base-dialog': BaseDialog,
@@ -26,4 +27,5 @@ export default {
     'icon-sprite-sheet': IconSpriteSheet,
     'outline-small-card': OutlineSmallCard,
     'recursive-table': RecursiveTable,
+    'recursive-nested-collapse': RecursiveNestedCollapse,
 }

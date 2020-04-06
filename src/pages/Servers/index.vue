@@ -48,14 +48,15 @@
             </router-link>
         </template>
 
-        <template v-slot:serverStatus="{ data: { item: { serverStatus } } }">
+        <template v-slot:serverState="{ data: { item: { serverState } } }">
             <icon-sprite-sheet
                 size="13"
-                class="status-icon"
-                :frame="$help.serverStateIcon(serverStatus)"
+                class="mr-1 status-icon"
+                :frame="$help.serverStateIcon(serverState)"
             >
                 status
             </icon-sprite-sheet>
+            <span>{{ serverState }}</span>
         </template>
 
         <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
@@ -124,7 +125,6 @@ export default {
                 { text: `Monitor`, value: 'id' },
                 { text: 'State', value: 'monitorState' },
                 { text: 'Servers', sortable: false, value: 'serverId' },
-                { text: 'Status', sortable: false, value: 'serverStatus' },
                 { text: 'Address', sortable: false, value: 'serverAddress' },
                 { text: 'Port', sortable: false, value: 'serverPort' },
                 { text: 'Connections', sortable: false, value: 'serverConnections' },
@@ -170,7 +170,6 @@ export default {
                         originalHidden: false,
                         hidden: false,
                         serverId: serverId,
-                        serverStatus: serverState,
                         serverAddress: parameters.address,
                         serverPort: parameters.port,
                         serverConnections: statistics.connections,

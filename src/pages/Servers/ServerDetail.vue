@@ -42,11 +42,13 @@
                                     <span>{{ value }} </span>
                                 </router-link>
                                 <span v-else class="text-no-wrap body-2">
-                                    {{
-                                        name === 'triggered_at' && value !== 'undefined'
-                                            ? $help.formatValue(value, 'DATE_RFC2822')
-                                            : value
-                                    }}
+                                    <span v-if="value !== 'undefined'">
+                                        {{
+                                            name === 'triggered_at' && value !== 'undefined'
+                                                ? $help.formatValue(value, 'DATE_RFC2822')
+                                                : value
+                                        }}
+                                    </span>
                                 </span>
                             </template>
                         </outline-small-card>
@@ -145,14 +147,12 @@
 </template>
 
 <script>
-import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
 import { mapGetters, mapActions } from 'vuex'
 import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
 
 export default {
     name: 'server-detail',
     components: {
-        // 'recursive-nested-collapse': RecursiveNestedCollapse,
         ServiceCreateOrUpdate,
     },
     props: {

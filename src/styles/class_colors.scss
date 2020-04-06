@@ -7,7 +7,6 @@ $colors: (
     'info': $info,
     'accent': $accent,
     'accent-dark': $accent-dark,
-    'table-header': $table-header,
     'text': $text,
     'text-subtle': $text-subtle,
     'navigation': $navigation,
@@ -20,6 +19,8 @@ $colors: (
     'field-text': $field-text,
     'code-color': $code-color,
     'table-border': $table-border,
+    'table-header': $table-header,
+    'small-text': $small-text,
 );
 
 .color {
@@ -34,10 +35,13 @@ $colors: (
             border-color: $value !important;
         }
         &.border-bottom-#{$name} {
-            border-bottom: 1px solid $value !important;
+            border-bottom: thin solid $value !important;
         }
         &.border-top-#{$name} {
-            border-top: 1px solid $value !important;
+            border-top: thin solid $value !important;
+        }
+        &.border-left-#{$name} {
+            border-left: thin solid $value !important;
         }
     }
 }

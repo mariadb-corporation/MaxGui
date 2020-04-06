@@ -2,9 +2,99 @@
     <v-data-table
         :headers="headers"
         :items="dataProcess"
-        :class="['data-table-full', tableClass]"
+        :class="['data-table-full', 'data-table-nested', tableClass]"
         item-key="name"
+        :hide-default-header="true"
+        :hide-default-footer="dataProcess.length <= 10"
+        :loading="loading"
+        :options.sync="pagination"
+        :page="page"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        :search="search"
+        :dense="dense"
+        :items-per-page="itemsPerPage"
+        @current-items="currentItems"
+        @update:page="updatePagination"
     >
+        <!----------------------------------------------------TABLE HEAD--------------------------------------------->
+        <template v-slot:header="{ props: { headers } }">
+            <thead class="v-data-table-header">
+                <tr>
+                    <th
+                        v-for="header in headers"
+                        :key="header.value"
+                        :width="header.width"
+                        :class="[
+                            header.align && `text-${header.align}`,
+                            header.sortable !== false ? 'pointer sortable' : 'no-pointerEvent',
+                            pagination.sortDesc[0] ? 'desc' : 'asc',
+                            header.value === pagination.sortBy[0] ? 'active' : '',
+                        ]"
+                        @click="changeSort(header.value)"
+                    >
+                        <div class="d-inline-flex justify-center align-center">
+                            <span>{{ header.text }}</span>
+                            <slot :name="`append-${header.value}`"> </slot>
+                            <v-icon
+                                v-if="header.sortable !== false"
+                                size="7"
+                                class="ml-1 v-data-table-header__icon"
+                                >$vuetify.icons.arrowDown</v-icon
+                            >
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+        </template>
+        <!----------------------------------------------------TABLE ROW--------------------------------------------->
+
+        <template v-slot:item="{ item, index }">
+            <fragment>
+                <tr
+                    :class="{
+                        'last-row': index === currentPageItems.length - 1,
+                        'collapse-row': $_.isObject(item.value),
+                    }"
+                >
+                    <td
+                        v-for="(header, i) in headers"
+                        :key="i"
+                        :class="[header.value, header.tdClass || header.class]"
+                        @click="cellClick(item, headers)"
+                    >
+                        <div>
+                            <slot :name="header.value" :data="{ item, header }">
+                                <!-- no content for the corresponding header, usually this is an error  -->
+                                <span v-if="$_.isUndefined(item[header.value])"></span>
+                                <!-- regular cell, check if value is object; 
+                                this lodash function also see array as object  -->
+                                <span v-else-if="!$_.isObject(item[header.value])">
+                                    {{ getValue(item, header) }}
+                                </span>
+                            </slot>
+                        </div>
+                    </td>
+                </tr>
+            </fragment>
+
+            <fragment v-if="$_.isObject(item.value)">
+                <tr v-for="(nestedItem, n) in handleNestedValue(item.value)" :key="n">
+                    <td
+                        v-for="(header, i) in headers"
+                        :key="i"
+                        class="nested-row"
+                        :class="[header.value, header.tdClass || header.class]"
+                        @click="cellClick(nestedItem, headers)"
+                    >
+                        <span v-if="$_.isUndefined(nestedItem[header.value])"></span>
+                        <span v-else-if="!$_.isObject(nestedItem[header.value])">
+                            {{ getValue(nestedItem, header) }}
+                        </span>
+                    </td>
+                </tr>
+            </fragment>
+        </template>
     </v-data-table>
 </template>
 
@@ -35,9 +125,22 @@ export default {
         data: { type: Array },
         tdBorderLeft: { type: Boolean, default: false },
         tableClass: { type: String, default: 'data-table-full' },
+        sortBy: { type: String },
+        search: { type: String, default: '' },
+        sortDesc: { type: Boolean },
+        loading: { type: Boolean, default: false },
+        onCellClick: { type: Function },
+        itemsPerPage: { type: Number, defalut: 10 },
+        page: { type: Number, default: 1 },
+        dense: { type: Boolean, default: false },
     },
     data() {
         return {
+            pagination: {},
+            isSearching: false,
+            isPaginationChanged: false,
+            currentPage: 1,
+            currentPageItems: null,
             windowSize: {
                 x: 0,
                 y: 0,
@@ -48,16 +151,27 @@ export default {
     computed: {
         dataProcess: function() {
             let self = this
-            let oriData = self.data
-            for (let i = 0; i < oriData.length; ++i) {
-                let obj = oriData[i]
+            let processedData = self.$_.cloneDeep(self.data)
+            for (let i = 0; i < processedData.length; ++i) {
+                let obj = processedData[i]
                 Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
             }
-            return oriData
+            return processedData
         },
     },
 
     watch: {
+        search: function(val) {
+            if (val !== '') this.isSearching = true
+            else this.isSearching = false
+        },
+
+        pagination: {
+            handler(val) {
+                this.$emit('pagination', val)
+            },
+            deep: true,
+        },
         data: {
             handler(list) {
                 list.forEach(item => {
@@ -68,9 +182,45 @@ export default {
     },
 
     methods: {
-        rowClick(item, headers) {
-            // if (this.$scopedSlots['expandable']) this.toggleRow(item.id);
-            this.onRowClick && this.onRowClick(item, headers)
+        updatePagination(page) {
+            if (this.currentPage !== page) {
+                this.isPaginationChanged = true
+                this.currentPage = page
+            }
+        },
+
+        currentItems(items) {
+            let uniqueSet = new Set(items.map(item => item.id))
+            let itemsId = [...uniqueSet]
+            let groupedId = this.$help.groupBy(items, 'id')
+
+            for (let i = 0; i < itemsId.length; ++i) {
+                let group = groupedId[`${itemsId[i]}`]
+                for (let n = 0; n < group.length; ++n) {
+                    group[n].hidden = group[n].originalHidden
+                    group[n].alterableRowspan = group[n].originalRowSpan
+                }
+                // when searching or pagination, use current items to mutate
+                //Add this.isSearching || still breaks the rowspan view in some cases
+                if (this.isSearching || this.isPaginationChanged) {
+                    // mutate object
+                    /* if group length is one ------> alterableRowspan property needs to be 1 */
+                    if (group.length === 1) {
+                        group[0].alterableRowspan = 1
+                    }
+                    group[0].hidden && (group[0].hidden = false)
+                }
+            }
+            this.currentPageItems = items
+        },
+        changeSort(column) {
+            // TODO: support multiple column sorting
+            if (this.pagination.sortBy[0] === column) {
+                this.pagination.sortDesc = [!this.pagination.sortDesc[0]]
+            } else {
+                this.pagination.sortBy = [column]
+                this.pagination.sortDesc = [false]
+            }
         },
         cellClick(item, header) {
             this.onCellClick && this.onCellClick(item, header)
@@ -91,6 +241,9 @@ export default {
             // use helper function to handle value before passing the data to table
             let value = item[header.value]
             return this.$_.isFunction(header.format) ? header.format(value) : value
+        },
+        handleNestedValue(item) {
+            return this.$help.objToArrOfObj(item)
         },
     },
 }

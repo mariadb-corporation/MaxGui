@@ -202,7 +202,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import RecursiveNestedCollapse from 'components/RecursiveNestedCollapse'
+
 import { mapGetters, mapActions } from 'vuex'
 import CurrentConnectionsChart from 'pages/Services/CurrentConnectionsChart'
 import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'

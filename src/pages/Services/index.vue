@@ -1,5 +1,11 @@
 <template>
-    <data-table :headers="tableHeaders" :data="generateTableRows" :sortDesc="false" sortBy="id">
+    <data-table
+        :search="searchKeyWord"
+        :headers="tableHeaders"
+        :data="generateTableRows"
+        :sortDesc="false"
+        sortBy="id"
+    >
         <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
         </template>
@@ -86,7 +92,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('service', ['allServices']),
+        ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
+            allServices: 'service/allServices',
+        }),
+
         /**
          * @return {Array} An array of objects
          */
@@ -113,7 +123,8 @@ export default {
                         relationships: { servers: { data: allServers = undefined } = {} },
                     } = allServices[n] || {}
 
-                    let serversList = allServers ? allServers.map(item => `${item.id}`) : allServers
+                    let serversList =
+                        allServers !== undefined ? allServers.map(item => `${item.id}`) : allServers
                     let row = {
                         id: id,
                         state: state,
