@@ -97,7 +97,7 @@ body,
                     pointer-events: all !important;
                     padding: 0 35px;
                     border-bottom: thin solid $table-border !important;
-                    font-size: 14px;
+                    height: 45px;
                     color: $navigation;
                     white-space: nowrap;
                     @media (max-width: 600px) {
@@ -109,33 +109,32 @@ body,
                     &:first-child:not(.hide) {
                         border-left: thin solid $table-border !important;
                     }
+                    // .cell-accent {
+                    //     height: 100%;
+                    //     padding: 0 35px;
+                    //     margin-left: -24px;
+                    //     display: flex;
+                    //     border-left: 8px solid #828282;
+                    //     &.info-accent {
+                    //         border-color: $accent;
+                    //     }
+                    //     &.success-accent {
+                    //         border-color: $success;
+                    //     }
+                    //     &.error-accent {
+                    //         border-color: $error;
+                    //     }
+                    //     &.warning-accent {
+                    //         border-color: $warning;
+                    //     }
+                    // }
+                    // &.actions {
+                    //     text-align: right;
 
-                    .cell-accent {
-                        height: 100%;
-                        padding: 0 35px;
-                        margin-left: -24px;
-                        display: flex;
-                        border-left: 8px solid #828282;
-                        &.info-accent {
-                            border-color: $accent;
-                        }
-                        &.success-accent {
-                            border-color: $success;
-                        }
-                        &.error-accent {
-                            border-color: $error;
-                        }
-                        &.warning-accent {
-                            border-color: $warning;
-                        }
-                    }
-                    &.actions {
-                        text-align: right;
-
-                        button {
-                            opacity: 0;
-                        }
-                    }
+                    //     button {
+                    //         opacity: 0;
+                    //     }
+                    // }
                 }
                 &:hover {
                     td.actions button {

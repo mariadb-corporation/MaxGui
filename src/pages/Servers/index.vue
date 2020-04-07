@@ -30,7 +30,7 @@
         </template>
 
         <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-            <fragment v-if="monitorState !== 'undefined'">
+            <div v-if="monitorState !== 'undefined'" class="d-flex align-center">
                 <icon-sprite-sheet
                     size="13"
                     class="status-icon mr-1"
@@ -39,7 +39,7 @@
                     status
                 </icon-sprite-sheet>
                 <span>{{ $help.sliceStrAtChar(monitorState, '|', true) }} </span>
-            </fragment>
+            </div>
         </template>
 
         <template v-slot:serverId="{ data: { item: { serverId } } }">
@@ -49,14 +49,16 @@
         </template>
 
         <template v-slot:serverState="{ data: { item: { serverState } } }">
-            <icon-sprite-sheet
-                size="13"
-                class="mr-1 status-icon"
-                :frame="$help.serverStateIcon(serverState)"
-            >
-                status
-            </icon-sprite-sheet>
-            <span>{{ serverState }}</span>
+            <div class="d-flex align-center">
+                <icon-sprite-sheet
+                    size="13"
+                    class="mr-1 status-icon"
+                    :frame="$help.serverStateIcon(serverState)"
+                >
+                    status
+                </icon-sprite-sheet>
+                <span>{{ serverState }}</span>
+            </div>
         </template>
 
         <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
@@ -146,7 +148,7 @@ export default {
         dataProcessing: function() {
             if (this.allServers.length && this.allMonitorsMap.size) {
                 let tableRows = []
-                let allServers = this.$_.cloneDeep(this.allServers)
+                let allServers = this.$help.cloneDeep(this.allServers)
                 let totalServices = []
                 for (let index = 0; index < allServers.length; ++index) {
                     const {

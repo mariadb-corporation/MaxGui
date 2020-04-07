@@ -336,7 +336,7 @@ export default {
             return this.allServicesMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
         },
         booleanParams: function() {
-            return this.$_.pickBy(this.parameters, this.$_.isBoolean)
+            return this.$help.pickBy(this.parameters, this.$help.isBoolean)
         },
     },
     watch: {
@@ -361,10 +361,10 @@ export default {
                 } = this.getCurrentService
                 //First set serviceID from item props
                 this.serviceId = this.item.id
-                // deep object copy or using this.$_.cloneDeep from lodash
-                this.parameters = this.$_.cloneDeep(parameters)
-                this.relationships = this.$_.cloneDeep(relationships)
-                this.router = this.$_.cloneDeep(router)
+                // deep object copy or using this.$help.cloneDeep from lodash
+                this.parameters = this.$help.cloneDeep(parameters)
+                this.relationships = this.$help.cloneDeep(relationships)
+                this.router = this.$help.cloneDeep(router)
                 if (this.relationships.filters === undefined) {
                     this.$set(this.relationships, 'filters', { data: [] })
                 }

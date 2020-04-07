@@ -54,7 +54,7 @@
                 <tr
                     :class="{
                         'last-row': index === currentPageItems.length - 1,
-                        'collapse-row': $_.isObject(item.value),
+                        'collapse-row': $help.isObject(item.value),
                     }"
                 >
                     <td
@@ -66,10 +66,10 @@
                         <div>
                             <slot :name="header.value" :data="{ item, header }">
                                 <!-- no content for the corresponding header, usually this is an error  -->
-                                <span v-if="$_.isUndefined(item[header.value])"></span>
+                                <span v-if="$help.isUndefined(item[header.value])"></span>
                                 <!-- regular cell, check if value is object; 
                                 this lodash function also see array as object  -->
-                                <span v-else-if="!$_.isObject(item[header.value])">
+                                <span v-else-if="!$help.isObject(item[header.value])">
                                     {{ getValue(item, header) }}
                                 </span>
                             </slot>
@@ -78,7 +78,7 @@
                 </tr>
             </fragment>
 
-            <fragment v-if="$_.isObject(item.value)">
+            <fragment v-if="$help.isObject(item.value)">
                 <tr v-for="(nestedItem, n) in handleNestedValue(item.value)" :key="n">
                     <td
                         v-for="(header, i) in headers"
@@ -87,8 +87,8 @@
                         :class="[header.value, header.tdClass || header.class]"
                         @click="cellClick(nestedItem, headers)"
                     >
-                        <span v-if="$_.isUndefined(nestedItem[header.value])"></span>
-                        <span v-else-if="!$_.isObject(nestedItem[header.value])">
+                        <span v-if="$help.isUndefined(nestedItem[header.value])"></span>
+                        <span v-else-if="!$help.isObject(nestedItem[header.value])">
                             {{ getValue(nestedItem, header) }}
                         </span>
                     </td>
@@ -151,7 +151,7 @@ export default {
     computed: {
         dataProcess: function() {
             let self = this
-            let processedData = self.$_.cloneDeep(self.data)
+            let processedData = self.$help.cloneDeep(self.data)
             for (let i = 0; i < processedData.length; ++i) {
                 let obj = processedData[i]
                 Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
@@ -240,11 +240,59 @@ export default {
             // data type shouldn't be handled here as it will break the filter result
             // use helper function to handle value before passing the data to table
             let value = item[header.value]
-            return this.$_.isFunction(header.format) ? header.format(value) : value
+            return this.$help.isFunction(header.format) ? header.format(value) : value
         },
         handleNestedValue(item) {
             return this.$help.objToArrOfObj(item)
         },
+        // levelRecursive(arr, newwArr, level) {
+        //     let self = this
+
+        //     arr.forEach(function(o) {
+        //         if (o.children && o.children.length > 0) {
+        //             o.level = level
+
+        //             newwArr.push(o)
+        //             self.levelRecursive(o.children, newwArr, o.level + 1)
+        //         } else {
+        //             o.level = level
+        //             newwArr.push(o)
+        //             return false
+        //         }
+        //     })
+        // },
+        // processTreeData(obj) {
+        //     if (typeof obj === 'object') {
+        //         let data = []
+        //         let self = this
+        //         let targetObj = self.$help.cloneDeep(obj)
+
+        //         if (!self.$help.isEmpty(targetObj)) {
+        //             Object.keys(targetObj).map(key => {
+        //                 const value = self.$help.handleValue(targetObj[key])
+        //                 let newValue = self.$help.cloneDeep(value)
+        //                 let chilren = self.processTreeData(self.$help.handleValue(targetObj[key]))
+        //                 let typeOfValue = typeof value
+        //                 if (typeOfValue === 'object') {
+        //                     newValue = null
+        //                 } else if (Array.isArray(value)) {
+        //                     newValue = { ...newValue } // convert to object
+        //                 }
+
+        //                 data.push({
+        //                     id: key,
+        //                     name: key,
+        //                     value: newValue,
+        //                     children: chilren,
+        //                     colNameWidth: '65%',
+        //                     colValueWidth: '35%',
+        //                 })
+        //             })
+        //             return data
+        //         }
+        //     }
+        //     return []
+        // },
     },
 }
 </script>

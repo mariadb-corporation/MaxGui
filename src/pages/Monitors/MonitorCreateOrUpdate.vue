@@ -357,9 +357,9 @@ export default {
                 //First set serverId from item props
                 this.serverId = this.item.id
                 this.radioGroup = parameters.address ? 'address' : 'socket'
-                // deep object copy or using this.$_.cloneDeep from lodash
-                this.parameters = this.$_.cloneDeep(parameters)
-                this.relationships = this.$_.cloneDeep(relationships)
+                // deep object copy or using this.$help.cloneDeep from lodash
+                this.parameters = this.$help.cloneDeep(parameters)
+                this.relationships = this.$help.cloneDeep(relationships)
                 if (this.relationships.services === undefined) {
                     this.$set(this.relationships, 'services', { data: [] })
                 }

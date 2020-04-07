@@ -47,9 +47,9 @@ export default {
         ...mapActions(['maxscale/fetchMaxScaleDetails']),
         genData() {
             if (this.$route.params.parameters) {
-                return this.$_.cloneDeep(this.$route.params.parameters)
+                return this.$help.cloneDeep(this.$route.params.parameters)
             }
-            return this.$_.cloneDeep(this.maxscaleDetails.parameters)
+            return this.$help.cloneDeep(this.maxscaleDetails.parameters)
         },
     },
 }

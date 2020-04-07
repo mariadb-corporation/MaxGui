@@ -1,5 +1,5 @@
 <template>
-    <v-sheet v-if="!$_.isEmpty(currentService)" class="px-6">
+    <v-sheet v-if="!$help.isEmpty(currentService)" class="px-6">
         <details-page-title />
         <icon-sprite-sheet
             size="13"
@@ -305,8 +305,8 @@ export default {
         ...mapGetters('service', ['currentService']),
         tableRowProcessed() {
             return type => {
-                let currentService = this.$_.cloneDeep(this.currentService)
-                if (!this.$_.isEmpty(currentService)) {
+                let currentService = this.$help.cloneDeep(this.currentService)
+                if (!this.$help.isEmpty(currentService)) {
                     switch (type) {
                         case 'parameters': {
                             const { attributes: { parameters = {} } = {} } = currentService
@@ -324,7 +324,7 @@ export default {
     },
     watch: {
         currentService: function(newVal) {
-            if (!this.$_.isEmpty(newVal.relationships)) {
+            if (!this.$help.isEmpty(newVal.relationships)) {
                 let servers = newVal.relationships.servers.data
                 let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
                 // Get array of obj linked servers based on linkedServers array of IDs

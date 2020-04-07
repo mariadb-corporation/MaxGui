@@ -16,8 +16,10 @@ import SearchBox from 'components/common/SearchBox'
 import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from 'components/common/IconSpriteSheet'
 import OutlineSmallCard from 'components/common/OutlineSmallCard'
+
 import RecursiveTable from 'components/common/RecursiveTable'
 import RecursiveNestedCollapse from 'components/common/RecursiveNestedCollapse'
+import TreeData from 'components/common/TreeData'
 
 export default {
     'base-dialog': BaseDialog,
@@ -28,4 +30,5 @@ export default {
     'outline-small-card': OutlineSmallCard,
     'recursive-table': RecursiveTable,
     'recursive-nested-collapse': RecursiveNestedCollapse,
+    'tree-data': TreeData,
 }

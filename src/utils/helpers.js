@@ -11,11 +11,21 @@
  * Public License.
  */
 import Vue from 'vue'
-import _ from 'lodash'
+
 import { moment } from 'plugins/moment'
 
+export const isNaN = require('lodash/isNaN')
+export const isObject = require('lodash/isObject')
+export const isEmpty = require('lodash/isEmpty')
+export const isNull = require('lodash/isNull')
+export const isFunction = require('lodash/isFunction')
+export const cloneDeep = require('lodash/cloneDeep')
+export const isUndefined = require('lodash/isUndefined')
+export const pickBy = require('lodash/pickBy')
+export const isBoolean = require('lodash/isBoolean')
+
 export function range(start, end) {
-    if (_.isNaN(start) || _.isNaN(end)) return
+    if (isNaN(start) || isNaN(end)) return
     return Math.floor(Math.random() * (end - start + 1)) + start
 }
 
@@ -24,20 +34,19 @@ export function range(start, end) {
  * @returns {Boolean} Return true if value type is object or array.
  */
 export function hasChild(val) {
-    /*  _.isObject => true if val is array or object
+    /*  help.isObject => true if val is array or object
         https://lodash.com/docs/4.17.15#isObject 
         Empty child won't be shown
     */
 
-    if (_.isObject(val) && !_.isEmpty(val) && val !== null) {
+    if (isObject(val) && !isEmpty(val) && val !== null) {
         return true
     }
-
     return false
 }
 
 export function treatEmptyStringAsNull(val) {
-    if (_.isEmpty(val)) {
+    if (isEmpty(val)) {
         return null
     }
     return val
@@ -49,7 +58,7 @@ export function treatEmptyStringAsNull(val) {
  */
 export function handleNull(val) {
     // render null string
-    if (_.isNull(val)) {
+    if (isNull(val)) {
         return 'null'
     }
     // check if it is object, or array
@@ -79,11 +88,6 @@ export function dynamicColors(dataIndex) {
         'rgba(66,79,98,1)',
         'rgba(245,157,52,1)',
     ]
-    let r = Math.floor(Math.random() * 255)
-    let g = Math.floor(Math.random() * 255)
-    let b = Math.floor(Math.random() * 255)
-    // return 'rgb(' + r + ',' + g + ',' + b + ')'
-
     return palette[dataIndex % palette.length]
 }
 
@@ -178,9 +182,9 @@ export function formatValue(value, formatType) {
 export function objToArrOfObj(obj) {
     if (typeof obj === 'object') {
         let data = []
-        let targetObj = _.cloneDeep(obj)
+        let targetObj = cloneDeep(obj)
 
-        if (!_.isEmpty(targetObj)) {
+        if (!isEmpty(targetObj)) {
             Object.keys(targetObj).map(key => {
                 data.push({ id: key, value: handleValue(targetObj[key]) })
             })
@@ -198,9 +202,8 @@ export function handleValue(value) {
     let typeOfValue = typeof value
     let newVal
 
-    // handle typeof first
     if (
-        typeOfValue === 'array' ||
+        Array.isArray(value) ||
         typeOfValue === 'object' ||
         typeOfValue === 'string' ||
         typeOfValue === 'number' ||
@@ -236,6 +239,16 @@ Object.defineProperties(Vue.prototype, {
                 formatValue,
                 objToArrOfObj,
                 handleValue,
+                // lodash
+                isNaN,
+                isObject,
+                isEmpty,
+                isNull,
+                isFunction,
+                cloneDeep,
+                isUndefined,
+                pickBy,
+                isBoolean,
             }
         },
     },

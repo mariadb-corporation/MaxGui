@@ -1,5 +1,5 @@
 <template>
-    <v-sheet v-if="!$_.isEmpty(currentServer)" class="px-6">
+    <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
         <details-page-title />
         <icon-sprite-sheet
             size="13"
@@ -12,7 +12,7 @@
             {{ currentServer.attributes.state.includes('Running') ? 'Running' : 'Down' }}
         </span>
         <span class="color text-field-text body-2">
-            {{ !$_.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
+            {{ !$help.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
             <span>{{ currentServer.attributes.version_string }}</span>
         </span>
         <v-slide-group :show-arrows="false" class="mb-5" center-active>
@@ -249,9 +249,9 @@ export default {
         }),
         getTopOverviewInfo: function() {
             let self = this
-            let currentServer = self.$_.cloneDeep(self.currentServer)
+            let currentServer = self.$help.cloneDeep(self.currentServer)
             let overviewInfo = {}
-            if (!self.$_.isEmpty(currentServer)) {
+            if (!self.$help.isEmpty(currentServer)) {
                 // Set fallback undefined value if properties doesnt exist
                 const {
                     attributes: {
@@ -291,8 +291,8 @@ export default {
         },
         tableRowProcessed() {
             return type => {
-                let currentServer = this.$_.cloneDeep(this.currentServer)
-                if (!this.$_.isEmpty(currentServer)) {
+                let currentServer = this.$help.cloneDeep(this.currentServer)
+                if (!this.$help.isEmpty(currentServer)) {
                     switch (type) {
                         case 'parameters': {
                             const { attributes: { parameters = {} } = {} } = currentServer
@@ -323,7 +323,7 @@ export default {
     },
     watch: {
         currentServer: function(newVal) {
-            if (!this.$_.isEmpty(newVal.relationships)) {
+            if (!this.$help.isEmpty(newVal.relationships)) {
                 let services = newVal.relationships.services.data
                 let servicesIdArr = services ? services.map(item => `${item.id}`) : []
                 // Get array of obj linked servers based on linkedServers array of IDs

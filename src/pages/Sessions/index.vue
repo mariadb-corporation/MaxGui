@@ -152,7 +152,7 @@ export default {
             if (sessionsTest.length) {
                 let itemsArr = []
 
-                let allSessions = this.$_.cloneDeep(sessionsTest)
+                let allSessions = this.$help.cloneDeep(sessionsTest)
                 for (let n = allSessions.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row

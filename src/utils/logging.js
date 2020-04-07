@@ -11,14 +11,14 @@
  * Public License.
  */
 /* eslint-disable no-console */
-import _ from 'lodash'
+import { isNull, isUndefined } from 'utils/helpers'
 const traceCaller = require('utils/traceCaller')
 
 const defCaller = { file: 'n/a', lineNumber: 'n/a' }
 
 class Logger {
     constructor(name) {
-        if (_.isNull(name) || _.isUndefined(name))
+        if (isNull(name) || isUndefined(name))
             throw new Error('You must provide name when creating new logger instance.')
 
         this.info = (...args) => {

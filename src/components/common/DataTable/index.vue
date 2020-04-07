@@ -134,7 +134,7 @@
                     <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
                         <slot :name="header.value" :data="{ item, header }">
                             <!-- no content for the corresponding header, usually this is an error -->
-                            <span v-if="$_.isUndefined(item[header.value])"></span>
+                            <span v-if="$help.isUndefined(item[header.value])"></span>
                             <!-- regular cell -->
                             <span v-else>{{ getValue(item, header) }}</span>
                         </slot>
@@ -317,7 +317,7 @@ export default {
             // data type shouldn't be handled here as it will break the filter result
             // use helper function to handle value before passing the data to table
             let value = item[header.value]
-            return this.$_.isFunction(header.format) ? header.format(value) : value
+            return this.$help.isFunction(header.format) ? header.format(value) : value
         },
         columnToggle() {
             this.isColumnToggleVisible = !this.isColumnToggleVisible

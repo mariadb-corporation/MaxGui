@@ -1,5 +1,5 @@
 <template>
-    <v-sheet v-if="!$_.isEmpty(currentMonitor)" class="px-6">
+    <v-sheet v-if="!$help.isEmpty(currentMonitor)" class="px-6">
         <details-page-title />
         <icon-sprite-sheet
             size="13"
@@ -59,18 +59,13 @@
                 </div>
                 <v-expand-transition>
                     <div v-show="showMonitorDiagnostics">
-                        <recursive-nested-collapse
+                        <tree-data
                             :headers="monitorDiagnosticsTableHeaders"
                             :data="tableRowProcessed('monitorDiagnostics')"
+                            :search="searchKeyWord"
+                            :openNode="getFirstOpenNodeId"
                         />
                     </div>
-                    <!-- <recursive-table
-                    class="table-fluid"
-                    :search="searchKeyWord"
-                    :headers="variableValueTableHeaders"
-                    :data="tableRowProcessed('monitorDiagnostics')"
-                    :tdBorderLeft="true"
-                /> -->
                 </v-expand-transition>
             </v-col>
         </v-row>
@@ -142,11 +137,14 @@ export default {
             currentMonitor: 'monitor/currentMonitor',
         }),
 
+        /**
+         * @return {Object} return overviewInfo object
+         */
         getTopOverviewInfo: function() {
             let self = this
-            let currentMonitor = self.$_.cloneDeep(self.currentMonitor)
+            let currentMonitor = self.$help.cloneDeep(self.currentMonitor)
             let overviewInfo = {}
-            if (!self.$_.isEmpty(currentMonitor)) {
+            if (!self.$help.isEmpty(currentMonitor)) {
                 // Set fallback undefined value if properties doesnt exist
                 const {
                     attributes: {
@@ -167,10 +165,14 @@ export default {
             }
             return overviewInfo
         },
+        /**
+         * @param {String} type type for handle processing data
+         * @return {Array} Array
+         */
         tableRowProcessed() {
             return type => {
-                let currentMonitor = this.$_.cloneDeep(this.currentMonitor)
-                if (!this.$_.isEmpty(currentMonitor)) {
+                let currentMonitor = this.$help.cloneDeep(this.currentMonitor)
+                if (!this.$help.isEmpty(currentMonitor)) {
                     switch (type) {
                         case 'parameters': {
                             const { attributes: { parameters = {} } = {} } = currentMonitor
@@ -180,14 +182,22 @@ export default {
                             const {
                                 attributes: { monitor_diagnostics: { server_info = [] } = {} } = {},
                             } = currentMonitor
-                            let arrData = server_info.map(obj => {
-                                let id = obj.name
-                                delete obj.name
-                                return {
-                                    id: id,
-                                    value: obj,
-                                }
-                            })
+                            let arrData
+                            if (server_info.length) {
+                                arrData = server_info.map(obj => {
+                                    let id = obj.name
+                                    delete obj.name
+                                    return {
+                                        id: id,
+                                        value: null,
+                                        isLink: true,
+                                        children: this.processTreeData(obj, 0),
+                                        level: 0,
+                                        colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
+                                        colValueWidth: 'calc(35% - 11px)',
+                                    }
+                                })
+                            }
                             return arrData
                         }
                     }
@@ -195,41 +205,67 @@ export default {
                 return []
             }
         },
+        getFirstOpenNodeId: function() {
+            let currentMonitor = this.$help.cloneDeep(this.currentMonitor)
+            const {
+                attributes: { monitor_diagnostics: { server_info = [] } = {} } = {},
+            } = currentMonitor
+            if (server_info.length) {
+                return [server_info[0].name]
+            }
+            return []
+        },
     },
 
     created() {
         this.fetchMonitorById(this.$route.params.id)
     },
+
     methods: {
         ...mapActions('monitor', ['fetchMonitorById']),
-        // objToArrOfObj(obj) {
-        //     if (typeof obj === 'object') {
-        //         let data = []
-        //         let self = this
-        //         let targetObj = self.$_.cloneDeep(obj)
+        /**
+         * @param {Object} obj Object to be processed in to tree data arr
+         * @param {Number} level level of data
+         * @return {Array} return tree data arr
+         */
+        processTreeData(obj, level) {
+            if (typeof obj === 'object') {
+                let data = []
+                let self = this
+                let targetObj = self.$help.cloneDeep(obj)
 
-        //         if (!self.$_.isEmpty(targetObj)) {
-        //             Object.keys(targetObj).map(key => {
-        //                 let value = self.$help.handleValue(targetObj[key])
-        //                 let chilren = []
-        //                 let typeOfValue = typeof self.$help.handleValue(targetObj[key])
-        //                 if (typeOfValue === 'object') {
-        //                     value = null
-        //                 } else if (typeOfValue === 'array') {
-        //                     value = { ...value } // convert to object
-        //                 }
-        //                 data.push({
-        //                     id: key,
-        //                     name: key,
-        //                     value: value,
-        //                     children: self.objToArrOfObj(self.$help.handleValue(targetObj[key])),
-        //                 })
-        //             })
-        //             return data
-        //         }
-        //     }
-        //     return []
-        // },
+                if (!self.$help.isEmpty(targetObj)) {
+                    Object.keys(targetObj).map(key => {
+                        const value = self.$help.handleValue(targetObj[key])
+                        let newValue = self.$help.cloneDeep(value)
+
+                        let typeOfValue = typeof value
+                        if (typeOfValue === 'object') {
+                            newValue = null
+                        } else if (Array.isArray(value)) {
+                            newValue = { ...newValue } // convert to object
+                        }
+                        let chilren = self.processTreeData(
+                            self.$help.handleValue(targetObj[key]),
+                            level + 1
+                        )
+
+                        data.push({
+                            id: key,
+                            level: level + 1,
+                            value: newValue,
+                            children: chilren,
+                            /* width of one v-treeview-node__level is 24, by default
+                             */
+                            colNameWidth: `calc(65% - 11px -  ${(level + 1) * 8.5}px)`,
+                            colValueWidth: `calc(35% - 11px - ${(level + 1) * 8.5}px)`,
+                        })
+                    })
+                    return data
+                }
+            }
+            return []
+        },
     },
 }
 </script>

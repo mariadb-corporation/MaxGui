@@ -102,7 +102,7 @@
                     <div>
                         <slot :name="header.value" :data="{ item, header }">
                             <!-- no content for the corresponding header, usually this is an error  -->
-                            <span v-if="$_.isUndefined(item[header.value])"></span>
+                            <span v-if="$help.isUndefined(item[header.value])"></span>
                             <!-- regular cell  -->
                             <span v-else>{{ getValue(item, header) }} </span>
                         </slot>
@@ -166,7 +166,7 @@ export default {
     computed: {
         dataProcess: function() {
             let self = this
-            let processedData = self.$_.cloneDeep(self.data)
+            let processedData = self.$help.cloneDeep(self.data)
             for (let i = 0; i < processedData.length; ++i) {
                 let obj = processedData[i]
                 Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
@@ -238,7 +238,7 @@ export default {
              */
 
             let value = item[header.value]
-            return this.$_.isFunction(header.format) ? header.format(value) : value
+            return this.$help.isFunction(header.format) ? header.format(value) : value
         },
 
         mouse: function(e, mouseType, target, rowspanId) {

@@ -3,7 +3,7 @@
         <div class="d-flex flex-wrap ">
             <v-text-field
                 id="search"
-                v-model="search"
+                v-model.trim="search"
                 class="search-restyle mr-4"
                 name="search"
                 height="39"
