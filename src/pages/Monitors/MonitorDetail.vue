@@ -41,21 +41,35 @@
         <v-row>
             <v-col cols="6">
                 <div class="mb-1 d-flex align-center">
-                    <v-btn
-                        icon
-                        class="arrow-toggle"
-                        @click="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
-                    >
-                        <v-icon
-                            :class="[!showMonitorDiagnostics ? 'arrow-down' : 'arrow-up']"
-                            size="32"
+                    <div class="d-flex align-center">
+                        <v-btn
+                            icon
+                            class="arrow-toggle"
+                            @click="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
                         >
-                            $expand
-                        </v-icon>
+                            <v-icon
+                                :class="[!showMonitorDiagnostics ? 'arrow-down' : 'arrow-up']"
+                                size="32"
+                            >
+                                $expand
+                            </v-icon>
+                        </v-btn>
+                        <p
+                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
+                        >
+                            {{ $t('monitorDiagnostics') }}
+                        </p>
+                    </div>
+                    <v-spacer />
+                    <v-btn
+                        color="primary"
+                        text
+                        x-small
+                        class="text-capitalize"
+                        @click="() => (addServerDialog = true)"
+                    >
+                        + {{ $t('addServer') }}
                     </v-btn>
-                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('monitorDiagnostics') }}
-                    </p>
                 </div>
                 <v-expand-transition>
                     <div v-show="showMonitorDiagnostics">
@@ -93,6 +107,7 @@
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"
+                            :search="searchKeyWord"
                         />
                     </div>
                 </v-expand-transition>
@@ -129,6 +144,7 @@ export default {
             ],
             showParameter: true,
             showMonitorDiagnostics: true,
+            addServerDialog: false,
         }
     },
     computed: {

@@ -25,6 +25,7 @@ import Edit from 'icons/Edit'
 import HealthAlert from 'icons/HealthAlert'
 import HealthBad from 'icons/HealthBad'
 import HealthOk from 'icons/HealthOk'
+import InfoCircle from 'icons/InfoCircle'
 import Monitoring from 'icons/Monitoring'
 import Paused from 'icons/Paused'
 import QuestionCircle from 'icons/QuestionCircle'
@@ -90,6 +91,9 @@ export default {
     },
     healthOk: {
         component: HealthOk,
+    },
+    infoCircle: {
+        component: InfoCircle,
     },
     monitoring: {
         component: Monitoring,

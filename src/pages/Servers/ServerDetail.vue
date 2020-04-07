@@ -87,11 +87,6 @@
             </v-col>
             <!-- SERVICE TABLE -->
             <v-col cols="3">
-                <service-create-or-update
-                    v-model="addToServiceDialog"
-                    :close-modal="() => (addToServiceDialog = false)"
-                    mode="post"
-                />
                 <div class="mb-1 d-flex align-center">
                     <div class="d-flex align-center">
                         <v-btn
@@ -213,13 +208,9 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
 
 export default {
     name: 'server-detail',
-    components: {
-        ServiceCreateOrUpdate,
-    },
     props: {
         id: String,
     },
@@ -323,7 +314,8 @@ export default {
     },
     watch: {
         currentServer: function(newVal) {
-            if (!this.$help.isEmpty(newVal.relationships)) {
+            // If relationships.services is not empty then fetch data of linked services
+            if (!this.$help.isEmpty(newVal.relationships.services)) {
                 let services = newVal.relationships.services.data
                 let servicesIdArr = services ? services.map(item => `${item.id}`) : []
                 // Get array of obj linked servers based on linkedServers array of IDs

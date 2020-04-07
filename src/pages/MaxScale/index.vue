@@ -1,6 +1,42 @@
 <template>
     <fragment>
-        <h4 class="text-left">Parameters</h4>
+        <!-- MAXSCALE TABLE
+        <v-row>
+            <v-col cols="6">
+                <div class="mb-1 d-flex align-center">
+                    <div class="d-flex align-center">
+                        <v-btn
+                            icon
+                            class="arrow-toggle"
+                            @click="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
+                        >
+                            <v-icon
+                                :class="[!showMonitorDiagnostics ? 'arrow-down' : 'arrow-up']"
+                                size="32"
+                            >
+                                $expand
+                            </v-icon>
+                        </v-btn>
+                        <p
+                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
+                        >
+                            MaxScale Detail
+                        </p>
+                    </div>
+                </div>
+                <v-expand-transition>
+                    <div v-show="showMonitorDiagnostics">
+                        <tree-data
+                            :headers="monitorDiagnosticsTableHeaders"
+                            :data="tableRowProcessed('monitorDiagnostics')"
+                            :search="searchKeyWord"
+                            :openNode="getFirstOpenNodeId"
+                        />
+                    </div>
+                </v-expand-transition>
+            </v-col>
+        </v-row>
+
         <v-sheet max-width="600">
             <recursive-nested-collapse
                 v-for="(value, keyName) in genData()"
@@ -10,7 +46,7 @@
                 :value="$help.handleValue(value)"
                 :child="$help.hasChild(value) ? value : {}"
             />
-        </v-sheet>
+        </v-sheet> -->
     </fragment>
 </template>
 
@@ -45,12 +81,12 @@ export default {
     },
     methods: {
         ...mapActions(['maxscale/fetchMaxScaleDetails']),
-        genData() {
-            if (this.$route.params.parameters) {
-                return this.$help.cloneDeep(this.$route.params.parameters)
-            }
-            return this.$help.cloneDeep(this.maxscaleDetails.parameters)
-        },
+        // genData() {
+        //     if (this.$route.params.parameters) {
+        //         return this.$help.cloneDeep(this.$route.params.parameters)
+        //     }
+        //     return this.$help.cloneDeep(this.maxscaleDetails.parameters)
+        // },
     },
 }
 </script>

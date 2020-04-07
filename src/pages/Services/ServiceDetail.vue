@@ -99,11 +99,6 @@
             </v-col>
             <!-- SERVER TABLE -->
             <v-col cols="3">
-                <server-create-or-update
-                    v-model="addServerDialog"
-                    :close-modal="() => (addServerDialog = false)"
-                    mode="post"
-                />
                 <div class="mb-1 d-flex align-center">
                     <div class="d-flex align-center">
                         <v-btn
@@ -270,13 +265,11 @@
 
 import { mapGetters, mapActions } from 'vuex'
 import CurrentConnectionsChart from 'pages/Services/CurrentConnectionsChart'
-import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
 
 export default {
     name: 'service-detail',
     components: {
         CurrentConnectionsChart,
-        ServerCreateOrUpdate,
     },
     data() {
         return {

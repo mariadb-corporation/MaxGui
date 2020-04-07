@@ -7,9 +7,17 @@
             >
                 {{ pageTitle }}
             </h4>
-            <span style="position:relative;top:-15px" class="field-text-info color text-field-text">
+
+            <span
+                style="position:relative;top:-15px"
+                class="field-text-info color text-field-text "
+            >
                 Uptime {{ duration }}
             </span>
+
+            <v-icon class="pointer" style="position:relative;top:-15px" size="16" color="#9DB4BB">
+                $vuetify.icons.infoCircle
+            </v-icon>
         </portal>
 
         <v-slide-group width="100%" class="mb-5" center-active>
@@ -107,8 +115,10 @@ export default {
             showTooltip: false,
             uptime: null,
             duration: null,
+            containerWidth: 130,
         }
     },
+
     computed: {
         ...mapGetters('maxscale', ['maxscaleDetails']),
         pageTitle: function() {
@@ -142,6 +152,7 @@ export default {
             this['service/fetchAllServices'](),
         ])
     },
+
     methods: {
         ...mapActions([
             'maxscale/fetchMaxScaleDetails',
