@@ -7,7 +7,7 @@
                 :key="keyName"
                 :hasChild="$help.hasChild(value)"
                 :keyName="keyName"
-                :value="$help.handleNull(value)"
+                :value="$help.handleValue(value)"
                 :child="$help.hasChild(value) ? value : {}"
             />
         </v-sheet>

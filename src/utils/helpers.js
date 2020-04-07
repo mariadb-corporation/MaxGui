@@ -24,11 +24,15 @@ export function range(start, end) {
  * @returns {Boolean} Return true if value type is object or array.
  */
 export function hasChild(val) {
-    //_.isObject => true if val is array or object
-    //https://lodash.com/docs/4.17.15#isObject
-    if (_.isObject(val)) {
+    /*  _.isObject => true if val is array or object
+        https://lodash.com/docs/4.17.15#isObject 
+        Empty child won't be shown
+    */
+
+    if (_.isObject(val) && !_.isEmpty(val) && val !== null) {
         return true
     }
+
     return false
 }
 

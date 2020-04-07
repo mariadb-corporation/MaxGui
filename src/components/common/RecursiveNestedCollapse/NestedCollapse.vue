@@ -8,7 +8,7 @@
                 }"
             >
                 <v-btn
-                    v-if="child"
+                    v-if="$help.hasChild(child)"
                     icon
                     class="arrow-toggle"
                     :class="[firstLevelRoot ? 'ml-3' : '']"
@@ -19,17 +19,17 @@
                     </v-icon>
                 </v-btn>
 
-                <span :class="[child ? '' : 'ml-3']">{{ keyName }}</span>
+                <span :class="[$help.hasChild(child) ? '' : 'ml-3']">{{ keyName }}</span>
             </div>
             <span
-                v-if="!child"
+                v-if="!$help.hasChild(child)"
                 class="pl-10 treeview-node__content__keyValue color border-left-table-border d-flex align-center "
                 :style="{
                     width: headers[1].width,
                     height: '45px',
                 }"
             >
-                {{ $help.handleEmptyString(value) }}
+                {{ value }}
             </span>
         </div>
         <v-expand-transition>
@@ -38,8 +38,8 @@
                     v-for="(childValue, childKeyName) in child"
                     :key="childKeyName"
                     :keyName="childKeyName"
-                    :value="$help.handleNull(childValue)"
-                    :child="$help.hasChild(childValue) ? childValue : null"
+                    :value="$help.handleValue(childValue)"
+                    :child="$help.hasChild(childValue) ? childValue : {}"
                     :headers="headers"
                     :firstLevelRoot="false"
                 />
@@ -69,7 +69,8 @@ export default {
     name: 'nested-collapse',
     props: {
         keyName: [String, Number, Boolean, Object],
-        value: [String, Number, Boolean, Object], // null object value has been handle by handleNull
+        // null object value has been handle by handleValue
+        value: [String, Number, Boolean, Object, Array],
         child: [Object, Array],
         index: Number,
         headers: Array,
@@ -93,6 +94,9 @@ export default {
     &__root {
         min-height: 45px;
         border-bottom: thin solid $table-border;
+        &:hover {
+            background: #eeeeee;
+        }
     }
     .treeview-node {
         padding-left: 36px;

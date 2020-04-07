@@ -21,7 +21,7 @@
                 :key="i"
                 :keyName="item.id"
                 :value="$help.handleValue(item.value)"
-                :child="$help.hasChild(item.value) ? item.value : null"
+                :child="$help.hasChild(item.value) ? item.value : {}"
                 :headers="headers"
                 :firstLevelRoot="true"
             />
@@ -70,14 +70,5 @@ export default {
 .tree-view {
     border-left: thin solid $table-border;
     border-right: thin solid $table-border;
-}
-::v-deep .v-treeview {
-    border-left: thin solid $table-border;
-    border-right: thin solid $table-border;
-}
-
-::v-deep .v-treeview-node__root {
-    border-bottom: thin solid $table-border !important;
-    padding-left: 18px !important;
 }
 </style>
