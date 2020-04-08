@@ -62,9 +62,9 @@ export default {
     },
 
     methods: {
-        ...mapActions(['user/logout']),
+        ...mapActions('user', ['logout']),
         handleLogout() {
-            this['user/logout']()
+            this.logout()
         },
     },
 }

@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
     },
     error => {
         if (error.response.status === 401) {
-            store.dispatch('logout')
+            store.dispatch('user/logout')
             delete axios.defaults.headers.common['Authorization']
 
             return Promise.reject(error)
