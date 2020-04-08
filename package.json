@@ -1,5 +1,5 @@
 {
-    "name": "vuetify-project",
+    "name": "maxgui",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -15,7 +15,6 @@
         "chart.js": "^2.8.0",
         "chartjs-plugin-streaming": "^1.8.0",
         "core-js": "^3.4.4",
-        "immutability-helper": "^3.0.1",
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
         "moment-duration-format": "^2.3.2",
