@@ -25,7 +25,11 @@
             :transition="true"
         >
             <template v-slot:label="{ item, open }">
-                <div class="d-flex align-center" :class="[open ? 'font-weight-bold' : '']">
+                <div
+                    class="pointer d-flex align-center"
+                    :class="[open ? 'font-weight-bold' : '']"
+                    @click="handleItemClick(item)"
+                >
                     <div
                         class="d-flex align-center"
                         :style="{
@@ -98,6 +102,11 @@ export default {
             set(openNode) {
                 this.open = openNode
             },
+        },
+    },
+    methods: {
+        handleItemClick(item) {
+            // console.log('item', item)
         },
     },
 }
