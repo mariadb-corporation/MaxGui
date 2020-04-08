@@ -17,6 +17,7 @@ import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from 'components/common/IconSpriteSheet'
 import OutlineSmallCard from 'components/common/OutlineSmallCard'
 import TreeData from 'components/common/TreeData'
+import DetailsTableWrapper from 'components/common/DetailsTableWrapper'
 
 export default {
     'base-dialog': BaseDialog,
@@ -26,4 +27,5 @@ export default {
     'icon-sprite-sheet': IconSpriteSheet,
     'outline-small-card': OutlineSmallCard,
     'tree-data': TreeData,
+    'details-table-wrapper': DetailsTableWrapper,
 }

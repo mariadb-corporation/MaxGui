@@ -40,68 +40,33 @@
         <!-- MONITOR DIAGNOSTICS TABLE -->
         <v-row>
             <v-col cols="6">
-                <div class="mb-1 d-flex align-center">
-                    <div class="d-flex align-center">
-                        <v-btn
-                            icon
-                            class="arrow-toggle"
-                            @click="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
-                        >
-                            <v-icon
-                                :class="[!showMonitorDiagnostics ? 'arrow-down' : 'arrow-up']"
-                                size="32"
-                            >
-                                $expand
-                            </v-icon>
-                        </v-btn>
-                        <p
-                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
-                        >
-                            {{ $t('monitorDiagnostics') }}
-                        </p>
-                    </div>
-                    <v-spacer />
-                    <v-btn
-                        color="primary"
-                        text
-                        x-small
-                        class="text-capitalize"
-                        @click="() => (addServerDialog = true)"
-                    >
-                        + {{ $t('addServer') }}
-                    </v-btn>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showMonitorDiagnostics">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
+                    :toggleVal="showMonitorDiagnostics"
+                    title="monitorDiagnostics"
+                    :onAddClick="() => (addServerDialog = true)"
+                    addBtnText="addServer"
+                >
+                    <template v-slot:table>
                         <tree-data
                             :headers="monitorDiagnosticsTableHeaders"
                             :data="tableRowProcessed('monitorDiagnostics')"
                             :search="searchKeyWord"
                             :openNode="getFirstOpenNodeId"
                         />
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
         </v-row>
         <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
-                <div class="mb-1 d-flex align-center">
-                    <v-btn
-                        icon
-                        class="arrow-toggle"
-                        @click="() => (showParameter = !showParameter)"
-                    >
-                        <v-icon :class="[!showParameter ? 'arrow-down' : 'arrow-up']" size="32">
-                            $expand
-                        </v-icon>
-                    </v-btn>
-                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('parameters') }}
-                    </p>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showParameter">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showParameters = !showParameters)"
+                    :toggleVal="showParameters"
+                    title="parameters"
+                >
+                    <template v-slot:table>
                         <data-table
                             class="table-fluid"
                             :headers="variableValueTableHeaders"
@@ -109,8 +74,8 @@
                             :tdBorderLeft="true"
                             :search="searchKeyWord"
                         />
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
         </v-row>
     </v-sheet>
@@ -142,7 +107,7 @@ export default {
                 { text: 'Servers', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%' },
             ],
-            showParameter: true,
+            showParameters: true,
             showMonitorDiagnostics: true,
             addServerDialog: false,
         }

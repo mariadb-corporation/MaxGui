@@ -60,66 +60,32 @@
         <v-row>
             <!-- STATISTICS TABLE -->
             <v-col cols="6">
-                <div class="mb-1 d-flex align-center">
-                    <v-btn
-                        icon
-                        class="arrow-toggle"
-                        @click="() => (showStatistics = !showStatistics)"
-                    >
-                        <v-icon :class="[!showStatistics ? 'arrow-down' : 'arrow-up']" size="32">
-                            $expand
-                        </v-icon>
-                    </v-btn>
-                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('statistics') }}
-                    </p>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showStatistics">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showStatistics = !showStatistics)"
+                    :toggleVal="showStatistics"
+                    title="statistics"
+                >
+                    <template v-slot:table>
                         <data-table
                             class="table-fluid"
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('statistics')"
                             :tdBorderLeft="true"
                         />
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
             <!-- SERVICE TABLE -->
             <v-col cols="3">
-                <div class="mb-1 d-flex align-center">
-                    <div class="d-flex align-center">
-                        <v-btn
-                            icon
-                            class="arrow-toggle"
-                            @click="() => (showServices = !showServices)"
-                        >
-                            <v-icon :class="[!showServices ? 'arrow-down' : 'arrow-up']" size="32">
-                                $expand
-                            </v-icon>
-                        </v-btn>
-                        <p
-                            class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase"
-                        >
-                            {{ $t('services') }}
-                            <span class="ml-1 color text-field-text"
-                                >({{ servicesLinked.length }})
-                            </span>
-                        </p>
-                    </div>
-                    <v-spacer />
-                    <v-btn
-                        color="primary"
-                        text
-                        x-small
-                        class="text-capitalize"
-                        @click="() => (addToServiceDialog = true)"
-                    >
-                        + {{ $t('addService') }}
-                    </v-btn>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showServices">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showServices = !showServices)"
+                    :toggleVal="showServices"
+                    title="services"
+                    :titleInfo="servicesLinked.length"
+                    :onAddClick="() => (addFilterDialog = true)"
+                    addBtnText="addService"
+                >
+                    <template v-slot:table>
                         <data-table
                             :headers="servicesTableHeader"
                             :data="servicesLinked"
@@ -138,69 +104,44 @@
                                 </icon-sprite-sheet>
                             </template>
                         </data-table>
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
             <!-- SLAVE SERVER IDS TABLE -->
             <v-col cols="3">
-                <div class="mb-1 d-flex align-center">
-                    <v-btn
-                        icon
-                        class="arrow-toggle"
-                        @click="() => (showSlaveServerIds = !showSlaveServerIds)"
-                    >
-                        <v-icon
-                            :class="[!showSlaveServerIds ? 'arrow-down' : 'arrow-up']"
-                            size="32"
-                        >
-                            $expand
-                        </v-icon>
-                    </v-btn>
-                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('slaveServerIds') }}
-                        <span class="ml-1 color text-field-text">
-                            ({{ tableRowProcessed('slaveServers').length }})
-                        </span>
-                    </p>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showSlaveServerIds">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showSlaveServerIds = !showSlaveServerIds)"
+                    :toggleVal="showSlaveServerIds"
+                    title="slaveServerIds"
+                    :titleInfo="tableRowProcessed('slaveServers').length"
+                >
+                    <template v-slot:table>
                         <data-table
                             class="table-fluid"
                             :headers="slaveServersTableHeaders"
                             :data="tableRowProcessed('slaveServers')"
                         />
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
         </v-row>
         <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
-                <div class="mb-1 d-flex align-center">
-                    <v-btn
-                        icon
-                        class="arrow-toggle"
-                        @click="() => (showParameters = !showParameters)"
-                    >
-                        <v-icon :class="[!showParameters ? 'arrow-down' : 'arrow-up']" size="32">
-                            $expand
-                        </v-icon>
-                    </v-btn>
-                    <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
-                        {{ $t('parameters') }}
-                    </p>
-                </div>
-                <v-expand-transition>
-                    <div v-show="showParameters">
+                <details-table-wrapper
+                    :toggleOnClick="() => (showParameters = !showParameters)"
+                    :toggleVal="showParameters"
+                    title="parameters"
+                >
+                    <template v-slot:table>
                         <data-table
                             class="table-fluid"
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"
                         />
-                    </div>
-                </v-expand-transition>
+                    </template>
+                </details-table-wrapper>
             </v-col>
         </v-row>
     </v-sheet>
