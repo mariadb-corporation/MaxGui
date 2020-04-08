@@ -143,8 +143,9 @@ export function serviceStateIcon(serviceState) {
 }
 export function serverStateIcon(serverStatus) {
     if (serverStatus) {
-        if (serverStatus.includes('Running')) return 2
-        if (serverStatus.includes('Down')) return 0
+        if (serverStatus === 'Master, Running' || serverStatus === 'Slave, Running') return 2
+        if (serverStatus === 'Running') return 1
+        if (serverStatus === 'Down') return 0
         else return ''
     } else return ''
 }

@@ -40,6 +40,7 @@
                 </icon-sprite-sheet>
                 <span>{{ $help.sliceStrAtChar(monitorState, '|', true) }} </span>
             </div>
+            <span v-else />
         </template>
 
         <template v-slot:serverId="{ data: { item: { serverId } } }">
