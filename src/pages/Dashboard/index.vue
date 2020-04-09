@@ -20,35 +20,26 @@
             </v-icon>
         </portal>
 
-        <v-slide-group width="100%" class="mb-5" center-active>
-            <v-slide-item>
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('users') }}
-                    </template>
-                    <template v-slot:card-body>
-                        <users-chart />
-                    </template>
-                </outline-small-card>
-            </v-slide-item>
-            <v-slide-item>
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('sessions') }}
-                    </template>
-                    <template v-slot:card-body>
-                        <sessions-chart />
-                    </template>
-                </outline-small-card>
-            </v-slide-item>
-            <!-- <v-slide-item>
-                <outline-small-card
+        <div style="width:100%" class="d-flex mb-5">
+            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+                <template v-slot:title>
+                    {{ $t('users') }}
+                </template>
+                <template v-slot:card-body>
+                    <users-chart />
+                </template>
+            </outline-small-card>
+
+            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+                <template v-slot:title>
+                    {{ $t('sessions') }}
+                </template>
+                <template v-slot:card-body>
+                    <sessions-chart />
+                </template>
+            </outline-small-card>
+
+            <!-- <outline-small-card
                     cardWrapper="slide-nav-item"
                     cardClass="slide-nav-item__card-graph"
                 >
@@ -58,23 +49,17 @@
                     <template v-slot:card-body>
                         TODO: A graph here
                     </template>
-                </outline-small-card>
-            </v-slide-item> -->
+                </outline-small-card> -->
 
-            <v-slide-item>
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('threadUsage') }}
-                    </template>
-                    <template v-slot:card-body>
-                        <threads-chart :isMiniChart="true" />
-                    </template>
-                </outline-small-card>
-            </v-slide-item>
-        </v-slide-group>
+            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+                <template v-slot:title>
+                    {{ $t('threadUsage') }}
+                </template>
+                <template v-slot:card-body>
+                    <threads-chart :isMiniChart="true" />
+                </template>
+            </outline-small-card>
+        </div>
 
         <tab-nav :tabRoutes="tabRoutes" />
     </div>

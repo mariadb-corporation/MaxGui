@@ -10,42 +10,28 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vuex from 'vuex'
+import { expect } from 'chai'
 import mount from './setup'
 import BaseDialog from '@/components/common/BaseDialog.vue'
 
 describe('BaseDialog.vue', () => {
-    let getters
-    let store
-    beforeEach(() => {
-        getters = {
-            darkTheme: () => true,
-        }
-        store = new Vuex.Store({
-            getters,
-        })
-    })
-    it('Snapshot render', () => {
-        let wrapper = mount({
-            shallow: false,
-            component: BaseDialog,
-            store: store,
-            props: {
-                value: true, // set Modal to be open
-            },
-        })
+    let wrapper
 
-        expect(wrapper.html()).toMatchSnapshot()
-    })
-    it('closes when buttons are pressed', () => {
-        let wrapper = mount({
+    beforeEach(() => {
+        wrapper = mount({
             shallow: false,
             component: BaseDialog,
-            store: store,
             props: {
-                value: true, // set Modal to be open
+                value: true,
             },
         })
+    })
+
+    it('Renders as Vue instance.', () => {
+        expect(wrapper.isVueInstance()).to.equal(true)
+    })
+
+    it('closes when buttons are pressed', () => {
         const closeButton = wrapper.find('.close')
         const cancelButton = wrapper.find('.cancel')
         let eventFired = 0
@@ -56,6 +42,6 @@ describe('BaseDialog.vue', () => {
 
         closeButton.trigger('click')
         cancelButton.trigger('click')
-        expect(eventFired).toEqual(2)
+        expect(eventFired).to.equal(2)
     })
 })

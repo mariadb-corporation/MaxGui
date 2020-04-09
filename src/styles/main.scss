@@ -9,29 +9,37 @@
 
 html,
 body,
-#app {
-    width: 100%;
-    height: 100%;
+#app,
+.v-application--wrap {
     margin: 0;
     padding: 0;
+    //dashboard "responsive". preserve ratio
+    overflow-x: auto;
+    min-width: 960px !important;
 }
+
 .v-application {
     background-color: $background !important;
 }
+
 .v-content-padding {
     padding: 25px 40px 40px;
 }
-.overlay {
-    display: table;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(1100px at 100% 89%, #2f99a3 0%, #003545 100%);
-    .overlay-content {
-        display: table-cell;
-        vertical-align: middle;
-    }
-    .loading-icon {
-        text-align: center;
+.v-overlay__content {
+    width: 100%;
+    height: 100%;
+    .overlay {
+        display: table;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(1100px at 100% 89%, #2f99a3 0%, #003545 100%);
+        .overlay-content {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .loading-icon {
+            text-align: center;
+        }
     }
 }
 .arrow-toggle {
@@ -109,32 +117,6 @@ body,
                     &:first-child:not(.hide) {
                         border-left: thin solid $table-border !important;
                     }
-                    // .cell-accent {
-                    //     height: 100%;
-                    //     padding: 0 35px;
-                    //     margin-left: -24px;
-                    //     display: flex;
-                    //     border-left: 8px solid #828282;
-                    //     &.info-accent {
-                    //         border-color: $accent;
-                    //     }
-                    //     &.success-accent {
-                    //         border-color: $success;
-                    //     }
-                    //     &.error-accent {
-                    //         border-color: $error;
-                    //     }
-                    //     &.warning-accent {
-                    //         border-color: $warning;
-                    //     }
-                    // }
-                    // &.actions {
-                    //     text-align: right;
-
-                    //     button {
-                    //         opacity: 0;
-                    //     }
-                    // }
                 }
                 &:hover {
                     td.actions button {

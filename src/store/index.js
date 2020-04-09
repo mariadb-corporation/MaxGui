@@ -28,7 +28,6 @@ export default new Vuex.Store({
             text: '',
             type: 'info',
         },
-        darkTheme: sessionStorage.getItem('darkTheme') === 'true' ? true : false,
         searchKeyWord: '',
         overlay: false,
     },
@@ -51,19 +50,14 @@ export default new Vuex.Store({
             state.message.type = type
         },
         /**
-         * @param {Boolean} obj Boolean darkmode
+         * @param {String} keyword global search keyword
          */
-        toggleDarkTheme(state) {
-            state.darkTheme = !state.darkTheme
-            sessionStorage.setItem('darkTheme', state.darkTheme)
-        },
         setSearchKeyWord(state, keyword) {
             state.searchKeyWord = keyword
         },
     },
     getters: {
         searchKeyWord: state => state.searchKeyWord,
-        darkTheme: state => state.darkTheme,
         overlay: state => state.overlay,
     },
     modules: {

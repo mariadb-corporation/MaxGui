@@ -12,17 +12,21 @@
  */
 import Vue from 'vue'
 import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
-import '@/utils/helpers'
+import 'utils/helpers'
 import Vuetify from 'vuetify'
-import Vuex from 'vuex'
+import '@/plugins/vuetify'
+import VueI18n from 'vue-i18n'
+import i18n from '@/plugins/i18n'
 Vue.use(Vuetify)
-Vue.use(Vuex)
 
-Vue.config.silent = true
 // Required for Vuetify (Create div with a data-app attribute)
 const app = document.createElement('div')
 app.setAttribute('data-app', 'true')
 document.body.appendChild(app)
+
+global.requestAnimationFrame = () => {
+    return null
+}
 
 function doMount(isShallow, component, options) {
     if (isShallow) {
@@ -31,6 +35,8 @@ function doMount(isShallow, component, options) {
         return mount(component, options)
     }
 }
+
+Vue.config.silent = true
 
 export default options => {
     const localVue = createLocalVue()
@@ -42,12 +48,12 @@ export default options => {
     })
 
     localVue.use(vuetify)
-    let store = options.store
+    localVue.use(VueI18n)
 
     return doMount(options.shallow, options.component, {
-        store,
         localVue,
         vuetify,
+        i18n,
         propsData: options.props,
         attachToDocument: true,
         sync: false,

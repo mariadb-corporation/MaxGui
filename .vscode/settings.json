@@ -42,6 +42,10 @@
         "vuetify"
     ],
     "cSpell.words": [
-        "maxgui"
+        "loginpage",
+        "maxgui",
+        "maxscale",
+        "nightwatch",
+        "vuex"
     ]
 }

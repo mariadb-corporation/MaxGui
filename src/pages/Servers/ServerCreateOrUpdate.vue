@@ -202,6 +202,7 @@
         </template>
         <template v-slot:actions="{ cancel, save }">
             <v-btn
+                height="36"
                 small
                 color="primary"
                 class="px-5 text-capitalize"
@@ -213,6 +214,7 @@
                 {{ $t('cancel') }}
             </v-btn>
             <v-btn
+                height="36"
                 small
                 color="primary"
                 class="px-5 text-capitalize"

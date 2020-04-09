@@ -69,7 +69,7 @@ import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 export default {
     name: 'base-dialog',
     props: {
-        maxWidth: String,
+        maxWidth: { type: String, default: '466px' },
         title: String,
         value: Boolean,
         onCancel: Function,

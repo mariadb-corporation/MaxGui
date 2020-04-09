@@ -91,6 +91,7 @@ export default {
 
     .navitem {
         // transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; // same easing as the nav drawer open/close animation
+
         height: 52px;
         &:hover {
             background: rgba(0, 0, 0, 0.14) !important;

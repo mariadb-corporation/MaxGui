@@ -1,7 +1,5 @@
 <template>
-    <transition name="fade" mode="out-in">
-        <router-view v-if="!$route.meta.requiresAuth" />
-    </transition>
+    <router-view v-if="!$route.meta.requiresAuth" />
 </template>
 
 <script>

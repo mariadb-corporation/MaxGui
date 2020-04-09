@@ -32,11 +32,11 @@ export default new Vuetify({
                 info: '#1c9dd6',
                 anchor: '#2d9cdb',
             },
-            dark: {
-                primary: '#121212',
-                secondary: '#1E1E1E',
-                accent: '#0b718c',
-            },
+            // dark: {
+            //     primary: '#121212',
+            //     secondary: '#1E1E1E',
+            //     accent: '#0b718c',
+            // },
         },
     },
     lang: {

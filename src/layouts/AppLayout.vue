@@ -5,7 +5,7 @@
         <snackbars />
         <v-content>
             <div class="fill-height v-content-padding">
-                <div class="d-flex flex-wrap ml-n1">
+                <div class="d-flex ml-n1">
                     <portal-target name="page-title">
                         <!--
                         This component can be located anywhere in your App.
@@ -23,14 +23,14 @@
             </div>
         </v-content>
         <v-footer
-            class="d-flex justify-center color border-top-reflection"
+            class="pl-2 d-flex justify-center color border-top-reflection"
             color="white"
             padless
             app
             height="40"
             inset
         >
-            <span class="footer-text color text-code-color">
+            <span class=" footer-text color text-code-color align-center text-truncate">
                 MariaDB Corporation | Copyright © 2019 MariaDB ab. All rights reserved. |
                 <a target="_blank" rel="noopener" href="https://mariadb.com/privacy-policy/">
                     Privacy Policy</a
@@ -112,6 +112,14 @@ export default {
 .page-title {
     margin-bottom: 55px;
 }
+
+.footer-text {
+    font-size: 10px;
+    a {
+        text-decoration: none;
+    }
+}
+
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */
 .fade-enter-active,
@@ -124,11 +132,5 @@ export default {
 .fade-enter,
 .fade-leave-active {
     opacity: 0;
-}
-.footer-text {
-    font-size: 10px;
-    a {
-        text-decoration: none;
-    }
 }
 </style>

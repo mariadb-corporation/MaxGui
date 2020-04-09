@@ -13,23 +13,23 @@
 
         <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
             <template v-slot:activator="{ on }">
-                <v-btn class="mr-0" text tile v-on="on">
-                    <v-icon class="user-icon mr-1 white--text" style="width:30px" size="30">
+                <v-btn dark class="mr-0" text tile v-on="on">
+                    <v-icon class="user-icon mr-1 " style="width:30px" size="30">
                         $vuetify.icons.user
                     </v-icon>
-                    <span class="text-capitalize white--text">{{ user ? user.username : '' }}</span>
+                    <span class="text-capitalize ">{{ user ? user.username : '' }}</span>
 
                     <v-icon
                         :class="[!isProfileOpened ? 'arrow-down' : 'arrow-up']"
-                        size="7"
-                        class="mr-0 ml-1 white--text"
+                        size="14"
+                        class="mr-0 ml-1 "
                         left
                     >
                         $vuetify.icons.arrowDown
                     </v-icon>
                 </v-btn>
             </template>
-            <v-list class="header-dropdown-list">
+            <v-list>
                 <v-list-item @click="handleLogout">
                     <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
                 </v-list-item>
@@ -99,10 +99,14 @@ export default {
 .v-btn {
     letter-spacing: normal;
 }
-.header-dropdown-list {
-    border-radius: 10px;
 
-    padding: 0px;
+.v-menu__content {
+    border-radius: 0;
+    .v-list {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 0;
+    }
     .v-list-item__title {
         font-size: 0.875rem;
     }

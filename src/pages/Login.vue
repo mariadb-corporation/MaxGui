@@ -4,7 +4,7 @@
             <v-col class="pa-0 ma-0 " cols="12" align="center">
                 <div class="logo">
                     <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                    <span class="font-weight-medium ml-2 white--text">
+                    <span class="product-name font-weight-medium ml-2 white--text">
                         {{ config.productName }}
                     </span>
                 </div>
@@ -206,7 +206,20 @@ export default {
             this.isLoading = false
         },
         onResize() {
-            this.scratch.width = this.$refs.canvas.width = window.innerWidth
+            let width =
+                window.innerWidth && document.documentElement.clientWidth
+                    ? Math.min(window.innerWidth, document.documentElement.clientWidth)
+                    : window.innerWidth ||
+                      document.documentElement.clientWidth ||
+                      document.getElementsByTagName('body')[0].clientWidth
+            let height =
+                window.innerHeight && document.documentElement.clientHeight
+                    ? Math.min(window.innerHeight, document.documentElement.clientHeight)
+                    : window.innerHeight ||
+                      document.documentElement.clientHeight ||
+                      document.getElementsByTagName('body')[0].clientHeight
+
+            this.scratch.width = this.$refs.canvas.width = width
             this.scratch.height = this.$refs.canvas.height = window.innerHeight
         },
         drawCircle(circle) {

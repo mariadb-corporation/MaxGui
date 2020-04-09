@@ -15,7 +15,6 @@
             v-model="deleteDialog"
             :onCancel="() => (deleteDialog = false)"
             :onSave="handleDelete"
-            maxWidth="466px"
             :title="title"
         >
             <template v-slot:body>

@@ -13,6 +13,7 @@ npm run serve
 ```
 
 ### Compiles and minifies for production
+
 Check [Config build path](#config-build-path) before building
 
 ```
@@ -24,16 +25,27 @@ npm run build
 ```
 npm run lint
 ```
+
+### Run your end-to-end tests
+
+```
+npm run test:e2e
+```
+
 ### App translation
+
 Create a json file in `src/locales`. For example: `es.json`
 Copy everything in `src/locales/en.json` file and paste to `es.json` then .... translate it
 Change the value of VUE_APP_I18N_LOCALE in `.env` file to the desire locale
 
 ### Developer settings
+
 #### Disable CORS to access app via localhost
+
 It has been configured in devServer using proxy. Check `vue.config.js` file for more configuration
 
 #### Config build path
+
 Add .env.local file that contains `buildPath=dataDir`
 
 `dataDir` indicates your maxscale's Data directory absolute path

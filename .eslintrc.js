@@ -1,34 +1,18 @@
-/*
- * Copyright (c) 2020 MariaDB Corporation Ab
- *
- * Use of this software is governed by the Business Source License included
- * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
- *
- * Change Date: 2024-07-01
- *
- * On the date above, in accordance with the Business Source License, use
- * of this software will be governed by version 2 or later of the General
- * Public License.
- */
 module.exports = {
     root: true,
-
     env: {
         node: true,
         es6: true,
     },
-
-    parser: 'vue-eslint-parser',
-
+    extends: ['plugin:vue/recommended', 'eslint:recommended', '@vue/prettier'],
     parserOptions: {
         parser: 'babel-eslint',
     },
-
-    plugins: ['vue', 'vuetify'],
+    plugins: ['vuetify'],
 
     rules: {
-        'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-unused-vars': 0,
         'comma-dangle': 0,
         'no-tabs': 2,
@@ -72,7 +56,6 @@ module.exports = {
         'vue/no-template-shadow': 0,
         'vue/name-property-casing': ['error', 'kebab-case'],
     },
-
     overrides: [
         {
             files: ['*.vue'],
@@ -83,16 +66,8 @@ module.exports = {
         {
             files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],
             env: {
-                jest: true,
+                mocha: true,
             },
         },
-    ],
-
-    extends: [
-        'plugin:vue/recommended',
-        'eslint:recommended',
-        'prettier',
-        'prettier/vue',
-        '@vue/prettier',
     ],
 }
