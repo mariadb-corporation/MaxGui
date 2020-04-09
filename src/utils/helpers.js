@@ -12,8 +12,6 @@
  */
 import Vue from 'vue'
 
-import { moment } from 'plugins/moment'
-
 export const isNaN = require('lodash/isNaN')
 export const isObject = require('lodash/isObject')
 export const isEmpty = require('lodash/isEmpty')
@@ -176,7 +174,7 @@ export function formatValue(value, formatType) {
             format = default_format
     }
 
-    return moment(date).format(format)
+    return Vue.moment(date).format(format)
 }
 /**
  * @param {Object} obj Object to be converted to array
