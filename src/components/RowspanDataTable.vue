@@ -40,8 +40,8 @@
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
                                 v-if="header.sortable !== false"
-                                size="7"
-                                class="ml-1 v-data-table-header__icon"
+                                size="14"
+                                class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
                             >
                         </div>
@@ -129,9 +129,6 @@ export default {
     name: 'rowspan-data-table',
     /* SLOTS available for data-table */
     // :name="header.value" // slot aka item
-    // name="actions" :data="{ item }"
-    // name="expandable"   :data="{ item }"
-    // name="expandIndicator" :expanded Boolean
     props: {
         headers: { type: Array },
         data: { type: Array },

@@ -12,31 +12,25 @@
             {{ currentMonitor.attributes.state }}
         </span>
 
-        <v-slide-group :show-arrows="false" class="mb-5" center-active>
-            <v-slide-item>
-                <fragment>
-                    <template v-for="(value, name) in getTopOverviewInfo">
-                        <outline-small-card
-                            :key="name"
-                            cardWrapper="detail-overview mt-6"
-                            cardClass="detail-overview__card px-10"
-                        >
-                            <template v-slot:card-body>
-                                <span
-                                    class="caption text-uppercase font-weight-bold color text-deep-ocean"
-                                >
-                                    {{ name.replace('_', ' ') }}
-                                </span>
+        <div class="d-flex mb-2">
+            <template v-for="(value, name) in getTopOverviewInfo">
+                <outline-small-card
+                    :key="name"
+                    cardWrapper="detail-overview mt-0"
+                    cardClass="detail-overview__card px-10"
+                >
+                    <template v-slot:card-body>
+                        <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
+                            {{ name.replace('_', ' ') }}
+                        </span>
 
-                                <span class="text-no-wrap body-2">
-                                    {{ value }}
-                                </span>
-                            </template>
-                        </outline-small-card>
+                        <span class="text-no-wrap body-2">
+                            {{ value }}
+                        </span>
                     </template>
-                </fragment>
-            </v-slide-item>
-        </v-slide-group>
+                </outline-small-card>
+            </template>
+        </div>
         <!-- MONITOR DIAGNOSTICS TABLE -->
         <v-row>
             <v-col cols="6">

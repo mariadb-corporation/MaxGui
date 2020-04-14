@@ -15,47 +15,40 @@
             {{ !$help.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
             <span>{{ currentServer.attributes.version_string }}</span>
         </span>
-        <v-slide-group :show-arrows="false" class="mb-5" center-active>
-            <v-slide-item>
-                <fragment>
-                    <template v-for="(value, name, index) in getTopOverviewInfo">
-                        <outline-small-card
-                            :key="name"
-                            cardWrapper="detail-overview mt-6"
-                            cardClass="detail-overview__card px-10"
-                        >
-                            <template v-if="index === 0" v-slot:title>
-                                {{ $t('overview') }}
-                            </template>
-                            <template v-slot:card-body>
-                                <span
-                                    class="caption text-uppercase font-weight-bold color text-deep-ocean"
-                                >
-                                    {{ name.replace('_', ' ') }}
-                                </span>
-                                <router-link
-                                    v-if="name === 'monitor' && value !== 'undefined'"
-                                    :key="index"
-                                    :to="`/dashboard/monitors/${value}`"
-                                    class="body-2 no-underline"
-                                >
-                                    <span>{{ value }} </span>
-                                </router-link>
-                                <span v-else class="text-no-wrap body-2">
-                                    <span v-if="value !== 'undefined'">
-                                        {{
-                                            name === 'triggered_at' && value !== 'undefined'
-                                                ? $help.formatValue(value, 'DATE_RFC2822')
-                                                : value
-                                        }}
-                                    </span>
-                                </span>
-                            </template>
-                        </outline-small-card>
-                    </template>
-                </fragment>
-            </v-slide-item>
-        </v-slide-group>
+        <div class="d-flex mb-2">
+            <outline-small-card
+                v-for="(value, name, index) in getTopOverviewInfo"
+                :key="name"
+                cardWrapper="detail-overview mt-5"
+                cardClass="detail-overview__card px-10"
+            >
+                <template v-if="index === 0" v-slot:title>
+                    {{ $t('overview') }}
+                </template>
+                <template v-slot:card-body>
+                    <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
+                        {{ name.replace('_', ' ') }}
+                    </span>
+                    <router-link
+                        v-if="name === 'monitor' && value !== 'undefined'"
+                        :key="index"
+                        :to="`/dashboard/monitors/${value}`"
+                        class="body-2 no-underline"
+                    >
+                        <span>{{ value }} </span>
+                    </router-link>
+                    <span v-else class="text-no-wrap body-2">
+                        <span v-if="value !== 'undefined'">
+                            {{
+                                name === 'triggered_at' && value !== 'undefined'
+                                    ? $help.formatValue(value, 'DATE_RFC2822')
+                                    : value
+                            }}
+                        </span>
+                    </span>
+                </template>
+            </outline-small-card>
+        </div>
 
         <v-row>
             <!-- STATISTICS TABLE -->
@@ -71,6 +64,7 @@
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('statistics')"
                             :tdBorderLeft="true"
+                            :search="searchKeyWord"
                         />
                     </template>
                 </details-table-wrapper>
@@ -93,7 +87,13 @@
                             sortBy="id"
                             class="table-fluid"
                             :noDataText="$t('noService')"
+                            :search="searchKeyWord"
                         >
+                            <template v-slot:id="{ data: { item: { id } } }">
+                                <router-link :to="`/dashboard/services/${id}`" class="no-underline">
+                                    {{ id }}
+                                </router-link>
+                            </template>
                             <template v-slot:state="{ data: { item: { state } } }">
                                 <icon-sprite-sheet
                                     size="13"
@@ -120,6 +120,7 @@
                             class="table-fluid"
                             :headers="slaveServersTableHeaders"
                             :data="tableRowProcessed('slaveServers')"
+                            :search="searchKeyWord"
                         />
                     </template>
                 </details-table-wrapper>
@@ -139,6 +140,7 @@
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"
+                            :search="searchKeyWord"
                         />
                     </template>
                 </details-table-wrapper>
@@ -188,6 +190,7 @@ export default {
     },
     computed: {
         ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
             currentServer: 'server/currentServer',
             allServicesMap: 'service/allServicesMap',
         }),

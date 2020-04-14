@@ -31,7 +31,7 @@
             inset
         >
             <span class=" footer-text color text-code-color align-center text-truncate">
-                MariaDB Corporation | Copyright © 2019 MariaDB ab. All rights reserved. |
+                MariaDB Corporation | Copyright © 2020 MariaDB ab. All rights reserved. |
                 <a target="_blank" rel="noopener" href="https://mariadb.com/privacy-policy/">
                     Privacy Policy</a
                 >

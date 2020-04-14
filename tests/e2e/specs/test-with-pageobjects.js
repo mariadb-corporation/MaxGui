@@ -27,13 +27,8 @@ module.exports = {
 
         const app = loginpage.section.app
         app.assert.elementCount('@logo', 1)
-        app.expect.section('@welcome').to.be.visible
         app.expect.section('@headline').text.to.match(/^Welcome$/)
 
         browser.end()
-    },
-
-    'verify if string "e2e-nightwatch" is within the cli plugin links': browser => {
-        const loginpage = browser.page.loginpage()
     },
 }

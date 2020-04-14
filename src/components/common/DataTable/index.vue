@@ -1,6 +1,5 @@
 <template>
     <v-data-table
-        v-resize="onResize"
         :headers="visibleHeaders"
         :items="dataProcess"
         :hide-default-footer="dataProcess.length <= 10"
@@ -20,13 +19,10 @@
     >
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
-            <thead
-                :class="[windowSize.x < 600 && 'v-data-table-header-mobile']"
-                class="v-data-table-header"
-            >
-                <tr v-if="windowSize.x >= 600">
+            <thead class="v-data-table-header">
+                <tr>
                     <th
-                        v-for="header in headers"
+                        v-for="(header, i) in headers"
                         :key="header.value"
                         :width="header.width"
                         :class="[
@@ -37,45 +33,36 @@
                         ]"
                         @click="changeSort(header.value)"
                     >
-                        <div class="d-inline-flex justify-center align-center">
+                        <div
+                            :class="[
+                                i === headers.length - 1
+                                    ? 'd-flex justify-space-between'
+                                    : 'd-inline-flex justify-center align-center',
+                            ]"
+                            class="d-flex justify-space-between"
+                        >
                             <span>{{ header.text }}</span>
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
                                 v-if="header.sortable !== false"
-                                size="7"
-                                class="ml-1 v-data-table-header__icon"
+                                size="14"
+                                class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
                             >
+                            <fragment v-if="i === headers.length - 1">
+                                <v-spacer></v-spacer>
+                                <!--column toggle icon-->
+                                <v-icon
+                                    v-if="hasColumnToggle"
+                                    size="18"
+                                    class="pl-4 pr-0 toggle-icon"
+                                    @click.stop="columnToggle"
+                                >
+                                    visibility
+                                </v-icon>
+                            </fragment>
                         </div>
                     </th>
-                    <!-- Add an extra table heading to remain text align ability in heading
-                        display searchbox and toggle icon as the last th item
-                        Only display in large tablet to laptop md
-                     -->
-                    <th
-                        v-if="windowSize.x > 960 && hasColumnToggle"
-                        style="padding-left:12px; padding-right:12px"
-                    >
-                        <div
-                            v-if="hasColumnToggle"
-                            style="width:100%;"
-                            class="d-flex align-center "
-                        >
-                            <!--column toggle icon-->
-
-                            <v-icon
-                                v-if="hasColumnToggle"
-                                size="18"
-                                class="pl-4 pr-0 toggle-icon"
-                                @click.stop="columnToggle"
-                            >
-                                visibility
-                            </v-icon>
-                        </div>
-                    </th>
-                </tr>
-                <tr v-else>
-                    <data-table-header-mobile :items="headers" @sort="changeSort" />
                 </tr>
             </thead>
         </template>
@@ -97,8 +84,6 @@
                         />
                     </div>
                 </td>
-                <!-- Add extra table data -->
-                <td v-if="isColumnToggleVisible" />
             </tr>
         </template>
 
@@ -108,7 +93,6 @@
                 :class="{
                     pointer: onRowClick,
                     'last-row': index === data.length - 1,
-                    'v-data-table__mobile-table-row': windowSize.x < 600,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
             >
@@ -118,20 +102,11 @@
                     :class="[
                         header.value,
                         header.tdClass || header.class,
-                        windowSize.x < 600 && 'v-data-table__mobile-row',
                         tdBorderLeft && 'border-left-thin',
                     ]"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
-                    <!--
-                            Display header in  table data for Mobile view 
-                            as thead will be removed when windowSize.x < 600 
-                        -->
-                    <div v-if="windowSize.x < 600" class="v-data-table__mobile-row__header">
-                        {{ header.text }}
-                    </div>
-                    <!-- Add mobile class when windowSize.x < 600 -->
-                    <div :class="[windowSize.x < 600 && 'v-data-table__mobile-row__cell']">
+                    <div>
                         <slot :name="header.value" :data="{ item, header }">
                             <!-- no content for the corresponding header, usually this is an error -->
                             <span v-if="$help.isUndefined(item[header.value])"></span>
@@ -171,14 +146,6 @@
                         </div>
                     </div>
                 </td>
-
-                <!-- Extra table data item when toggle icon are visible -->
-                <td
-                    v-if="windowSize.x > 960 && hasColumnToggle"
-                    :style="
-                        `${headers[headers.length - 1].text === 'Actions' ? 'padding:0px;' : ''}`
-                    "
-                />
             </tr>
             <!-- optional expandable row -->
             <tr v-if="expandedRows.includes(item.id)" class="expanded-row">
@@ -203,11 +170,8 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import DataTableHeaderMobile from './DataTableHeaderMobile'
-
 export default {
     name: 'data-table',
-    components: { DataTableHeaderMobile },
     /* SLOTS available for data-table */
     // :name="header.value" // slot aka item
     // name="actions" :data="{ item }"
@@ -235,10 +199,6 @@ export default {
     },
     data() {
         return {
-            windowSize: {
-                x: 0,
-                y: 0,
-            },
             expandedRows: [],
             pagination: {},
             visible: [],
@@ -275,17 +235,12 @@ export default {
             },
         },
     },
-    mounted() {
-        this.onResize()
-    },
+
     created() {
         this.visible = this.headers.filter(h => !h.hidden)
     },
 
     methods: {
-        onResize() {
-            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
-        },
         changeSort(column) {
             // TODO: support multiple column sorting
             if (this.pagination.sortBy[0] === column) {

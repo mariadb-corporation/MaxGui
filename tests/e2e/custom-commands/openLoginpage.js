@@ -29,7 +29,8 @@ module.exports = {
         this.init()
         this.waitForElementVisible('#app')
 
-        const result = await this.elements('css selector', '#app input')
-        this.assert.strictEqual(result.value.length, 2) // check there are two input fields
+        const result = await this.elements('css selector', '#app')
+        console.log('result.value', result.value)
+        this.assert.strictEqual(result.value.length, 1)
     },
 }

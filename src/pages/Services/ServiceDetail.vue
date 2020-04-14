@@ -12,47 +12,41 @@
             {{ currentService.attributes.state === 'Started' ? 'Healthy' : 'Unhealthy' }}
         </span>
 
-        <v-slide-group :show-arrows="false" width="100%" class="mb-5" center-active>
-            <v-slide-item style="width:40%">
-                <div class="d-flex" style="width:100%">
-                    <outline-small-card
-                        cardWrapper="detail-overview-with-graph mt-6"
-                        cardClass="detail-overview-with-graph__card "
-                    >
-                        <template v-slot:title>
-                            {{ $t('overview') }}
-                        </template>
-                        <template v-slot:card-body>
-                            <span
-                                class="caption text-uppercase font-weight-bold color text-deep-ocean"
-                            >
-                                ROUTER
-                            </span>
-                            <span class="text-no-wrap body-2">
-                                {{ currentService.attributes.router }}
-                            </span>
-                        </template>
-                    </outline-small-card>
-                    <outline-small-card
-                        cardWrapper="detail-overview-with-graph mt-6"
-                        cardClass="detail-overview-with-graph__card "
-                    >
-                        <template v-slot:card-body>
-                            <span
-                                class="caption text-uppercase font-weight-bold color text-deep-ocean"
-                            >
-                                STARTED AT
-                            </span>
-                            <span class="text-no-wrap body-2">
-                                {{ $help.formatValue(currentService.attributes.started) }}
-                            </span>
-                        </template>
-                    </outline-small-card>
-                </div>
-            </v-slide-item>
-            <v-slide-item style="width:60%">
+        <div class="d-flex mb-2">
+            <div class="d-flex" style="width:40%">
                 <outline-small-card
-                    cardWrapper="detail-overview-with-graph ml-2 mt-6"
+                    cardWrapper="detail-overview-with-graph mt-5"
+                    cardClass="detail-overview-with-graph__card "
+                >
+                    <template v-slot:title>
+                        {{ $t('overview') }}
+                    </template>
+                    <template v-slot:card-body>
+                        <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
+                            ROUTER
+                        </span>
+                        <span class="text-no-wrap body-2">
+                            {{ currentService.attributes.router }}
+                        </span>
+                    </template>
+                </outline-small-card>
+                <outline-small-card
+                    cardWrapper="detail-overview-with-graph mt-5"
+                    cardClass="detail-overview-with-graph__card "
+                >
+                    <template v-slot:card-body>
+                        <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
+                            STARTED AT
+                        </span>
+                        <span class="text-no-wrap body-2">
+                            {{ $help.formatValue(currentService.attributes.started) }}
+                        </span>
+                    </template>
+                </outline-small-card>
+            </div>
+            <div style="width:60%">
+                <outline-small-card
+                    cardWrapper="detail-overview-with-graph ml-2 mt-5"
                     cardClass="detail-overview-with-graph__card-graph"
                 >
                     <template v-slot:title>
@@ -67,8 +61,8 @@
                         </v-col>
                     </template>
                 </outline-small-card>
-            </v-slide-item>
-        </v-slide-group>
+            </div>
+        </div>
         <!-- PARAMETERS TABLE -->
         <v-row>
             <v-col cols="6">
@@ -83,6 +77,7 @@
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"
+                            :search="searchKeyWord"
                         />
                     </template>
                 </details-table-wrapper>
@@ -105,6 +100,7 @@
                             :noDataText="$t('noServer')"
                             sortBy="id"
                             class="table-fluid"
+                            :search="searchKeyWord"
                         >
                             <template v-slot:id="{ data: { item: { id } } }">
                                 <router-link
@@ -146,6 +142,7 @@
                             :noDataText="$t('noFilter')"
                             sortBy="id"
                             class="table-fluid"
+                            :search="searchKeyWord"
                         >
                             <template v-slot:id="{ data: { item: { id } } }">
                                 <router-link
@@ -174,6 +171,7 @@
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('routerDiagnostics')"
                             :tdBorderLeft="true"
+                            :search="searchKeyWord"
                         />
                     </template>
                 </details-table-wrapper>
@@ -228,7 +226,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('service', ['currentService']),
+        ...mapGetters({
+            searchKeyWord: 'searchKeyWord',
+            currentService: 'service/currentService',
+        }),
         tableRowProcessed() {
             return type => {
                 let currentService = this.$help.cloneDeep(this.currentService)

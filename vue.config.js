@@ -13,6 +13,20 @@
 
 const path = require('path')
 process.env.VUE_APP_VERSION = require('./package.json').version
+let devServer = {
+    progress: false,
+    port: 8000,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+    },
+    proxy: {
+        '^/': {
+            changeOrigin: true,
+            target: process.env.VUE_APP_API,
+        },
+    },
+}
+process.env.NODE_ENV !== 'development' && (devServer = {})
 
 module.exports = {
     chainWebpack: config => {
@@ -24,19 +38,7 @@ module.exports = {
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },
-        devServer: {
-            progress: false,
-            port: 8000,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            proxy: {
-                '^/': {
-                    changeOrigin: true,
-                    target: process.env.VUE_APP_API,
-                },
-            },
-        },
+        devServer: devServer,
     },
 
     // css: {
