@@ -1,6 +1,56 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
-        <details-page-title />
+        <details-page-title>
+            <template v-slot:setting-menu>
+                <icon-group-wrapper multiIcons>
+                    <template v-slot:body>
+                        <v-btn text>
+                            <v-icon size="18" color="primary">
+                                $vuetify.icons.paused
+                            </v-icon>
+                        </v-btn>
+                        <v-btn text>
+                            <v-icon size="18" color="primary">
+                                $vuetify.icons.reload
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                </icon-group-wrapper>
+                <icon-group-wrapper>
+                    <template v-slot:body>
+                        <v-btn text>
+                            <v-icon size="18" color="primary">
+                                $vuetify.icons.edit
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                </icon-group-wrapper>
+                <icon-group-wrapper>
+                    <template v-slot:body>
+                        <v-btn text @click="() => (serverDeleteDialog = true)">
+                            <v-icon size="18" color="error">
+                                $vuetify.icons.delete
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                </icon-group-wrapper>
+            </template>
+        </details-page-title>
+        <delete-modal
+            v-model="serverDeleteDialog"
+            :title="`${$t('destroy')} ${$t('server')}`"
+            :smallInfo="$t('info.serverDeleteModal')"
+            type="destroy"
+            :item="currentServer"
+            :dispatchDelete="() => destroyServer(currentServer.id)"
+            :close-modal="
+                () => {
+                    $router.go(-1)
+                    serverDeleteDialog = false
+                }
+            "
+        />
+
         <icon-sprite-sheet
             size="13"
             class="status-icon mr-1"
@@ -13,7 +63,7 @@
         </span>
         <span class="color text-field-text body-2">
             {{ !$help.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
-            <span>{{ currentServer.attributes.version_string }}</span>
+            <span>{{ $t('version') }} {{ currentServer.attributes.version_string }}</span>
         </span>
         <div class="d-flex mb-2">
             <outline-small-card
@@ -166,11 +216,14 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
     name: 'server-detail',
+
     props: {
         id: String,
     },
+
     data() {
         return {
+            serverDeleteDialog: false,
             addToServiceDialog: false,
             servicesLinked: [],
             servicesTableHeader: [
@@ -239,6 +292,7 @@ export default {
         tableRowProcessed() {
             return type => {
                 let currentServer = this.$help.cloneDeep(this.currentServer)
+
                 if (!this.$help.isEmpty(currentServer)) {
                     switch (type) {
                         case 'parameters': {
@@ -283,7 +337,7 @@ export default {
         await this.fetchServerById(this.$route.params.id)
     },
     methods: {
-        ...mapActions('server', ['fetchServerById']),
+        ...mapActions('server', ['fetchServerById', 'destroyServer']),
         processServicesLinked(arr) {
             this.servicesLinked = arr
         },

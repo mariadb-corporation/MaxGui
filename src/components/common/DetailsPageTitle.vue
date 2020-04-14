@@ -6,12 +6,38 @@
                     $vuetify.icons.arrowLeft
                 </v-icon>
             </v-btn>
-            <h4
-                style="line-height: normal;"
-                class="ml-1 mb-0 color text-navigation display-1 text-capitalize page-title"
-            >
-                {{ $route.params.id }}
-            </h4>
+            <div class="d-inline-flex align-center">
+                <h4
+                    style="line-height: normal;"
+                    class="ml-1 mb-0 color text-navigation display-1 text-capitalize page-title"
+                >
+                    {{ $route.params.id }}
+                </h4>
+                <v-menu transition="slide-y-transition" offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn class="ml-2 " icon v-on="on">
+                            <v-icon size="18" color="primary">
+                                $vuetify.icons.settings
+                            </v-icon>
+                        </v-btn>
+                    </template>
+
+                    <div class="color bg-background d-inline-flex icon-wrapper-list">
+                        <slot name="setting-menu"></slot>
+                    </div>
+                </v-menu>
+            </div>
         </div>
     </portal>
 </template>
+<style lang="scss" scoped>
+.v-menu__content {
+    border-radius: 4px;
+    border: 1px solid $field-text;
+    box-shadow: none;
+    margin-top: 4px;
+    .icon-wrapper-list {
+        min-height: 36px;
+    }
+}
+</style>

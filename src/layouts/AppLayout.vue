@@ -14,7 +14,11 @@
                     </portal-target>
                     <v-spacer />
 
-                    <search-to-create :currentRoute="currentRoute" :tabRoutes="tabRoutes" />
+                    <search-to-create
+                        v-if="showSearchToCreate"
+                        :currentRouteName="currentRouteName"
+                        :tabRoutes="tabRoutes"
+                    />
                 </div>
 
                 <transition name="fade" mode="out-in">
@@ -85,25 +89,25 @@ export default {
     computed: {
         ...mapGetters('user', ['user']),
 
-        currentRoute: function() {
+        currentRouteName: function() {
             return this.$route.name
         },
 
         currentPath: function() {
             return this.$route.path
         },
-    },
-    methods: {
-        // check if currentRoute is a tabRoute
-        checkIsTabRoute() {
+        showSearchToCreate: function() {
             let arr = this.tabRoutes
-            let isTabRoute = false
+            let show = false
             for (let i = arr.length - 1; i >= 0; --i) {
-                if (arr[i].name === this.currentRoute) {
-                    isTabRoute = true
+                if (arr[i].path.includes(this.currentRouteName)) {
+                    show = true
                 }
             }
-            return isTabRoute
+            if (this.currentRouteName === 'monitor') {
+                show = true
+            }
+            return show
         },
     },
 }

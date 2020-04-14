@@ -77,7 +77,7 @@ export default {
         return {
             tableHeaders: [
                 { text: 'ID', value: 'id' },
-                { text: 'DB user', value: 'user' },
+                { text: 'Client', value: 'user' },
                 { text: 'Connected', value: 'connected' },
                 { text: 'IDLE (s)', value: 'idle' },
                 { text: 'Service', value: 'servicesIdArr' },

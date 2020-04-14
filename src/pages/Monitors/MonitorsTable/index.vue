@@ -51,13 +51,12 @@
  * Public License.
  */
 import { mapActions } from 'vuex'
-import DeleteModal from 'components/DeleteModal'
+
 import MonitorCreateOrUpdate from '../MonitorCreateOrUpdate'
 
 export default {
     name: 'monitors-table',
     components: {
-        DeleteModal,
         MonitorCreateOrUpdate,
     },
     props: {

@@ -16,12 +16,12 @@ import MaxScale from 'pages/MaxScale'
 import ServiceDetail from 'pages/Services/ServiceDetail'
 import ServerDetail from 'pages/Servers/ServerDetail'
 import MonitorDetail from 'pages/Monitors/MonitorDetail'
+import NotFound404 from 'pages/NotFound404'
 
 export const routes = [
     {
         path: '*',
-        name: 'default',
-        redirect: '/dashboard/servers',
+        redirect: '/dashboard/servers/',
     },
     {
         path: '/login',
@@ -70,5 +70,14 @@ export const routes = [
             layout: 'app-layout',
         },
         name: 'monitor',
+    },
+    {
+        path: '/404',
+        name: 'not-found',
+        component: NotFound404,
+        meta: {
+            requiresAuth: true,
+            layout: 'app-layout',
+        },
     },
 ]

@@ -11,7 +11,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-menu v-model="isProfileOpened" transition="slide-y-transition" offset-y>
+        <v-menu v-model="isProfileOpened" allow-overflow transition="slide-y-transition" offset-y>
             <template v-slot:activator="{ on }">
                 <v-btn dark class="mr-0" text tile v-on="on">
                     <v-icon class="user-icon mr-1 " style="width:30px" size="30">
@@ -29,7 +29,8 @@
                     </v-icon>
                 </v-btn>
             </template>
-            <v-list>
+
+            <v-list dark class="color bg-navigation">
                 <v-list-item @click="handleLogout">
                     <v-list-item-title>{{ $t('logout') }}</v-list-item-title>
                 </v-list-item>
@@ -101,14 +102,16 @@ export default {
 }
 
 .v-menu__content {
-    border-radius: 0;
+    border-radius: 0px;
     .v-list {
         padding-top: 0;
         padding-bottom: 0;
-        border-radius: 0;
-    }
-    .v-list-item__title {
-        font-size: 0.875rem;
+        border-radius: 0px;
+        &-item {
+            &__title {
+                font-size: 0.875rem;
+            }
+        }
     }
 }
 </style>

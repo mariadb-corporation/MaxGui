@@ -45,6 +45,7 @@ import Table from 'icons/Table'
 import Tachometer from 'icons/Tachometer' // MaxScale new icons
 import User from 'icons/User'
 import Users from 'icons/Users'
+import NotFound from 'icons/NotFound'
 
 export default {
     alerts: {
@@ -97,6 +98,9 @@ export default {
     },
     monitoring: {
         component: Monitoring,
+    },
+    notFound: {
+        component: NotFound,
     },
     paused: {
         component: Paused,

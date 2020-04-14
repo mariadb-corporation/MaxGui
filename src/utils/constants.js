@@ -36,7 +36,6 @@ export const APP_CONFIG = Object.freeze({
     //             size: 22,
     //             icon: '$vuetify.icons.reports',
     //         },
-    //         { title: i18n.t('users'), route: 'users', size: 22, icon: '$vuetify.icons.users' },
     //         {
     //             title: i18n.t('settings'),
     //             route: 'settings',

@@ -70,6 +70,9 @@
     "statistics": "Statistics",
     "users": "Users",
     "settings": "Settings",
+    "version": "Version",
+    "404Error": "404 Error",
+    "404ErrorMessage": "Sorry, that page doesn't exist",
     "$vuetify": {
         "badge": "Badge",
         "close": "Close",

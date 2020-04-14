@@ -43,5 +43,8 @@ $colors: (
         &.border-left-#{$name} {
             border-left: thin solid $value !important;
         }
+        &.border-right-#{$name} {
+            border-right: thin solid $value !important;
+        }
     }
 }

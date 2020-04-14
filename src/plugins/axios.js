@@ -15,7 +15,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
-
+import router from 'router'
 const location = window.location
 
 let apiClient = axios.create({
@@ -47,6 +47,9 @@ apiClient.interceptors.response.use(
             store.dispatch('user/logout')
             delete axios.defaults.headers.common['Authorization']
 
+            return Promise.reject(error)
+        } else if (error.response.status === 404) {
+            router.push('/404')
             return Promise.reject(error)
         } else {
             store.commit('showMessage', {

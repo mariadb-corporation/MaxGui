@@ -12,12 +12,14 @@
  */
 import BaseDialog from './BaseDialog'
 import DataTable from './DataTable'
-import SearchBox from 'components/common/SearchBox'
+import SearchBox from './SearchBox'
 import DetailsPageTitle from './DetailsPageTitle'
-import IconSpriteSheet from 'components/common/IconSpriteSheet'
-import OutlineSmallCard from 'components/common/OutlineSmallCard'
-import TreeData from 'components/common/TreeData'
-import DetailsTableWrapper from 'components/common/DetailsTableWrapper'
+import IconSpriteSheet from './IconSpriteSheet'
+import OutlineSmallCard from './OutlineSmallCard'
+import TreeData from './TreeData'
+import DetailsTableWrapper from './DetailsTableWrapper'
+import IconGroupWrapper from './IconGroupWrapper'
+import DeleteModal from './DeleteModal'
 
 export default {
     'base-dialog': BaseDialog,
@@ -28,4 +30,6 @@ export default {
     'outline-small-card': OutlineSmallCard,
     'tree-data': TreeData,
     'details-table-wrapper': DetailsTableWrapper,
+    'icon-group-wrapper': IconGroupWrapper,
+    'delete-modal': DeleteModal,
 }

@@ -1,19 +1,8 @@
 <template>
     <span>
-        <!-- Dialog activator -->
-        <v-tooltip top>
-            <template v-slot:activator="{ on }">
-                <v-btn color="#eb5757" icon v-on="on" @click.stop="deleteDialog = true">
-                    <v-icon size="16" color="#eb5757">
-                        $vuetify.icons.delete
-                    </v-icon>
-                </v-btn>
-            </template>
-            <span> {{ $t(`${type}`) }}</span>
-        </v-tooltip>
         <base-dialog
-            v-model="deleteDialog"
-            :onCancel="() => (deleteDialog = false)"
+            v-model="computeShowDialog"
+            :onCancel="closeModal"
             :onSave="handleDelete"
             :title="title"
         >
@@ -71,21 +60,35 @@
 export default {
     name: 'delete-modal',
     props: {
+        value: Boolean,
         type: String, // delete or destroy
         title: String,
         item: Object,
         dispatchDelete: Function,
         smallInfo: String,
+        closeModal: Function,
     },
     data() {
         return {
-            deleteDialog: false,
+            show: false,
         }
     },
+    computed: {
+        computeShowDialog: {
+            // get value from props
+            get() {
+                return this.value
+            },
+            // set the value to show property in data
+            set(value) {
+                this.show = value
+            },
+        },
+    },
     methods: {
-        handleDelete() {
-            this.deleteDialog = false
-            this.dispatchDelete(this.item.id)
+        async handleDelete() {
+            await this.dispatchDelete(this.item.id)
+            this.closeModal()
         },
     },
 }

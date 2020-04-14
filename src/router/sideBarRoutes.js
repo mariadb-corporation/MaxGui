@@ -13,7 +13,6 @@
 // Sidebar components
 import Dashboard from 'pages/Dashboard'
 import Statistics from 'pages/Statistics'
-import Users from 'pages/Users'
 import Settings from 'pages/Settings'
 import tabRoutes from './tabRoutes'
 
@@ -44,17 +43,7 @@ export default [
         },
         name: 'statistics',
     },
-    {
-        path: '/users',
-        component: Users,
-        meta: {
-            requiresAuth: true,
-            layout: 'app-layout',
-            size: 22,
-            icon: '$vuetify.icons.users',
-        },
-        name: 'users',
-    },
+
     {
         path: '/settings',
         component: Settings,

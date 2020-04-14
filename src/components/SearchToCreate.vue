@@ -71,7 +71,7 @@ export default {
     },
     props: {
         tabRoutes: { type: Array, default: () => [], required: true },
-        currentRoute: { type: String, default: '', required: true },
+        currentRouteName: { type: String, default: '', required: true },
     },
 
     data() {
@@ -90,14 +90,14 @@ export default {
             // let keyword = newVal.toLowerCase()
             this.setSearchKeyWord(newVal)
             /*Display create button when the current route belongs to tabRoute, 
-            when search keyword is empty, currentRoute is */
+            when search keyword is empty, currentRouteName is */
             if (newVal === '') {
                 this.isBtnDisabled = false
             } else {
                 this.isBtnDisabled = this.isMatchTabRoutes(newVal.toLowerCase())
             }
         },
-        currentRoute: function(newRoute) {
+        currentRouteName: function(newRoute) {
             this.isBtnDisabled = this.isMatchTabRoutes(newRoute)
         },
         $route: function(to, from) {
@@ -107,7 +107,7 @@ export default {
         },
     },
     created() {
-        this.isBtnDisabled = this.isMatchTabRoutes(this.currentRoute)
+        this.isBtnDisabled = this.isMatchTabRoutes(this.currentRouteName)
     },
 
     methods: {
@@ -116,7 +116,7 @@ export default {
             if (this.search && !this.isBtnDisabled) {
                 this.createType(this.search.toLowerCase())
             } else {
-                this.createType(this.currentRoute)
+                this.createType(this.currentRouteName)
             }
         },
         createType(type) {

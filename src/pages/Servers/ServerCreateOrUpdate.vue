@@ -305,12 +305,6 @@ export default {
             }
             return title
         },
-        /**
-         * @returns {Object} Return object server
-         */
-        getCurrentServer: function() {
-            return this.allServersMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
-        },
     },
     watch: {
         /**
@@ -343,7 +337,7 @@ export default {
                 const {
                     attributes: { parameters },
                     relationships,
-                } = this.getCurrentServer
+                } = this.item
                 //First set serverId from item props
                 this.serverId = this.item.id
                 this.radioGroup = parameters.address ? 'address' : 'socket'
