@@ -54,6 +54,8 @@ module.exports = {
             enableInSFC: true,
         },
     },
+
+    productionSourceMap: false,
 }
 function addStyleResource(rule) {
     rule.use('style-resource')
