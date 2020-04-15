@@ -1,11 +1,6 @@
 <template>
     <v-tabs v-model="activeTab" class="tab-navigation-wrapper">
-        <v-tab
-            v-for="route in tabRoutes"
-            :key="route.path"
-            :to="route.path"
-            class="color border-bottom-table-header "
-        >
+        <v-tab v-for="route in tabRoutes" :key="route.path" :to="route.path">
             {{ route.name === 'sessions' ? 'Current Sessions' : route.name }}
             <span class="field-text-info color text-field-text">
                 ({{ getTotal(route.name) }})
@@ -41,7 +36,7 @@ export default {
     },
     data() {
         return {
-            activeTab: '/dashboard/servers',
+            activeTab: null,
         }
     },
     computed: {

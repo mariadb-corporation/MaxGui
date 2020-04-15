@@ -1,7 +1,12 @@
 <template>
     <fragment>
         <div class="mb-1 d-flex align-center">
-            <div class="d-flex align-center">
+            <div
+                class="d-flex align-center"
+                :class="{ pointer: $help.isFunction(onEdit) }"
+                @mouseover="() => $help.isFunction(onEdit) && (showEdit = true)"
+                @mouseleave="() => $help.isFunction(onEdit) && (showEdit = false)"
+            >
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
                     <v-icon :class="[!toggleVal ? 'arrow-down' : 'arrow-up']" size="32">
                         $expand
@@ -13,8 +18,25 @@
                         ({{ titleInfo }})
                     </span>
                 </p>
+                <v-btn v-if="showEdit || editing" icon class="arrow-toggle" @click="onEdit">
+                    <v-icon color="primary" size="18">
+                        $vuetify.icons.edit
+                    </v-icon>
+                </v-btn>
             </div>
             <v-spacer />
+
+            <v-btn
+                v-if="editing"
+                color="primary"
+                rounded
+                small
+                class="text-capitalize"
+                @click="doneEdit"
+            >
+                {{ $t('doneEditing') }}
+            </v-btn>
+
             <v-btn
                 v-if="onAddClick"
                 color="primary"
@@ -61,6 +83,15 @@ export default {
         // optional props for the + Add ... button
         onAddClick: Function,
         addBtnText: String,
+        // props for editing
+        onEdit: Function,
+        editing: Boolean,
+        doneEdit: Function,
+    },
+    data() {
+        return {
+            showEdit: false,
+        }
     },
     watch: {
         onAddClick: {

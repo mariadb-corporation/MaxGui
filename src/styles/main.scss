@@ -81,12 +81,15 @@ body,
 }
 // --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
 .tab-navigation-wrapper {
+    .v-slide-group__wrapper {
+        border-bottom: thin solid $table-header !important;
+    }
     .v-tabs-slider-wrapper {
         height: 3px !important;
     }
     .v-tab {
         letter-spacing: -0.01em;
-        border-bottom: thin solid $table-header !important;
+
         text-transform: capitalize;
     }
     .v-tab:not(.v-tab--active) {

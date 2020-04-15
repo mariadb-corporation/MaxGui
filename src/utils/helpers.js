@@ -220,6 +220,46 @@ export function handleValue(value) {
     if (value === '') newVal = "''"
     return newVal
 }
+/**
+ * @param {Object} obj Object to be processed in to tree data arr
+ * @param {Number} level level of data
+ * @return {Array} return tree data arr
+ */
+export function processTreeData(obj, level) {
+    if (typeof obj === 'object') {
+        let data = []
+        let self = this
+        let targetObj = self.cloneDeep(obj)
+
+        if (!self.isEmpty(targetObj)) {
+            Object.keys(targetObj).map(key => {
+                const value = self.handleValue(targetObj[key])
+                let newValue = self.cloneDeep(value)
+
+                let typeOfValue = typeof value
+                if (typeOfValue === 'object') {
+                    newValue = null
+                } else if (Array.isArray(value)) {
+                    newValue = { ...newValue } // convert to object
+                }
+                let children = self.processTreeData(self.handleValue(targetObj[key]), level + 1)
+
+                data.push({
+                    id: key,
+                    level: level + 1,
+                    value: newValue,
+                    children: children,
+                    /* width of one v-treeview-node__level is 24, by default
+                     */
+                    colNameWidth: `calc(65% - 11px -  ${(level + 1) * 8.5}px)`,
+                    colValueWidth: `calc(35% - 11px - ${(level + 1) * 8.5}px)`,
+                })
+            })
+            return data
+        }
+    }
+    return []
+}
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -241,6 +281,7 @@ Object.defineProperties(Vue.prototype, {
                 formatValue,
                 objToArrOfObj,
                 handleValue,
+                processTreeData,
                 // lodash
                 isNaN,
                 isObject,

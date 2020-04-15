@@ -13,7 +13,6 @@
 import Vue from 'vue'
 import { OVERLAY_LOGOUT } from 'store/overlayTypes'
 import { delay, dynamicColors, strReplaceAt } from 'utils/helpers'
-
 import router from 'router'
 
 export default {

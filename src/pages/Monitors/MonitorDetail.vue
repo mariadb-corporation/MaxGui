@@ -166,7 +166,7 @@ export default {
                                         id: id,
                                         value: null,
                                         isLink: true,
-                                        children: this.processTreeData(obj, 0),
+                                        children: this.$help.processTreeData(obj, 0),
                                         level: 0,
                                         colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
                                         colValueWidth: 'calc(35% - 11px)',
@@ -198,49 +198,6 @@ export default {
 
     methods: {
         ...mapActions('monitor', ['fetchMonitorById']),
-        /**
-         * @param {Object} obj Object to be processed in to tree data arr
-         * @param {Number} level level of data
-         * @return {Array} return tree data arr
-         */
-        processTreeData(obj, level) {
-            if (typeof obj === 'object') {
-                let data = []
-                let self = this
-                let targetObj = self.$help.cloneDeep(obj)
-
-                if (!self.$help.isEmpty(targetObj)) {
-                    Object.keys(targetObj).map(key => {
-                        const value = self.$help.handleValue(targetObj[key])
-                        let newValue = self.$help.cloneDeep(value)
-
-                        let typeOfValue = typeof value
-                        if (typeOfValue === 'object') {
-                            newValue = null
-                        } else if (Array.isArray(value)) {
-                            newValue = { ...newValue } // convert to object
-                        }
-                        let chilren = self.processTreeData(
-                            self.$help.handleValue(targetObj[key]),
-                            level + 1
-                        )
-
-                        data.push({
-                            id: key,
-                            level: level + 1,
-                            value: newValue,
-                            children: chilren,
-                            /* width of one v-treeview-node__level is 24, by default
-                             */
-                            colNameWidth: `calc(65% - 11px -  ${(level + 1) * 8.5}px)`,
-                            colValueWidth: `calc(35% - 11px - ${(level + 1) * 8.5}px)`,
-                        })
-                    })
-                    return data
-                }
-            }
-            return []
-        },
     },
 }
 </script>

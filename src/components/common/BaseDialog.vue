@@ -31,7 +31,7 @@
                         depressed
                         @click="cancel"
                     >
-                        {{ $t('cancel') }}
+                        {{ $t(cancelText) }}
                     </v-btn>
                     <v-btn
                         small
@@ -42,7 +42,7 @@
                         depressed
                         @click="save"
                     >
-                        {{ $t('save') }}
+                        {{ $t(saveText) }}
                     </v-btn>
                 </slot>
             </v-card-actions>
@@ -74,6 +74,8 @@ export default {
         value: Boolean,
         onCancel: Function,
         onSave: Function,
+        cancelText: { type: String, default: 'cancel' },
+        saveText: { type: String, default: 'save' },
     },
     data() {
         return {

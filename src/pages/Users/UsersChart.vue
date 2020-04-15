@@ -48,8 +48,8 @@ export default {
                             realtime: {
                                 duration: 20000,
                                 refresh: 5000, // onRefresh callback will be called every 5000 ms
-                                // delay of 1000 ms, so upcoming values are known before plotting a line
-                                delay: 10000,
+                                // delay of 5000 ms, so upcoming values are known before plotting a line
+                                delay: 5000,
                             },
                         },
                     ],

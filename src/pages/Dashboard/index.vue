@@ -25,13 +25,13 @@
             >
                 <template v-slot:activator="{ on }">
                     <v-icon
-                        class="pointer"
+                        class="material-icons-outlined pointer"
                         style="position:relative;top:-15px"
                         size="16"
                         color="#9DB4BB"
                         v-on="on"
                     >
-                        $vuetify.icons.infoCircle
+                        info
                     </v-icon>
                 </template>
 
@@ -52,7 +52,6 @@
                             <v-tooltip v-if="name === 'commit'" :key="copyState" top>
                                 <template v-slot:activator="{ on }">
                                     <div
-                                        ref="commitRef"
                                         style="width:65%;"
                                         class="pointer d-inline-block text-truncate"
                                         @dblclick="copyToClipboard(value)"
@@ -100,8 +99,7 @@
                 </template>
             </outline-small-card>
         </div>
-        <tab-navs :tabRoutes="tabRoutes" />
-        <!-- <tab-nav v-model="activeTab" :isRoute="true" :tabs="tabRoutes" /> -->
+        <tab-nav :tabRoutes="tabRoutes" />
     </div>
 </template>
 
@@ -128,7 +126,7 @@ import SessionsChart from 'pages/Sessions/SessionsChart'
 export default {
     name: 'dashboard',
     components: {
-        'tab-navs': TabNav,
+        TabNav,
         ThreadsChart,
         UsersChart,
         SessionsChart,
@@ -136,7 +134,6 @@ export default {
     data() {
         return {
             tabRoutes: tabRoutes,
-            activeTab: '/dashboard/servers',
             isCopied: false,
             uptime: null,
             duration: null,
@@ -155,9 +152,6 @@ export default {
     },
 
     watch: {
-        $route: function(to, from) {
-            this.activeTab = to.path
-        },
         isCopied: function(newVal) {
             if (newVal) {
                 let self = this

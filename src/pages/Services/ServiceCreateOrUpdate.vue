@@ -328,13 +328,6 @@ export default {
             }
             return title
         },
-
-        /**
-         * @returns {Object} Return object service
-         */
-        getCurrentService: function() {
-            return this.allServicesMap.get(this.item.id) //ONLY AVAILABLE FOR PATCH MODE
-        },
         booleanParams: function() {
             return this.$help.pickBy(this.parameters, this.$help.isBoolean)
         },
@@ -358,7 +351,7 @@ export default {
                 const {
                     attributes: { parameters, router },
                     relationships,
-                } = this.getCurrentService
+                } = this.item
                 //First set serviceID from item props
                 this.serviceId = this.item.id
                 // deep object copy or using this.$help.cloneDeep from lodash
