@@ -1,5 +1,5 @@
 <template>
-    <v-tabs v-model="activeTab">
+    <v-tabs v-model="activeTab" class="tab-navigation-wrapper">
         <v-tab
             v-for="route in tabRoutes"
             :key="route.path"
@@ -7,7 +7,6 @@
             class="color border-bottom-table-header "
         >
             {{ route.name === 'sessions' ? 'Current Sessions' : route.name }}
-
             <span class="field-text-info color text-field-text">
                 ({{ getTotal(route.name) }})
             </span>
@@ -43,7 +42,6 @@ export default {
     data() {
         return {
             activeTab: '/dashboard/servers',
-            total: null,
         }
     },
     computed: {
@@ -53,13 +51,6 @@ export default {
             allSessions: 'session/allSessions',
             allServices: 'service/allServices',
         }),
-        // tabRoutesFilter() {
-        //     let self = this
-        //     // let filteredData = this.tabRoutes.filter(obj => obj.name.includes(self.searchKeyWord))
-        //     let filteredData = this.tabRoutes.filter(obj => !obj.name === 'dashboardHome')
-
-        //     return filteredData
-        // },
     },
     watch: {
         $route: function(to, from) {

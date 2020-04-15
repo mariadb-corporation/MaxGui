@@ -107,7 +107,7 @@
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
                     <div>
-                        <slot :name="header.value" :data="{ item, header }">
+                        <slot :name="header.value" :data="{ item, header, i }">
                             <!-- no content for the corresponding header, usually this is an error -->
                             <span v-if="$help.isUndefined(item[header.value])"></span>
                             <!-- regular cell -->

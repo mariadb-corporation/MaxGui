@@ -10,9 +10,9 @@
             <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
         </template>
 
-        <template v-slot:id="{ data: { item: { id } } }">
-            <router-link :key="id" :to="`/dashboard/sessions/${id}`" class="no-underline">
-                <span> {{ id }} </span>
+        <template v-slot:user="{ data: { item: { user } } }">
+            <router-link :key="user" :to="`/users/${user}`" class="no-underline">
+                <span> {{ user }} </span>
             </router-link>
         </template>
         <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
@@ -93,6 +93,33 @@ export default {
 
         generateTableRows: function() {
             let sessionsTest = [
+                {
+                    id: '8',
+                    type: 'sessions',
+                    relationships: {
+                        services: {
+                            links: {
+                                self: 'http://localhost:8989/v1/services/',
+                            },
+                            data: [
+                                {
+                                    id: 'RCR-Writer',
+                                    type: 'services',
+                                },
+                            ],
+                        },
+                    },
+                    attributes: {
+                        state: 'Session ready for routing',
+                        user: 'lee',
+                        remote: '::ffff:127.0.0.1',
+                        connected: 'Mon Jul 17 11:10:39 2017',
+                        idle: 62.899999999999999,
+                    },
+                    links: {
+                        self: 'http://localhost:8989/v1/sessions/9',
+                    },
+                },
                 {
                     id: '9',
                     type: 'sessions',

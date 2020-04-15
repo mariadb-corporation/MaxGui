@@ -20,12 +20,12 @@
                 status
             </icon-sprite-sheet>
         </template>
-        <template v-slot:servers="{ data: { item: { servers } } }">
+        <template v-slot:servers="{ data: { item: { servers }, i } }">
             <fragment v-if="servers === 'undefined'">
                 <span>{{ servers }}</span>
             </fragment>
 
-            <fragment v-else-if="servers.length < 4">
+            <fragment v-else-if="servers.length < 3">
                 <template v-for="(serverId, i) in servers">
                     <router-link
                         :key="serverId"
@@ -37,25 +37,33 @@
                 </template>
             </fragment>
 
-            <template v-else>
-                <v-tooltip top transition="fade-transition">
-                    <template v-slot:activator="{ on }">
-                        <span class="pointer color text-links" v-on="on">
-                            {{ servers.length }}
-                            {{ $t('servers').toLowerCase() }}
-                        </span>
-                    </template>
+            <v-menu
+                v-else
+                :key="i"
+                transition="slide-x-transition"
+                :close-on-content-click="false"
+                open-on-hover
+                offset-x
+            >
+                <template v-slot:activator="{ on }">
+                    <span class="pointer color text-links" v-on="on">
+                        {{ servers.length }}
+                        {{ $t('servers').toLowerCase() }}
+                    </span>
+                </template>
+
+                <v-sheet style="border-radius: 4px;" class="px-4 py-2">
                     <template v-for="serverId in servers">
                         <router-link
                             :key="serverId"
                             :to="`/dashboard/servers/${serverId}`"
-                            class="no-underline"
+                            class="body-2 d-block no-underline"
                         >
                             <span>{{ serverId }} </span>
                         </router-link>
                     </template>
-                </v-tooltip>
-            </template>
+                </v-sheet>
+            </v-menu>
         </template>
     </data-table>
 </template>
@@ -84,8 +92,8 @@ export default {
                 { text: 'Service', value: 'id' },
                 { text: 'Status', value: 'state' },
                 { text: 'Router', value: 'router' },
-                { text: 'Connections', value: 'connections' },
-                { text: 'Total Connections', value: 'total_connections' },
+                { text: 'Current Sessions', value: 'connections' },
+                { text: 'Total Sessions', value: 'total_connections' },
                 { text: 'Servers', value: 'servers' },
             ],
             isloading: true,

@@ -15,21 +15,66 @@
                 Uptime {{ duration }}
             </span>
 
-            <v-icon class="pointer" style="position:relative;top:-15px" size="16" color="#9DB4BB">
-                $vuetify.icons.infoCircle
-            </v-icon>
+            <v-menu
+                transition="slide-y-transition"
+                :close-on-content-click="false"
+                open-on-hover
+                offset-y
+                nudge-left="20"
+                content-class="v-menu--with-arrow shadow-drop"
+            >
+                <template v-slot:activator="{ on }">
+                    <v-icon
+                        class="pointer"
+                        style="position:relative;top:-15px"
+                        size="16"
+                        color="#9DB4BB"
+                        v-on="on"
+                    >
+                        $vuetify.icons.infoCircle
+                    </v-icon>
+                </template>
+
+                <v-sheet style="border-radius: 10px;" class="px-6 py-4" max-width="320px">
+                    <span class="d-block mb-1"> About MaxScale</span>
+                    <div
+                        v-for="(value, name) in $help.pick(maxscaleDetails, [
+                            'commit',
+                            'started_at',
+                            'activated_at',
+                        ])"
+                        :key="name"
+                    >
+                        <span class="d-flex body-2">
+                            <span class="text-capitalize" style="width:35%">
+                                {{ name.split('_').join(' ') }}
+                            </span>
+                            <v-tooltip v-if="name === 'commit'" :key="copyState" top>
+                                <template v-slot:activator="{ on }">
+                                    <div
+                                        ref="commitRef"
+                                        style="width:65%;"
+                                        class="pointer d-inline-block text-truncate"
+                                        @dblclick="copyToClipboard(value)"
+                                        v-on="on"
+                                    >
+                                        {{ value }}
+                                    </div>
+                                </template>
+                                <span>
+                                    {{ copyState }}
+                                </span>
+                            </v-tooltip>
+                            <div v-else style="width:65%;" class="d-inline-block ">
+                                {{ formatValue(value, name) }}
+                            </div>
+                        </span>
+                    </div>
+                </v-sheet>
+            </v-menu>
         </portal>
 
         <div style="width:100%" class="d-flex mb-5">
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
-                <template v-slot:title>
-                    {{ $t('users') }}
-                </template>
-                <template v-slot:card-body>
-                    <users-chart />
-                </template>
-            </outline-small-card>
-
             <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
                 <template v-slot:title>
                     {{ $t('sessions') }}
@@ -38,30 +83,25 @@
                     <sessions-chart />
                 </template>
             </outline-small-card>
-
-            <!-- <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('sessions') }}
-                    </template>
-                    <template v-slot:card-body>
-                        TODO: A graph here
-                    </template>
-                </outline-small-card> -->
-
             <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
                 <template v-slot:title>
-                    {{ $t('threadUsage') }}
+                    {{ $t('connections') }}
+                </template>
+                <template v-slot:card-body>
+                    <users-chart />
+                </template>
+            </outline-small-card>
+            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+                <template v-slot:title>
+                    {{ $t('load') }}
                 </template>
                 <template v-slot:card-body>
                     <threads-chart :isMiniChart="true" />
                 </template>
             </outline-small-card>
         </div>
-
-        <tab-nav :tabRoutes="tabRoutes" />
+        <tab-navs :tabRoutes="tabRoutes" />
+        <!-- <tab-nav v-model="activeTab" :isRoute="true" :tabs="tabRoutes" /> -->
     </div>
 </template>
 
@@ -88,19 +128,20 @@ import SessionsChart from 'pages/Sessions/SessionsChart'
 export default {
     name: 'dashboard',
     components: {
-        TabNav,
+        'tab-navs': TabNav,
         ThreadsChart,
         UsersChart,
         SessionsChart,
     },
     data() {
         return {
-            model: null,
             tabRoutes: tabRoutes,
-            showTooltip: false,
+            activeTab: '/dashboard/servers',
+            isCopied: false,
             uptime: null,
             duration: null,
             containerWidth: 130,
+            copyState: 'Double click to copy to clipboard',
         }
     },
 
@@ -114,10 +155,20 @@ export default {
     },
 
     watch: {
-        showTooltip: function(newVal) {
+        $route: function(to, from) {
+            this.activeTab = to.path
+        },
+        isCopied: function(newVal) {
             if (newVal) {
                 let self = this
-                setTimeout(() => (self.showTooltip = false), 1500)
+                self.copyState = 'Copied'
+                setTimeout(
+                    () => (
+                        (self.isCopied = false),
+                        (self.copyState = 'Double click to copy to clipboard')
+                    ),
+                    2000
+                )
             }
         },
         maxscaleDetails: function(newVal) {
@@ -158,7 +209,7 @@ export default {
         },
         copyToClipboard(value) {
             document.execCommand('copy')
-            this.showTooltip = true
+            this.isCopied = true
         },
         updateUpTime() {
             this.uptime = this.uptime + 1
@@ -171,7 +222,7 @@ export default {
 <style scoped lang="scss">
 .slide-nav-item {
     margin: 0px 8px;
-    width: 25%;
+    width: 33.33%;
     &:first-of-type {
         margin-left: 0px;
     }

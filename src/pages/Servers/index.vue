@@ -62,7 +62,7 @@
             </div>
         </template>
 
-        <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
+        <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr }, i } }">
             <fragment v-if="servicesIdArr.length === 0">
                 <span>No service</span>
             </fragment>
@@ -80,23 +80,32 @@
             </fragment>
 
             <template v-else>
-                <v-tooltip top transition="fade-transition">
+                <v-menu
+                    :key="i"
+                    transition="slide-x-transition"
+                    :close-on-content-click="false"
+                    open-on-hover
+                    offset-x
+                >
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
                             {{ servicesIdArr.length }}
                             {{ $t('services').toLowerCase() }}
                         </span>
                     </template>
-                    <template v-for="serviceId in servicesIdArr">
-                        <router-link
-                            :key="serviceId"
-                            :to="`/dashboard/services/${serviceId}`"
-                            class="no-underline"
-                        >
-                            <span>{{ serviceId }} </span>
-                        </router-link>
-                    </template>
-                </v-tooltip>
+
+                    <v-sheet style="border-radius: 4px;" class="px-4 py-2">
+                        <template v-for="serviceId in servicesIdArr">
+                            <router-link
+                                :key="serviceId"
+                                :to="`/dashboard/services/${serviceId}`"
+                                class="body-2 d-block no-underline"
+                            >
+                                <span>{{ serviceId }} </span>
+                            </router-link>
+                        </template>
+                    </v-sheet>
+                </v-menu>
             </template>
         </template>
     </rowspan-data-table>

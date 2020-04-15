@@ -11,7 +11,13 @@
 
         <v-spacer></v-spacer>
 
-        <v-menu v-model="isProfileOpened" allow-overflow transition="slide-y-transition" offset-y>
+        <v-menu
+            v-model="isProfileOpened"
+            allow-overflow
+            transition="slide-y-transition"
+            offset-y
+            content-class="profile-menu"
+        >
             <template v-slot:activator="{ on }">
                 <v-btn dark class="mr-0" text tile v-on="on">
                     <v-icon class="user-icon mr-1 " style="width:30px" size="30">
@@ -100,9 +106,9 @@ export default {
 .v-btn {
     letter-spacing: normal;
 }
-
-.v-menu__content {
+.profile-menu {
     border-radius: 0px;
+
     .v-list {
         padding-top: 0;
         padding-bottom: 0;

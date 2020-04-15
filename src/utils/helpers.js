@@ -21,6 +21,7 @@ export const cloneDeep = require('lodash/cloneDeep')
 export const isUndefined = require('lodash/isUndefined')
 export const pickBy = require('lodash/pickBy')
 export const isBoolean = require('lodash/isBoolean')
+export const pick = require('lodash/pick')
 
 export function range(start, end) {
     if (isNaN(start) || isNaN(end)) return
@@ -249,6 +250,7 @@ Object.defineProperties(Vue.prototype, {
                 cloneDeep,
                 isUndefined,
                 pickBy,
+                pick,
                 isBoolean,
             }
         },

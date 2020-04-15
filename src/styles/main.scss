@@ -47,6 +47,58 @@ body,
         transform: rotate(-180deg);
     }
 }
+// --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
+.v-menu--with-arrow {
+    contain: initial;
+    overflow: visible;
+    margin-top: 10px;
+    &:after {
+        bottom: 100%;
+        left: 30px;
+        border: solid transparent;
+        content: '';
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(255, 255, 255, 0);
+        border-top-color: $background;
+        border-width: 10px;
+        border-top-width: 8px;
+        margin-left: -10px;
+        transform: rotate(180deg);
+    }
+    &::before {
+        content: '';
+        background: rgba(255, 255, 255, 0);
+        position: absolute;
+        transform: rotate(45deg);
+        width: 18px;
+        height: 18px;
+        top: -4px;
+        left: 21px;
+        z-index: -1;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.4);
+    }
+}
+// --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
+.tab-navigation-wrapper {
+    .v-tabs-slider-wrapper {
+        height: 3px !important;
+    }
+    .v-tab {
+        letter-spacing: -0.01em;
+        border-bottom: thin solid $table-header !important;
+        text-transform: capitalize;
+    }
+    .v-tab:not(.v-tab--active) {
+        color: $primary !important;
+    }
+
+    .v-tab--active {
+        color: $navigation !important;
+        font-weight: 600;
+    }
+}
+
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 .data-table-full {
     table-layout: fixed;

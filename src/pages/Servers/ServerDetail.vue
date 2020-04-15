@@ -42,13 +42,13 @@
             :smallInfo="$t('info.serverDeleteModal')"
             type="destroy"
             :item="currentServer"
-            :dispatchDelete="() => destroyServer(currentServer.id)"
-            :close-modal="
+            :dispatchDelete="
                 () => {
+                    destroyServer(currentServer.id)
                     $router.go(-1)
-                    serverDeleteDialog = false
                 }
             "
+            :close-modal="() => (serverDeleteDialog = false)"
         />
 
         <icon-sprite-sheet
