@@ -35,6 +35,7 @@
     "add": "Add",
     "doneEditing": "Done Editing",
     "implementChanges": "Implement Changes?",
+    "changeTheFollowingParameters": "You've changed the following {quantity} parameters:",
     "thatsRight": "That's Right",
     "createNew": "Create New",
     "close": "Close",

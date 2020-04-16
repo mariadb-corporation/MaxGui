@@ -157,8 +157,8 @@ body,
                     border-left: thin solid $table-border !important;
                 }
                 td {
+                    padding: 0px 35px;
                     pointer-events: all !important;
-                    padding: 0 35px;
                     border-bottom: thin solid $table-border !important;
                     height: 45px;
                     color: $navigation;
@@ -178,6 +178,9 @@ body,
                         opacity: 1;
                     }
                 }
+                &:hover:not(.v-data-table__editable-cell-mode) {
+                    background: transparent !important;
+                }
                 &.last-row {
                     td {
                         &:last-child {
@@ -188,6 +191,9 @@ body,
                         }
                     }
                 }
+            }
+            .v-data-table__editable-cell {
+                padding: 0px 10px;
             }
         }
     }
@@ -203,20 +209,6 @@ body,
                     &:not(:last-child) {
                         width: unset;
                     }
-                }
-            }
-        }
-        tbody {
-            tr.collapse-row {
-                td {
-                    &:first-child {
-                        padding: 0 50px;
-                    }
-                }
-            }
-            tr {
-                td.nested-row {
-                    padding: 0 50px;
                 }
             }
         }

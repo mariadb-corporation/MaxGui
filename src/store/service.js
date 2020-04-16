@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isUndefined } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -87,27 +87,32 @@ export default {
          * @param {Object} serviceData.relationships.servers Type of relationships
          * @param {Object} serviceData.relationships.filters Type of relationships
          */
-        async createOrUpdateService({ commit, dispatch, state }, serviceData) {
+        async createOrUpdateService({ commit }, serviceData, callback) {
             const payload = {
                 data: {
                     id: serviceData.id,
                     type: 'services',
-                    attributes: {
-                        router: serviceData.router,
-                        parameters: serviceData.parameters,
-                    },
-                    relationships: serviceData.relationships,
+                    attributes: {},
                 },
             }
-
             let res
             let message
             switch (serviceData.mode) {
                 case 'post':
+                    payload.data.attributes.router = serviceData.router
+                    payload.data.attributes.parameters = serviceData.parameters
+                    payload.data.relationships = serviceData.relationships
                     res = await Vue.axios.post(`/services/`, payload)
                     message = [`Service ${serviceData.id} is created`]
+
                     break
                 case 'patch':
+                    if (!isUndefined(serviceData.parameters)) {
+                        payload.data.attributes.parameters = serviceData.parameters
+                    }
+                    if (!isUndefined(serviceData.relationships)) {
+                        payload.data.relationships = serviceData.relationships
+                    }
                     res = await Vue.axios.patch(`/services/${serviceData.id}`, payload)
                     message = [`Service ${serviceData.id} is updated`]
                     break
@@ -123,7 +128,7 @@ export default {
                     },
                     { root: true }
                 )
-                await dispatch('fetchAllServices')
+                await callback
             }
         },
         /**

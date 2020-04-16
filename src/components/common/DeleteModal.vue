@@ -5,6 +5,7 @@
             :onCancel="closeModal"
             :onSave="handleDelete"
             :title="title"
+            :saveText="type"
         >
             <template v-slot:body>
                 <fragment>
@@ -13,32 +14,6 @@
                         {{ smallInfo }}
                     </small>
                 </fragment>
-            </template>
-
-            <template v-slot:actions="{ cancel, save }">
-                <v-btn
-                    small
-                    height="36"
-                    color="primary"
-                    class="font-weight-regular px-7 text-capitalize"
-                    rounded
-                    outlined
-                    depressed
-                    @click="cancel"
-                >
-                    {{ $t('cancel') }}
-                </v-btn>
-                <v-btn
-                    small
-                    height="36"
-                    color="primary"
-                    class="font-weight-regular px-7 text-capitalize"
-                    rounded
-                    depressed
-                    @click="save"
-                >
-                    {{ $t(`${type}`) }}
-                </v-btn>
             </template>
         </base-dialog>
     </span>

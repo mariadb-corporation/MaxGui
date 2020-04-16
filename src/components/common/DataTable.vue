@@ -1,14 +1,13 @@
 <template>
     <v-data-table
         :headers="visibleHeaders"
-        :items="dataProcess"
-        :hide-default-footer="dataProcess.length <= 10"
+        :items="!loading ? dataProcess : []"
         :hide-default-header="true"
-        :footer-props="{ 'items-per-page-options': [] }"
+        :hide-default-footer="showAll ? true : dataProcess.length <= 10"
+        :items-per-page="itemsPerPage"
         :class="['data-table-full', tableClass]"
         :loading="loading"
         :options.sync="pagination"
-        :items-per-page="itemsPerPage"
         :page="page"
         :sort-by="sortBy"
         :sort-desc="sortDesc"
@@ -27,11 +26,13 @@
                         :width="header.width"
                         :class="[
                             header.align && `text-${header.align}`,
-                            header.sortable !== false ? 'pointer sortable' : 'no-pointerEvent',
+                            header.sortable !== false && !editableCell
+                                ? 'pointer sortable'
+                                : 'no-pointerEvent',
                             pagination.sortDesc[0] ? 'desc' : 'asc',
                             header.value === pagination.sortBy[0] ? 'active' : '',
                         ]"
-                        @click="changeSort(header.value)"
+                        @click="!editableCell ? changeSort(header.value) : null"
                     >
                         <div
                             :class="[
@@ -44,7 +45,7 @@
                             <span>{{ header.text }}</span>
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
-                                v-if="header.sortable !== false"
+                                v-if="header.sortable !== false && !editableCell"
                                 size="14"
                                 class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
@@ -103,6 +104,8 @@
                         header.value,
                         header.tdClass || header.class,
                         tdBorderLeft && 'border-left-thin',
+                        editableCell && 'v-data-table__editable-cell-mode',
+                        editableCell && header.editableCol && 'v-data-table__editable-cell',
                     ]"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
@@ -191,11 +194,13 @@ export default {
         onRowClick: { type: Function },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, default: 10 },
+        showAll: { type: Boolean, default: false },
         page: { type: Number, default: 1 },
         dense: { type: Boolean, default: false },
         noDataText: { type: String },
         // add border left to td
         tdBorderLeft: { type: Boolean, default: false },
+        editableCell: { type: Boolean, default: false },
     },
     data() {
         return {

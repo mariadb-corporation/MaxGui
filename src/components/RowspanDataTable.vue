@@ -197,7 +197,6 @@ export default {
             let uniqueSet = new Set(items.map(item => item.id))
             let itemsId = [...uniqueSet]
             let groupedId = this.$help.groupBy(items, 'id')
-
             for (let i = 0; i < itemsId.length; ++i) {
                 let group = groupedId[`${itemsId[i]}`]
                 for (let n = 0; n < group.length; ++n) {

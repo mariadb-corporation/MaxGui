@@ -11,7 +11,7 @@
                 <h3 class="font-weight-light color text-navigation ">
                     {{ title }}
                 </h3>
-                <v-btn class="close" icon @click="cancel">
+                <v-btn class="close" icon @click="close">
                     <v-icon size="18" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
@@ -72,6 +72,7 @@ export default {
         maxWidth: { type: String, default: '466px' },
         title: String,
         value: Boolean,
+        onClose: Function,
         onCancel: Function,
         onSave: Function,
         cancelText: { type: String, default: 'cancel' },
@@ -92,7 +93,7 @@ export default {
             set(value) {
                 this.show = value
                 if (value === false) {
-                    this.cancel()
+                    this.onClose && this.close()
                 }
             },
         },
@@ -106,11 +107,19 @@ export default {
             // unit event testing
             this.$emit('cancelClick', false)
         },
+        close() {
+            this.onClose && this.onClose()
+        },
+
         async save() {
-            if (this.onSave) {
-                this.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-                await this.onSave()
-                this.hideOverlay()
+            let self = this
+            if (self.onSave) {
+                self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+                await self.onSave()
+                // wait time out for loading animation
+                await setTimeout(() => {
+                    self.hideOverlay()
+                }, 600)
             }
         },
     },

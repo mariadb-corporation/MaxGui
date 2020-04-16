@@ -1,12 +1,9 @@
 <template>
     <fragment>
         <div class="mb-1 d-flex align-center">
-            <div
-                class="d-flex align-center"
-                :class="{ pointer: $help.isFunction(onEdit) }"
-                @mouseover="() => $help.isFunction(onEdit) && (showEdit = true)"
-                @mouseleave="() => $help.isFunction(onEdit) && (showEdit = false)"
-            >
+            <!-- @mouseover="() => $help.isFunction(onEdit) && (showEdit = true)"
+                @mouseleave="() => $help.isFunction(onEdit) && (showEdit = false)" -->
+            <div class="d-flex align-center" :class="{ pointer: $help.isFunction(onEdit) }">
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
                     <v-icon :class="[!toggleVal ? 'arrow-down' : 'arrow-up']" size="32">
                         $expand
@@ -18,24 +15,33 @@
                         ({{ titleInfo }})
                     </span>
                 </p>
-                <v-btn v-if="showEdit || editing" icon class="arrow-toggle" @click="onEdit">
-                    <v-icon color="primary" size="18">
-                        $vuetify.icons.edit
-                    </v-icon>
-                </v-btn>
+                <v-fade-transition>
+                    <!-- <v-btn v-if="showEdit || editing" icon class="arrow-toggle" @click="onEdit"> -->
+                    <v-btn
+                        v-if="$help.isFunction(onEdit)"
+                        icon
+                        class="arrow-toggle"
+                        @click="onEdit"
+                    >
+                        <v-icon color="primary" size="18">
+                            $vuetify.icons.edit
+                        </v-icon>
+                    </v-btn>
+                </v-fade-transition>
             </div>
             <v-spacer />
-
-            <v-btn
-                v-if="editing"
-                color="primary"
-                rounded
-                small
-                class="text-capitalize"
-                @click="doneEdit"
-            >
-                {{ $t('doneEditing') }}
-            </v-btn>
+            <v-fade-transition>
+                <v-btn
+                    v-if="editing"
+                    color="primary"
+                    rounded
+                    small
+                    class="text-capitalize"
+                    @click="doneEditing"
+                >
+                    {{ $t('doneEditing') }}
+                </v-btn>
+            </v-fade-transition>
 
             <v-btn
                 v-if="onAddClick"
@@ -86,13 +92,13 @@ export default {
         // props for editing
         onEdit: Function,
         editing: Boolean,
-        doneEdit: Function,
+        doneEditing: Function,
     },
-    data() {
-        return {
-            showEdit: false,
-        }
-    },
+    // data() {
+    //     return {
+    //         showEdit: false,
+    //     }
+    // },
     watch: {
         onAddClick: {
             handler(value) {
