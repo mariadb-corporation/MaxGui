@@ -19,7 +19,6 @@
                                 :sortDesc="false"
                                 :noDataText="$t('noServer')"
                                 sortBy="id"
-                                class="table-fluid"
                                 :search="searchKeyWord"
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
@@ -61,7 +60,6 @@
                                 :sortDesc="false"
                                 :noDataText="$t('noFilter')"
                                 sortBy="id"
-                                class="table-fluid"
                                 :search="searchKeyWord"
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
@@ -112,7 +110,7 @@ export default {
             addServerDialog: false,
             serversTableHeader: [
                 { text: 'Server', value: 'id' },
-                { text: 'Status', value: 'state' },
+                { text: 'Status', value: 'state', align: 'center' },
             ],
             showFilter: true,
             addFilterDialog: false,

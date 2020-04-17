@@ -1,9 +1,10 @@
 <template>
-    <fragment>
+    <div
+        @mouseover="() => $help.isFunction(onEdit) && (showEditBtn = true)"
+        @mouseleave="() => $help.isFunction(onEdit) && (showEditBtn = false)"
+    >
         <div class="mb-1 d-flex align-center">
-            <!-- @mouseover="() => $help.isFunction(onEdit) && (showEdit = true)"
-                @mouseleave="() => $help.isFunction(onEdit) && (showEdit = false)" -->
-            <div class="d-flex align-center" :class="{ pointer: $help.isFunction(onEdit) }">
+            <div class="d-flex align-center">
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
                     <v-icon :class="[!toggleVal ? 'arrow-down' : 'arrow-up']" size="32">
                         $expand
@@ -16,13 +17,7 @@
                     </span>
                 </p>
                 <v-fade-transition>
-                    <!-- <v-btn v-if="showEdit || editing" icon class="arrow-toggle" @click="onEdit"> -->
-                    <v-btn
-                        v-if="$help.isFunction(onEdit)"
-                        icon
-                        class="arrow-toggle"
-                        @click="onEdit"
-                    >
+                    <v-btn v-if="showEditBtn || editing" icon class="arrow-toggle" @click="onEdit">
                         <v-icon color="primary" size="18">
                             $vuetify.icons.edit
                         </v-icon>
@@ -59,7 +54,7 @@
                 <slot name="table"></slot>
             </div>
         </v-expand-transition>
-    </fragment>
+    </div>
 </template>
 
 <script>
@@ -90,15 +85,15 @@ export default {
         onAddClick: Function,
         addBtnText: String,
         // props for editing
-        onEdit: Function,
+        onEdit: Function, // if this props is added, mouse event will be triggered on hover
         editing: Boolean,
         doneEditing: Function,
     },
-    // data() {
-    //     return {
-    //         showEdit: false,
-    //     }
-    // },
+    data() {
+        return {
+            showEditBtn: false,
+        }
+    },
     watch: {
         onAddClick: {
             handler(value) {
@@ -111,5 +106,3 @@ export default {
     },
 }
 </script>
-
-<style></style>

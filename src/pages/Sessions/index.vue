@@ -52,6 +52,9 @@
                 </v-tooltip>
             </template>
         </template>
+        <template v-slot:connected="{ data: { item: { connected } } }">
+            <span> {{ $help.formatValue(connected) }} </span>
+        </template>
     </data-table>
 </template>
 

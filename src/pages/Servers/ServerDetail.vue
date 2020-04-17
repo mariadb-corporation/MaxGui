@@ -110,7 +110,6 @@
                 >
                     <template v-slot:table>
                         <data-table
-                            class="table-fluid"
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('statistics')"
                             :tdBorderLeft="true"
@@ -135,7 +134,6 @@
                             :data="servicesLinked"
                             :sortDesc="false"
                             sortBy="id"
-                            class="table-fluid"
                             :noDataText="$t('noService')"
                             :search="searchKeyWord"
                         >
@@ -167,7 +165,6 @@
                 >
                     <template v-slot:table>
                         <data-table
-                            class="table-fluid"
                             :headers="slaveServersTableHeaders"
                             :data="tableRowProcessed('slaveServers')"
                             :search="searchKeyWord"
@@ -186,7 +183,6 @@
                 >
                     <template v-slot:table>
                         <data-table
-                            class="table-fluid"
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"
@@ -228,7 +224,7 @@ export default {
             servicesLinked: [],
             servicesTableHeader: [
                 { text: 'Service', value: 'id' },
-                { text: 'Status', value: 'state' },
+                { text: 'Status', value: 'state', align: 'center' },
             ],
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '65%' },

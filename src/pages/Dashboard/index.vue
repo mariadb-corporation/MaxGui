@@ -36,7 +36,7 @@
                 </template>
 
                 <v-sheet style="border-radius: 10px;" class="px-6 py-4" max-width="320px">
-                    <span class="d-block mb-1"> About MaxScale</span>
+                    <span class="d-block mb-1 body-2 font-weight-bold"> About MaxScale</span>
                     <div
                         v-for="(value, name) in $help.pick(maxscaleDetails, [
                             'commit',
@@ -197,7 +197,7 @@ export default {
         },
         formatValue(value, name) {
             if (name === 'started_at' || name === 'activated_at') {
-                return this.$moment(value).format('HH:mm:ss MM/DD/YYYY')
+                return this.$moment(value).format('MM.DD.YYYY HH:mm:ss ')
             }
             return value
         },

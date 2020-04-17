@@ -62,7 +62,6 @@
                 >
                     <template v-slot:table>
                         <data-table
-                            class="table-fluid"
                             :headers="variableValueTableHeaders"
                             :data="tableRowProcessed('parameters')"
                             :tdBorderLeft="true"

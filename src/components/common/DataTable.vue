@@ -34,14 +34,7 @@
                         ]"
                         @click="!editableCell ? changeSort(header.value) : null"
                     >
-                        <div
-                            :class="[
-                                i === headers.length - 1
-                                    ? 'd-flex justify-space-between'
-                                    : 'd-inline-flex justify-center align-center',
-                            ]"
-                            class="d-flex justify-space-between"
-                        >
+                        <div class="d-inline-flex justify-center align-center">
                             <span>{{ header.text }}</span>
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
@@ -50,11 +43,10 @@
                                 class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
                             >
-                            <fragment v-if="i === headers.length - 1">
+                            <fragment v-if="hasColumnToggle && i === headers.length - 1">
                                 <v-spacer></v-spacer>
                                 <!--column toggle icon-->
                                 <v-icon
-                                    v-if="hasColumnToggle"
                                     size="18"
                                     class="pl-4 pr-0 toggle-icon"
                                     @click.stop="columnToggle"
@@ -94,6 +86,7 @@
                 :class="{
                     pointer: onRowClick,
                     'last-row': index === data.length - 1,
+                    'v-data-table__editable-cell-mode': editableCell,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
             >
@@ -102,14 +95,15 @@
                     :key="i"
                     :class="[
                         header.value,
+                        header.align && `text-${header.align}`,
                         header.tdClass || header.class,
                         tdBorderLeft && 'border-left-thin',
-                        editableCell && 'v-data-table__editable-cell-mode',
+
                         editableCell && header.editableCol && 'v-data-table__editable-cell',
                     ]"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
-                    <div>
+                    <div :style="cellAlignHandle(header)">
                         <slot :name="header.value" :data="{ item, header, i }">
                             <!-- no content for the corresponding header, usually this is an error -->
                             <span v-if="$help.isUndefined(item[header.value])"></span>
@@ -281,6 +275,16 @@ export default {
         },
         columnToggle() {
             this.isColumnToggleVisible = !this.isColumnToggleVisible
+        },
+        cellAlignHandle(header) {
+            // make centering cell more accurate that ommit the width of the sort arrow from the header
+            let marginRight = header.align && header.sortable !== false ? 26 : ''
+            if (this.hasColumnToggle) {
+                marginRight += 34
+            }
+            return {
+                marginRight: `${marginRight}px`,
+            }
         },
     },
 }

@@ -61,13 +61,14 @@ export default {
     actions: {
         async logout({ commit }) {
             commit('logout')
-            sessionStorage.removeItem('user')
-            commit('setUser', {})
-            delete Vue.axios.defaults.headers.common['Authorization']
+
             await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
             await delay(1500).then(() => {
                 return commit('hideOverlay', null, { root: true }), router.push('/login')
             })
+            delete Vue.axios.defaults.headers.common['Authorization']
+            sessionStorage.removeItem('user')
+            commit('setUser', {})
         },
         // --------------------------------------------------- Network users -------------------------------------
         async fetchCurrentNetworkUser({ dispatch, commit, state }) {

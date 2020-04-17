@@ -90,7 +90,7 @@ export default {
         return {
             tableHeaders: [
                 { text: 'Service', value: 'id' },
-                { text: 'Status', value: 'state' },
+                { text: 'Status', value: 'state', align: 'center' },
                 { text: 'Router', value: 'router' },
                 { text: 'Current Sessions', value: 'connections' },
                 { text: 'Total Sessions', value: 'total_connections' },

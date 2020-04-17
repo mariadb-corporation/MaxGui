@@ -50,11 +50,12 @@ export default {
     },
     watch: {
         overlay: function(newVal) {
-            let body = document.getElementsByTagName('BODY')[0]
+            let html = document.getElementsByTagName('html')[0]
+
             if (newVal) {
-                body.style.overflow = 'hidden'
+                html.style.overflow = 'hidden'
             } else {
-                body.style.overflow = 'initial'
+                html.style.overflow = 'auto'
             }
         },
     },

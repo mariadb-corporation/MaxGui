@@ -6,13 +6,12 @@
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
                 title="parameters"
-                :onEdit="() => (paramsEditable = true)"
                 :editing="paramsEditable"
+                :onEdit="() => (paramsEditable = true)"
                 :doneEditing="() => (showConfirmDialog = true)"
             >
                 <template v-slot:table>
                     <data-table
-                        class="table-fluid"
                         :headers="variableValueTableHeaders"
                         :data="tableRowProcessed('parameters')"
                         :tdBorderLeft="true"
@@ -76,7 +75,7 @@
             >
                 <template v-slot:table>
                     <!-- <data-table
-                        class="table-fluid"
+           
                         :headers="variableValueTableHeaders"
                         :data="tableRowProcessed('routerDiagnostics')"
                         :tdBorderLeft="true"

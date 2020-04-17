@@ -1,5 +1,5 @@
 <template>
-    <v-overlay z-index="9999" :opacity="1" :absolute="true">
+    <v-overlay z-index="9999" :opacity="1">
         <div class="overlay">
             <div class="overlay-content">
                 <WelcomeMessage :greeting="$t('welcomeTo')" />

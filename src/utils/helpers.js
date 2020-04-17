@@ -144,7 +144,7 @@ export function sliceStrAtChar(str, char, returnLastPart) {
 export function formatValue(value, formatType) {
     let date = new Date(value)
     const DATE_RFC2822 = 'ddd, DD MMM YYYY HH:mm:ss'
-    const default_format = 'HH:mm:ss MM/DD/YYYY'
+    const default_format = 'HH:mm:ss MM.DD.YYYY'
     let format
     switch (formatType) {
         case 'DATE_RFC2822':
