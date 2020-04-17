@@ -73,32 +73,48 @@
             </v-menu>
         </portal>
 
-        <div style="width:100%" class="d-flex mb-5">
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
-                <template v-slot:title>
-                    {{ $t('sessions') }}
-                </template>
-                <template v-slot:card-body>
-                    <sessions-chart />
-                </template>
-            </outline-small-card>
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
-                <template v-slot:title>
-                    {{ $t('connections') }}
-                </template>
-                <template v-slot:card-body>
-                    <users-chart />
-                </template>
-            </outline-small-card>
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
-                <template v-slot:title>
-                    {{ $t('load') }}
-                </template>
-                <template v-slot:card-body>
-                    <threads-chart :isMiniChart="true" />
-                </template>
-            </outline-small-card>
-        </div>
+        <v-row style="margin-right:-8px;margin-left:-8px">
+            <v-col cols="4" style="padding:0px 8px">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
+                        {{ $t('sessions') }}
+                    </template>
+                    <template v-slot:card-body>
+                        <sessions-chart />
+                    </template>
+                </outline-small-card>
+            </v-col>
+            <v-col cols="4" style="padding:0px 8px">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
+                        {{ $t('connections') }}
+                    </template>
+                    <template v-slot:card-body>
+                        <users-chart />
+                    </template>
+                </outline-small-card>
+            </v-col>
+            <v-col cols="4" style="padding:0px 8px">
+                <outline-small-card
+                    cardWrapper="slide-nav-item"
+                    cardClass="slide-nav-item__card-graph"
+                >
+                    <template v-slot:title>
+                        {{ $t('load') }}
+                    </template>
+                    <template v-slot:card-body>
+                        <threads-chart :isMiniChart="true" />
+                    </template>
+                </outline-small-card>
+            </v-col>
+        </v-row>
+
         <tab-nav :tabRoutes="tabRoutes" />
     </div>
 </template>
@@ -215,11 +231,7 @@ export default {
 
 <style scoped lang="scss">
 .slide-nav-item {
-    margin: 0px 8px;
-    width: 33.33%;
-    &:first-of-type {
-        margin-left: 0px;
-    }
+    width: 100%;
     ::v-deep &__card-graph {
         padding-top: 6px;
     }

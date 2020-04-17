@@ -8,22 +8,26 @@
 @import 'variables.scss';
 @import 'details_page';
 
+// layout
 html {
     margin: 0;
     padding: 0;
     //dashboard "responsive". preserve ratio
     overflow-x: auto;
     overflow-y: auto;
-    min-width: 1264px !important;
+    min-width: 1366px !important;
 }
 
 .v-application {
     background-color: $background !important;
 }
 
-.v-content-padding {
-    padding: 25px 40px 40px;
+.wrapper-container {
+    max-width: 1366px; // preserve ratio for larger screen
+    margin: 0 auto;
 }
+
+// --------------------------------- Vuetify custom v-overlay ----------------------------------------------------------------------
 .v-overlay__scrim {
     width: 100vw;
     height: 100vh;
@@ -43,11 +47,6 @@ html {
         .loading-icon {
             text-align: center;
         }
-    }
-}
-.arrow-toggle {
-    .arrow-up {
-        transform: rotate(-180deg);
     }
 }
 // --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
@@ -142,7 +141,7 @@ html {
                 }
                 &:not(.v-data-table__progress) {
                     th {
-                        padding: 0 35px;
+                        padding: 0 25px;
                     }
                 }
             }
@@ -165,7 +164,7 @@ html {
                     border-left: thin solid $table-border !important;
                 }
                 td {
-                    padding: 0px 35px;
+                    padding: 0px 25px;
                     pointer-events: all !important;
                     border-bottom: thin solid $table-border !important;
                     height: 45px;

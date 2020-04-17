@@ -1,7 +1,7 @@
 <template>
     <v-row>
         <!-- PARAMETERS TABLE -->
-        <v-col cols="6">
+        <v-col class="py-0 my-0" cols="6">
             <details-table-wrapper
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
@@ -67,7 +67,7 @@
                 </template>
             </base-dialog>
         </v-col>
-        <v-col cols="6">
+        <v-col class="py-0 my-0" cols="6">
             <details-table-wrapper
                 :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
                 :toggleVal="showRouterDiagnostics"

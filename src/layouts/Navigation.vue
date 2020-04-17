@@ -28,7 +28,7 @@
                             }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title style=" font-size: 0.875rem; color: white;">
+                            <v-list-item-title style="color: white;">
                                 {{ $t(`${item.name}`) }}
                             </v-list-item-title>
                         </v-list-item-content>

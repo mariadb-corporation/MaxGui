@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col cols="3">
+        <v-col class="py-0 my-0" cols="3">
             <v-row class="pa-0 ma-0">
                 <!-- SERVER TABLE -->
                 <v-col cols="12" class="pa-0 ma-0">
@@ -44,7 +44,7 @@
                     </details-table-wrapper>
                 </v-col>
                 <!-- Filter TABLE -->
-                <v-col cols="12" class="pa-0 ma-0">
+                <v-col cols="12" class="pa-0 mt-4">
                     <details-table-wrapper
                         :toggleOnClick="() => (showFilter = !showFilter)"
                         :toggleVal="showFilter"
@@ -77,7 +77,7 @@
                 </v-col>
             </v-row>
         </v-col>
-        <v-col cols="9"> </v-col>
+        <v-col class="pa-0 ma-0" cols="9"> </v-col>
     </v-row>
 </template>
 

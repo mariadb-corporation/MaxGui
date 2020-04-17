@@ -8,14 +8,14 @@
             </v-tab>
 
             <v-tabs-items v-model="currentActiveTab">
-                <v-tab-item>
+                <v-tab-item class="pt-5">
                     <ServerSessionTab
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->
-                <v-tab-item>
+                <v-tab-item class="pt-5">
                     <parameter-diagnostics-tab
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"

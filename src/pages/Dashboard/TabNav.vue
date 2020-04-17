@@ -7,7 +7,7 @@
             </span>
         </v-tab>
         <v-tabs-items v-model="activeTab">
-            <v-tab-item v-for="route in tabRoutes" :id="route.path" :key="route.name" class="pt-5">
+            <v-tab-item v-for="route in tabRoutes" :id="route.path" :key="route.name" class="pt-2">
                 <router-view v-if="activeTab === route.path" />
             </v-tab-item>
         </v-tabs-items>

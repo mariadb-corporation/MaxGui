@@ -4,26 +4,28 @@
         <navigation :currentPath="currentPath" />
         <snackbars />
         <v-content>
-            <div class="fill-height v-content-padding">
-                <div class="d-flex ml-n1">
-                    <portal-target name="page-title">
-                        <!--
+            <div class="fill-height py-6 px-10">
+                <div class="wrapper-container ">
+                    <div class="d-flex ml-n1">
+                        <portal-target name="page-title">
+                            <!--
                         This component can be located anywhere in your App.
                         The slot content of the above portal component will be rendered here.
                         -->
-                    </portal-target>
-                    <v-spacer />
+                        </portal-target>
+                        <v-spacer />
 
-                    <search-to-create
-                        v-if="showSearchToCreate"
-                        :currentRouteName="currentRouteName"
-                        :tabRoutes="tabRoutes"
-                    />
+                        <search-to-create
+                            v-if="showSearchToCreate"
+                            :currentRouteName="currentRouteName"
+                            :tabRoutes="tabRoutes"
+                        />
+                    </div>
+
+                    <transition name="fade" mode="out-in">
+                        <router-view v-if="$route.meta.requiresAuth" />
+                    </transition>
                 </div>
-
-                <transition name="fade" mode="out-in">
-                    <router-view v-if="$route.meta.requiresAuth" />
-                </transition>
             </div>
         </v-content>
         <v-footer
