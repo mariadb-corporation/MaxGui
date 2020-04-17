@@ -23,10 +23,26 @@
                         :loading="loading"
                     >
                         <template v-if="paramsEditable" v-slot:value="props">
-                            <parameter-input
-                                :item="props.data.item"
-                                :onItemChanges="handleItemChange"
-                            />
+                            <fragment v-if="props.data.item.id === 'password'">
+                                <parameter-input
+                                    :item="props.data.item"
+                                    :onItemChanges="handleItemChange"
+                                    :hasPwdParam="true"
+                                />
+                            </fragment>
+                            <fragment v-else-if="props.data.item.id === 'user'">
+                                <parameter-input
+                                    :item="props.data.item"
+                                    :onItemChanges="handleItemChange"
+                                    :hasUseParam="true"
+                                />
+                            </fragment>
+                            <fragment v-else>
+                                <parameter-input
+                                    :item="props.data.item"
+                                    :onItemChanges="handleItemChange"
+                                />
+                            </fragment>
                         </template>
                     </data-table>
                 </template>
@@ -92,12 +108,9 @@
  */
 
 import { mapGetters, mapActions } from 'vuex'
-import ParameterInput from './ParameterInput'
 export default {
     name: 'parameter-diagnostics-tab',
-    components: {
-        ParameterInput,
-    },
+
     props: {
         searchKeyWord: { type: String, required: true },
         currentService: { type: Object, required: true },

@@ -1,7 +1,7 @@
 <template>
     <!-- Each input will has its form validation TODO: add validation -->
     <v-form>
-        <fragment v-if="objectItem.id === 'password'">
+        <fragment v-if="hasPwdParam">
             <v-form>
                 <v-text-field
                     :id="objectItem.id"
@@ -19,7 +19,7 @@
                 />
             </v-form>
         </fragment>
-        <fragment v-else-if="objectItem.id === 'user'">
+        <fragment v-else-if="hasUseParam">
             <v-form>
                 <v-text-field
                     :id="objectItem.id"
@@ -35,7 +35,9 @@
                 />
             </v-form>
         </fragment>
-        <fragment v-else-if="booleanParams.includes(objectItem.id)">
+
+        <fragment v-else-if="typeof objectItem.value === 'boolean'">
+            <!-- {{ typeof objectItem.id }} -->
             <v-select
                 :id="objectItem.id"
                 v-model="objectItem.value"
@@ -47,7 +49,7 @@
                 required
             />
         </fragment>
-        <fragment v-else-if="numberParams.includes(objectItem.id)">
+        <fragment v-else-if="typeof objectItem.value === 'number'">
             <v-text-field
                 :id="objectItem.id"
                 v-model.trim.number="objectItem.value"
@@ -82,25 +84,11 @@ export default {
     props: {
         item: { type: Object, required: true },
         onItemChanges: { type: Function, required: true },
+        hasPwdParam: { type: Boolean, required: false, default: false },
+        hasUseParam: { type: Boolean, required: false, default: false },
     },
     data() {
         return {
-            booleanParams: [
-                'enable_root_user',
-                'auth_all_servers',
-                'strip_db_esc',
-                'localhost_match_wildcard_host',
-                'log_auth_warnings',
-                'session_track_trx_state',
-                'session_trace',
-            ],
-            numberParams: [
-                'max_connections',
-                'connection_timeout',
-                'net_write_timeout',
-                'retain_last_statements',
-                'connection_keepalive',
-            ],
             objectItem: {},
         }
     },

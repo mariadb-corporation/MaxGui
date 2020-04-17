@@ -20,6 +20,7 @@ import TreeData from './TreeData'
 import DetailsTableWrapper from './DetailsTableWrapper'
 import IconGroupWrapper from './IconGroupWrapper'
 import DeleteModal from './DeleteModal'
+import ParameterInput from './ParameterInput'
 
 export default {
     'base-dialog': BaseDialog,
@@ -32,4 +33,5 @@ export default {
     'details-table-wrapper': DetailsTableWrapper,
     'icon-group-wrapper': IconGroupWrapper,
     'delete-modal': DeleteModal,
+    'parameter-input': ParameterInput,
 }
