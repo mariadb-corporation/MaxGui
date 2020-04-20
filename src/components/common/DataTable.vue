@@ -22,25 +22,29 @@
         <template v-slot:header="{ props: { headers } }">
             <thead class="v-data-table-header">
                 <tr>
+                    <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
+                    By doing this, it won't break the no-data view when data length = 0
+                    -->
+                    <th v-if="data.length && hasOrderNumber && !loading" width="1px" class="pa-0" />
                     <th
                         v-for="(header, i) in headers"
                         :key="header.value"
                         :width="header.width"
                         :class="[
                             header.align && `text-${header.align}`,
-                            header.sortable !== false && !editableCell ? 'pointer sortable' : '',
+                            header.sortable !== false && 'pointer sortable',
                             pagination.sortDesc[0] ? 'desc' : 'asc',
                             (header.value === pagination.sortBy[0]) & 'active',
                             header.text === 'Action' && 'px-0',
                         ]"
                         style="position:relative"
-                        @click="!editableCell ? changeSort(header.value) : null"
+                        @click="header.sortable !== false ? changeSort(header.value) : null"
                     >
                         <div class="d-inline-flex justify-center align-center">
                             <span v-if="header.text !== 'Action'">{{ header.text }}</span>
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
-                                v-if="header.sortable !== false && !editableCell"
+                                v-if="header.sortable !== false"
                                 size="14"
                                 class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
@@ -94,6 +98,15 @@
                 @mouseover="() => onRowHover(item, rowIndex, 'mouseover')"
                 @mouseleave="() => onRowHover(item, rowIndex, 'mouseleave')"
             >
+                <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
+                    By doing this, it won't break the no-data view when data length = 0
+                    -->
+                <td
+                    v-if="data.length && hasOrderNumber && !loading"
+                    class="overline px-2 color border-right-table-border  text-field-text"
+                >
+                    {{ rowIndex }}
+                </td>
                 <td
                     v-for="(header, i) in visibleHeaders"
                     :key="i"
@@ -101,8 +114,9 @@
                         header.value,
                         header.align && `text-${header.align}`,
                         header.tdClass || header.class,
-                        tdBorderLeft && 'border-left-thin',
+                        tdBorderLeft && 'color border-left-table-border',
                         editableCell && header.editableCol && 'v-data-table__editable-cell',
+                        header.value === 'action' && 'pr-3',
                     ]"
                     style="position:relative"
                     @click="cellClick(item, headers, visibleHeaders)"
@@ -172,6 +186,10 @@
                 <td colspan="100%" style="padding: 0;">
                     <slot :data="{ item }" name="expandable" />
                 </td>
+                <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
+                    By doing this, it won't break the no-data view when data length = 0
+                    -->
+                <td v-if="data.length && hasOrderNumber && !loading" />
             </tr>
         </template>
     </v-data-table>
@@ -238,6 +256,8 @@ export default {
         // For draggable feature
         draggable: { type: Boolean, default: false },
         dragReorder: { type: Function, default: () => null },
+        hasOrderNumber: { type: Boolean, default: false },
+
         showActionsOnHover: { type: Boolean, default: false },
     },
     data() {
@@ -335,7 +355,7 @@ export default {
         cellAlignHandle(header) {
             // make centering cell more accurate that ommit the width of the sort arrow from the header
             let marginRight = header.align && header.sortable !== false ? 26 : ''
-            if (this.hasColumnToggle && header.sortable) {
+            if (this.hasColumnToggle && header.sortable !== false) {
                 marginRight += 34
             }
             return {
@@ -374,7 +394,7 @@ export default {
 .toggle-icon {
     color: inherit;
     position: absolute;
-    right: 34px;
+    right: 21px;
 }
 .draggable-row:hover {
     background: transparent !important;

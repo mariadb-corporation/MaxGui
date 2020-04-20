@@ -19,7 +19,6 @@
                                 :sortDesc="false"
                                 :noDataText="$t('noServer')"
                                 sortBy="id"
-                                :search="searchKeyWord"
                                 :loading="loading"
                                 :showActionsOnHover="true"
                             >
@@ -68,11 +67,11 @@
                                 :data="filtersLinked"
                                 :sortDesc="false"
                                 :noDataText="$t('noFilter')"
-                                :search="searchKeyWord"
                                 :draggable="true"
                                 :dragReorder="filterDragReorder"
                                 :loading="loading"
                                 :showActionsOnHover="true"
+                                :hasOrderNumber="true"
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
