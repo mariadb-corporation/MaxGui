@@ -10,14 +10,17 @@
     "rememberMe": "Remember me",
     "signIn": "Sign In",
     "forgotPassword": "Forgot Password",
-    "lastTwoSecondsThreads": "Last two second threads",
-    "service": "Service",
+
+    "service": "service",
     "services": "Services",
     "servers": "Servers",
+    "server": "server",
     "filters": "Filters",
+    "filter": "filter",
     "sessions": "Sessions",
+
+    "lastTwoSecondsThreads": "Last two second threads",
     "load": "Load",
-    "server": "Server",
     "monitorDiagnostics": "Monitor Diagnostics",
     "noServer": "No Server",
     "noService": "No Service",
@@ -43,6 +46,7 @@
     "update": "Update",
     "actions": "Actions",
     "delete": "Delete",
+    "unlink": "Unlink",
     "destroy": "Destroy",
     "logout": "Logout",
     "save": "Save",
@@ -57,7 +61,8 @@
         "refreshLater": "Please refresh in a few moments."
     },
     "confirmations": {
-        "delete": "Are you sure you want to delete {name}?",
+        "unlink": "Are you sure you want to unlink {name} from {resourceName} {resourceId}? ",
+        "delete": "Are you sure you want to delete {name} from {resourceName} {resourceId}? ",
         "destroy": "Are you sure you want to destroy {name}?"
     },
     "loading": {
@@ -67,7 +72,8 @@
         "createOrUpdateForm": "Empty value in non-required fields will be treated as null. *indicates required field.",
         "serverDeleteModal": "Make sure it is not used by any services or monitors.",
         "monitorDeleteModal": "The monitor must not have relationships to any servers in order to be destroyed.",
-        "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
+        "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed.",
+        "filterDeleteModal": "A filter can only be destroyed if no service uses it. This means that the data.relationships object for the filter must be empty."
     },
     "dashboard": "Dashboard",
     "statistics": "Statistics",

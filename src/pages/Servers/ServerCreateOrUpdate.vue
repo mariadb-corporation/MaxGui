@@ -2,6 +2,7 @@
     <base-dialog
         v-model="computeShowDialog"
         :onCancel="closeModal"
+        :onClose="closeModal"
         :onSave="handleSave"
         maxWidth="890px"
         :title="`${modalTitle} ${$t('server')}`"

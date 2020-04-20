@@ -10,15 +10,15 @@
             sortBy="id"
             :onRowClick="onRowClick"
         >
-            <template v-slot:actions="{ data: { item } }">
-                <!-- <v-tooltip top>
+            <!-- <template v-slot:actions="{ data: { item } }">
+              <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn icon color="primary" v-on="on" @click.stop="handleOpenModal(item)">
                             <v-icon size="16">$vuetify.icons.edit</v-icon>
                         </v-btn>
                     </template>
                     <span>{{ `${$t('monitor')} ${$t('update')}` }}</span>
-                </v-tooltip> -->
+                </v-tooltip> 
                 <delete-modal
                     :item="item"
                     type="destroy"
@@ -26,7 +26,7 @@
                     :title="`${$t('destroy')} ${$t('monitor')}`"
                     :smallInfo="$t('info.monitorDeleteModal')"
                 />
-            </template>
+            </template> -->
         </data-table>
         <monitor-create-or-update
             v-model="serverDialog"

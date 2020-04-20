@@ -48,7 +48,8 @@
                     $router.go(-1)
                 }
             "
-            :close-modal="() => (serverDeleteDialog = false)"
+            :onClose="() => (serverDeleteDialog = false)"
+            :onCancel="() => (serverDeleteDialog = false)"
         />
 
         <icon-sprite-sheet

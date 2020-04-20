@@ -27,6 +27,7 @@ import HealthBad from 'icons/HealthBad'
 import HealthOk from 'icons/HealthOk'
 import InfoCircle from 'icons/InfoCircle'
 import Monitoring from 'icons/Monitoring'
+import NotFound from 'icons/NotFound' // MaxScale new icons
 import Paused from 'icons/Paused'
 import QuestionCircle from 'icons/QuestionCircle'
 import Reload from 'icons/Reload'
@@ -43,9 +44,9 @@ import StatusWarning from 'icons/StatusWarning'
 import Stopped from 'icons/Stopped'
 import Table from 'icons/Table'
 import Tachometer from 'icons/Tachometer' // MaxScale new icons
+import Unlink from 'icons/Unlink' // MaxScale new icons
 import User from 'icons/User'
 import Users from 'icons/Users'
-import NotFound from 'icons/NotFound'
 
 export default {
     alerts: {
@@ -149,6 +150,9 @@ export default {
     },
     tachometer: {
         component: Tachometer, // MaxScale new icons
+    },
+    unlink: {
+        component: Unlink,
     },
     user: {
         component: User,

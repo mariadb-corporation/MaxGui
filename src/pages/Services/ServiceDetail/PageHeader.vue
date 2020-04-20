@@ -34,12 +34,13 @@
             type="destroy"
             :item="currentService"
             :dispatchDelete="
-                () => {
-                    destroyService(currentService.id)
+                id => {
+                    destroyService(id)
                     $router.go(-1)
                 }
             "
-            :close-modal="() => (serviceDeleteDialog = false)"
+            :onClose="() => (serviceDeleteDialog = false)"
+            :onCancel="() => (serviceDeleteDialog = false)"
         />
         <icon-sprite-sheet
             size="13"

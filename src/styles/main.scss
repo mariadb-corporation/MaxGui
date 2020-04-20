@@ -139,9 +139,7 @@ html {
                     &:first-child {
                         border-radius: 5px 0 0 0;
                     }
-                    .toggle-icon {
-                        color: inherit;
-                    }
+
                     &:not(:last-child) {
                         width: 1px;
                     }
@@ -158,7 +156,9 @@ html {
             tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper):not(.v-data-table__editable-cell-mode) {
                 background: #fafcfc;
             }
-
+            tr:active:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper):not(.v-data-table__editable-cell-mode) {
+                background: #f2fcff !important;
+            }
             tr {
                 pointer-events: none !important;
                 .v-data-table__mobile-row {
@@ -186,6 +186,7 @@ html {
                         border-left: thin solid $table-border !important;
                     }
                 }
+
                 &:hover {
                     td.actions button {
                         opacity: 1;

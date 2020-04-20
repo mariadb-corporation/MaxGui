@@ -28,16 +28,16 @@
                         :width="header.width"
                         :class="[
                             header.align && `text-${header.align}`,
-                            header.sortable !== false && !editableCell
-                                ? 'pointer sortable'
-                                : 'no-pointerEvent',
+                            header.sortable !== false && !editableCell ? 'pointer sortable' : '',
                             pagination.sortDesc[0] ? 'desc' : 'asc',
-                            header.value === pagination.sortBy[0] ? 'active' : '',
+                            (header.value === pagination.sortBy[0]) & 'active',
+                            header.text === 'Action' && 'px-0',
                         ]"
+                        style="position:relative"
                         @click="!editableCell ? changeSort(header.value) : null"
                     >
                         <div class="d-inline-flex justify-center align-center">
-                            <span>{{ header.text }}</span>
+                            <span v-if="header.text !== 'Action'">{{ header.text }}</span>
                             <slot :name="`append-${header.value}`"> </slot>
                             <v-icon
                                 v-if="header.sortable !== false && !editableCell"
@@ -45,18 +45,13 @@
                                 class="ml-3 v-data-table-header__icon"
                                 >$vuetify.icons.arrowDown</v-icon
                             >
-                            <fragment v-if="hasColumnToggle && i === headers.length - 1">
-                                <v-spacer></v-spacer>
-                                <!--column toggle icon-->
-                                <v-icon
-                                    size="18"
-                                    class="pl-4 pr-0 toggle-icon"
-                                    @click.stop="columnToggle"
-                                >
-                                    visibility
-                                </v-icon>
-                            </fragment>
                         </div>
+                        <!--column toggle icon-->
+                        <fragment v-if="hasColumnToggle && i === headers.length - 1">
+                            <v-icon size="18" class="toggle-icon" @click.stop="columnToggle">
+                                visibility
+                            </v-icon>
+                        </fragment>
                     </th>
                 </tr>
             </thead>
@@ -69,7 +64,9 @@
                 <td :colspan="visibleHeaders.length" class="pl-4" style="height: 100%">
                     <div class="d-flex" style="height: 40px">
                         <v-checkbox
-                            v-for="(header, i) in headers"
+                            v-for="(header, i) in headers.filter(
+                                header => header.value !== 'action'
+                            )"
                             :key="`check-${i}`"
                             v-model="visible"
                             :label="header.text || header.value"
@@ -86,6 +83,7 @@
         <template v-slot:item="{ item, index: rowIndex }">
             <tr
                 :key="item.id"
+                ref="tableRow"
                 :class="{
                     pointer: onRowClick,
                     'last-row': rowIndex === data.length - 1,
@@ -93,8 +91,8 @@
                     'draggable-row': draggable,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
-                @mouseover="() => draggable && onRowHover(item, rowIndex, 'mouseover')"
-                @mouseleave="() => draggable && onRowHover(item, rowIndex, 'mouseleave')"
+                @mouseover="() => onRowHover(item, rowIndex, 'mouseover')"
+                @mouseleave="() => onRowHover(item, rowIndex, 'mouseleave')"
             >
                 <td
                     v-for="(header, i) in visibleHeaders"
@@ -106,17 +104,22 @@
                         tdBorderLeft && 'border-left-thin',
                         editableCell && header.editableCol && 'v-data-table__editable-cell',
                     ]"
+                    style="position:relative"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
+                    <v-icon
+                        v-show="
+                            showDragEntity &&
+                                showEntityAt === rowIndex &&
+                                i === visibleHeaders.length - 1
+                        "
+                        :class="{ 'drag-handle move': draggable }"
+                        class="color text-field-text"
+                        size="16"
+                    >
+                        drag_handle
+                    </v-icon>
                     <div :style="cellAlignHandle(header)" style="position:relative">
-                        <v-icon
-                            v-if="handleShowDragIcon(rowIndex)"
-                            :class="{ 'drag-handle move': draggable }"
-                            class="color text-field-text"
-                            size="16"
-                        >
-                            drag_handle
-                        </v-icon>
                         <span>
                             <slot :name="header.value" :data="{ item, header, i }">
                                 <!-- no content for the corresponding header, usually this is an error -->
@@ -124,43 +127,43 @@
                                 <!-- regular cell -->
                                 <span v-else>{{ getValue(item, header) }}</span>
                             </slot>
-                            <!-- Actions slot includes expandIndicator slot -->
-                            <div
-                                v-if="$scopedSlots['actions']"
-                                class="d-flex"
-                                :class="[`justify-${header.align}` && header.align]"
-                                style="position:absolute"
-                            >
-                                <slot :data="{ item }" name="actions" />
-
-                                <!-- expandle activator -->
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                            v-show="$scopedSlots['expandable']"
-                                            icon
-                                            color="primary"
-                                            v-on="on"
-                                            @click="toggleRow(item.id)"
-                                        >
-                                            <!-- optional expand indicator icon -->
-                                            <slot
-                                                :expanded="expandedRows.includes(item.id)"
-                                                name="expandIndicator"
-                                            >
-                                                <v-icon
-                                                    v-if="!expandedRows.includes(item.id)"
-                                                    size="24"
-                                                    >keyboard_arrow_down</v-icon
-                                                >
-                                                <v-icon v-else size="24">keyboard_arrow_up</v-icon>
-                                            </slot>
-                                        </v-btn>
-                                    </template>
-                                    <span>Show detailed information</span>
-                                </v-tooltip>
-                            </div>
                         </span>
+                        <!-- Actions slot includes expandIndicator slot -->
+                        <div
+                            v-if="
+                                showActionsEntity &&
+                                    showEntityAt === rowIndex &&
+                                    i === visibleHeaders.length - 1
+                            "
+                            class="action-slot-wrapper"
+                        >
+                            <slot :data="{ item }" name="actions" />
+
+                            <!-- expandle activator -->
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        v-show="$scopedSlots['expandable']"
+                                        icon
+                                        color="primary"
+                                        v-on="on"
+                                        @click="toggleRow(item.id)"
+                                    >
+                                        <!-- optional expand indicator icon -->
+                                        <slot
+                                            :expanded="expandedRows.includes(item.id)"
+                                            name="expandIndicator"
+                                        >
+                                            <v-icon v-if="!expandedRows.includes(item.id)" size="24"
+                                                >keyboard_arrow_down</v-icon
+                                            >
+                                            <v-icon v-else size="24">keyboard_arrow_up</v-icon>
+                                        </slot>
+                                    </v-btn>
+                                </template>
+                                <span>Show detailed information</span>
+                            </v-tooltip>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -235,6 +238,7 @@ export default {
         // For draggable feature
         draggable: { type: Boolean, default: false },
         dragReorder: { type: Function, default: () => null },
+        showActionsOnHover: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -243,8 +247,9 @@ export default {
             visible: [],
             isColumnToggleVisible: false,
             //draggable
-            showDragIcon: false,
-            showDragIconAtRow: null,
+            showDragEntity: false,
+            showActionsEntity: false,
+            showEntityAt: null,
         }
     },
     computed: {
@@ -275,6 +280,14 @@ export default {
                     if (item.expanded) this.expandedRows.push(item.id)
                 })
             },
+        },
+        loading: function(newVal) {
+            if (newVal) {
+                // when table is reload, dont show the entity
+                this.draggable && (this.showDragEntity = false)
+                this.showActionsOnHover && (this.showActionsEntity = false)
+                this.showEntityAt = null
+            }
         },
     },
 
@@ -322,7 +335,7 @@ export default {
         cellAlignHandle(header) {
             // make centering cell more accurate that ommit the width of the sort arrow from the header
             let marginRight = header.align && header.sortable !== false ? 26 : ''
-            if (this.hasColumnToggle) {
+            if (this.hasColumnToggle && header.sortable) {
                 marginRight += 34
             }
             return {
@@ -332,37 +345,45 @@ export default {
         onRowHover(item, index, type) {
             switch (type) {
                 case 'mouseover':
-                    this.showDragIcon = true
-                    this.showDragIconAtRow = index
+                    {
+                        // positioning the drag handle to the center of the table row
+                        let tableRowWidth = this.$refs.tableRow.clientWidth
+                        let dragHandle = document.getElementsByClassName('drag-handle')
+                        let center = `calc(100% - ${tableRowWidth / 2}px)`
+                        if (dragHandle.length && dragHandle[0].style.left !== center) {
+                            for (let i = 0; i < dragHandle.length; ++i) {
+                                dragHandle[i].style.left = center
+                            }
+                        }
+                        this.draggable && (this.showDragEntity = true)
+                        this.showActionsOnHover && (this.showActionsEntity = true)
+                        this.showEntityAt = index
+                    }
                     break
                 case 'mouseleave':
-                    this.showDragIcon = false
-                    this.showDragIconAtRow = null
+                    this.draggable && (this.showDragEntity = false)
+                    this.showActionsOnHover && (this.showActionsEntity = false)
+                    this.showEntityAt = null
                     break
             }
-        },
-
-        handleShowDragIcon(index) {
-            if (
-                this.showDragIcon &&
-                !this.$help.isNull(this.showDragIconAtRow) &&
-                this.showDragIconAtRow === index
-            )
-                return true
-            return false
         },
     },
 }
 </script>
 <style lang="scss" scoped>
+.toggle-icon {
+    color: inherit;
+    position: absolute;
+    right: 34px;
+}
 .draggable-row:hover {
     background: transparent !important;
 }
 
 .drag-handle {
     position: absolute;
-    left: 50%;
-    top: 0;
+
+    top: 10px;
     transform: translate(-50%, -50%);
 }
 .sortable-chosen:hover {
@@ -374,5 +395,11 @@ export default {
 .sortable-ghost {
     background: #f2fcff !important;
     opacity: 0.6;
+}
+.action-slot-wrapper {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translate(0%, -50%);
 }
 </style>

@@ -2,14 +2,25 @@
     <span>
         <base-dialog
             v-model="computeShowDialog"
-            :onCancel="closeModal"
+            :onCancel="onCancel"
             :onSave="handleDelete"
+            :onClose="onClose"
             :title="title"
             :saveText="type"
         >
             <template v-slot:body>
                 <fragment>
-                    <p>{{ $t(`confirmations.${type}`, { name: item.id }) }}</p>
+                    <p v-if="!$help.isNull(item)">
+                        <span>
+                            {{
+                                $t(`confirmations.${type}`, {
+                                    name: item.id,
+                                    resourceName: resourceName,
+                                    resourceId: resourceId,
+                                })
+                            }}
+                        </span>
+                    </p>
                     <small>
                         {{ smallInfo }}
                     </small>
@@ -37,11 +48,14 @@ export default {
     props: {
         value: Boolean,
         type: String, // delete or destroy
+        resourceName: String,
+        resourceId: String, // delete from what resource id
         title: String,
         item: Object,
         dispatchDelete: Function,
         smallInfo: String,
-        closeModal: Function,
+        onCancel: Function,
+        onClose: Function,
     },
     data() {
         return {
@@ -63,7 +77,7 @@ export default {
     methods: {
         async handleDelete() {
             await this.dispatchDelete(this.item.id)
-            this.closeModal()
+            this.onCancel()
         },
     },
 }

@@ -5,6 +5,7 @@
         overlay-opacity="0.6"
         :max-width="maxWidth"
         content-class="base-dialog"
+        persistent
     >
         <v-card class="v-card-custom">
             <v-card-title class="v-card-title_padding">
@@ -92,9 +93,6 @@ export default {
             // set the value to show property in data
             set(value) {
                 this.show = value
-                if (value === false) {
-                    this.onClose && this.close()
-                }
             },
         },
     },

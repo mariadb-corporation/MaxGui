@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col class="py-0 my-0" cols="3">
+        <v-col class="py-0 my-0" cols="4">
             <v-row class="pa-0 ma-0">
                 <!-- SERVER TABLE -->
                 <v-col cols="12" class="pa-0 ma-0">
@@ -21,6 +21,7 @@
                                 sortBy="id"
                                 :search="searchKeyWord"
                                 :loading="loading"
+                                :showActionsOnHover="true"
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
@@ -39,6 +40,13 @@
                                     >
                                         status
                                     </icon-sprite-sheet>
+                                </template>
+                                <template v-slot:actions="{ data: { item } }">
+                                    <v-btn icon @click="onRelationShipTypeDelete('server', item)">
+                                        <v-icon size="20" color="error">
+                                            $vuetify.icons.unlink
+                                        </v-icon>
+                                    </v-btn>
                                 </template>
                             </data-table>
                         </template>
@@ -64,6 +72,7 @@
                                 :draggable="true"
                                 :dragReorder="filterDragReorder"
                                 :loading="loading"
+                                :showActionsOnHover="true"
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
@@ -74,22 +83,38 @@
                                         <span> {{ id }} </span>
                                     </router-link>
                                 </template>
-                                <!-- <template v-slot:actions="{ data: { item: { id } } }">
-                                    <router-link
-                                        :key="id"
-                                        :to="`/dashboard/filters/${id}`"
-                                        class="no-underline"
-                                    >
-                                        <span> {{ id }} </span>
-                                    </router-link>
-                                </template> -->
+                                <template v-slot:actions="{ data: { item } }">
+                                    <v-btn icon @click="onRelationShipTypeDelete('filter', item)">
+                                        <v-icon size="14" color="error">
+                                            $vuetify.icons.delete
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
                             </data-table>
                         </template>
                     </details-table-wrapper>
                 </v-col>
+                <delete-modal
+                    v-model="showDeleteDialog"
+                    :title="deleteDialogTitle"
+                    :type="deleteDialogType"
+                    :resourceId="currentService.id"
+                    :resourceName="`${$t('service')}`"
+                    :item="targetItemDelete"
+                    :dispatchDelete="
+                        () => {
+                            performAsyncLoadingAction(
+                                'filter',
+                                filtersLinked.filter(item => item !== targetItemDelete)
+                            )
+                        }
+                    "
+                    :onClose="() => (showDeleteDialog = false)"
+                    :onCancel="() => (showDeleteDialog = false)"
+                />
             </v-row>
         </v-col>
-        <v-col class="pa-0 ma-0" cols="9"> </v-col>
+        <v-col class="pa-0 ma-0" cols="8"> </v-col>
     </v-row>
 </template>
 
@@ -120,16 +145,27 @@ export default {
     },
     data() {
         return {
+            // servers
             serversLinked: [],
             showServers: true,
             addServerDialog: false,
             serversTableHeader: [
                 { text: 'Server', value: 'id' },
                 { text: 'Status', value: 'state', align: 'center' },
+                { text: '', value: 'action', sortable: false },
             ],
+            // filters
             showFilter: true,
             addFilterDialog: false,
-            filterTableHeader: [{ text: 'Filter', value: 'id', sortable: false }],
+            filterTableHeader: [
+                { text: 'Filter', value: 'id', sortable: false },
+                { text: '', value: 'action', sortable: false },
+            ],
+            targetItemDelete: null,
+            // common
+            showDeleteDialog: false,
+            deleteDialogType: 'delete',
+            deleteDialogTitle: '',
         }
     },
     computed: {
@@ -180,25 +216,54 @@ export default {
 
         async filterDragReorder({ oldIndex, newIndex }) {
             let self = this
-
             if (oldIndex !== newIndex) {
                 const moved = self.filtersLinked.splice(oldIndex, 1)[0]
                 self.filtersLinked.splice(newIndex, 0, moved)
-                self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-                await self.createOrUpdateService({
-                    mode: 'patch',
-                    id: self.currentService.id,
-                    relationships: {
-                        filters: {
-                            data: self.filtersLinked,
-                        },
-                    },
-                })
-                // wait time out for loading animation
-                await setTimeout(() => {
-                    self.hideOverlay()
-                }, 600)
+                await self.performAsyncLoadingAction('filter', self.filtersLinked)
             }
+        },
+
+        async performAsyncLoadingAction(action, data) {
+            let self = this
+            self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+            switch (action) {
+                case 'filter':
+                    await self.patchLinkedFilters(data)
+            }
+
+            // wait time out for loading animation
+            await setTimeout(() => {
+                self.hideOverlay()
+            }, 300)
+        },
+
+        async patchLinkedFilters(data) {
+            let self = this
+            await this.createOrUpdateService({
+                mode: 'patch',
+                id: self.currentService.id,
+                relationships: {
+                    filters: {
+                        data: data,
+                    },
+                },
+            })
+        },
+
+        onRelationShipTypeDelete(type, item) {
+            this.targetItemDelete = item
+            switch (type) {
+                case 'filter':
+                    this.deleteDialogType = 'delete'
+                    this.deleteDialogTitle = `${this.$t('delete')} ${this.$t('filter')}`
+                    break
+                case 'server':
+                    this.deleteDialogType = 'unlink'
+                    this.deleteDialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
+                    break
+            }
+
+            this.showDeleteDialog = true
         },
     },
 }
