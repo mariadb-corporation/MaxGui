@@ -24,7 +24,7 @@ let router = new Router({
     To use history mode, the web server needs to configure to serve it
     https://router.vuejs.org/guide/essentials/history-mode.html
    */
-    // mode: "history",
+    // mode: 'history',
     routes: routes,
 })
 router.beforeEach(async (to, from, next) => {

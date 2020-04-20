@@ -22,6 +22,7 @@ html {
     background-color: $background !important;
 }
 
+//https://gs.statcounter.com/screen-resolution-stats top 2 for desktop screen resolution
 .wrapper-container {
     max-width: 1366px; // preserve ratio for larger screen
     margin: 0 auto;
@@ -105,6 +106,12 @@ html {
 }
 
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
+// reset hover effect
+.theme--light.v-data-table
+    tbody
+    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+    background: unset;
+}
 .data-table-full {
     table-layout: fixed;
 
@@ -148,11 +155,10 @@ html {
         }
 
         tbody {
-            .v-data-table__editable-cell-mode {
-                &:hover {
-                    background: transparent !important;
-                }
+            tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper):not(.v-data-table__editable-cell-mode) {
+                background: #fafcfc;
             }
+
             tr {
                 pointer-events: none !important;
                 .v-data-table__mobile-row {

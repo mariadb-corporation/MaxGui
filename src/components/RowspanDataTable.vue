@@ -245,14 +245,14 @@ export default {
                 )
 
                 elements.forEach(
-                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#eeeeee' : '')
+                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#fafcfc' : '')
                 )
             } else if (target === 'rowgroup') {
                 let elements = this.$refs.cell.filter((ele, i) =>
                     ele.attributes.class.value.includes(`${rowspanId}-cell`)
                 )
                 elements.forEach(
-                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#eeeeee' : '')
+                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#fafcfc' : '')
                 )
             }
         },

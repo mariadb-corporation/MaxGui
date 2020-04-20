@@ -12,6 +12,8 @@
                     <ServerSessionTab
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
+                        :createOrUpdateService="createOrUpdateService"
+                        :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->

@@ -92,7 +92,6 @@ export default {
                 data: {
                     id: serviceData.id,
                     type: 'services',
-                    attributes: {},
                 },
             }
             let res

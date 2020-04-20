@@ -20,6 +20,7 @@
         "moment": "^2.24.0",
         "moment-duration-format": "^2.3.2",
         "portal-vue": "^2.1.7",
+        "sortablejs": "^1.10.2",
         "stacktrace-parser": "^0.1.9",
         "vue": "^2.6.11",
         "vue-axios": "^2.1.5",

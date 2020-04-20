@@ -1,5 +1,6 @@
 <template>
     <v-data-table
+        v-sortable-table
         :headers="visibleHeaders"
         :items="!loading ? dataProcess : []"
         :hide-default-header="true"
@@ -15,6 +16,7 @@
         item-key="name"
         :dense="dense"
         :no-data-text="noDataText"
+        @drag-reorder="dragReorder"
     >
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
@@ -81,14 +83,18 @@
         </template>
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
-        <template v-slot:item="{ item, index }">
+        <template v-slot:item="{ item, index: rowIndex }">
             <tr
+                :key="item.id"
                 :class="{
                     pointer: onRowClick,
-                    'last-row': index === data.length - 1,
+                    'last-row': rowIndex === data.length - 1,
                     'v-data-table__editable-cell-mode': editableCell,
+                    'draggable-row': draggable,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
+                @mouseover="() => draggable && onRowHover(item, rowIndex, 'mouseover')"
+                @mouseleave="() => draggable && onRowHover(item, rowIndex, 'mouseleave')"
             >
                 <td
                     v-for="(header, i) in visibleHeaders"
@@ -98,49 +104,63 @@
                         header.align && `text-${header.align}`,
                         header.tdClass || header.class,
                         tdBorderLeft && 'border-left-thin',
-
                         editableCell && header.editableCol && 'v-data-table__editable-cell',
                     ]"
                     @click="cellClick(item, headers, visibleHeaders)"
                 >
-                    <div :style="cellAlignHandle(header)">
-                        <slot :name="header.value" :data="{ item, header, i }">
-                            <!-- no content for the corresponding header, usually this is an error -->
-                            <span v-if="$help.isUndefined(item[header.value])"></span>
-                            <!-- regular cell -->
-                            <span v-else>{{ getValue(item, header) }}</span>
-                        </slot>
-                        <!-- Actions slot includes expandIndicator slot -->
-                        <div
-                            v-if="header.text === 'Actions'"
-                            :class="`d-flex justify-${header.align}`"
+                    <div :style="cellAlignHandle(header)" style="position:relative">
+                        <v-icon
+                            v-if="handleShowDragIcon(rowIndex)"
+                            :class="{ 'drag-handle move': draggable }"
+                            class="color text-field-text"
+                            size="16"
                         >
-                            <slot :data="{ item }" name="actions" />
-                            <!-- expandle activator -->
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on }">
-                                    <v-btn
-                                        v-if="$scopedSlots['expandable']"
-                                        icon
-                                        color="primary"
-                                        v-on="on"
-                                        @click="toggleRow(item.id)"
-                                    >
-                                        <!-- optional expand indicator icon -->
-                                        <slot
-                                            :expanded="expandedRows.includes(item.id)"
-                                            name="expandIndicator"
+                            drag_handle
+                        </v-icon>
+                        <span>
+                            <slot :name="header.value" :data="{ item, header, i }">
+                                <!-- no content for the corresponding header, usually this is an error -->
+                                <span v-if="$help.isUndefined(item[header.value])"></span>
+                                <!-- regular cell -->
+                                <span v-else>{{ getValue(item, header) }}</span>
+                            </slot>
+                            <!-- Actions slot includes expandIndicator slot -->
+                            <div
+                                v-if="$scopedSlots['actions']"
+                                class="d-flex"
+                                :class="[`justify-${header.align}` && header.align]"
+                                style="position:absolute"
+                            >
+                                <slot :data="{ item }" name="actions" />
+
+                                <!-- expandle activator -->
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn
+                                            v-show="$scopedSlots['expandable']"
+                                            icon
+                                            color="primary"
+                                            v-on="on"
+                                            @click="toggleRow(item.id)"
                                         >
-                                            <v-icon v-if="!expandedRows.includes(item.id)" size="24"
-                                                >keyboard_arrow_down</v-icon
+                                            <!-- optional expand indicator icon -->
+                                            <slot
+                                                :expanded="expandedRows.includes(item.id)"
+                                                name="expandIndicator"
                                             >
-                                            <v-icon v-else size="24">keyboard_arrow_up</v-icon>
-                                        </slot>
-                                    </v-btn>
-                                </template>
-                                <span>Show detailed information</span>
-                            </v-tooltip>
-                        </div>
+                                                <v-icon
+                                                    v-if="!expandedRows.includes(item.id)"
+                                                    size="24"
+                                                    >keyboard_arrow_down</v-icon
+                                                >
+                                                <v-icon v-else size="24">keyboard_arrow_up</v-icon>
+                                            </slot>
+                                        </v-btn>
+                                    </template>
+                                    <span>Show detailed information</span>
+                                </v-tooltip>
+                            </div>
+                        </span>
                     </div>
                 </td>
             </tr>
@@ -155,6 +175,7 @@
 </template>
 
 <script>
+import Sortable from 'sortablejs'
 /*
  * Copyright (c) 2020 MariaDB Corporation Ab
  *
@@ -174,6 +195,21 @@ export default {
     // name="actions" :data="{ item }"
     // name="expandable"   :data="{ item }"
     // name="expandIndicator" :expanded Boolean
+    directives: {
+        sortableTable: {
+            bind(el, binding, vnode) {
+                const options = {
+                    handle: '.drag-handle',
+                    draggable: '.draggable-row',
+                    animation: 200,
+                    onEnd: function(event) {
+                        vnode.child.$emit('drag-reorder', event)
+                    },
+                }
+                Sortable.create(el.getElementsByTagName('tbody')[0], options)
+            },
+        },
+    },
     props: {
         headers: { type: Array },
         data: { type: Array },
@@ -194,7 +230,11 @@ export default {
         noDataText: { type: String },
         // add border left to td
         tdBorderLeft: { type: Boolean, default: false },
+        // For editable feature
         editableCell: { type: Boolean, default: false },
+        // For draggable feature
+        draggable: { type: Boolean, default: false },
+        dragReorder: { type: Function, default: () => null },
     },
     data() {
         return {
@@ -202,6 +242,9 @@ export default {
             pagination: {},
             visible: [],
             isColumnToggleVisible: false,
+            //draggable
+            showDragIcon: false,
+            showDragIconAtRow: null,
         }
     },
     computed: {
@@ -286,6 +329,50 @@ export default {
                 marginRight: `${marginRight}px`,
             }
         },
+        onRowHover(item, index, type) {
+            switch (type) {
+                case 'mouseover':
+                    this.showDragIcon = true
+                    this.showDragIconAtRow = index
+                    break
+                case 'mouseleave':
+                    this.showDragIcon = false
+                    this.showDragIconAtRow = null
+                    break
+            }
+        },
+
+        handleShowDragIcon(index) {
+            if (
+                this.showDragIcon &&
+                !this.$help.isNull(this.showDragIconAtRow) &&
+                this.showDragIconAtRow === index
+            )
+                return true
+            return false
+        },
     },
 }
 </script>
+<style lang="scss" scoped>
+.draggable-row:hover {
+    background: transparent !important;
+}
+
+.drag-handle {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+}
+.sortable-chosen:hover {
+    background: #f2fcff !important;
+    .drag-handle {
+        display: inline;
+    }
+}
+.sortable-ghost {
+    background: #f2fcff !important;
+    opacity: 0.6;
+}
+</style>
