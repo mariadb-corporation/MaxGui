@@ -141,6 +141,7 @@ export default {
         searchKeyWord: { type: String, required: true },
         createOrUpdateService: { type: Function, required: true },
         loading: { type: Boolean, required: true },
+        onEditSucceeded: { type: Function, required: true },
     },
     data() {
         return {
@@ -245,6 +246,7 @@ export default {
                         data: data,
                     },
                 },
+                callback: self.onEditSucceeded,
             })
         },
 

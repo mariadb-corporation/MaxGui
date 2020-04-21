@@ -1,7 +1,7 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentService)" class="px-6">
-        <!-- <page-header :currentService="currentService" />
-        <overview-header :currentService="currentService" /> -->
+        <page-header :currentService="currentService" />
+        <overview-header :currentService="currentService" />
         <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
             <v-tab v-for="tab in tabs" :key="tab.name">
                 {{ tab.name }}
@@ -13,6 +13,7 @@
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
                         :createOrUpdateService="createOrUpdateService"
+                        :onEditSucceeded="fetch"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                     />
                 </v-tab-item>

@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, isUndefined } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isUndefined, isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -128,7 +128,7 @@ export default {
                     },
                     { root: true }
                 )
-                await payload.callback()
+                if (isFunction(payload.callback)) await payload.callback()
             }
         },
         /**

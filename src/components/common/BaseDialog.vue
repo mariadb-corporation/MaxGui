@@ -73,9 +73,13 @@ export default {
         maxWidth: { type: String, default: '466px' },
         title: String,
         value: Boolean,
-        onClose: Function,
-        onCancel: Function,
-        onSave: Function,
+        /* These functions are requires since the computeShowDialog depends on the value props.
+        The open/close of the dialog completely controlled by the parent component.
+        */
+        onClose: { type: Function, required: true },
+        onCancel: { type: Function, required: true },
+        onSave: { type: Function, required: true },
+
         cancelText: { type: String, default: 'cancel' },
         saveText: { type: String, default: 'save' },
     },
