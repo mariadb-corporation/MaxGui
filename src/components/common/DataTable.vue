@@ -95,8 +95,14 @@
                     'draggable-row': draggable,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
-                @mouseover="() => onRowHover(item, rowIndex, 'mouseover')"
-                @mouseleave="() => onRowHover(item, rowIndex, 'mouseleave')"
+                @mouseover="
+                    () =>
+                        draggable || showActionsOnHover ? onRowHover(rowIndex, 'mouseover') : null
+                "
+                @mouseleave="
+                    () =>
+                        draggable || showActionsOnHover ? onRowHover(rowIndex, 'mouseleave') : null
+                "
             >
                 <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
                     By doing this, it won't break the no-data view when data length = 0
@@ -362,20 +368,23 @@ export default {
                 marginRight: `${marginRight}px`,
             }
         },
-        onRowHover(item, index, type) {
+        onRowHover(index, type) {
             switch (type) {
                 case 'mouseover':
                     {
                         // positioning the drag handle to the center of the table row
-                        let tableRowWidth = this.$refs.tableRow.clientWidth
-                        let dragHandle = document.getElementsByClassName('drag-handle')
-                        let center = `calc(100% - ${tableRowWidth / 2}px)`
-                        if (dragHandle.length && dragHandle[0].style.left !== center) {
-                            for (let i = 0; i < dragHandle.length; ++i) {
-                                dragHandle[i].style.left = center
+                        if (this.draggable) {
+                            let tableRowWidth = this.$refs.tableRow.clientWidth
+                            let dragHandle = document.getElementsByClassName('drag-handle')
+                            let center = `calc(100% - ${tableRowWidth / 2}px)`
+                            if (dragHandle.length && dragHandle[0].style.left !== center) {
+                                for (let i = 0; i < dragHandle.length; ++i) {
+                                    dragHandle[i].style.left = center
+                                }
                             }
+                            this.showDragEntity = true
                         }
-                        this.draggable && (this.showDragEntity = true)
+
                         this.showActionsOnHover && (this.showActionsEntity = true)
                         this.showEntityAt = index
                     }

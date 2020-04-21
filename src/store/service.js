@@ -75,45 +75,46 @@ export default {
         },
         //-----------------------------------------------Service----------------------------------------------
         /**
-         * @param {Object} serviceData Service object
-         * @param {String} serviceData.mode Mode to perform async request POST or Patch
-         * @param {String} serviceData.id Name of the service
-         * @param {String} serviceData.router The router module to use
+         * @param {Object} payload payload object
+         * @param {String} payload.mode Mode to perform async request POST or Patch
+         * @param {String} payload.id Name of the service
+         * @param {String} payload.router The router module to use
 
-         * @param {Object} serviceData.parameters Parameters for the server
-         * @param {String} serviceData.parameters.user The user to use
-         * @param {String} serviceData.parameters.password The password to use
-         * @param {Object} serviceData.relationships The relationships of the service to other resources
-         * @param {Object} serviceData.relationships.servers Type of relationships
-         * @param {Object} serviceData.relationships.filters Type of relationships
+         * @param {Object} payload.parameters Parameters for the server
+         * @param {String} payload.parameters.user The user to use
+         * @param {String} payload.parameters.password The password to use
+         * @param {Object} payload.relationships The relationships of the service to other resources
+         * @param {Object} payload.relationships.servers Type of relationships
+         * @param {Object} payload.relationships.filters Type of relationships
          */
-        async createOrUpdateService({ commit }, serviceData, callback) {
-            const payload = {
+        async createOrUpdateService({ commit }, payload) {
+            const body = {
                 data: {
-                    id: serviceData.id,
+                    id: payload.id,
                     type: 'services',
+                    attributes: {},
                 },
             }
             let res
             let message
-            switch (serviceData.mode) {
+            switch (payload.mode) {
                 case 'post':
-                    payload.data.attributes.router = serviceData.router
-                    payload.data.attributes.parameters = serviceData.parameters
-                    payload.data.relationships = serviceData.relationships
-                    res = await Vue.axios.post(`/services/`, payload)
-                    message = [`Service ${serviceData.id} is created`]
+                    body.data.attributes.router = payload.router
+                    body.data.attributes.parameters = payload.parameters
+                    body.data.relationships = payload.relationships
+                    res = await Vue.axios.post(`/services/`, body)
+                    message = [`Service ${payload.id} is created`]
 
                     break
                 case 'patch':
-                    if (!isUndefined(serviceData.parameters)) {
-                        payload.data.attributes.parameters = serviceData.parameters
+                    if (!isUndefined(payload.parameters)) {
+                        body.data.attributes.parameters = payload.parameters
                     }
-                    if (!isUndefined(serviceData.relationships)) {
-                        payload.data.relationships = serviceData.relationships
+                    if (!isUndefined(payload.relationships)) {
+                        body.data.relationships = payload.relationships
                     }
-                    res = await Vue.axios.patch(`/services/${serviceData.id}`, payload)
-                    message = [`Service ${serviceData.id} is updated`]
+                    res = await Vue.axios.patch(`/services/${payload.id}`, body)
+                    message = [`Service ${payload.id} is updated`]
                     break
             }
 
@@ -127,7 +128,7 @@ export default {
                     },
                     { root: true }
                 )
-                await callback
+                await payload.callback()
             }
         },
         /**

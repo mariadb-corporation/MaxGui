@@ -1,7 +1,7 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentService)" class="px-6">
-        <page-header :currentService="currentService" />
-        <overview-header :currentService="currentService" />
+        <!-- <page-header :currentService="currentService" />
+        <overview-header :currentService="currentService" /> -->
         <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
             <v-tab v-for="tab in tabs" :key="tab.name">
                 {{ tab.name }}
@@ -78,8 +78,8 @@ export default {
     },
     methods: {
         ...mapActions('service', ['fetchServiceById', 'createOrUpdateService']),
-        fetch() {
-            this.fetchServiceById(this.$route.params.id)
+        async fetch() {
+            await this.fetchServiceById(this.$route.params.id)
         },
     },
 }

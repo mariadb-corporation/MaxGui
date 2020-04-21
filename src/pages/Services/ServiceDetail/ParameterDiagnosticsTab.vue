@@ -134,7 +134,8 @@ export default {
     computed: {
         tableRowProcessed() {
             return type => {
-                let currentService = this.$help.cloneDeep(this.currentService)
+                let currentService = this.currentService
+
                 if (!this.$help.isEmpty(currentService)) {
                     switch (type) {
                         case 'parameters': {
@@ -190,14 +191,12 @@ export default {
             let self = this
             self.paramsEditable = false
             self.showConfirmDialog = false
-            self.createOrUpdateService(
-                {
-                    mode: 'patch',
-                    id: self.currentService.id,
-                    parameters: self.$help.arrOfObjToObj(self.changesItems),
-                },
-                self.onEditSucceeded()
-            )
+            self.createOrUpdateService({
+                mode: 'patch',
+                id: self.currentService.id,
+                parameters: self.$help.arrOfObjToObj(self.changesItems),
+                callback: self.onEditSucceeded,
+            })
         },
     },
 }

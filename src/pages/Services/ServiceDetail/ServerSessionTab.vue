@@ -178,7 +178,6 @@ export default {
             const {
                 filters: { data: filtersLinkedData = [] } = {},
             } = this.currentService.relationships
-
             return filtersLinkedData
                 ? filtersLinkedData.map(item => ({ id: item.id, type: item.type }))
                 : []
