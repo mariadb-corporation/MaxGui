@@ -1,10 +1,10 @@
 <template>
     <line-chart
-        v-if="totalConnectionsChartData.datasets.length"
-        id="total-connections-chart"
-        ref="totalConnectionsChart"
+        v-if="serversConnectionsChartData.datasets.length"
+        id="users-Chart"
+        ref="usersChart"
         :styles="{ height: '70px' }"
-        :chartData="totalConnectionsChartData"
+        :chartData="serversConnectionsChartData"
         :options="options"
         :isRealTime="true"
     />
@@ -27,14 +27,15 @@ import LineChart from 'components/LineChart.vue'
 import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
-    name: 'current-connections-chart',
+    name: 'servers-connection-chart',
     components: {
         'line-chart': LineChart,
     },
     props: {
-        totalConnectionsChartData: { type: Object, required: true },
-        updatingChart: { type: Function, required: true },
+        allServers: { type: Array, required: true },
+        serversConnectionsChartData: { type: Object, required: true },
     },
+
     data() {
         return {
             options: {
@@ -57,13 +58,28 @@ export default {
     },
 
     beforeDestroy() {
-        let chart = this.$refs.totalConnectionsChart.$data._chart
+        let chart = this.$refs.usersChart.$data._chart
         chart.data.labels = []
         chart.data.datasets = []
         chart.destroy()
     },
     methods: {
-        ...mapActions('service', ['genDataSetSchema']),
+        ...mapActions('server', ['fetchAllServers', 'genDataSetSchema']),
+        async updatingChart(chart) {
+            //  LOOP polling
+            await this.fetchAllServers()
+            let self = this
+            this.allServers.forEach((server, i) => {
+                chart.data.datasets[i].data.push({
+                    x: Date.now(),
+                    y: server.attributes.statistics.connections,
+                })
+            })
+
+            chart.update({
+                preservation: true,
+            })
+        },
     },
 }
 </script>

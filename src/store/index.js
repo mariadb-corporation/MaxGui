@@ -56,6 +56,12 @@ export default new Vuex.Store({
             state.searchKeyWord = keyword
         },
     },
+    // actions: {
+    //     async filterFetch({ commit }) {
+    //         let res = await Vue.axios.get(`/filters`)
+    //         await commit('setFilters', res.data.data)
+    //     },
+    // },
     getters: {
         searchKeyWord: state => state.searchKeyWord,
         overlay: state => state.overlay,

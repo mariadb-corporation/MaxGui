@@ -63,7 +63,7 @@ export default {
                     total = this.allServices.length
                     break
                 case 'sessions':
-                    total = this.allSessions.length || 2 // testing add 2 sessions
+                    total = this.allSessions.length
             }
             return total
         },

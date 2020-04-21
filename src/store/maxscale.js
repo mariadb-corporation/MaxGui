@@ -66,7 +66,7 @@ export default {
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,
-                        data: [{ x: Date.now(), y: Math.round(Math.random() * 100) }],
+                        data: [{ x: Date.now(), y: threads[i].attributes.stats.load.last_second }],
                     }
                     arr.push(obj)
                 }

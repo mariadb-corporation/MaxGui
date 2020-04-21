@@ -82,8 +82,11 @@
                     <template v-slot:title>
                         {{ $t('sessions') }}
                     </template>
-                    <template v-slot:card-body>
-                        <sessions-chart />
+                    <template v-if="allSessions.length" v-slot:card-body>
+                        <sessions-chart
+                            :allSessions="allSessions"
+                            :sessionsChartData="sessionsChartData"
+                        />
                     </template>
                 </outline-small-card>
             </v-col>
@@ -95,8 +98,11 @@
                     <template v-slot:title>
                         {{ $t('connections') }}
                     </template>
-                    <template v-slot:card-body>
-                        <users-chart />
+                    <template v-if="allServers.length" v-slot:card-body>
+                        <servers-connection-chart
+                            :allServers="allServers"
+                            :serversConnectionsChartData="serversConnectionsChartData"
+                        />
                     </template>
                 </outline-small-card>
             </v-col>
@@ -136,7 +142,7 @@ import { mapGetters, mapActions } from 'vuex'
 import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'
 import ThreadsChart from 'pages/Statistics/ThreadsChart'
-import UsersChart from 'pages/Users/UsersChart'
+import ServersConnectionChart from 'pages/Servers/ServersConnectionChart'
 import SessionsChart from 'pages/Sessions/SessionsChart'
 
 export default {
@@ -144,7 +150,7 @@ export default {
     components: {
         TabNav,
         ThreadsChart,
-        UsersChart,
+        ServersConnectionChart,
         SessionsChart,
     },
     data() {
@@ -159,7 +165,14 @@ export default {
     },
 
     computed: {
-        ...mapGetters('maxscale', ['maxscaleDetails']),
+        ...mapGetters({
+            maxscaleDetails: 'maxscale/maxscaleDetails',
+            allSessions: 'session/allSessions',
+            sessionsChartData: 'session/sessionsChartData',
+            allServers: 'server/allServers',
+            serversConnectionsChartData: 'server/serversConnectionsChartData',
+        }),
+
         pageTitle: function() {
             let version =
                 this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''

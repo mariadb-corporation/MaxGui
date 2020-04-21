@@ -161,11 +161,18 @@ export default {
                 { text: 'Filter', value: 'id', sortable: false },
                 { text: '', value: 'action', sortable: false },
             ],
-            targetItemDelete: null,
+            // sessions
+            sessionsTableHeader: [
+                { text: 'ID', value: 'id' },
+                { text: 'Client', value: 'user' },
+                { text: 'Connected', value: 'connected' },
+                { text: 'IDLE (s)', value: 'idle' },
+            ],
             // common
             showDeleteDialog: false,
             deleteDialogType: 'delete',
             deleteDialogTitle: '',
+            targetItemDelete: null,
         }
     },
     computed: {

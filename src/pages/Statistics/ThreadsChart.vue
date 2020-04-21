@@ -6,6 +6,8 @@
         :styles="isMiniChart ? { height: '70px' } : null"
         :chartData="threadsChartData"
         :options="options"
+        :isRealTime="true"
+        :yAxesTicks="{ max: 100, min: 0 }"
     />
 </template>
 
@@ -39,34 +41,13 @@ export default {
                 legend: {
                     display: this.isMiniChart ? false : true,
                 },
-                scales: {
-                    xAxes: [
-                        {
-                            type: 'realtime',
-                            time: {
-                                displayFormats: {
-                                    second: 'HH:mm:ss',
-                                },
-                            },
-                            realtime: {
-                                duration: 20000,
-                                refresh: 5000, // onRefresh callback will be called every 5000 ms
-                                // delay of 5000 ms, so upcoming values are known before plotting a line
-                                delay: 10000,
-                            },
-                        },
-                    ],
-                    yAxes: [
-                        {
-                            ticks: {
-                                max: 100,
-                                min: 0,
-                            },
-                        },
-                    ],
-                },
+
                 plugins: {
                     streaming: {
+                        duration: 20000,
+                        refresh: 1000, // onRefresh callback will be called every 5000 ms
+                        // delay of 5000 ms, so upcoming values are known before plotting a line
+                        delay: 5000,
                         onRefresh: this.updatingThreads,
                     },
                 },
@@ -90,15 +71,16 @@ export default {
     methods: {
         ...mapActions('maxscale', ['fetchThreads', 'genDataSetSchema']),
         updatingThreads(chart) {
-            // this.threads.forEach(thread => console.log(thread.attributes.stats.load.last_second))
             this.fetchThreads()
-            chart.data.datasets.forEach(function(dataset) {
-                dataset.data.push({
+            this.threads.forEach((thread, i) => {
+                chart.data.datasets[i].data.push({
                     x: Date.now(),
-                    y: Math.round(Math.random() * 100),
+                    y: thread.attributes.stats.load.last_second,
                 })
             })
-            chart.update()
+            chart.update({
+                preservation: true,
+            })
         },
     },
 }

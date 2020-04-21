@@ -43,8 +43,11 @@
                     >
                 </template>
                 <template v-slot:card-body>
-                    <v-col>
-                        <current-connections-chart :updatingChart="updatingChart" />
+                    <v-col v-if="!$help.isEmpty(currentService)">
+                        <current-connections-chart
+                            :totalConnectionsChartData="totalConnectionsChartData"
+                            :updatingChart="updatingChart"
+                        />
                     </v-col>
                 </template>
             </outline-small-card>
@@ -78,13 +81,20 @@ export default {
     },
     data() {
         return {
-            totalConnections: 100,
+            totalConnections: 0,
             currentConnections: 0,
         }
     },
+    computed: {
+        ...mapGetters({
+            totalConnectionsChartData: 'service/totalConnectionsChartData',
+        }),
+    },
     created() {
         this.currentConnections = this.currentService.attributes.connections
+        this.totalConnections = this.currentService.attributes.total_connections
     },
+
     methods: {
         async updatingChart(chart) {
             let self = this
@@ -97,14 +107,14 @@ export default {
 
                 let testCurrent = Math.round(Math.random() * 100)
 
-                this.totalConnections = 100 //total_connections
-                this.currentConnections = testCurrent //connections
+                this.totalConnections = total_connections
+                this.currentConnections = connections
 
                 chart.data.datasets.forEach(function(dataset) {
                     dataset.data.push({
                         x: Date.now(),
                         //connections
-                        y: testCurrent,
+                        y: connections,
                     })
                 })
                 chart.update({

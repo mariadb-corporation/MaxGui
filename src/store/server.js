@@ -11,12 +11,15 @@
  * Public License.
  */
 import Vue from 'vue'
-
+import { dynamicColors, strReplaceAt } from 'utils/helpers'
 export default {
     namespaced: true,
     state: {
         allServers: [],
         currentServer: {},
+        serversConnectionsChartData: {
+            datasets: [],
+        },
     },
     mutations: {
         /**
@@ -27,6 +30,9 @@ export default {
         },
         setCurrentServer(state, payload) {
             state.currentServer = payload
+        },
+        setServersConnectionsChartData(state, payload) {
+            state.serversConnectionsChartData = payload
         },
     },
     actions: {
@@ -131,6 +137,41 @@ export default {
                 )
             }
         },
+
+        /**
+        Generate data schema for total connections of each server
+         */
+        genDataSetSchema({ commit, state }) {
+            const { allServers } = state
+            if (allServers.length) {
+                let arr = []
+                let lineColors = []
+                for (let i = 0; i < allServers.length; ++i) {
+                    const {
+                        id,
+                        attributes: { statistics },
+                    } = allServers[i]
+                    lineColors.push(dynamicColors(i))
+                    let indexOfOpacity = lineColors[i].lastIndexOf(')') - 1
+                    let obj = {
+                        label: `Server ID - ${id}`,
+                        id: `Server ID - ${id}`,
+                        type: 'line',
+                        // background of the line
+                        backgroundColor: strReplaceAt(lineColors[i], indexOfOpacity, '0.2'),
+                        borderColor: lineColors[i], //theme.palette.primary.main, // line color
+                        borderWidth: 1,
+                        lineTension: 0,
+                        data: [{ x: Date.now(), y: statistics.connections }],
+                    }
+                    arr.push(obj)
+                }
+                let serversConnectionsChartDataSchema = {
+                    datasets: arr,
+                }
+                commit('setServersConnectionsChartData', serversConnectionsChartDataSchema)
+            }
+        },
     },
     getters: {
         allServers: state => state.allServers,
@@ -152,5 +193,7 @@ export default {
                 return (accumulator = { idArr: idArr, portNumArr: portNumArr })
             }, [])
         },
+
+        serversConnectionsChartData: state => state.serversConnectionsChartData,
     },
 }

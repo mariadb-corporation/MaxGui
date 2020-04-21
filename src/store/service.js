@@ -58,8 +58,8 @@ export default {
                         borderColor: lineColors,
                         borderWidth: 1,
                         lineTension: 0,
-                        //currentService.attributes.total_connections
-                        data: [{ x: Date.now(), y: Math.round(Math.random() * 100) }],
+
+                        data: [{ x: Date.now(), y: currentService.attributes.connections }],
                     },
                 ]
 

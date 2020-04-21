@@ -23,9 +23,6 @@ export default {
         allNetworkUsers: [],
         allUNIXAccounts: [],
         allUsers: [],
-        usersChartData: {
-            datasets: [],
-        },
     },
     mutations: {
         /**
@@ -53,9 +50,6 @@ export default {
         },
         logout(state) {
             state.user = null
-        },
-        setUsersChartData(state, payload) {
-            state.usersChartData = payload
         },
     },
     actions: {
@@ -215,38 +209,12 @@ export default {
                 commit('setAllUsers', res.data.data)
             }
         },
-
-        genDataSetSchema({ commit, state }) {
-            const { allUNIXAccounts } = state
-            if (allUNIXAccounts) {
-                let lineColors = dynamicColors(0)
-
-                let indexOfOpacity = lineColors.lastIndexOf(')') - 1
-                let dataset = [
-                    {
-                        label: `Total Unix User`,
-                        type: 'line',
-                        // background of the line
-                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.2'),
-                        borderColor: lineColors, //theme.palette.primary.main, // line color
-                        borderWidth: 1,
-                        lineTension: 0,
-                        data: [{ x: Date.now(), y: allUNIXAccounts.length }],
-                    },
-                ]
-
-                let usersChartDataSchema = {
-                    datasets: dataset,
-                }
-                commit('setUsersChartData', usersChartDataSchema)
-            }
-        },
     },
     getters: {
         user: state => state.user,
         currentNetworkUser: state => state.currentNetworkUser,
         allUsers: state => state.allUsers,
-        usersChartData: state => state.usersChartData,
+
         allUNIXAccounts: state => state.allUNIXAccounts,
     },
 }

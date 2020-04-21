@@ -7,7 +7,7 @@
         sortBy="id"
     >
         <template v-slot:append-id>
-            <span class="ml-1 color text-field-text"> ({{ allServices.length }}) </span>
+            <span class="ml-1 color text-field-text"> ({{ allSessions.length }}) </span>
         </template>
 
         <template v-slot:user="{ data: { item: { user } } }">
@@ -95,94 +95,10 @@ export default {
         }),
 
         generateTableRows: function() {
-            let sessionsTest = [
-                {
-                    id: '8',
-                    type: 'sessions',
-                    relationships: {
-                        services: {
-                            links: {
-                                self: 'http://localhost:8989/v1/services/',
-                            },
-                            data: [
-                                {
-                                    id: 'RCR-Writer',
-                                    type: 'services',
-                                },
-                            ],
-                        },
-                    },
-                    attributes: {
-                        state: 'Session ready for routing',
-                        user: 'lee',
-                        remote: '::ffff:127.0.0.1',
-                        connected: 'Mon Jul 17 11:10:39 2017',
-                        idle: 62.899999999999999,
-                    },
-                    links: {
-                        self: 'http://localhost:8989/v1/sessions/9',
-                    },
-                },
-                {
-                    id: '9',
-                    type: 'sessions',
-                    relationships: {
-                        services: {
-                            links: {
-                                self: 'http://localhost:8989/v1/services/',
-                            },
-                            data: [
-                                {
-                                    id: 'RCR-Writer',
-                                    type: 'services',
-                                },
-                            ],
-                        },
-                    },
-                    attributes: {
-                        state: 'Session ready for routing',
-                        user: 'maxuser',
-                        remote: '::ffff:127.0.0.1',
-                        connected: 'Mon Jul 17 11:10:39 2017',
-                        idle: 62.899999999999999,
-                    },
-                    links: {
-                        self: 'http://localhost:8989/v1/sessions/9',
-                    },
-                },
-                {
-                    id: '10',
-                    type: 'sessions',
-                    relationships: {
-                        services: {
-                            links: {
-                                self: 'http://localhost:8989/v1/services/',
-                            },
-                            data: [
-                                {
-                                    id: 'RCR-Router',
-                                    type: 'services',
-                                },
-                            ],
-                        },
-                    },
-                    attributes: {
-                        state: 'Session ready for routing',
-                        user: 'skysql',
-                        remote: '::ffff:127.0.0.1',
-                        connected: 'Mon Jul 17 11:11:37 2017',
-                        idle: 5.2000000000000002,
-                    },
-                    links: {
-                        self: 'http://localhost:8989/v1/sessions/10',
-                    },
-                },
-            ]
-            //   if (this.allSessions && this.allServices) {
-            if (sessionsTest.length) {
+            if (this.allSessions && this.allServices) {
                 let itemsArr = []
 
-                let allSessions = this.$help.cloneDeep(sessionsTest)
+                let allSessions = this.$help.cloneDeep(this.allSessions)
                 for (let n = allSessions.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row

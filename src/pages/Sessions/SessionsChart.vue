@@ -6,6 +6,7 @@
         :styles="{ height: '70px' }"
         :chartData="sessionsChartData"
         :options="options"
+        :isRealTime="true"
     />
 </template>
 
@@ -23,57 +24,37 @@
  * Public License.
  */
 import LineChart from 'components/LineChart.vue'
-import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
     name: 'sessions-chart',
     components: {
         'line-chart': LineChart,
     },
+    props: {
+        allSessions: { type: Array, required: true },
+        sessionsChartData: { type: Object, required: true },
+    },
+
     data() {
         return {
             options: {
-                legend: {
-                    display: false,
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            type: 'realtime',
-                            time: {
-                                displayFormats: {
-                                    second: 'HH:mm:ss',
-                                },
-                            },
-                            realtime: {
-                                duration: 20000,
-                                refresh: 5000, // onRefresh callback will be called every 5000 ms
-                                // delay of 1000 ms, so upcoming values are known before plotting a line
-                                delay: 10000,
-                            },
-                        },
-                    ],
-                    yAxes: [
-                        {
-                            ticks: {
-                                maxTicksLimit: 3,
-                            },
-                        },
-                    ],
-                },
                 plugins: {
                     streaming: {
+                        duration: 20000,
+                        refresh: 10000, // onRefresh callback will be called every 10000 ms
+                        /* delay of 10000 ms, so upcoming values are known before plotting a line
+                      delay value can be larger but not smaller than refresh value to remain realtime streaming data */
+                        delay: 10000,
                         onRefresh: this.updatingChart,
                     },
                 },
             },
         }
     },
-    computed: {
-        ...mapGetters('session', ['sessionsChartData', 'allSessions']),
-    },
-    created() {
-        this.genDataSetSchema()
+
+    async created() {
+        await this.genDataSetSchema()
     },
 
     beforeDestroy() {
@@ -91,7 +72,7 @@ export default {
             chart.data.datasets.forEach(function(dataset) {
                 dataset.data.push({
                     x: Date.now(),
-                    y: Math.round(Math.random() * 100), //self.allSessions.length,
+                    y: self.allSessions.length, //,Math.round(Math.random() * 100),
                 })
             })
             chart.update({

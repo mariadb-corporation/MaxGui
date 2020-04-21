@@ -37,6 +37,7 @@ export default {
             let res = await Vue.axios.get(`/sessions`)
             await commit('setSessions', res.data.data)
         },
+        // this function should be called after fetchAllSessions has been fetched
         genDataSetSchema({ commit, state }) {
             const { allSessions } = state
             if (allSessions) {
@@ -48,12 +49,12 @@ export default {
                         label: `Total sessions`,
                         type: 'line',
                         // background of the line
-                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.2'),
+                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.1'),
                         borderColor: lineColors, //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,
-                        //sessions.length
-                        data: [{ x: Date.now(), y: Math.round(Math.random() * 100) }],
+
+                        data: [{ x: Date.now(), y: allSessions.length }],
                     },
                 ]
 
