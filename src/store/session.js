@@ -35,34 +35,34 @@ export default {
     actions: {
         async fetchAllSessions({ commit }) {
             let res = await Vue.axios.get(`/sessions`)
+
             await commit('setSessions', res.data.data)
         },
         // this function should be called after fetchAllSessions has been fetched
         genDataSetSchema({ commit, state }) {
             const { allSessions } = state
-            if (allSessions) {
-                let lineColors = dynamicColors(0)
 
-                let indexOfOpacity = lineColors.lastIndexOf(')') - 1
-                let dataset = [
-                    {
-                        label: `Total sessions`,
-                        type: 'line',
-                        // background of the line
-                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.1'),
-                        borderColor: lineColors, //theme.palette.primary.main, // line color
-                        borderWidth: 1,
-                        lineTension: 0,
+            let lineColors = dynamicColors(0)
 
-                        data: [{ x: Date.now(), y: allSessions.length }],
-                    },
-                ]
+            let indexOfOpacity = lineColors.lastIndexOf(')') - 1
+            let dataset = [
+                {
+                    label: `Total sessions`,
+                    type: 'line',
+                    // background of the line
+                    backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.1'),
+                    borderColor: lineColors, //theme.palette.primary.main, // line color
+                    borderWidth: 1,
+                    lineTension: 0,
 
-                let sessionsChartDataSchema = {
-                    datasets: dataset,
-                }
-                commit('setSessionsChartData', sessionsChartDataSchema)
+                    data: [{ x: Date.now(), y: allSessions.length }],
+                },
+            ]
+
+            let sessionsChartDataSchema = {
+                datasets: dataset,
             }
+            commit('setSessionsChartData', sessionsChartDataSchema)
         },
     },
     getters: {

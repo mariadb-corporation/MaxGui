@@ -82,7 +82,7 @@
                     <template v-slot:title>
                         {{ $t('sessions') }}
                     </template>
-                    <template v-if="allSessions.length" v-slot:card-body>
+                    <template v-slot:card-body>
                         <sessions-chart
                             :allSessions="allSessions"
                             :sessionsChartData="sessionsChartData"

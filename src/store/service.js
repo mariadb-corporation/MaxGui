@@ -131,6 +131,37 @@ export default {
                 if (isFunction(payload.callback)) await payload.callback()
             }
         },
+        //-----------------------------------------------Service relationship update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the service
+         * @param {Array} payload.servers servers array
+         * @param {Array} payload.filters filters array
+         * @param {Object} payload.type Type of relationships
+         * @param {Function} payload.callback callback function after successfully updated
+         */
+        async updateServiceRelationship({ commit }, payload) {
+            let res
+            let message
+
+            res = await Vue.axios.patch(`/services/${payload.id}/relationships/${payload.type}`, {
+                data: payload.type === 'servers' ? payload.servers : payload.filters,
+            })
+            message = [`${payload.id} relationships is updated`]
+
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
         /**
          * @param {String} id id of the service
          */

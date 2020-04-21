@@ -12,7 +12,7 @@
                     <ServerSessionTab
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
-                        :createOrUpdateService="createOrUpdateService"
+                        :updateServiceRelationship="updateServiceRelationship"
                         :onEditSucceeded="fetch"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                     />
@@ -78,7 +78,11 @@ export default {
         await this.fetch()
     },
     methods: {
-        ...mapActions('service', ['fetchServiceById', 'createOrUpdateService']),
+        ...mapActions('service', [
+            'fetchServiceById',
+            'updateServiceRelationship',
+            'createOrUpdateService',
+        ]),
         async fetch() {
             await this.fetchServiceById(this.$route.params.id)
         },

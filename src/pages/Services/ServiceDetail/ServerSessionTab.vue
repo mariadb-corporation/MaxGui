@@ -102,10 +102,7 @@
                     :item="targetItemDelete"
                     :dispatchDelete="
                         () => {
-                            performAsyncLoadingAction(
-                                'filter',
-                                filtersLinked.filter(item => item !== targetItemDelete)
-                            )
+                            confirmDelete()
                         }
                     "
                     :onClose="() => (showDeleteDialog = false)"
@@ -139,7 +136,7 @@ export default {
     props: {
         currentService: { type: Object, required: true },
         searchKeyWord: { type: String, required: true },
-        createOrUpdateService: { type: Function, required: true },
+        updateServiceRelationship: { type: Function, required: true },
         loading: { type: Boolean, required: true },
         onEditSucceeded: { type: Function, required: true },
     },
@@ -175,13 +172,8 @@ export default {
             targetItemDelete: null,
         }
     },
+
     computed: {
-        fetch: function() {
-            let servers = this.currentService.relationships.servers.data
-            let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
-            // Get array of obj linked servers based on linkedServers array of IDs
-            return this.fetchServerFieldsets(serversIdArr)
-        },
         filtersLinked: function() {
             const {
                 filters: { data: filtersLinkedData = [] } = {},
@@ -191,35 +183,58 @@ export default {
                 : []
         },
     },
+
+    watch: {
+        /*  This watcher update the serversLinked
+            If there is no servers type in service relationship, set serversLinked to empty array
+         */
+        currentService: function(newVal) {
+            !this.$help.isEmpty(newVal.relationships.servers)
+                ? this.getServersIdArr()
+                : (this.serversLinked = [])
+        },
+    },
+
     async created() {
-        if (!this.$help.isEmpty(this.currentService.relationships)) {
-            await this.fetch
+        /*  When the component is created the first time,
+            First call getServersIdArr(): get the list of servers linked to this currentService
+            Finally, fetchServerFieldsets() : fetch the server information using fieldsets()
+            and set the data to serversLinked
+
+         */
+        if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
+            await this.getServersIdArr()
         }
     },
+
     methods: {
         ...mapMutations(['showOverlay', 'hideOverlay']),
-        processServersLinked(arr) {
-            this.serversLinked = arr
-        },
-        async fetchServerFieldsets(idArray) {
-            try {
-                let arr = []
-                for (let i = 0; i < idArray.length; ++i) {
-                    let res = await this.axios.get(`/servers/${idArray[i]}?fields[servers]=state`)
-                    if (res.status === 200) {
-                        const {
-                            id,
-                            attributes: { state },
-                        } = res.data.data
-                        arr.push({ id: id, state: state })
-                    }
-                }
-                return this.processServersLinked(arr)
-            } catch (e) {
-                return e
-            }
+
+        //--------------------------------------------------------- SERVERS -------------------------------------------
+        getServersIdArr() {
+            let servers = this.currentService.relationships.servers.data
+            let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
+            // Get array of obj linked servers based on linkedServers array of IDs
+            return this.fetchServerFieldsets(serversIdArr)
         },
 
+        async fetchServerFieldsets(idArray) {
+            let arr = []
+            for (let i = 0; i < idArray.length; ++i) {
+                let res = await this.axios.get(`/servers/${idArray[i]}?fields[servers]=state`)
+                if (res.status === 200) {
+                    const {
+                        id,
+                        type,
+                        attributes: { state },
+                    } = res.data.data
+                    arr.push({ id: id, state: state, type: type })
+                }
+            }
+            this.serversLinked = arr
+        },
+
+        //--------------------------------------------------------- FILTERS ------------------------------------------
         async filterDragReorder({ oldIndex, newIndex }) {
             let self = this
             if (oldIndex !== newIndex) {
@@ -229,34 +244,9 @@ export default {
             }
         },
 
-        async performAsyncLoadingAction(action, data) {
-            let self = this
-            self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-            switch (action) {
-                case 'filter':
-                    await self.patchLinkedFilters(data)
-            }
+        //--------------------------------------------------------- COMMON ---------------------------------------------
 
-            // wait time out for loading animation
-            await setTimeout(() => {
-                self.hideOverlay()
-            }, 300)
-        },
-
-        async patchLinkedFilters(data) {
-            let self = this
-            await this.createOrUpdateService({
-                mode: 'patch',
-                id: self.currentService.id,
-                relationships: {
-                    filters: {
-                        data: data,
-                    },
-                },
-                callback: self.onEditSucceeded,
-            })
-        },
-
+        // This approach helps reusing the delete-modal for both filters and severs
         onRelationShipTypeDelete(type, item) {
             this.targetItemDelete = item
             switch (type) {
@@ -271,6 +261,53 @@ export default {
             }
 
             this.showDeleteDialog = true
+        },
+
+        confirmDelete() {
+            let self = this
+            switch (self.targetItemDelete.type) {
+                case 'filters':
+                    self.performAsyncLoadingAction(
+                        'filter',
+                        self.filtersLinked.filter(item => item !== self.targetItemDelete)
+                    )
+                    break
+                case 'servers':
+                    self.performAsyncLoadingAction(
+                        'server',
+                        self.serversLinked.filter(item => item !== self.targetItemDelete)
+                    )
+                    break
+            }
+        },
+
+        // actions to vuex
+        async performAsyncLoadingAction(action, data) {
+            let self = this
+            self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+            switch (action) {
+                case 'filter':
+                    await self.updateServiceRelationship({
+                        id: self.currentService.id,
+                        type: 'filters',
+                        filters: data,
+                        callback: self.onEditSucceeded,
+                    })
+                    break
+                case 'server':
+                    await self.updateServiceRelationship({
+                        id: self.currentService.id,
+                        type: 'servers',
+                        servers: data,
+                        callback: self.onEditSucceeded,
+                    })
+                    break
+            }
+
+            // wait time out for loading animation
+            await setTimeout(() => {
+                self.hideOverlay()
+            }, 300)
         },
     },
 }

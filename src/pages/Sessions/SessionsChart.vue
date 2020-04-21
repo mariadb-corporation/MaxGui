@@ -52,9 +52,10 @@ export default {
             },
         }
     },
-
-    async created() {
-        await this.genDataSetSchema()
+    watch: {
+        allSessions: function(newVal, oldVal) {
+            newVal !== oldVal && this.genDataSetSchema()
+        },
     },
 
     beforeDestroy() {
