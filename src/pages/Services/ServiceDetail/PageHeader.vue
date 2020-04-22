@@ -27,7 +27,7 @@
                 </icon-group-wrapper>
             </template>
         </details-page-title>
-        <delete-modal
+        <delete-dialog
             v-model="serviceDeleteDialog"
             :title="`${$t('destroy')} ${$t('service')}`"
             :smallInfo="$t('info.serviceDeleteModal')"

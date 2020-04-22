@@ -25,6 +25,7 @@ export default {
             type: Object,
         },
         isRealTime: { type: Boolean, default: true },
+
         yAxesTicks: {
             type: Object,
             default: () => {},
@@ -43,10 +44,6 @@ export default {
                         type: 'realtime',
                         ticks: {
                             display: false,
-                            maxTicksLimit: 4,
-                            fontSize: 10,
-                            fontColor: '#424F62',
-                            fontFamily: "'azo-sans-web', adrianna, serif",
                         },
                     },
                 ],
@@ -190,12 +187,18 @@ export default {
                     }
 
                     // `this` will be the overall tooltip
-                    let position = this._chart.canvas.getBoundingClientRect()
+                    let chart = this._chart.canvas.getBoundingClientRect()
 
                     // Display, position, and set styles for font
                     tooltipEl.style.opacity = 1
-                    tooltipEl.style.left = position.left + tooltipModel.caretX + 'px'
-                    tooltipEl.style.top = position.top + tooltipModel.caretY + 'px'
+                    // this makes sure the tooltip wont go over client view width when realtime chart is used
+                    let left =
+                        chart.left + tooltipModel.caretX > chart.width + chart.left
+                            ? chart.width + chart.left
+                            : chart.left + tooltipModel.caretX
+
+                    tooltipEl.style.left = left + 'px'
+                    tooltipEl.style.top = chart.top + tooltipModel.caretY + 'px'
                     tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
                     tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
                     tooltipEl.style.padding =

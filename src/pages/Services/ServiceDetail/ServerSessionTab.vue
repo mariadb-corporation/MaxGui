@@ -8,14 +8,14 @@
                         :toggleOnClick="() => (showServers = !showServers)"
                         :toggleVal="showServers"
                         title="servers"
-                        :titleInfo="serversLinked.length"
+                        :titleInfo="serviceRelationshipServerTableData.length"
                         :onAddClick="() => (addServerDialog = true)"
                         addBtnText="addServer"
                     >
                         <template v-slot:table>
                             <data-table
                                 :headers="serversTableHeader"
-                                :data="serversLinked"
+                                :data="serviceRelationshipServerTableData"
                                 :sortDesc="false"
                                 :noDataText="$t('noServer')"
                                 sortBy="id"
@@ -93,7 +93,8 @@
                         </template>
                     </details-table-wrapper>
                 </v-col>
-                <delete-modal
+                <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->
+                <delete-dialog
                     v-model="showDeleteDialog"
                     :title="deleteDialogTitle"
                     :type="deleteDialogType"
@@ -110,7 +111,38 @@
                 />
             </v-row>
         </v-col>
-        <v-col class="pa-0 ma-0" cols="8"> </v-col>
+        <v-col class="pa-0 ma-0" cols="8">
+            <details-table-wrapper
+                :toggleOnClick="() => (showSessions = !showSessions)"
+                :toggleVal="showSessions"
+                title="currentSessions"
+                :titleInfo="sessionsTableRow.length"
+            >
+                <template v-slot:table>
+                    <data-table
+                        :headers="sessionsTableHeader"
+                        :data="sessionsTableRow"
+                        :sortDesc="false"
+                        :noDataText="$t('noSessions')"
+                        :loading="loading"
+                    >
+                        <template v-slot:append-id>
+                            <span class="ml-1 color text-field-text">
+                                ({{ sessionsTableRow.length }})
+                            </span>
+                        </template>
+                        <template v-slot:user="{ data: { item: { user } } }">
+                            <router-link :key="user" :to="`/users/${user}`" class="no-underline">
+                                <span> {{ user }} </span>
+                            </router-link>
+                        </template>
+                        <template v-slot:connected="{ data: { item: { connected } } }">
+                            <span> {{ $help.formatValue(connected) }} </span>
+                        </template>
+                    </data-table>
+                </template>
+            </details-table-wrapper>
+        </v-col>
     </v-row>
 </template>
 
@@ -128,7 +160,7 @@
  * Public License.
  */
 
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 
 export default {
@@ -139,11 +171,12 @@ export default {
         updateServiceRelationship: { type: Function, required: true },
         loading: { type: Boolean, required: true },
         onEditSucceeded: { type: Function, required: true },
+        sessionsByService: { type: Array, required: true },
+        serviceRelationshipServerTableData: { type: Array, required: true },
     },
     data() {
         return {
             // servers
-            serversLinked: [],
             showServers: true,
             addServerDialog: false,
             serversTableHeader: [
@@ -159,6 +192,7 @@ export default {
                 { text: '', value: 'action', sortable: false },
             ],
             // sessions
+            showSessions: true,
             sessionsTableHeader: [
                 { text: 'ID', value: 'id' },
                 { text: 'Client', value: 'user' },
@@ -182,57 +216,43 @@ export default {
                 ? filtersLinkedData.map(item => ({ id: item.id, type: item.type }))
                 : []
         },
-    },
+        sessionsTableRow: function() {
+            if (this.sessionsByService.length) {
+                let itemsArr = []
+                let allSessions = this.$help.cloneDeep(this.sessionsByService)
+                for (let n = allSessions.length - 1; n >= 0; --n) {
+                    /**
+                     * @typedef {Object} row
+                     * @property {Number} row.id - sessions's id
+                     * @property {String} row.user - sessions's user
+                     * @property {String} row.connected - sessions's sessions
+                     * @property {Number} row.idle - idle (seconds)
+                     */
+                    const {
+                        id,
+                        attributes: { idle, connected, user, remote },
+                    } = allSessions[n] || {}
 
-    watch: {
-        /*  This watcher update the serversLinked
-            If there is no servers type in service relationship, set serversLinked to empty array
-         */
-        currentService: function(newVal) {
-            !this.$help.isEmpty(newVal.relationships.servers)
-                ? this.getServersIdArr()
-                : (this.serversLinked = [])
+                    let row = {
+                        id: id,
+                        user: `${user}@${remote}`,
+                        connected: connected,
+                        idle: idle,
+                    }
+                    itemsArr.push(row)
+                }
+                return itemsArr
+            }
+            return []
         },
-    },
-
-    async created() {
-        /*  When the component is created the first time,
-            First call getServersIdArr(): get the list of servers linked to this currentService
-            Finally, fetchServerFieldsets() : fetch the server information using fieldsets()
-            and set the data to serversLinked
-
-         */
-        if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
-            await this.getServersIdArr()
-        }
     },
 
     methods: {
-        ...mapMutations(['showOverlay', 'hideOverlay']),
-
-        //--------------------------------------------------------- SERVERS -------------------------------------------
-        getServersIdArr() {
-            let servers = this.currentService.relationships.servers.data
-            let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
-            // Get array of obj linked servers based on linkedServers array of IDs
-            return this.fetchServerFieldsets(serversIdArr)
-        },
-
-        async fetchServerFieldsets(idArray) {
-            let arr = []
-            for (let i = 0; i < idArray.length; ++i) {
-                let res = await this.axios.get(`/servers/${idArray[i]}?fields[servers]=state`)
-                if (res.status === 200) {
-                    const {
-                        id,
-                        type,
-                        attributes: { state },
-                    } = res.data.data
-                    arr.push({ id: id, state: state, type: type })
-                }
-            }
-            this.serversLinked = arr
-        },
+        ...mapMutations({
+            showOverlay: 'showOverlay',
+            hideOverlay: 'hideOverlay',
+            setServiceRelationshipServerTableData: 'service/setServiceRelationshipServerTableData',
+        }),
 
         //--------------------------------------------------------- FILTERS ------------------------------------------
         async filterDragReorder({ oldIndex, newIndex }) {
@@ -246,7 +266,7 @@ export default {
 
         //--------------------------------------------------------- COMMON ---------------------------------------------
 
-        // This approach helps reusing the delete-modal for both filters and severs
+        // This approach helps reusing the delete-dialog for both filters and severs
         onRelationShipTypeDelete(type, item) {
             this.targetItemDelete = item
             switch (type) {
@@ -263,20 +283,34 @@ export default {
             this.showDeleteDialog = true
         },
 
-        confirmDelete() {
+        async confirmDelete() {
             let self = this
             switch (self.targetItemDelete.type) {
                 case 'filters':
-                    self.performAsyncLoadingAction(
+                    await self.performAsyncLoadingAction(
                         'filter',
                         self.filtersLinked.filter(item => item !== self.targetItemDelete)
                     )
                     break
                 case 'servers':
-                    self.performAsyncLoadingAction(
-                        'server',
-                        self.serversLinked.filter(item => item !== self.targetItemDelete)
-                    )
+                    {
+                        let ori = self.serviceRelationshipServerTableData
+                        let serversRelationship = []
+                        let newTableData = []
+                        for (let i = 0; i < ori.length; ++i) {
+                            if (ori[i].id !== self.targetItemDelete.id) {
+                                let cloneO = self.$help.cloneDeep(ori[i])
+                                newTableData.push(cloneO)
+                                //  {id:id,type:"server"} schema
+                                delete cloneO.state
+                                serversRelationship.push(cloneO)
+                            }
+                        }
+                        // set new data for server table
+                        await self.setServiceRelationshipServerTableData(newTableData)
+                        //  serversRelationship with {id:id,type:"server"} object
+                        await self.performAsyncLoadingAction('server', serversRelationship)
+                    }
                     break
             }
         },

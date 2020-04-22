@@ -25,6 +25,7 @@
     "noServer": "No Server",
     "noService": "No Service",
     "noFilter": "No Filter",
+    "noSessions": "No Sessions",
     "addService": "Add service",
     "addServer": "Add server",
     "addFilter": "Add filter",
@@ -53,6 +54,7 @@
     "details": "Details",
     "overview": "Overview",
     "currentConnections": "Current Connections",
+    "currentSessions": "Current Sessions",
     "errors": {
         "usernameRequired": "Username is required.",
         "passwordRequired": "Password is required.",

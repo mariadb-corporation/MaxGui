@@ -44,7 +44,7 @@
  * Public License.
  */
 export default {
-    name: 'delete-modal',
+    name: 'delete-dialog',
     props: {
         value: Boolean,
         type: String, // delete or destroy

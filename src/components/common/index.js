@@ -19,7 +19,7 @@ import OutlineSmallCard from './OutlineSmallCard'
 import TreeData from './TreeData'
 import DetailsTableWrapper from './DetailsTableWrapper'
 import IconGroupWrapper from './IconGroupWrapper'
-import DeleteModal from './DeleteModal'
+import DeleteDialog from './DeleteDialog'
 import ParameterInput from './ParameterInput'
 
 export default {
@@ -32,6 +32,6 @@ export default {
     'tree-data': TreeData,
     'details-table-wrapper': DetailsTableWrapper,
     'icon-group-wrapper': IconGroupWrapper,
-    'delete-modal': DeleteModal,
+    'delete-dialog': DeleteDialog,
     'parameter-input': ParameterInput,
 }

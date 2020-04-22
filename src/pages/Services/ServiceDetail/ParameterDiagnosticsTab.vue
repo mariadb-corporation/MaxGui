@@ -150,7 +150,7 @@ export default {
                                 arrData = arr.map(obj => {
                                     return {
                                         id: obj.id,
-                                        value: obj.value,
+                                        value: this.$help.isObject(obj.value) ? '' : obj.value,
                                         isLink: false,
                                         children: this.$help.processTreeData(obj.value, 0),
                                         level: 0,

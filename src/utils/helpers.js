@@ -23,7 +23,8 @@ export const pickBy = require('lodash/pickBy')
 export const isBoolean = require('lodash/isBoolean')
 export const pick = require('lodash/pick')
 export const isEqual = require('lodash/isEqual')
-export const xorWith = require('lodash/xorWith')
+// export const xorWith = require('lodash/xorWith')
+// export const uniqueId = require('lodash/uniqueId')
 
 export function range(start, end) {
     if (isNaN(start) || isNaN(end)) return
@@ -262,12 +263,12 @@ export function processTreeData(obj, level) {
     return []
 }
 
-/**
- * @param {Array} x Array
- * @param {Array} y Array
- * @return {Boolean} return boolean value
- */
-export const arrayObjDeepCompare = (x, y) => isEmpty(xorWith(x, y, isEqual))
+// /**
+//  * @param {Array} x Array
+//  * @param {Array} y Array
+//  * @return {Boolean} return boolean value
+//  */
+// export const arrayObjDeepCompare = (x, y) => isEmpty(xorWith(x, y, isEqual))
 
 Object.defineProperties(Vue.prototype, {
     $help: {
@@ -289,7 +290,7 @@ Object.defineProperties(Vue.prototype, {
                 arrOfObjToObj,
                 handleValue,
                 processTreeData,
-                arrayObjDeepCompare,
+                // arrayObjDeepCompare,
                 // lodash
                 isNaN,
                 isObject,
@@ -302,7 +303,8 @@ Object.defineProperties(Vue.prototype, {
                 pick,
                 isBoolean,
                 isEqual,
-                xorWith,
+                // xorWith,
+                // uniqueId,
             }
         },
     },

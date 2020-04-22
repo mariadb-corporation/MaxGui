@@ -77,50 +77,37 @@ export default {
         CurrentConnectionsChart,
     },
     props: {
+        totalConnectionsChartData: { type: Object, required: true },
         currentService: { type: Object, required: true },
+        connectionInfo: { type: Object, required: true },
+        fetchSessions: { type: Function, required: true },
+        fetchNewConnectionsInfo: { type: Function, required: true },
     },
-    data() {
-        return {
-            totalConnections: 0,
-            currentConnections: 0,
-        }
-    },
+
     computed: {
-        ...mapGetters({
-            totalConnectionsChartData: 'service/totalConnectionsChartData',
-        }),
-    },
-    created() {
-        this.currentConnections = this.currentService.attributes.connections
-        this.totalConnections = this.currentService.attributes.total_connections
+        totalConnections: function() {
+            return this.connectionInfo.total_connections
+        },
+        currentConnections: function() {
+            return this.connectionInfo.connections
+        },
     },
 
     methods: {
         async updatingChart(chart) {
             let self = this
-            // Use sparse fieldsets to fetch only necessary data
-            let res = await this.axios.get(
-                `/services/${self.$route.params.id}?fields[services]=connections,total_connections`
-            )
-            if (res.status === 200) {
-                let { attributes: { connections, total_connections } = {} } = res.data.data
+            // fetching connections chart info should be at the same time with fetchSessionsFilterByServiceId
+            await Promise.all([self.fetchNewConnectionsInfo(), self.fetchSessions()])
 
-                let testCurrent = Math.round(Math.random() * 100)
-
-                this.totalConnections = total_connections
-                this.currentConnections = connections
-
-                chart.data.datasets.forEach(function(dataset) {
-                    dataset.data.push({
-                        x: Date.now(),
-                        //connections
-                        y: connections,
-                    })
+            chart.data.datasets.forEach(function(dataset) {
+                dataset.data.push({
+                    x: Date.now(),
+                    y: self.connectionInfo.connections,
                 })
-                chart.update({
-                    preservation: true,
-                })
-            }
+            })
+            chart.update({
+                preservation: true,
+            })
         },
     },
 }

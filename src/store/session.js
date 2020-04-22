@@ -20,6 +20,7 @@ export default {
         sessionsChartData: {
             datasets: [],
         },
+        sessionsByService: [],
     },
     mutations: {
         /**
@@ -30,6 +31,9 @@ export default {
         },
         setSessionsChartData(state, payload) {
             state.sessionsChartData = payload
+        },
+        setSessionsByService(state, payload) {
+            state.sessionsByService = payload
         },
     },
     actions: {
@@ -64,9 +68,18 @@ export default {
             }
             commit('setSessionsChartData', sessionsChartDataSchema)
         },
+
+        //-------------------- sessions filter by relationships serviceId
+        async fetchSessionsFilterByServiceId({ commit }, id) {
+            let res = await Vue.axios.get(
+                `/sessions?filter=/relationships/services/data/0/id="${id}"`
+            )
+            await commit('setSessionsByService', res.data.data)
+        },
     },
     getters: {
         allSessions: state => state.allSessions,
         sessionsChartData: state => state.sessionsChartData,
+        sessionsByService: state => state.sessionsByService,
     },
 }

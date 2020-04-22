@@ -1,7 +1,14 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentService)" class="px-6">
         <page-header :currentService="currentService" />
-        <overview-header :currentService="currentService" />
+
+        <overview-header
+            :currentService="currentService"
+            :totalConnectionsChartData="totalConnectionsChartData"
+            :fetchSessions="fetchSessions"
+            :fetchNewConnectionsInfo="fetchNewConnectionsInfo"
+            :connectionInfo="connectionInfo"
+        />
         <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
             <v-tab v-for="tab in tabs" :key="tab.name">
                 {{ tab.name }}
@@ -11,10 +18,12 @@
                 <v-tab-item class="pt-5">
                     <ServerSessionTab
                         :currentService="currentService"
+                        :serviceRelationshipServerTableData="serviceRelationshipServerTableData"
                         :searchKeyWord="searchKeyWord"
                         :updateServiceRelationship="updateServiceRelationship"
-                        :onEditSucceeded="fetch"
+                        :onEditSucceeded="fetchService"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
+                        :sessionsByService="sessionsByService"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->
@@ -23,7 +32,7 @@
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
                         :createOrUpdateService="createOrUpdateService"
-                        :onEditSucceeded="fetch"
+                        :onEditSucceeded="fetchService"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                 /></v-tab-item>
             </v-tabs-items>
@@ -71,20 +80,42 @@ export default {
             overlay: 'overlay',
             searchKeyWord: 'searchKeyWord',
             currentService: 'service/currentService',
+            serviceRelationshipServerTableData: 'service/serviceRelationshipServerTableData',
+            connectionInfo: 'service/connectionInfo',
+            totalConnectionsChartData: 'service/totalConnectionsChartData',
+            sessionsByService: 'session/sessionsByService',
         }),
     },
 
     async created() {
-        await this.fetch()
+        let self = this
+        // Initial fetch, wait for service id
+        await self.fetchService()
+        await self.fetchSessions()
     },
     methods: {
-        ...mapActions('service', [
-            'fetchServiceById',
-            'updateServiceRelationship',
-            'createOrUpdateService',
-        ]),
-        async fetch() {
+        ...mapActions({
+            fetchServiceById: 'service/fetchServiceById',
+            fetchServerLinkedToCurrentService: 'service/fetchServerLinkedToCurrentService',
+            updateServiceRelationship: 'service/updateServiceRelationship',
+            createOrUpdateService: 'service/createOrUpdateService',
+            fetchServiceConnections: 'service/fetchServiceConnections',
+            fetchSessionsFilterByServiceId: 'session/fetchSessionsFilterByServiceId',
+        }),
+        // reuse functions for fetch loop or after finish editing
+        async fetchService() {
             await this.fetchServiceById(this.$route.params.id)
+            if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
+                let servers = this.currentService.relationships.servers.data
+                let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
+                this.fetchServerLinkedToCurrentService(serversIdArr)
+            }
+        },
+        async fetchNewConnectionsInfo() {
+            await this.fetchServiceConnections(this.$route.params.id)
+        },
+        async fetchSessions() {
+            await this.fetchSessionsFilterByServiceId(this.$route.params.id)
         },
     },
 }

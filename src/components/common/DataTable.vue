@@ -1,5 +1,7 @@
 <template>
+    <!-- Add a component key as table item length to v-data-table to trigger rerender since refs is not reactive-->
     <v-data-table
+        :key="dataProcess.length"
         v-sortable-table
         :headers="visibleHeaders"
         :items="!loading ? dataProcess : []"
@@ -13,7 +15,7 @@
         :sort-by="sortBy"
         :sort-desc="sortDesc"
         :search="search"
-        item-key="name"
+        item-key="id"
         :dense="dense"
         :no-data-text="noDataText"
         @drag-reorder="dragReorder"
@@ -369,12 +371,13 @@ export default {
             }
         },
         onRowHover(index, type) {
+            let self = this
             switch (type) {
                 case 'mouseover':
                     {
                         // positioning the drag handle to the center of the table row
-                        if (this.draggable) {
-                            let tableRowWidth = this.$refs.tableRow.clientWidth
+                        if (self.draggable) {
+                            let tableRowWidth = self.$refs.tableRow.clientWidth
                             let dragHandle = document.getElementsByClassName('drag-handle')
                             let center = `calc(100% - ${tableRowWidth / 2}px)`
                             if (dragHandle.length && dragHandle[0].style.left !== center) {
@@ -382,17 +385,17 @@ export default {
                                     dragHandle[i].style.left = center
                                 }
                             }
-                            this.showDragEntity = true
+                            self.showDragEntity = true
                         }
 
-                        this.showActionsOnHover && (this.showActionsEntity = true)
-                        this.showEntityAt = index
+                        self.showActionsOnHover && (self.showActionsEntity = true)
+                        self.showEntityAt = index
                     }
                     break
                 case 'mouseleave':
-                    this.draggable && (this.showDragEntity = false)
-                    this.showActionsOnHover && (this.showActionsEntity = false)
-                    this.showEntityAt = null
+                    self.draggable && (self.showDragEntity = false)
+                    self.showActionsOnHover && (self.showActionsEntity = false)
+                    self.showEntityAt = null
                     break
             }
         },

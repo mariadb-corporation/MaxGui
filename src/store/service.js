@@ -22,6 +22,8 @@ export default {
         totalConnectionsChartData: {
             datasets: [],
         },
+        connectionInfo: {},
+        serviceRelationshipServerTableData: [],
     },
     mutations: {
         /**
@@ -36,13 +38,23 @@ export default {
         setTotalConnectionsChartData(state, payload) {
             state.totalConnectionsChartData = payload
         },
+        setConnectionInfo(state, payload) {
+            state.connectionInfo = payload
+        },
+        setServiceRelationshipServerTableData(state, payload) {
+            state.serviceRelationshipServerTableData = payload
+        },
     },
     actions: {
         async fetchServiceById({ commit, state }, id) {
             let res = await Vue.axios.get(`/services/${id}`, {
                 auth: state.credentials,
             })
-            commit('setCurrentService', res.data.data)
+            await commit('setCurrentService', res.data.data)
+            await commit('setConnectionInfo', {
+                total_connections: res.data.data.attributes.total_connections,
+                connections: res.data.data.attributes.connections,
+            })
         },
         genDataSetSchema({ commit, state }) {
             const { currentService } = state
@@ -73,7 +85,30 @@ export default {
             let res = await Vue.axios.get(`/services`)
             await commit('setServices', res.data.data)
         },
-        //-----------------------------------------------Service----------------------------------------------
+        async fetchServiceConnections({ commit }, id) {
+            let res = await Vue.axios.get(
+                `/services/${id}?fields[services]=connections,total_connections`
+            )
+            let { attributes: { connections, total_connections } = {} } = res.data.data
+            await commit('setConnectionInfo', {
+                total_connections: total_connections,
+                connections: connections,
+            })
+        },
+        async fetchServerLinkedToCurrentService({ commit }, serversIdArr) {
+            let arr = []
+            for (let i = 0; i < serversIdArr.length; ++i) {
+                let res = await Vue.axios.get(`/servers/${serversIdArr[i]}?fields[servers]=state`)
+                const {
+                    id,
+                    type,
+                    attributes: { state },
+                } = res.data.data
+                arr.push({ id: id, state: state, type: type })
+            }
+            await commit('setServiceRelationshipServerTableData', arr)
+        },
+        //-----------------------------------------------Service Create/Update/Delete----------------------------------
         /**
          * @param {Object} payload payload object
          * @param {String} payload.mode Mode to perform async request POST or Patch
@@ -147,7 +182,7 @@ export default {
             res = await Vue.axios.patch(`/services/${payload.id}/relationships/${payload.type}`, {
                 data: payload.type === 'servers' ? payload.servers : payload.filters,
             })
-            message = [`${payload.id} relationships is updated`]
+            message = [`The ${payload.type} relationships in ${payload.id} is updated`]
 
             // response ok
             if (res.status === 204) {
@@ -228,5 +263,7 @@ export default {
             }, [])
         },
         totalConnectionsChartData: state => state.totalConnectionsChartData,
+        connectionInfo: state => state.connectionInfo,
+        serviceRelationshipServerTableData: state => state.serviceRelationshipServerTableData,
     },
 }
