@@ -16,6 +16,7 @@ import VueAxios from 'vue-axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
 import router from 'router'
+
 const location = window.location
 
 let apiClient = axios.create({
@@ -56,7 +57,12 @@ apiClient.interceptors.response.use(
                 text: getErrorsArr(error),
                 type: 'error',
             })
-
+            // when request is dispatched in a modal, an overlay loading will be set -> turn it off before return error
+            if (store.state.overlay !== false) {
+                setTimeout(() => {
+                    store.commit('hideOverlay')
+                }, 600)
+            }
             return Promise.reject(error)
         }
     }

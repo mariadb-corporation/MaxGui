@@ -8,14 +8,14 @@
                         :toggleOnClick="() => (showServers = !showServers)"
                         :toggleVal="showServers"
                         title="servers"
-                        :titleInfo="serviceRelationshipServerTableData.length"
-                        :onAddClick="() => (addServerDialog = true)"
+                        :titleInfo="serverStateTableRow.length"
+                        :onAddClick="() => onAdd('servers')"
                         addBtnText="addServer"
                     >
                         <template v-slot:table>
                             <data-table
                                 :headers="serversTableHeader"
-                                :data="serviceRelationshipServerTableData"
+                                :data="serverStateTableRow"
                                 :sortDesc="false"
                                 :noDataText="$t('noServer')"
                                 sortBy="id"
@@ -41,7 +41,7 @@
                                     </icon-sprite-sheet>
                                 </template>
                                 <template v-slot:actions="{ data: { item } }">
-                                    <v-btn icon @click="onRelationShipTypeDelete('server', item)">
+                                    <v-btn icon @click="onDelete('servers', item)">
                                         <v-icon size="20" color="error">
                                             $vuetify.icons.unlink
                                         </v-icon>
@@ -58,7 +58,7 @@
                         :toggleVal="showFilter"
                         title="filters"
                         :titleInfo="filtersLinked.length"
-                        :onAddClick="() => (addFilterDialog = true)"
+                        :onAddClick="() => onAdd('filters')"
                         addBtnText="addFilter"
                     >
                         <template v-slot:table>
@@ -83,7 +83,7 @@
                                     </router-link>
                                 </template>
                                 <template v-slot:actions="{ data: { item } }">
-                                    <v-btn icon @click="onRelationShipTypeDelete('filter', item)">
+                                    <v-btn icon @click="onDelete('filters', item)">
                                         <v-icon size="14" color="error">
                                             $vuetify.icons.delete
                                         </v-icon>
@@ -96,11 +96,11 @@
                 <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->
                 <delete-dialog
                     v-model="showDeleteDialog"
-                    :title="deleteDialogTitle"
+                    :title="dialogTitle"
                     :type="deleteDialogType"
                     :resourceId="currentService.id"
                     :resourceName="`${$t('service')}`"
-                    :item="targetItemDelete"
+                    :item="Array.isArray(targetItem) ? {} : targetItem"
                     :dispatchDelete="
                         () => {
                             confirmDelete()
@@ -109,40 +109,23 @@
                     :onClose="() => (showDeleteDialog = false)"
                     :onCancel="() => (showDeleteDialog = false)"
                 />
+
+                <select-dialog
+                    v-model="showSelectDialog"
+                    :title="dialogTitle"
+                    mode="add"
+                    :multiple="true"
+                    :entityName="targetSelectItemType"
+                    :onClose="() => (showSelectDialog = false)"
+                    :onCancel="() => (showSelectDialog = false)"
+                    :handleSave="confirmAdd"
+                    :itemsList="itemsList"
+                    :getAllEntities="getAllEntities"
+                    :returnSelectedEntities="selectedItems => (targetItem = selectedItems)"
+                />
             </v-row>
         </v-col>
-        <v-col class="pa-0 ma-0" cols="8">
-            <details-table-wrapper
-                :toggleOnClick="() => (showSessions = !showSessions)"
-                :toggleVal="showSessions"
-                title="currentSessions"
-                :titleInfo="sessionsTableRow.length"
-            >
-                <template v-slot:table>
-                    <data-table
-                        :headers="sessionsTableHeader"
-                        :data="sessionsTableRow"
-                        :sortDesc="false"
-                        :noDataText="$t('noSessions')"
-                        :loading="loading"
-                    >
-                        <template v-slot:append-id>
-                            <span class="ml-1 color text-field-text">
-                                ({{ sessionsTableRow.length }})
-                            </span>
-                        </template>
-                        <template v-slot:user="{ data: { item: { user } } }">
-                            <router-link :key="user" :to="`/users/${user}`" class="no-underline">
-                                <span> {{ user }} </span>
-                            </router-link>
-                        </template>
-                        <template v-slot:connected="{ data: { item: { connected } } }">
-                            <span> {{ $help.formatValue(connected) }} </span>
-                        </template>
-                    </data-table>
-                </template>
-            </details-table-wrapper>
-        </v-col>
+        <SessionPart :loading="loading" :sessionsByService="sessionsByService" />
     </v-row>
 </template>
 
@@ -160,25 +143,28 @@
  * Public License.
  */
 
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters, mapActions } from 'vuex'
 import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
+import SessionPart from './SessionPart'
 
 export default {
     name: 'server-session-tab',
+    components: {
+        SessionPart,
+    },
     props: {
         currentService: { type: Object, required: true },
-        searchKeyWord: { type: String, required: true },
+        fetchServerState: { type: Function, required: true },
         updateServiceRelationship: { type: Function, required: true },
         loading: { type: Boolean, required: true },
         onEditSucceeded: { type: Function, required: true },
         sessionsByService: { type: Array, required: true },
-        serviceRelationshipServerTableData: { type: Array, required: true },
+        serverStateTableRow: { type: Array, required: true },
     },
     data() {
         return {
             // servers
             showServers: true,
-            addServerDialog: false,
             serversTableHeader: [
                 { text: 'Server', value: 'id' },
                 { text: 'Status', value: 'state', align: 'center' },
@@ -186,28 +172,29 @@ export default {
             ],
             // filters
             showFilter: true,
-            addFilterDialog: false,
             filterTableHeader: [
                 { text: 'Filter', value: 'id', sortable: false },
                 { text: '', value: 'action', sortable: false },
             ],
-            // sessions
-            showSessions: true,
-            sessionsTableHeader: [
-                { text: 'ID', value: 'id' },
-                { text: 'Client', value: 'user' },
-                { text: 'Connected', value: 'connected' },
-                { text: 'IDLE (s)', value: 'idle' },
-            ],
-            // common
+            //---------------- common
+            dialogTitle: '',
+            targetItem: null,
+            //delete dialog
             showDeleteDialog: false,
             deleteDialogType: 'delete',
-            deleteDialogTitle: '',
-            targetItemDelete: null,
+
+            //select dialog
+            showSelectDialog: false,
+            targetSelectItemType: 'server',
+            itemsList: [],
         }
     },
 
     computed: {
+        ...mapGetters({
+            allFilters: 'filter/allFilters',
+            allServers: 'server/allServers',
+        }),
         filtersLinked: function() {
             const {
                 filters: { data: filtersLinkedData = [] } = {},
@@ -216,111 +203,34 @@ export default {
                 ? filtersLinkedData.map(item => ({ id: item.id, type: item.type }))
                 : []
         },
-        sessionsTableRow: function() {
-            if (this.sessionsByService.length) {
-                let itemsArr = []
-                let allSessions = this.$help.cloneDeep(this.sessionsByService)
-                for (let n = allSessions.length - 1; n >= 0; --n) {
-                    /**
-                     * @typedef {Object} row
-                     * @property {Number} row.id - sessions's id
-                     * @property {String} row.user - sessions's user
-                     * @property {String} row.connected - sessions's sessions
-                     * @property {Number} row.idle - idle (seconds)
-                     */
-                    const {
-                        id,
-                        attributes: { idle, connected, user, remote },
-                    } = allSessions[n] || {}
-
-                    let row = {
-                        id: id,
-                        user: `${user}@${remote}`,
-                        connected: connected,
-                        idle: idle,
-                    }
-                    itemsArr.push(row)
-                }
-                return itemsArr
-            }
-            return []
-        },
     },
 
     methods: {
         ...mapMutations({
             showOverlay: 'showOverlay',
             hideOverlay: 'hideOverlay',
-            setServiceRelationshipServerTableData: 'service/setServiceRelationshipServerTableData',
         }),
-
+        ...mapActions({
+            fetchAllServers: 'server/fetchAllServers',
+            fetchAllFilters: 'filter/fetchAllFilters',
+        }),
         //--------------------------------------------------------- FILTERS ------------------------------------------
         async filterDragReorder({ oldIndex, newIndex }) {
             let self = this
             if (oldIndex !== newIndex) {
                 const moved = self.filtersLinked.splice(oldIndex, 1)[0]
                 self.filtersLinked.splice(newIndex, 0, moved)
-                await self.performAsyncLoadingAction('filter', self.filtersLinked)
+                await self.performAsyncLoadingAction('filters', self.filtersLinked)
             }
         },
 
         //--------------------------------------------------------- COMMON ---------------------------------------------
-
-        // This approach helps reusing the delete-dialog for both filters and severs
-        onRelationShipTypeDelete(type, item) {
-            this.targetItemDelete = item
-            switch (type) {
-                case 'filter':
-                    this.deleteDialogType = 'delete'
-                    this.deleteDialogTitle = `${this.$t('delete')} ${this.$t('filter')}`
-                    break
-                case 'server':
-                    this.deleteDialogType = 'unlink'
-                    this.deleteDialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
-                    break
-            }
-
-            this.showDeleteDialog = true
-        },
-
-        async confirmDelete() {
-            let self = this
-            switch (self.targetItemDelete.type) {
-                case 'filters':
-                    await self.performAsyncLoadingAction(
-                        'filter',
-                        self.filtersLinked.filter(item => item !== self.targetItemDelete)
-                    )
-                    break
-                case 'servers':
-                    {
-                        let ori = self.serviceRelationshipServerTableData
-                        let serversRelationship = []
-                        let newTableData = []
-                        for (let i = 0; i < ori.length; ++i) {
-                            if (ori[i].id !== self.targetItemDelete.id) {
-                                let cloneO = self.$help.cloneDeep(ori[i])
-                                newTableData.push(cloneO)
-                                //  {id:id,type:"server"} schema
-                                delete cloneO.state
-                                serversRelationship.push(cloneO)
-                            }
-                        }
-                        // set new data for server table
-                        await self.setServiceRelationshipServerTableData(newTableData)
-                        //  serversRelationship with {id:id,type:"server"} object
-                        await self.performAsyncLoadingAction('server', serversRelationship)
-                    }
-                    break
-            }
-        },
-
         // actions to vuex
-        async performAsyncLoadingAction(action, data) {
+        async performAsyncLoadingAction(type, data) {
             let self = this
-            self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-            switch (action) {
-                case 'filter':
+            // self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+            switch (type) {
+                case 'filters':
                     await self.updateServiceRelationship({
                         id: self.currentService.id,
                         type: 'filters',
@@ -328,7 +238,7 @@ export default {
                         callback: self.onEditSucceeded,
                     })
                     break
-                case 'server':
+                case 'servers':
                     await self.updateServiceRelationship({
                         id: self.currentService.id,
                         type: 'servers',
@@ -338,10 +248,140 @@ export default {
                     break
             }
 
-            // wait time out for loading animation
-            await setTimeout(() => {
-                self.hideOverlay()
-            }, 300)
+            // // wait time out for loading animation
+            // await setTimeout(() => {
+            //     self.hideOverlay()
+            // }, 300)
+        },
+
+        // -------------- Delete handle
+        onDelete(type, item) {
+            this.targetItem = item
+            switch (type) {
+                case 'filters':
+                    this.deleteDialogType = 'delete'
+                    this.dialogTitle = `${this.$t('delete')} ${this.$t('filter')}`
+                    break
+                case 'servers':
+                    this.deleteDialogType = 'unlink'
+                    this.dialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
+                    break
+            }
+
+            this.showDeleteDialog = true
+        },
+
+        async confirmDelete() {
+            let self = this
+            switch (self.targetItem.type) {
+                case 'filters':
+                    await self.performAsyncLoadingAction(
+                        'filters',
+                        self.filtersLinked.filter(item => item !== self.targetItem)
+                    )
+                    break
+                case 'servers':
+                    {
+                        let ori = self.serverStateTableRow
+                        let serversRelationship = []
+                        for (let i = 0; i < ori.length; ++i) {
+                            if (ori[i].id !== self.targetItem.id) {
+                                let cloneO = self.$help.cloneDeep(ori[i])
+                                delete cloneO.state
+                                serversRelationship.push(cloneO)
+                            }
+                        }
+
+                        await self.performAsyncLoadingAction('servers', serversRelationship)
+                    }
+                    break
+            }
+        },
+        // -------------- Add handle
+        async getAllEntities() {
+            switch (this.targetSelectItemType) {
+                case 'servers':
+                    {
+                        let res = await this.fetchServerState()
+                        let all = res.map(server => ({
+                            id: server.id,
+                            type: server.type,
+                            state: server.attributes.state,
+                        }))
+
+                        let self = this
+                        let availableEntities = self.$help.xorWith(
+                            all,
+                            self.serverStateTableRow,
+                            self.$help.isEqual
+                        )
+                        this.itemsList = availableEntities
+                    }
+                    break
+                case 'filters':
+                    {
+                        await this.fetchAllFilters()
+                        let all = this.$help.cloneDeep(this.allFilters).map(filter => ({
+                            id: filter.id,
+                            type: filter.type,
+                        }))
+
+                        let self = this
+                        let availableEntities = self.$help.xorWith(
+                            all,
+                            self.filtersLinked,
+                            self.$help.isEqual
+                        )
+                        this.itemsList = availableEntities
+                    }
+                    break
+            }
+        },
+        onAdd(type) {
+            let self = this
+            self.dialogTitle = `${self.$t(`addEntity`, {
+                entityName: self.$t(type),
+            })}`
+
+            switch (type) {
+                case 'filters':
+                    self.targetSelectItemType = 'filters'
+                    break
+                case 'servers':
+                    self.targetSelectItemType = 'servers'
+                    break
+            }
+
+            this.showSelectDialog = true
+        },
+        async confirmAdd() {
+            let self = this
+
+            switch (self.targetSelectItemType) {
+                case 'filters':
+                    {
+                        let clone = self.$help.cloneDeep(self.filtersLinked)
+                        await self.performAsyncLoadingAction('filters', [
+                            ...clone,
+                            ...self.targetItem,
+                        ])
+                    }
+
+                    break
+                case 'servers':
+                    {
+                        let ori = self.serverStateTableRow
+                        let merge = [...ori, ...self.targetItem]
+                        let serversRelationship = []
+                        for (let i = 0; i < merge.length; ++i) {
+                            let cloneO = self.$help.cloneDeep(merge[i])
+                            delete cloneO.state
+                            serversRelationship.push(cloneO)
+                        }
+                        await self.performAsyncLoadingAction('servers', serversRelationship)
+                    }
+                    break
+            }
         },
     },
 }

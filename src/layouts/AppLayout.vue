@@ -5,7 +5,7 @@
         <snackbars />
         <v-content>
             <div class="fill-height py-6 px-10">
-                <div class="wrapper-container ">
+                <div class="wrapper-container fill-height">
                     <div class="d-flex ml-n1">
                         <portal-target name="page-title">
                             <!--

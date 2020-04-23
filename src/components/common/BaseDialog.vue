@@ -140,7 +140,7 @@ export default {
     }
     $paddingLeft: 62px;
     .v-card-title_padding {
-        padding: 52px $paddingLeft 20px;
+        padding: 52px $paddingLeft 16px;
     }
     .v-card-text_padding {
         padding: 0px $paddingLeft 48px;

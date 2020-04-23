@@ -15,20 +15,20 @@ import Vue from 'vue'
 export default {
     namespaced: true,
     state: {
-        filters: [],
+        allFilters: [],
     },
     mutations: {
         /**
          * @param {Array} payload  // Array of filter resources
          */
-        setFilters(state, payload) {
-            state.filters = payload
+        setAllFilters(state, payload) {
+            state.allFilters = payload
         },
     },
     actions: {
         async fetchAllFilters({ commit }) {
             let res = await Vue.axios.get(`/filters`)
-            await commit('setFilters', res.data.data)
+            await commit('setAllFilters', res.data.data)
         },
 
         /**
@@ -83,6 +83,6 @@ export default {
         },
     },
     getters: {
-        filters: state => state.filters,
+        allFilters: state => state.allFilters,
     },
 }

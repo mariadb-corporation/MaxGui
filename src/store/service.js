@@ -23,7 +23,6 @@ export default {
             datasets: [],
         },
         connectionInfo: {},
-        serviceRelationshipServerTableData: [],
     },
     mutations: {
         /**
@@ -40,9 +39,6 @@ export default {
         },
         setConnectionInfo(state, payload) {
             state.connectionInfo = payload
-        },
-        setServiceRelationshipServerTableData(state, payload) {
-            state.serviceRelationshipServerTableData = payload
         },
     },
     actions: {
@@ -95,19 +91,7 @@ export default {
                 connections: connections,
             })
         },
-        async fetchServerLinkedToCurrentService({ commit }, serversIdArr) {
-            let arr = []
-            for (let i = 0; i < serversIdArr.length; ++i) {
-                let res = await Vue.axios.get(`/servers/${serversIdArr[i]}?fields[servers]=state`)
-                const {
-                    id,
-                    type,
-                    attributes: { state },
-                } = res.data.data
-                arr.push({ id: id, state: state, type: type })
-            }
-            await commit('setServiceRelationshipServerTableData', arr)
-        },
+
         //-----------------------------------------------Service Create/Update/Delete----------------------------------
         /**
          * @param {Object} payload payload object
@@ -264,6 +248,5 @@ export default {
         },
         totalConnectionsChartData: state => state.totalConnectionsChartData,
         connectionInfo: state => state.connectionInfo,
-        serviceRelationshipServerTableData: state => state.serviceRelationshipServerTableData,
     },
 }

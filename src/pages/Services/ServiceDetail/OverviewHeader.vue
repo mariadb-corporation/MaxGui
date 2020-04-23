@@ -31,9 +31,9 @@
                 </template>
             </outline-small-card>
         </div>
-        <div style="width:60%">
+        <div style="width:60%" class="pl-3">
             <outline-small-card
-                cardWrapper="detail-overview-with-graph ml-2 mt-5"
+                cardWrapper="detail-overview-with-graph  mt-5"
                 cardClass="detail-overview-with-graph__card-graph"
             >
                 <template v-slot:title>
@@ -69,7 +69,6 @@
  * Public License.
  */
 
-import { mapGetters, mapActions } from 'vuex'
 import CurrentConnectionsChart from 'pages/Services/CurrentConnectionsChart'
 export default {
     name: 'overview-header',

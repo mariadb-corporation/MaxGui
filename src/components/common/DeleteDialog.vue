@@ -52,10 +52,10 @@ export default {
         resourceId: String, // delete from what resource id
         title: String,
         item: Object,
-        dispatchDelete: Function,
+        dispatchDelete: { type: Function, required: true },
         smallInfo: String,
-        onCancel: Function,
-        onClose: Function,
+        onClose: { type: Function, required: true },
+        onCancel: { type: Function, required: true },
     },
     data() {
         return {

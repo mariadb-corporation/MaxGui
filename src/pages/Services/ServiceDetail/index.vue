@@ -18,12 +18,12 @@
                 <v-tab-item class="pt-5">
                     <ServerSessionTab
                         :currentService="currentService"
-                        :serviceRelationshipServerTableData="serviceRelationshipServerTableData"
-                        :searchKeyWord="searchKeyWord"
+                        :serverStateTableRow="serverStateTableRow"
                         :updateServiceRelationship="updateServiceRelationship"
                         :onEditSucceeded="fetchService"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                         :sessionsByService="sessionsByService"
+                        :fetchServerState="fetchServerState"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->
@@ -73,6 +73,7 @@ export default {
             OVERLAY_TRANSPARENT_LOADING: OVERLAY_TRANSPARENT_LOADING,
             currentActiveTab: null,
             tabs: [{ name: 'Servers & Sessions' }, { name: 'Parameters & Diagnostics' }],
+            serverStateTableRow: [],
         }
     },
     computed: {
@@ -80,7 +81,6 @@ export default {
             overlay: 'overlay',
             searchKeyWord: 'searchKeyWord',
             currentService: 'service/currentService',
-            serviceRelationshipServerTableData: 'service/serviceRelationshipServerTableData',
             connectionInfo: 'service/connectionInfo',
             totalConnectionsChartData: 'service/totalConnectionsChartData',
             sessionsByService: 'session/sessionsByService',
@@ -96,7 +96,6 @@ export default {
     methods: {
         ...mapActions({
             fetchServiceById: 'service/fetchServiceById',
-            fetchServerLinkedToCurrentService: 'service/fetchServerLinkedToCurrentService',
             updateServiceRelationship: 'service/updateServiceRelationship',
             createOrUpdateService: 'service/createOrUpdateService',
             fetchServiceConnections: 'service/fetchServiceConnections',
@@ -105,10 +104,26 @@ export default {
         // reuse functions for fetch loop or after finish editing
         async fetchService() {
             await this.fetchServiceById(this.$route.params.id)
+            await this.fetchServerStateLoop()
+        },
+        async fetchServerStateLoop() {
             if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
                 let servers = this.currentService.relationships.servers.data
                 let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
-                this.fetchServerLinkedToCurrentService(serversIdArr)
+
+                let arr = []
+                for (let i = 0; i < serversIdArr.length; ++i) {
+                    let res = await this.fetchServerState(serversIdArr[i])
+                    const {
+                        id,
+                        type,
+                        attributes: { state },
+                    } = res
+                    arr.push({ id: id, state: state, type: type })
+                }
+                this.serverStateTableRow = arr
+            } else {
+                this.serverStateTableRow = []
             }
         },
         async fetchNewConnectionsInfo() {
@@ -116,6 +131,17 @@ export default {
         },
         async fetchSessions() {
             await this.fetchSessionsFilterByServiceId(this.$route.params.id)
+        },
+        // fetch server state for all servers or one server
+        async fetchServerState(serverId) {
+            let res
+            if (serverId) {
+                res = await this.axios.get(`/servers/${serverId}?fields[servers]=state`)
+            } else {
+                res = await this.axios.get(`/servers?fields[servers]=state`)
+            }
+
+            return res.data.data
         },
     },
 }

@@ -23,7 +23,7 @@ export const pickBy = require('lodash/pickBy')
 export const isBoolean = require('lodash/isBoolean')
 export const pick = require('lodash/pick')
 export const isEqual = require('lodash/isEqual')
-// export const xorWith = require('lodash/xorWith')
+export const xorWith = require('lodash/xorWith')
 // export const uniqueId = require('lodash/uniqueId')
 
 export function range(start, end) {
@@ -138,6 +138,13 @@ export function sliceStrAtChar(str, char, returnLastPart) {
         : str.slice(0, str.indexOf(char))
 }
 
+/**
+ * @param {String} str String to be sliced, use for resource name
+ * @return {String} new return singular string
+ */
+export function pluralToSingularStr(str) {
+    return str.slice(0, str.lastIndexOf('s'))
+}
 /**
  * @param {String} value String date to be formatted
  * @param {String} formatType format type
@@ -290,6 +297,7 @@ Object.defineProperties(Vue.prototype, {
                 arrOfObjToObj,
                 handleValue,
                 processTreeData,
+                pluralToSingularStr,
                 // arrayObjDeepCompare,
                 // lodash
                 isNaN,
@@ -303,7 +311,7 @@ Object.defineProperties(Vue.prototype, {
                 pick,
                 isBoolean,
                 isEqual,
-                // xorWith,
+                xorWith,
                 // uniqueId,
             }
         },
