@@ -49,9 +49,6 @@ apiClient.interceptors.response.use(
             delete axios.defaults.headers.common['Authorization']
 
             return Promise.reject(error)
-        } else if (error.response.status === 404) {
-            router.push('/404')
-            return Promise.reject(error)
         } else {
             store.commit('showMessage', {
                 text: getErrorsArr(error),

@@ -30,6 +30,7 @@
         </div>
     </portal>
 </template>
+
 <style lang="scss" scoped>
 .v-menu__content {
     border-radius: 4px;

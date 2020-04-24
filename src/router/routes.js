@@ -20,9 +20,14 @@ import NotFound404 from 'pages/NotFound404'
 
 export const routes = [
     {
-        path: '*',
+        path: '/',
         redirect: '/dashboard/servers/',
     },
+    {
+        path: '*',
+        redirect: '/404',
+    },
+
     {
         path: '/login',
         name: 'login',

@@ -12,7 +12,7 @@
                 </v-btn>
                 <p class="mb-0 body-2 font-weight-bold color text-navigation text-uppercase">
                     {{ $t(title) }}
-                    <span v-if="titleInfo" class="ml-1 color text-field-text">
+                    <span v-if="titleInfo || titleInfo === 0" class="ml-1 color text-field-text">
                         ({{ titleInfo }})
                     </span>
                 </p>

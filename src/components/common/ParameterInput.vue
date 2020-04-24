@@ -2,42 +2,20 @@
     <!-- Each input will has its form validation TODO: add validation -->
     <v-form>
         <fragment v-if="hasPwdParam">
-            <v-form>
-                <v-text-field
-                    :id="objectItem.id"
-                    v-model="objectItem.value"
-                    :name="objectItem.id"
-                    class="std"
-                    height="35px"
-                    single-line
-                    outlined
-                    dense
-                    hide-details
-                    autocomplete
-                    required
-                    type="password"
-                />
-            </v-form>
+            <v-text-field
+                :id="objectItem.id"
+                v-model="objectItem.value"
+                :name="objectItem.id"
+                class="std"
+                height="35px"
+                single-line
+                outlined
+                dense
+                hide-details
+                type="password"
+            />
         </fragment>
-        <fragment v-else-if="hasUseParam">
-            <v-form>
-                <v-text-field
-                    :id="objectItem.id"
-                    v-model="objectItem.value"
-                    :name="objectItem.id"
-                    class="std"
-                    height="35px"
-                    single-line
-                    outlined
-                    dense
-                    hide-details
-                    required
-                />
-            </v-form>
-        </fragment>
-
         <fragment v-else-if="typeof objectItem.value === 'boolean'">
-            <!-- {{ typeof objectItem.id }} -->
             <v-select
                 :id="objectItem.id"
                 v-model="objectItem.value"
@@ -46,7 +24,6 @@
                 outlined
                 dense
                 hide-details
-                required
             />
         </fragment>
         <fragment v-else-if="typeof objectItem.value === 'number'">
@@ -85,7 +62,6 @@ export default {
         item: { type: Object, required: true },
         onItemChanges: { type: Function, required: true },
         hasPwdParam: { type: Boolean, required: false, default: false },
-        hasUseParam: { type: Boolean, required: false, default: false },
     },
     data() {
         return {
@@ -101,7 +77,7 @@ export default {
             deep: true,
         },
     },
-    created() {
+    async created() {
         this.objectItem = this.$help.cloneDeep(this.item)
     },
 }

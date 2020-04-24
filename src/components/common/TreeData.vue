@@ -26,7 +26,7 @@
         >
             <template v-slot:label="{ item, open }">
                 <div
-                    class="pointer d-flex align-center"
+                    class="pointer d-flex align-center tree-node"
                     :class="[open ? 'font-weight-bold' : '']"
                     @click="handleItemClick(item)"
                 >
@@ -112,6 +112,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.tree-node {
+    font-size: 0.875rem;
+    color: $navigation;
+    white-space: nowrap;
+}
 .header {
     height: 48px;
     &__item {

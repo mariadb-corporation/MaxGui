@@ -14,11 +14,6 @@
                     :noDataText="$t('noSessions')"
                     :loading="loading"
                 >
-                    <template v-slot:append-id>
-                        <span class="ml-1 color text-field-text">
-                            ({{ sessionsTableRow.length }})
-                        </span>
-                    </template>
                     <template v-slot:user="{ data: { item: { user } } }">
                         <router-link :key="user" :to="`/users/${user}`" class="no-underline">
                             <span> {{ user }} </span>

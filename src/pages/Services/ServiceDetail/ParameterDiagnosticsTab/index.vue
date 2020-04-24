@@ -29,13 +29,6 @@
                                     :hasPwdParam="true"
                                 />
                             </fragment>
-                            <fragment v-else-if="props.data.item.id === 'user'">
-                                <parameter-input
-                                    :item="props.data.item"
-                                    :onItemChanges="handleItemChange"
-                                    :hasUseParam="true"
-                                />
-                            </fragment>
                             <fragment v-else>
                                 <parameter-input
                                     :item="props.data.item"
@@ -129,8 +122,10 @@ export default {
             showConfirmDialog: false,
             changesItems: [],
             showRouterDiagnostics: true,
+            routerParameters: [],
         }
     },
+
     computed: {
         tableRowProcessed() {
             return type => {
@@ -165,6 +160,20 @@ export default {
                     }
                 }
                 return []
+            }
+        },
+    },
+    watch: {
+        paramsEditable: async function(val) {
+            if (val) {
+                const {
+                    attributes: { router },
+                } = this.currentService
+                let res = await this.axios.get(
+                    `/maxscale/modules/${router}?fields[module]=parameters`
+                )
+                const { attributes: { parameters = [] } = {} } = res.data.data
+                this.routerParameters = parameters
             }
         },
     },
