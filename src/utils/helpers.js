@@ -26,6 +26,16 @@ export const isEqual = require('lodash/isEqual')
 export const xorWith = require('lodash/xorWith')
 // export const uniqueId = require('lodash/uniqueId')
 
+export function getCookie(name) {
+    let value = '; ' + document.cookie
+    let parts = value.split('; ' + name + '=')
+    if (parts.length == 2)
+        return parts
+            .pop()
+            .split(';')
+            .shift()
+}
+
 export function range(start, end) {
     if (isNaN(start) || isNaN(end)) return
     return Math.floor(Math.random() * (end - start + 1)) + start
@@ -281,6 +291,7 @@ Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
             return {
+                getCookie,
                 range,
                 serviceStateIcon,
                 serverStateIcon,

@@ -12,13 +12,13 @@
  */
 import Vue from 'vue'
 import { OVERLAY_LOGOUT } from 'store/overlayTypes'
-import { delay, dynamicColors, strReplaceAt } from 'utils/helpers'
+import { delay, getCookie } from 'utils/helpers'
 import router from 'router'
 
 export default {
     namespaced: true,
     state: {
-        user: JSON.parse(sessionStorage.getItem('user')),
+        user: JSON.parse(localStorage.getItem('user')),
         currentNetworkUser: null,
         allNetworkUsers: [],
         allUNIXAccounts: [],
@@ -26,8 +26,8 @@ export default {
     },
     mutations: {
         /**
-         * @param {Object} userObj User token info
-         * @param {String} userObj.token Token
+         * @param {Object} userObj User rememberMe info
+         * @param {Boolean} userObj.rememberMe rememberMe
          * @param {String} userObj.username username
          */
         setUser(state, userObj) {
@@ -60,8 +60,8 @@ export default {
             await delay(1500).then(() => {
                 return commit('hideOverlay', null, { root: true }), router.push('/login')
             })
-            delete Vue.axios.defaults.headers.common['Authorization']
-            sessionStorage.removeItem('user')
+            // delete Vue.axios.defaults.headers.common['Authorization']
+            localStorage.removeItem('user')
             commit('setUser', {})
         },
         // --------------------------------------------------- Network users -------------------------------------

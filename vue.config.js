@@ -12,13 +12,20 @@
  */
 
 const path = require('path')
+const fs = require('fs')
+
 process.env.VUE_APP_VERSION = require('./package.json').version
 let devServer = {
+    https: {
+        key: fs.readFileSync('./.certs/maxgui.com+5-key.pem'),
+        cert: fs.readFileSync('./.certs/maxgui.com+5.pem'),
+    },
     progress: false,
     port: 8000,
     headers: {
         'Access-Control-Allow-Origin': '*',
     },
+    public: 'https://localhost:8000/',
     proxy: {
         '^/': {
             changeOrigin: true,

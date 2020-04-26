@@ -15,30 +15,19 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
-import router from 'router'
 
 const location = window.location
+// allow cookies to be sent (cors handling)
 
 let apiClient = axios.create({
     baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
     headers: {
+        'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
     },
 })
 
-apiClient.interceptors.request.use(
-    config => {
-        const user = JSON.parse(sessionStorage.getItem('user'))
-        let token = user && user.token
-        // Add token before request is sent
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`
-        }
-        return config
-    },
-    error => Promise.reject(error)
-)
 apiClient.interceptors.response.use(
     response => {
         return response
@@ -46,8 +35,9 @@ apiClient.interceptors.response.use(
     error => {
         if (error.response.status === 401) {
             store.dispatch('user/logout')
-            delete axios.defaults.headers.common['Authorization']
-
+            // delete axios.defaults.headers.common['Authorization']
+            // this happens when cookie is expired
+            localStorage.removeItem('user')
             return Promise.reject(error)
         } else {
             store.commit('showMessage', {

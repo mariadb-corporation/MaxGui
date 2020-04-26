@@ -183,16 +183,24 @@ export default {
             let self = this
             try {
                 const login = axios.create()
-                // use login axios instance, instead of showing global interceptor, show error in catch
-                let res = await login.get(`/auth`, { auth: self.credential })
-                // temporary user's name, it is using username for name
-                let userObj = { username: self.credential.username, token: res.data.meta.token }
+                /*  use login axios instance, instead of showing global interceptor, show error in catch
+                    max-age param will be 8 hours if rememberMe is true, otherwise, along as user close the browser
+                    it will be expired
+                */
+                let res = await login.get(
+                    // `/auth?persist=yes,max-age=${self.rememberMe ? '28800' : '-99999999'}`,
+                    `/auth?persist=yes`,
+                    { auth: self.credential }
+                )
+
+                let userObj = {
+                    username: self.credential.username,
+                    rememberMe: self.rememberMe,
+                    isLoggedIn: self.$help.getCookie('token_body') ? true : false,
+                }
                 await self.setUser(userObj)
-                sessionStorage.setItem('user', JSON.stringify(userObj))
-                // set headers to global axios instance
-                await (self.axios.defaults.headers.common[
-                    'Authorization'
-                ] = `Bearer ${res.data.meta.token}`)
+                localStorage.setItem('user', JSON.stringify(userObj))
+
                 await self.$router.push(self.$route.query.redirect || '/dashboard/servers')
             } catch (error) {
                 this.displayOneError = true

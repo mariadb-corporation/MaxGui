@@ -15,7 +15,7 @@ import Router from 'vue-router'
 import { routes } from './routes'
 import { OVERLAY_LOADING } from 'store/overlayTypes'
 import store from 'store'
-import { delay } from 'utils/helpers'
+import { delay, getCookie } from 'utils/helpers'
 
 Vue.use(Router)
 
@@ -29,12 +29,21 @@ let router = new Router({
 })
 router.beforeEach(async (to, from, next) => {
     // Check if user is logged in
-    const user = JSON.parse(sessionStorage.getItem('user'))
-    const token = user ? user.token : null
+    const token_body = getCookie('token_body')
+    const user = JSON.parse(localStorage.getItem('user'))
+    const isLoggedIn = user ? user.isLoggedIn : null
 
-    // Auth route
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (token === null) {
+        if (token_body && isLoggedIn) {
+            if (from.path === '/login') {
+                store.commit('showOverlay', OVERLAY_LOADING)
+                await delay(1500).then(() => {
+                    return store.commit('hideOverlay'), next()
+                })
+            } else {
+                next()
+            }
+        } else {
             if (from.path === '/') {
                 store.commit('showOverlay', OVERLAY_LOADING)
 
@@ -46,15 +55,6 @@ router.beforeEach(async (to, from, next) => {
                 path: '/login',
                 query: { redirect: to.path },
             })
-        } else {
-            if (from.path === '/login') {
-                store.commit('showOverlay', OVERLAY_LOADING)
-                await delay(1500).then(() => {
-                    return store.commit('hideOverlay'), next()
-                })
-            } else {
-                next()
-            }
         }
     } else {
         // Public route
