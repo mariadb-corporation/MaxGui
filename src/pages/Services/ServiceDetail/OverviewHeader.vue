@@ -69,7 +69,7 @@
  * Public License.
  */
 
-import CurrentConnectionsChart from 'pages/Services/CurrentConnectionsChart'
+import CurrentConnectionsChart from './CurrentConnectionsChart'
 export default {
     name: 'overview-header',
     components: {

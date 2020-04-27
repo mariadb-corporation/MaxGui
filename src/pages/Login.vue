@@ -187,11 +187,11 @@ export default {
                     max-age param will be 8 hours if rememberMe is true, otherwise, along as user close the browser
                     it will be expired
                 */
-                let res = await login.get(
-                    // `/auth?persist=yes,max-age=${self.rememberMe ? '28800' : '-99999999'}`,
-                    `/auth?persist=yes`,
-                    { auth: self.credential }
-                )
+                let url = '/auth?persist=yes'
+
+                let res = await login.get(`${url}${self.rememberMe ? '&max-age=28800' : ''}`, {
+                    auth: self.credential,
+                })
 
                 let userObj = {
                     username: self.credential.username,

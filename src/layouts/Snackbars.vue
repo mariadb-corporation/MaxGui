@@ -7,7 +7,7 @@
         :timeout="timeout"
         multi-line
     >
-        <div class="d-flex align-center  justify-center">
+        <div style="width:100%" class="d-inline-flex align-center justify-center">
             <v-icon
                 v-if="message.type === 'info'"
                 class="mr-3 material-icons"
@@ -29,6 +29,7 @@
             <div class="d-flex flex-column">
                 <span v-for="(item, i) in message.text" :key="i">{{ item }}</span>
             </div>
+            <v-spacer />
             <v-btn dark class="mr-0" icon @click="message.status = false">
                 <v-icon size="24">
                     close

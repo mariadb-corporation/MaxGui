@@ -24,7 +24,8 @@ export const isBoolean = require('lodash/isBoolean')
 export const pick = require('lodash/pick')
 export const isEqual = require('lodash/isEqual')
 export const xorWith = require('lodash/xorWith')
-// export const uniqueId = require('lodash/uniqueId')
+export const uniqueId = require('lodash/uniqueId')
+export const orderBy = require('lodash/orderBy')
 
 export function getCookie(name) {
     let value = '; ' + document.cookie
@@ -178,16 +179,26 @@ export function formatValue(value, formatType) {
 
 /**
  * @param {Object} obj Object to be converted to array
+ * @param {String} keyName keyName
+ * @param {String} keyValue keyValue
  * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
  */
-export function objToArrOfObj(obj) {
+export function objToArrOfObj(obj, keyName, keyValue) {
     if (typeof obj === 'object') {
         let data = []
         let targetObj = cloneDeep(obj)
 
         if (!isEmpty(targetObj)) {
             Object.keys(targetObj).map(key => {
-                data.push({ id: key, value: handleValue(targetObj[key]) })
+                if ((keyName, keyValue)) {
+                    let o = {}
+                    o[`${keyName}`] = key
+                    o[`${keyValue}`] = handleValue(targetObj[key])
+
+                    data.push(o)
+                } else {
+                    data.push({ id: key, value: handleValue(targetObj[key]) })
+                }
             })
             return data
         }
@@ -197,9 +208,11 @@ export function objToArrOfObj(obj) {
 
 /**
  * @param {Array} a Array of object to be converted to object
+ * @param {String} keyName keyName
+ * @param {String} keyValue keyValue
  * @return {Object}  return original object of the objToArrOfObj function
  */
-export function arrOfObjToObj(a) {
+export function arrOfObjToObj(a, keyName, keyValue) {
     if (Array.isArray(a)) {
         let o = {}
         for (let i = 0; i < a.length; ++i) {
@@ -207,7 +220,11 @@ export function arrOfObjToObj(a) {
             if (!isEmpty(innerObj)) {
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
-                o[innerObj.id] = treatEmptyStringAsNull(innerObj.value)
+                if ((keyName, keyValue)) {
+                    o[innerObj[keyName]] = treatEmptyStringAsNull(innerObj[keyValue])
+                } else {
+                    o[innerObj.id] = treatEmptyStringAsNull(innerObj.value)
+                }
             }
         }
         return o
@@ -323,7 +340,8 @@ Object.defineProperties(Vue.prototype, {
                 isBoolean,
                 isEqual,
                 xorWith,
-                // uniqueId,
+                uniqueId,
+                orderBy,
             }
         },
     },

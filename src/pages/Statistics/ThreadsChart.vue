@@ -60,7 +60,7 @@ export default {
 
     async created() {
         await this.fetchThreads()
-        await this.genDataSetSchema()
+        await this.generateDataSetSchema()
     },
     beforeDestroy() {
         let chart = this.$refs.threadsChart.$data._chart
@@ -70,13 +70,22 @@ export default {
     },
     methods: {
         ...mapActions('maxscale', ['fetchThreads', 'genDataSetSchema']),
-        updatingThreads(chart) {
-            this.fetchThreads()
-            this.threads.forEach((thread, i) => {
-                chart.data.datasets[i].data.push({
-                    x: Date.now(),
-                    y: thread.attributes.stats.load.last_second,
-                })
+        async generateDataSetSchema() {
+            await this.genDataSetSchema()
+        },
+        async updatingThreads(chart) {
+            let self = this
+            await self.fetchThreads()
+
+            await self.threads.forEach((thread, i) => {
+                if (self.$help.isUndefined(chart.data.datasets[i])) {
+                    self.generateDataSetSchema()
+                } else {
+                    chart.data.datasets[i].data.push({
+                        x: Date.now(),
+                        y: thread.attributes.stats.load.last_second,
+                    })
+                }
             })
             chart.update({
                 preservation: true,

@@ -9,11 +9,11 @@
             <div class="d-inline-flex align-center">
                 <h4
                     style="line-height: normal;"
-                    class="ml-1 mb-0 color text-navigation display-1 text-capitalize page-title"
+                    class="ml-1 mb-0 color text-navigation display-1  page-title"
                 >
                     {{ $route.params.id }}
                 </h4>
-                <v-menu transition="slide-y-transition" offset-y>
+                <v-menu transition="slide-y-transition" offset-y content-class="setting-menu">
                     <template v-slot:activator="{ on }">
                         <v-btn class="ml-2 " icon v-on="on">
                             <v-icon size="18" color="primary">
@@ -32,13 +32,19 @@
 </template>
 
 <style lang="scss" scoped>
-.v-menu__content {
+.setting-menu {
     border-radius: 4px;
     border: 1px solid $field-text;
     box-shadow: none;
     margin-top: 4px;
     .icon-wrapper-list {
         min-height: 36px;
+        border-radius: 4px;
+    }
+    .v-list {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 0px;
     }
 }
 </style>

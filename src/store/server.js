@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, orderBy } from 'utils/helpers'
 export default {
     namespaced: true,
     state: {
@@ -38,7 +38,9 @@ export default {
     actions: {
         async fetchAllServers({ commit }) {
             let res = await Vue.axios.get(`/servers`)
-            await commit('setServers', res.data.data)
+            let newArr = res.data.data.map((server, i) => ({ ...server, idNum: i }))
+            let sorted = orderBy(newArr, 'idNum', 'desc')
+            await commit('setServers', sorted)
         },
         async fetchServerById({ commit, state }, id) {
             let res = await Vue.axios.get(`/servers/${id}`, {

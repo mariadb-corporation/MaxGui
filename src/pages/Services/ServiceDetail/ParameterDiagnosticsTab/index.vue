@@ -13,9 +13,9 @@
                 <template v-slot:table>
                     <data-table
                         :headers="variableValueTableHeaders"
-                        :data="tableRowProcessed('parameters')"
+                        :data="parametersTableRow"
                         :tdBorderLeft="true"
-                        :itemsPerPage="tableRowProcessed('parameters').length"
+                        :itemsPerPage="parametersTableRow.length"
                         :showAll="true"
                         :search="searchKeyWord"
                         :editableCell="paramsEditable"
@@ -26,7 +26,6 @@
                                 <parameter-input
                                     :item="props.data.item"
                                     :onItemChanges="handleItemChange"
-                                    :hasPwdParam="true"
                                 />
                             </fragment>
                             <fragment v-else>
@@ -35,6 +34,10 @@
                                     :onItemChanges="handleItemChange"
                                 />
                             </fragment>
+                        </template>
+                        <template v-if="paramsEditable" v-slot:id="props">
+                            <b>{{ props.data.item.type }}</b
+                            >: {{ props.data.item.id }}
                         </template>
                     </data-table>
                 </template>
@@ -70,13 +73,13 @@
                     <!-- <data-table
            
                         :headers="variableValueTableHeaders"
-                        :data="tableRowProcessed('routerDiagnostics')"
+                        :data="routerDiagnosticsTableRow"
                         :tdBorderLeft="true"
                         :search="searchKeyWord"
                     /> -->
                     <tree-data
                         :headers="variableValueTableHeaders"
-                        :data="tableRowProcessed('routerDiagnostics')"
+                        :data="routerDiagnosticsTableRow"
                         :search="searchKeyWord"
                     />
                 </template>
@@ -127,40 +130,57 @@ export default {
     },
 
     computed: {
-        tableRowProcessed() {
-            return type => {
-                let currentService = this.currentService
-
-                if (!this.$help.isEmpty(currentService)) {
-                    switch (type) {
-                        case 'parameters': {
-                            const { attributes: { parameters = {} } = {} } = currentService
-                            return this.$help.objToArrOfObj(parameters)
-                        }
-                        case 'routerDiagnostics': {
-                            const { attributes: { router_diagnostics = {} } = {} } = currentService
-                            let arrData
-                            let arr = this.$help.objToArrOfObj(router_diagnostics)
-                            if (arr.length) {
-                                arrData = arr.map(obj => {
-                                    return {
-                                        id: obj.id,
-                                        value: this.$help.isObject(obj.value) ? '' : obj.value,
-                                        isLink: false,
-                                        children: this.$help.processTreeData(obj.value, 0),
-                                        level: 0,
-                                        colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
-                                        colValueWidth: 'calc(35% - 11px)',
-                                    }
-                                })
+        parametersTableRow: function() {
+            let currentService = this.currentService
+            if (!this.$help.isEmpty(currentService)) {
+                const { attributes: { parameters = {} } = {} } = currentService
+                let tableRow = this.$help.objToArrOfObj(parameters)
+                let editableParams = this.$help.cloneDeep(this.routerParameters)
+                let arr = []
+                if (this.paramsEditable) {
+                    for (let o = 0; o < tableRow.length; ++o) {
+                        for (let i = 0; i < editableParams.length; ++i) {
+                            if (tableRow[o].id === editableParams[i].name) {
+                                let clone = this.$help.cloneDeep(editableParams[i])
+                                clone['value'] = tableRow[o].value
+                                // param in editableParams has name propery instead of id
+                                clone['id'] = clone.name
+                                delete clone.name
+                                arr.push(clone)
                             }
-                            return arrData
-                            // return this.$help.objToArrOfObj(router_diagnostics)
                         }
                     }
+                } else {
+                    arr = tableRow
                 }
-                return []
+
+                return arr
             }
+            return []
+        },
+        routerDiagnosticsTableRow: function() {
+            let currentService = this.currentService
+            if (!this.$help.isEmpty(currentService)) {
+                const { attributes: { router_diagnostics = {} } = {} } = currentService
+                let arrData
+                let arr = this.$help.objToArrOfObj(router_diagnostics)
+                if (arr.length) {
+                    arrData = arr.map(obj => {
+                        return {
+                            id: obj.id,
+                            value: this.$help.isObject(obj.value) ? '' : obj.value,
+                            isLink: false,
+                            children: this.$help.processTreeData(obj.value, 0),
+                            level: 0,
+                            colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
+                            colValueWidth: 'calc(35% - 11px)',
+                        }
+                    })
+                }
+                return arrData
+                // return this.$help.objToArrOfObj(router_diagnostics)
+            }
+            return []
         },
     },
     watch: {

@@ -24,6 +24,8 @@
                         return-object
                         outlined
                         dense
+                        class="std mariadb-select-input"
+                        :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                         hide-details
                         :no-data-text="
                             $t(`noEntityText`, {

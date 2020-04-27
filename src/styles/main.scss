@@ -256,8 +256,8 @@ input:-webkit-autofill:active {
 
     & input {
         margin-top: 1px;
-        font-size: 15px;
-        color: $navigation;
+        font-size: 0.875rem !important;
+        color: $navigation !important;
     }
 }
 .search-restyle.v-text-field--rounded {
@@ -308,6 +308,28 @@ input:-webkit-autofill:active {
 
     .v-input--selection-controls__input {
         margin-right: 0;
+    }
+}
+
+// vuetify select restyle
+.mariadb-select-input {
+    .v-select__selection--comma {
+        font-size: 0.875rem !important;
+        color: $navigation !important;
+    }
+}
+.mariadb-select-v-menu {
+    border-radius: 0px !important;
+
+    .v-list {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 0px;
+        &-item {
+            &__title {
+                font-size: 0.875rem !important;
+            }
+        }
     }
 }
 

@@ -44,6 +44,7 @@
                 :close-on-content-click="false"
                 open-on-hover
                 offset-x
+                content-class="shadow-drop"
             >
                 <template v-slot:activator="{ on }">
                     <span class="pointer color text-links" v-on="on">

@@ -1,8 +1,8 @@
 <template>
     <line-chart
         v-if="serversConnectionsChartData.datasets.length"
-        id="users-Chart"
-        ref="usersChart"
+        id="servers-connection-Chart"
+        ref="serversConnectionChart"
         :styles="{ height: '70px' }"
         :chartData="serversConnectionsChartData"
         :options="options"
@@ -41,7 +41,9 @@ export default {
             options: {
                 plugins: {
                     streaming: {
-                        duration: 20000,
+                        frameRate: 30,
+                        duration: 10000,
+                        ttl: 20000,
                         refresh: 10000, // onRefresh callback will be called every 10000 ms
                         /* delay of 10000 ms, so upcoming values are known before plotting a line
                       delay value can be larger but not smaller than refresh value to remain realtime streaming data */
@@ -50,34 +52,63 @@ export default {
                     },
                 },
             },
+            key: 0,
         }
     },
 
     async created() {
-        await this.genDataSetSchema()
+        await this.generateDataSetSchema()
     },
 
     beforeDestroy() {
-        let chart = this.$refs.usersChart.$data._chart
+        let chart = this.$refs.serversConnectionChart.$data._chart
         chart.data.labels = []
         chart.data.datasets = []
         chart.destroy()
     },
     methods: {
         ...mapActions('server', ['fetchAllServers', 'genDataSetSchema']),
+        async generateDataSetSchema() {
+            await this.genDataSetSchema()
+        },
         async updatingChart(chart) {
-            //  LOOP polling
-            await this.fetchAllServers()
             let self = this
-            this.allServers.forEach((server, i) => {
-                chart.data.datasets[i].data.push({
-                    x: Date.now(),
-                    y: server.attributes.statistics.connections,
-                })
-            })
+            //  LOOP polling
+            await self.fetchAllServers()
+            const time = Date.now()
+            let gap = self.allServers.length - chart.data.datasets.length
 
-            chart.update({
-                preservation: true,
+            self.allServers.forEach((server, i) => {
+                if (gap > 0 && i > chart.data.datasets.length - 1) {
+                    let lineColors = self.$help.dynamicColors(i)
+                    let indexOfOpacity = lineColors.lastIndexOf(')') - 1
+                    let dataset = {
+                        label: `Server ID - ${server.id}`,
+                        id: `Server ID - ${server.id}`,
+                        type: 'line',
+                        // background of the line
+                        backgroundColor: self.$help.strReplaceAt(lineColors, indexOfOpacity, '0.2'),
+                        borderColor: lineColors, //theme.palette.primary.main, // line color
+                        borderWidth: 1,
+                        lineTension: 0,
+                        data: [
+                            {
+                                x: time,
+                                y: server.attributes.statistics.connections,
+                            },
+                        ],
+                    }
+
+                    chart.data.datasets.push(dataset)
+                } else {
+                    chart.data.datasets[i].data.push({
+                        x: time,
+                        y: server.attributes.statistics.connections,
+                    })
+                }
+                chart.update({
+                    preservation: true,
+                })
             })
         },
     },

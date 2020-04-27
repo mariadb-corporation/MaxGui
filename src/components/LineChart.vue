@@ -108,10 +108,12 @@ export default {
         }
     },
     mounted() {
+        let self = this
+        let uniqueTooltipId = self.$help.uniqueId('tooltip_')
         this.renderChart(this.chartData, {
             showLines: true,
 
-            layout: this.isRealTime ? this.realtimeLayout : this.defaultLayout,
+            layout: self.isRealTime ? self.realtimeLayout : self.defaultLayout,
             legend: {
                 display: false,
             },
@@ -122,21 +124,28 @@ export default {
                     radius: 0,
                 },
             },
-            tooltips: {
-                mode: 'nearest',
+            hover: {
+                mode: 'index',
                 intersect: false,
+            },
+
+            tooltips: {
+                mode: 'x-axis',
+                intersect: true,
                 titleFontFamily: "'azo-sans-web', adrianna, serif",
                 bodyFontFamily: "'azo-sans-web', adrianna, serif",
 
                 enabled: false,
                 custom: function(tooltipModel) {
                     // Tooltip Element
-                    let tooltipEl = document.getElementById('chartjs-tooltip')
+
+                    let tooltipEl = document.getElementById(uniqueTooltipId)
 
                     // Create element on first render
                     if (!tooltipEl) {
                         tooltipEl = document.createElement('div')
-                        tooltipEl.id = 'chartjs-tooltip'
+                        tooltipEl.id = uniqueTooltipId
+                        tooltipEl.className = ['chartjs-tooltip shadow-drop']
                         tooltipEl.innerHTML = '<table></table>'
                         document.body.appendChild(tooltipEl)
                     }
@@ -175,7 +184,7 @@ export default {
                             let colors = tooltipModel.labelColors[i]
                             let style = 'background:' + colors.backgroundColor
                             style += '; border-color:' + colors.borderColor
-                            style += '; border-width: 2px'
+                            style += '; border-width: 2px;margin-right:4px'
                             let span =
                                 '<span class="chartjs-tooltip-key" style="' + style + '"></span>'
                             innerHtml += '<tr><td>' + span + body + '</td></tr>'
@@ -205,10 +214,6 @@ export default {
                         tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
                 },
             },
-            hover: {
-                mode: 'nearest',
-                intersect: false,
-            },
 
             scales: this.isRealTime ? this.realtimeScales : this.defaultScales,
             ...this.options,
@@ -218,11 +223,12 @@ export default {
 </script>
 
 <style lang="scss">
-#chartjs-tooltip {
+.chartjs-tooltip {
     opacity: 1;
     position: absolute;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: rgba(0, 0, 0, 0.87);
     border-radius: 10px;
     transition: all 0.3s ease;
     pointer-events: none;

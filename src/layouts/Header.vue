@@ -16,7 +16,7 @@
             allow-overflow
             transition="slide-y-transition"
             offset-y
-            content-class="profile-menu"
+            content-class="mariadb-select-v-menu"
         >
             <template v-slot:activator="{ on }">
                 <v-btn dark class="mr-0" text tile v-on="on">
@@ -105,19 +105,5 @@ export default {
 }
 .v-btn {
     letter-spacing: normal;
-}
-.profile-menu {
-    border-radius: 0px;
-
-    .v-list {
-        padding-top: 0;
-        padding-bottom: 0;
-        border-radius: 0px;
-        &-item {
-            &__title {
-                font-size: 0.875rem;
-            }
-        }
-    }
 }
 </style>
