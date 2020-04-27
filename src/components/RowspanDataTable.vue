@@ -68,7 +68,7 @@
                         i < numOfColsHasRowSpan ? `${item.id}-alterableRowspan` : `${item.id}-cell`,
                         header.value,
                         header.tdClass || header.class,
-                        i === numOfColsHasRowSpan && 'border-left-thin',
+                        i === numOfColsHasRowSpan && 'color border-left-table-border',
                     ]"
                     :style="
                         `${
