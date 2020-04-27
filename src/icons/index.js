@@ -10,7 +10,8 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Alerts from 'icons/Alerts'
+import AlertWarning from 'icons/AlertWarning'
+import AlertSuccess from 'icons/AlertSuccess'
 import ArrowDown from 'icons/ArrowDown' // MaxScale new icons
 import ArrowRight from 'icons/ArrowRight'
 import ArrowLeft from 'icons/ArrowLeft'
@@ -25,7 +26,7 @@ import Edit from 'icons/Edit'
 import HealthAlert from 'icons/HealthAlert'
 import HealthBad from 'icons/HealthBad'
 import HealthOk from 'icons/HealthOk'
-import InfoCircle from 'icons/InfoCircle'
+import AlertError from 'icons/AlertError'
 import Monitoring from 'icons/Monitoring'
 import NotFound from 'icons/NotFound' // MaxScale new icons
 import Paused from 'icons/Paused'
@@ -49,8 +50,14 @@ import User from 'icons/User'
 import Users from 'icons/Users'
 
 export default {
-    alerts: {
-        component: Alerts,
+    alertWarning: {
+        component: AlertWarning,
+    },
+    alertSuccess: {
+        component: AlertSuccess,
+    },
+    alertError: {
+        component: AlertError,
     },
     arrowDown: {
         component: ArrowDown,
@@ -94,9 +101,7 @@ export default {
     healthOk: {
         component: HealthOk,
     },
-    infoCircle: {
-        component: InfoCircle,
-    },
+
     monitoring: {
         component: Monitoring,
     },
