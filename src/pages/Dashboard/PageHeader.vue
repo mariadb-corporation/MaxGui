@@ -91,6 +91,7 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
+import { workerTimer } from 'utils/workerTimer'
 
 export default {
     name: 'page-title',
@@ -101,6 +102,10 @@ export default {
             uptime: null,
             duration: null,
             copyState: 'Double click to copy to clipboard',
+            workerList: [
+                { name: 'snapInterval', interval: 10000 },
+                { name: 'intervalFunc', interval: 40 },
+            ],
         }
     },
     computed: {
@@ -130,10 +135,15 @@ export default {
             }
         },
         maxScaleOverviewInfo: function(newVal) {
-            this.uptime = newVal.uptime
-            this.duration = this.$moment.duration(newVal.uptime, 'seconds').format()
-            this.updateUpTime()
+            let self = this
+            self.uptime = newVal.uptime
+            self.duration = self.$moment.duration(newVal.uptime, 'seconds').format()
+            this.workertimer = new workerTimer()
+            this.workertimer.timeInterval('MaxScale uptime worker timer', 1000, self.updateUpTime)
         },
+    },
+    beforeDestroy() {
+        this.workertimer.terminate('MaxScale uptime worker timer')
     },
     methods: {
         //---------------------- MaxScale overview info
@@ -144,9 +154,6 @@ export default {
         updateUpTime() {
             this.uptime = this.uptime + 1
             this.duration = this.$moment.duration(this.uptime, 'seconds').format()
-            setTimeout(() => {
-                this.updateUpTime()
-            }, 1000)
         },
     },
 }

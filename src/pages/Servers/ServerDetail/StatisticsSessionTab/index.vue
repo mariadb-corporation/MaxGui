@@ -92,6 +92,8 @@
             :getAllEntities="getAllEntities"
             :returnSelectedEntities="selectedItems => (targetItem = selectedItems)"
         />
+
+        <sessions-table :currentServer="currentServer" :loading="loading" />
     </v-row>
 </template>
 
@@ -111,12 +113,12 @@
 
 import { mapMutations, mapGetters, mapActions } from 'vuex'
 import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
-// import SessionPart from './SessionPart'
+import SessionsTable from './SessionsTable'
 
 export default {
     name: 'statistics-session-tab',
     components: {
-        // SessionPart,
+        SessionsTable,
     },
     props: {
         currentServer: { type: Object, required: true },

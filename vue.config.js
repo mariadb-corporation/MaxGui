@@ -36,14 +36,24 @@ let devServer = {
 process.env.NODE_ENV !== 'development' && (devServer = {})
 
 module.exports = {
+    parallel: false,
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
         types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
+        config.module.rule('js').exclude.add(/\.worker\.js$/)
     },
 
     configureWebpack: {
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.worker\.js$/,
+                    use: { loader: 'worker-loader' },
+                },
+            ],
         },
         devServer: devServer,
     },

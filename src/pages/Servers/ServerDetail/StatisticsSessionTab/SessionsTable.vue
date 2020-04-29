@@ -41,12 +41,13 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-    name: 'server-session-tab',
+    name: 'session-table',
     props: {
         loading: { type: Boolean, required: true },
-        sessionsByService: { type: Array, required: true },
+        currentServer: { type: Object, required: true },
     },
     data() {
         return {
@@ -60,13 +61,13 @@ export default {
             ],
         }
     },
-
     computed: {
+        ...mapGetters({ allSessions: 'session/allSessions' }),
         sessionsTableRow: function() {
-            if (this.sessionsByService.length) {
+            if (this.allSessions.length) {
+                let self = this
                 let itemsArr = []
-                let allSessions = this.$help.cloneDeep(this.sessionsByService)
-                for (let n = allSessions.length - 1; n >= 0; --n) {
+                for (let i = 0; i < self.allSessions.length; ++i) {
                     /**
                      * @typedef {Object} row
                      * @property {Number} row.id - sessions's id
@@ -76,20 +77,40 @@ export default {
                      */
                     const {
                         id,
-                        attributes: { idle, connected, user, remote },
-                    } = allSessions[n] || {}
+                        attributes: { idle, connected, user, remote, connections },
+                    } = self.allSessions[i]
 
-                    let row = {
-                        id: id,
-                        user: `${user}@${remote}`,
-                        connected: connected,
-                        idle: idle,
+                    let connectionOfThisServer = connections.find(
+                        connection => connection.server === self.currentServer.id
+                    )
+
+                    if (connectionOfThisServer) {
+                        let row = {
+                            id: id,
+                            user: `${user}@${remote}`,
+                            connected: connected,
+                            idle: idle,
+                        }
+                        itemsArr.push(row)
                     }
-                    itemsArr.push(row)
                 }
                 return itemsArr
             }
             return []
+        },
+    },
+    async created() {
+        await this.fetchSessionsLoop()
+    },
+    methods: {
+        ...mapActions({
+            fetchAllSessions: 'session/fetchAllSessions',
+        }),
+        async fetchSessionsLoop() {
+            await this.fetchAllSessions()
+            await setTimeout(() => {
+                this.fetchSessionsLoop()
+            }, 10000)
         },
     },
 }
