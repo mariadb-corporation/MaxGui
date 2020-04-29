@@ -53,7 +53,7 @@ export function serviceStateIcon(serviceState) {
 export function serverStateIcon(serverStatus) {
     if (serverStatus) {
         if (serverStatus === 'Master, Running' || serverStatus === 'Slave, Running') return 2
-        if (serverStatus === 'Running') return 1
+        if (serverStatus === 'Running' || serverStatus.includes('Maintenance')) return 1
         if (serverStatus === 'Down') return 0
         else return ''
     } else return ''
@@ -234,7 +234,7 @@ export function arrOfObjToObj(a, keyName, keyValue) {
 
 /**
  * @param {Any} value Object to be converted to array
- * @return {Any} return valid value, null becomes 'null', '' becomes "''", otherwise return 'n/a'
+ * @return {Any} return valid value, null becomes 'null', '' becomes "''", otherwise return 'undefined'
  */
 export function handleValue(value) {
     let typeOfValue = typeof value
@@ -296,13 +296,6 @@ export function processTreeData(obj, level) {
     }
     return []
 }
-
-// /**
-//  * @param {Array} x Array
-//  * @param {Array} y Array
-//  * @return {Boolean} return boolean value
-//  */
-// export const arrayObjDeepCompare = (x, y) => isEmpty(xorWith(x, y, isEqual))
 
 Object.defineProperties(Vue.prototype, {
     $help: {

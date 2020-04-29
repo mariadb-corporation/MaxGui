@@ -116,3 +116,7 @@ $btn-letter-spacing: -0.1px;
 
 // override v-menu
 $menu-content-border-radius: 10px;
+// override v-snackbar
+$snackbar-border-radius: 10px;
+$snackbar-font-size: map-deep-get($headings, 'subtitle-1', 'size');
+$snackbar-multi-line-content-min-height: 50px;

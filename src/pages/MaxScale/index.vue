@@ -74,18 +74,18 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('maxscale', ['maxscaleDetails']),
+        ...mapGetters('maxscale', ['maxScaleOverviewInfo']),
     },
     created() {
-        !this.$route.params.parameters && this['maxscale/fetchMaxScaleDetails']()
+        !this.$route.params.parameters && this['maxscale/fetchMaxScaleOverviewInfo']()
     },
     methods: {
-        ...mapActions(['maxscale/fetchMaxScaleDetails']),
+        ...mapActions(['maxscale/fetchMaxScaleOverviewInfo']),
         // genData() {
         //     if (this.$route.params.parameters) {
         //         return this.$help.cloneDeep(this.$route.params.parameters)
         //     }
-        //     return this.$help.cloneDeep(this.maxscaleDetails.parameters)
+        //     return this.$help.cloneDeep(this.maxScaleOverviewInfo.parameters)
         // },
     },
 }

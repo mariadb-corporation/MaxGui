@@ -13,15 +13,11 @@
  */
 import { Line, mixins } from 'vue-chartjs'
 import 'chartjs-plugin-streaming'
-// const { reactiveProp } = mixins
 export default {
     extends: Line,
-    // mixins: [reactiveProp],
+    mixins: [mixins.reactiveProp],
     props: {
         options: {
-            type: Object,
-        },
-        chartData: {
             type: Object,
         },
         isRealTime: { type: Boolean, default: true },

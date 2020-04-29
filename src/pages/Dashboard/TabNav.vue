@@ -28,15 +28,15 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
+import tabRoutes from 'router/tabRoutes'
 
 export default {
     name: 'tab-nav',
-    props: {
-        tabRoutes: Array,
-    },
+
     data() {
         return {
             activeTab: null,
+            tabRoutes: tabRoutes,
         }
     },
     computed: {

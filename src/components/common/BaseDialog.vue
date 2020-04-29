@@ -41,6 +41,7 @@
                         class="save font-weight-medium px-7 text-capitalize"
                         rounded
                         depressed
+                        :disabled="disabledSaveBtn"
                         @click="save"
                     >
                         {{ $t(saveText) }}
@@ -71,8 +72,8 @@ export default {
     name: 'base-dialog',
     props: {
         maxWidth: { type: String, default: '466px' },
-        title: String,
-        value: Boolean,
+        title: { type: String, required: true },
+        value: { type: Boolean, required: true },
         /* These functions are requires since the computeShowDialog depends on the value props.
         The open/close of the dialog completely controlled by the parent component.
         */
@@ -82,6 +83,7 @@ export default {
 
         cancelText: { type: String, default: 'cancel' },
         saveText: { type: String, default: 'save' },
+        disabledSaveBtn: { type: Boolean, default: false },
     },
     data() {
         return {

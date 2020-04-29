@@ -4,21 +4,12 @@
             <template v-slot:setting-menu>
                 <icon-group-wrapper multiIcons>
                     <template v-slot:body>
-                        <v-btn
-                            text
-                            :disabled="currentService.attributes.state === 'Stopped'"
-                            @click="handleStop"
-                        >
+                        <v-btn text>
                             <v-icon size="22" color="primary">
                                 $vuetify.icons.paused
                             </v-icon>
                         </v-btn>
-
-                        <v-btn
-                            text
-                            :disabled="currentService.attributes.state === 'Started'"
-                            @click="handleStart"
-                        >
+                        <v-btn text>
                             <v-icon size="22" color="primary">
                                 $vuetify.icons.restart
                             </v-icon>
@@ -27,9 +18,18 @@
                 </icon-group-wrapper>
                 <icon-group-wrapper>
                     <template v-slot:body>
+                        <v-btn text>
+                            <v-icon size="22" color="primary">
+                                $vuetify.icons.drain
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                </icon-group-wrapper>
+                <icon-group-wrapper>
+                    <template v-slot:body>
                         <v-btn text @click="handleDelete">
-                            <v-icon size="18" color="error">
-                                $vuetify.icons.delete
+                            <v-icon size="22" color="error">
+                                $vuetify.icons.unlink
                             </v-icon>
                         </v-btn>
                     </template>
@@ -41,21 +41,25 @@
             :title="dialogTitle"
             :type="dialogType"
             :smallInfo="smallInfo ? $t(`info.${smallInfo}`) : ''"
-            :item="currentService"
+            :item="currentServer"
             :onSave="confirmSave"
             :onClose="() => (showConfirmDialog = false)"
             :onCancel="() => (showConfirmDialog = false)"
         />
+
         <icon-sprite-sheet
             size="13"
             class="status-icon mr-1"
-            :frame="$help.serviceStateIcon(currentService.attributes.state)"
+            :frame="$help.serverStateIcon(currentServer.attributes.state)"
         >
             status
         </icon-sprite-sheet>
-        <!-- TODO: Determine service healthy -->
         <span class="color text-navigation body-2">
-            {{ currentService.attributes.state }}
+            {{ serverHealthy }}
+        </span>
+        <span class="color text-field-text body-2">
+            {{ !$help.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
+            <span>{{ $t('version') }} {{ currentServer.attributes.version_string }}</span>
         </span>
     </fragment>
 </template>
@@ -79,57 +83,55 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
     name: 'page-header',
     props: {
-        currentService: { type: Object, required: true },
-        onEditSucceeded: { type: Function, required: true },
+        currentServer: { type: Object, required: true },
     },
     data() {
         return {
             showConfirmDialog: false,
             dialogTitle: '',
-            dialogType: 'destroy',
+            dialogType: 'unlink',
             smallInfo: 'serviceDelete',
         }
     },
-
+    computed: {
+        // TODO: Determine server healthy
+        serverHealthy: function() {
+            if (
+                this.currentServer.attributes.state === 'Master, Running' ||
+                this.currentServer.attributes.state === 'Slave, Running'
+            ) {
+                return 'Healthy'
+            } else if (this.currentServer.attributes.state === 'Maintenance, Running') {
+                return 'Maintenance'
+            } else return 'Unhealthy'
+        },
+    },
     methods: {
-        ...mapActions('service', ['destroyService', 'stopOrStartService']),
+        ...mapActions('server', ['destroyServer']),
+        handleDelete() {
+            this.dialogType = 'unlink'
+            this.dialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
+            this.smallInfo = 'serverUnlink'
+            this.showConfirmDialog = true
+        },
+
         async confirmSave() {
             await this.performAsyncLoadingAction(this.dialogType)
         },
-
         async performAsyncLoadingAction(type) {
             let self = this
-            if (type === 'destroy') {
-                await self.destroyService(self.currentService.id)
+            if (type === 'unlink') {
+                await self.destroyServer(self.currentServer.id)
                 self.showConfirmDialog = false
                 self.$router.go(-1)
-            } else {
+            } /* else {
                 await self.stopOrStartService({
                     id: self.currentService.id,
                     mode: type,
                     callback: self.onEditSucceeded,
                 })
                 self.showConfirmDialog = false
-            }
-        },
-
-        handleDelete() {
-            this.dialogType = 'destroy'
-            this.dialogTitle = `${this.$t('destroy')} ${this.$t('service')}`
-            this.smallInfo = 'serviceDelete'
-            this.showConfirmDialog = true
-        },
-        handleStop() {
-            this.dialogType = 'stop'
-            this.dialogTitle = `${this.$t('stop')} ${this.$t('service')}`
-            this.smallInfo = ''
-            this.showConfirmDialog = true
-        },
-        handleStart() {
-            this.dialogType = 'start'
-            this.dialogTitle = `${this.$t('start')} ${this.$t('service')}`
-            this.smallInfo = ''
-            this.showConfirmDialog = true
+            }*/
         },
     },
 }

@@ -22,6 +22,7 @@ import ConnectivityAlert from 'icons/ConnectivityAlert'
 import ConnectivityBad from 'icons/ConnectivityBad'
 import ConnectivityOk from 'icons/ConnectivityOk'
 import Delete from 'icons/Delete'
+import Drain from 'icons/Drain' // MaxScale new icons
 import Edit from 'icons/Edit'
 import HealthAlert from 'icons/HealthAlert'
 import HealthBad from 'icons/HealthBad'
@@ -33,11 +34,13 @@ import Paused from 'icons/Paused'
 import QuestionCircle from 'icons/QuestionCircle'
 import Reload from 'icons/Reload'
 import Reports from 'icons/Reports' // MaxScale new icons
+import Restart from 'icons/Restart'
 import Restore from 'icons/Restore'
 import Running from 'icons/Running'
 import Search from 'icons/Search' // MaxScale new icons
 import Security from 'icons/Security'
 import Settings from 'icons/Settings' // MaxScale new icons
+import Start from 'icons/Start' // MaxScale new icons
 import StatusError from 'icons/StatusError'
 import StatusInfo from 'icons/StatusInfo'
 import StatusOk from 'icons/StatusOk'
@@ -89,6 +92,9 @@ export default {
     delete: {
         component: Delete,
     },
+    drain: {
+        component: Drain,
+    },
     edit: {
         component: Edit,
     },
@@ -120,6 +126,9 @@ export default {
     reports: {
         component: Reports, // MaxScale new icons
     },
+    restart: {
+        component: Restart,
+    },
     restore: {
         component: Restore,
     },
@@ -134,6 +143,9 @@ export default {
     },
     settings: {
         component: Settings, // MaxScale new icons
+    },
+    start: {
+        component: Start,
     },
     statusError: {
         component: StatusError,

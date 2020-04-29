@@ -2,9 +2,9 @@
     <v-row justify="center">
         <v-col :xs="12" :md="8" align="center" justify="center" class="pt-0">
             <v-card width="100%" class="v-card-custom pa-6">
-                <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
+                <!-- <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
                 <br />
-                <threads-chart />
+                <threads-chart /> -->
             </v-card>
         </v-col>
     </v-row>
@@ -23,12 +23,12 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
-import ThreadsChart from './ThreadsChart'
+
+// import ThreadsChart from './ThreadsChart'
 
 export default {
     components: {
-        ThreadsChart,
+        // ThreadsChart,
     },
 }
 </script>

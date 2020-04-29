@@ -13,6 +13,12 @@
     "lastTwoSecondsThreads": "Last two second threads",
     "load": "Load",
     "monitorDiagnostics": "Monitor Diagnostics",
+    "parameters": "Parameters",
+    "slaveServerIds": "Slave Server IDS",
+    "parametersConfig": "Parameters configurations",
+    "relationshipsConfig": "Relationships configurations",
+    "routerDiagnostics": "Router Diagnostics",
+
     "dashboard": "Dashboard",
     "statistics": "Statistics",
     "users": "Users",
@@ -34,6 +40,8 @@
     "delete": "Delete",
     "unlink": "Unlink",
     "destroy": "Destroy",
+    "stop": "Stop",
+    "start": "Start",
     "logout": "Logout",
     "save": "Save",
     "enable": "Enable",
@@ -66,12 +74,6 @@
 
     "noEntityText": "No {entityName} available",
 
-    "parameters": "Parameters",
-    "slaveServerIds": "Slave Server IDS",
-    "parametersConfig": "Parameters configurations",
-    "relationshipsConfig": "Relationships configurations",
-    "routerDiagnostics": "Router Diagnostics",
-
     "changeTheFollowingParameters": "You've changed the following {quantity} parameters:",
     "specify": "Specify {entityName}",
 
@@ -83,19 +85,22 @@
         "refreshLater": "Please refresh in a few moments."
     },
     "confirmations": {
-        "unlink": "Are you sure you want to unlink {name} from {resourceName} {resourceId}? ",
-        "delete": "Are you sure you want to delete {name} from {resourceName} {resourceId}? ",
-        "destroy": "Are you sure you want to destroy {name}?"
+        "unlink": "Are you sure you want to unlink {targetId}?",
+        "delete": "Are you sure you want to delete {targetId}?",
+        "destroy": "Are you sure you want to destroy {targetId}?",
+        "stop": "Are you sure you want to stop {targetId}?",
+        "start": "Are you sure you want to start {targetId}?"
     },
     "loading": {
         "threadsData": "Loading threads data"
     },
     "info": {
         "createOrUpdateForm": "Empty value in non-required fields will be treated as null. *indicates required field.",
-        "serverDeleteModal": "Make sure it is not used by any services or monitors.",
         "monitorDeleteModal": "The monitor must not have relationships to any servers in order to be destroyed.",
-        "serviceDeleteModal": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed.",
-        "filterDeleteModal": "A filter can only be destroyed if no service uses it. This means that the data.relationships object for the filter must be empty."
+        "filterDeleteModal": "A filter can only be destroyed if no service uses it. This means that the data.relationships object for the filter must be empty.",
+
+        "serverUnlink": "Make sure it is not used by any services or monitors.",
+        "serviceDelete": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
 
     "$vuetify": {

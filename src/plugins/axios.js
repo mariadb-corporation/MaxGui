@@ -35,7 +35,6 @@ apiClient.interceptors.response.use(
     error => {
         if (error.response.status === 401) {
             store.dispatch('user/logout')
-            // delete axios.defaults.headers.common['Authorization']
             // this happens when cookie is expired
             localStorage.removeItem('user')
             return Promise.reject(error)

@@ -16,7 +16,7 @@ import { dynamicColors, strReplaceAt } from 'utils/helpers'
 export default {
     namespaced: true,
     state: {
-        maxscaleDetails: {},
+        maxScaleOverviewInfo: {},
         threads: [],
         threadsChartData: {
             datasets: [],
@@ -24,10 +24,10 @@ export default {
     },
     mutations: {
         /**
-         * @param {Object} payload setMaxScaleDetails array
+         * @param {Object} payload setMaxScaleOverviewInfo array
          */
-        setMaxScaleDetails(state, payload) {
-            state.maxscaleDetails = payload
+        setMaxScaleOverviewInfo(state, payload) {
+            state.maxScaleOverviewInfo = payload
         },
         // ---------------------------- last two second threads--------------------------
         setThreads(state, payload) {
@@ -38,9 +38,11 @@ export default {
         },
     },
     actions: {
-        async fetchMaxScaleDetails({ commit }) {
-            let res = await Vue.axios.get(`/maxscale`)
-            await commit('setMaxScaleDetails', res.data.data.attributes)
+        async fetchMaxScaleOverviewInfo({ commit }) {
+            let res = await Vue.axios.get(
+                `/maxscale?fields[maxscale]=version,commit,started_at,activated_at,uptime`
+            )
+            await commit('setMaxScaleOverviewInfo', res.data.data.attributes)
         },
         // ---------------------------- last two second threads--------------------------
         async fetchThreads({ commit }) {
@@ -78,7 +80,7 @@ export default {
         },
     },
     getters: {
-        maxscaleDetails: state => state.maxscaleDetails,
+        maxScaleOverviewInfo: state => state.maxScaleOverviewInfo,
         threadsChartData: state => state.threadsChartData,
         threads: state => state.threads,
     },

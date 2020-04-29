@@ -11,7 +11,9 @@
                 }"
             >
                 {{ header.text }}
-                <span v-if="i === 0" class="ml-1 color text-field-text">({{ data.length }})</span>
+                <span v-if="showTotalRowsNumber && i === 0" class="ml-1 color text-field-text"
+                    >({{ data.length }})</span
+                >
             </div>
         </div>
         <v-treeview
@@ -86,6 +88,7 @@ export default {
         headers: Array,
         search: String,
         openNode: Array,
+        showTotalRowsNumber: { type: Boolean, default: false },
     },
     data() {
         return {

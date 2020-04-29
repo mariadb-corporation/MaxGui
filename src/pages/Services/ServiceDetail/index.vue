@@ -1,13 +1,11 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentService)" class="px-6">
-        <page-header :currentService="currentService" />
+        <page-header :currentService="currentService" :onEditSucceeded="fetchService" />
 
         <overview-header
             :currentService="currentService"
-            :totalConnectionsChartData="totalConnectionsChartData"
             :fetchSessions="fetchSessions"
             :fetchNewConnectionsInfo="fetchNewConnectionsInfo"
-            :connectionInfo="connectionInfo"
         />
         <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
             <v-tab v-for="tab in tabs" :key="tab.name">
@@ -90,12 +88,13 @@ export default {
     async created() {
         let self = this
         // Initial fetch, wait for service id
-        await self.fetchService()
-        await self.fetchSessions()
+        await Promise.all([self.fetchService(), self.fetchSessions()])
+        await self.genDataSetSchema()
     },
     methods: {
         ...mapActions({
             fetchServiceById: 'service/fetchServiceById',
+            genDataSetSchema: 'service/genDataSetSchema',
             updateServiceRelationship: 'service/updateServiceRelationship',
             createOrUpdateService: 'service/createOrUpdateService',
             fetchServiceConnections: 'service/fetchServiceConnections',

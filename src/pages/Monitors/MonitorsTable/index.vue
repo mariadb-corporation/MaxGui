@@ -19,10 +19,10 @@
                     </template>
                     <span>{{ `${$t('monitor')} ${$t('update')}` }}</span>
                 </v-tooltip> 
-                <delete-dialog
+                <confirm-dialog
                     :item="item"
                     type="destroy"
-                    :dispatchDelete="() => monitorManipulate({ id: item.id, mode: 'destroy' })"
+                    :onSave="() => monitorManipulate({ id: item.id, mode: 'destroy' })"
                     :title="`${$t('destroy')} ${$t('monitor')}`"
                     :smallInfo="$t('info.monitorDeleteModal')"
                 />

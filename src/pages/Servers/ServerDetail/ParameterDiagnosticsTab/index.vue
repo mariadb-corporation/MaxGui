@@ -17,9 +17,8 @@
                         :tdBorderLeft="true"
                         :itemsPerPage="parametersTableRow.length"
                         :showAll="true"
-                        :search="searchKeyWord"
                         :editableCell="editableCell"
-                        :loading="editableCell ? loadingEditableParams : loading"
+                        :loading="loading"
                     >
                         <template v-if="editableCell" v-slot:value="props">
                             <parameter-input
@@ -58,15 +57,14 @@
         </v-col>
         <v-col class="py-0 my-0" cols="6">
             <details-table-wrapper
-                :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
-                :toggleVal="showRouterDiagnostics"
-                title="routerDiagnostics"
+                :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
+                :toggleVal="showMonitorDiagnostics"
+                title="monitorDiagnostics"
             >
                 <template v-slot:table>
                     <tree-data
                         :headers="variableValueTableHeaders"
-                        :data="routerDiagnosticsTableRow"
-                        :search="searchKeyWord"
+                        :data="monitorDiagnosticsTableRow"
                     />
                 </template>
             </details-table-wrapper>
@@ -93,9 +91,8 @@ export default {
     name: 'parameter-diagnostics-tab',
 
     props: {
-        searchKeyWord: { type: String, required: true },
-        currentService: { type: Object, required: true },
-        createOrUpdateService: { type: Function, required: true },
+        currentServer: { type: Object, required: true },
+        createOrUpdateServerParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
     },
@@ -106,33 +103,52 @@ export default {
                 { text: 'Variable', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%', editableCol: true },
             ],
+
             showParameters: true,
             editableCell: false,
             showConfirmDialog: false,
             changesItems: [],
-            showRouterDiagnostics: true,
-            routerParameters: [],
-            loadingEditableParams: false,
+            showMonitorDiagnostics: true,
+            editableParams: [
+                {
+                    id: 'address',
+                    type: 'string',
+                },
+                {
+                    id: 'port',
+                    type: 'count',
+                },
+                {
+                    id: 'socket',
+                    type: 'string',
+                },
+                {
+                    id: 'monitoruser',
+                    type: 'string',
+                },
+                {
+                    id: 'monitorpw',
+                    type: 'string',
+                },
+            ],
+            monitorDiagnosticsTableRow: [],
         }
     },
 
     computed: {
         parametersTableRow: function() {
-            let currentService = this.currentService
-            if (!this.$help.isEmpty(currentService)) {
-                const { attributes: { parameters = {} } = {} } = currentService
+            let currentServer = this.$help.cloneDeep(this.currentServer)
+            if (!this.$help.isEmpty(currentServer)) {
+                const { attributes: { parameters = {} } = {} } = currentServer
                 let tableRow = this.$help.objToArrOfObj(parameters)
-                let editableParams = this.$help.cloneDeep(this.routerParameters)
+                let editableParams = this.$help.cloneDeep(this.editableParams)
                 let arr = []
                 if (this.editableCell) {
                     for (let o = 0; o < tableRow.length; ++o) {
                         for (let i = 0; i < editableParams.length; ++i) {
-                            if (tableRow[o].id === editableParams[i].name) {
+                            if (tableRow[o].id === editableParams[i].id) {
                                 let paramObj = this.$help.cloneDeep(editableParams[i])
                                 paramObj['value'] = tableRow[o].value
-                                // param in editableParams has name propery instead of id
-                                paramObj['id'] = paramObj.name
-                                delete paramObj.name
                                 arr.push(paramObj)
                             }
                         }
@@ -140,54 +156,52 @@ export default {
                 } else {
                     arr = tableRow
                 }
-
                 return arr
             }
             return []
         },
-        routerDiagnosticsTableRow: function() {
-            let currentService = this.currentService
-            if (!this.$help.isEmpty(currentService)) {
-                const { attributes: { router_diagnostics = {} } = {} } = currentService
+    },
+    async created() {
+        this.fetchMonitorDiagnostics()
+    },
+    methods: {
+        async fetchMonitorDiagnostics() {
+            let self = this
+            if (!self.$help.isEmpty(self.currentServer.relationships.monitors)) {
+                const { relationships: { monitors = {} } = {} } = self.currentServer
+
+                let res = await this.axios.get(
+                    `/monitors/${monitors.data[0].id}?fields[monitors]=monitor_diagnostics`
+                )
+                const {
+                    attributes: {
+                        monitor_diagnostics: { server_info },
+                    },
+                } = res.data.data
+
+                let monitorDiagnosticsObj = server_info.find(
+                    server => server.name === self.currentServer.id
+                )
                 let arrData
-                let arr = this.$help.objToArrOfObj(router_diagnostics)
+                let arr = self.$help.objToArrOfObj(monitorDiagnosticsObj)
                 if (arr.length) {
                     arrData = arr.map(obj => {
                         return {
                             id: obj.id,
-                            value: this.$help.isObject(obj.value) ? '' : obj.value,
+                            value: self.$help.isObject(obj.value) ? '' : obj.value,
                             isLink: false,
-                            children: this.$help.processTreeData(obj.value, 0),
+                            children: self.$help.processTreeData(obj.value, 0),
                             level: 0,
                             colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
                             colValueWidth: 'calc(35% - 11px)',
                         }
                     })
                 }
-                return arrData
-            }
-            return []
-        },
-    },
-    watch: {
-        editableCell: async function(val) {
-            if (val) {
-                const {
-                    attributes: { router },
-                } = this.currentService
-                let res = await this.axios.get(
-                    `/maxscale/modules/${router}?fields[module]=parameters`
-                )
-                const { attributes: { parameters = [] } = {} } = res.data.data
-                this.routerParameters = parameters
-                this.loadingEditableParams = true
-                await setTimeout(() => (this.loadingEditableParams = false), 200)
-            } else {
-                this.loadingEditableParams = false
+
+                this.monitorDiagnosticsTableRow = arrData
             }
         },
-    },
-    methods: {
+
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changesItems)
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
@@ -210,9 +224,9 @@ export default {
             let self = this
             self.editableCell = false
             self.showConfirmDialog = false
-            self.createOrUpdateService({
+            self.createOrUpdateServerParameters({
                 mode: 'patch',
-                id: self.currentService.id,
+                id: self.currentServer.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,
             })

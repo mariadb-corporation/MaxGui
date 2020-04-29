@@ -355,7 +355,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('server', ['createOrUpdateServer']),
+        ...mapActions('server', ['createOrUpdateServerParameters']),
         //ONLY AVAILABLE FOR POST MODE
         validatePortNumber(val) {
             if (!val) {
@@ -423,7 +423,7 @@ export default {
                     // console.log('update')
                 }
 
-                this.createOrUpdateServer({
+                this.createOrUpdateServerParameters({
                     mode: this.mode,
                     id: this.serverId,
                     relationships: this.relationships,

@@ -3,7 +3,7 @@
         <base-dialog
             v-model="computeShowDialog"
             :onCancel="onCancel"
-            :onSave="handleDelete"
+            :onSave="handleSave"
             :onClose="onClose"
             :title="title"
             :saveText="type"
@@ -12,13 +12,7 @@
                 <fragment>
                     <p v-if="!$help.isNull(item)">
                         <span>
-                            {{
-                                $t(`confirmations.${type}`, {
-                                    name: item.id,
-                                    resourceName: resourceName,
-                                    resourceId: resourceId,
-                                })
-                            }}
+                            {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
                         </span>
                     </p>
                     <small>
@@ -44,15 +38,13 @@
  * Public License.
  */
 export default {
-    name: 'delete-dialog',
+    name: 'confirm-dialog',
     props: {
         value: Boolean,
         type: String, // delete or destroy
-        resourceName: String,
-        resourceId: String, // delete from what resource id
         title: String,
         item: Object,
-        dispatchDelete: { type: Function, required: true },
+        onSave: { type: Function, required: true },
         smallInfo: String,
         onClose: { type: Function, required: true },
         onCancel: { type: Function, required: true },
@@ -75,8 +67,8 @@ export default {
         },
     },
     methods: {
-        async handleDelete() {
-            await this.dispatchDelete(this.item.id)
+        async handleSave() {
+            await this.onSave()
             this.onCancel()
         },
     },

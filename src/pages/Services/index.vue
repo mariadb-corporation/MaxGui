@@ -97,9 +97,9 @@ export default {
                 { text: 'Total Sessions', value: 'total_connections' },
                 { text: 'Servers', value: 'servers' },
             ],
-            isloading: true,
         }
     },
+
     computed: {
         ...mapGetters({
             searchKeyWord: 'searchKeyWord',

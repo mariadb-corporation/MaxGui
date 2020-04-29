@@ -1,128 +1,15 @@
 <template>
-    <div>
-        <portal to="page-title">
-            <h4
-                style="margin-bottom: 0px; line-height: normal;"
-                class="color text-navigation text-navigation display-1 text-capitalize page-title"
-            >
-                {{ pageTitle }}
-            </h4>
-
-            <span
-                style="position:relative;top:-15px"
-                class="field-text-info color text-field-text "
-            >
-                Uptime {{ duration }}
-            </span>
-
-            <v-menu
-                transition="slide-y-transition"
-                :close-on-content-click="false"
-                open-on-hover
-                offset-y
-                nudge-left="20"
-                content-class="v-menu--with-arrow shadow-drop"
-            >
-                <template v-slot:activator="{ on }">
-                    <v-icon
-                        class="material-icons-outlined pointer"
-                        style="position:relative;top:-15px"
-                        size="16"
-                        color="#9DB4BB"
-                        v-on="on"
-                    >
-                        info
-                    </v-icon>
-                </template>
-
-                <v-sheet style="border-radius: 10px;" class="px-6 py-4" max-width="320px">
-                    <span class="d-block mb-1 body-2 font-weight-bold"> About MaxScale</span>
-                    <div
-                        v-for="(value, name) in $help.pick(maxscaleDetails, [
-                            'commit',
-                            'started_at',
-                            'activated_at',
-                        ])"
-                        :key="name"
-                    >
-                        <span class="d-flex body-2">
-                            <span class="text-capitalize" style="width:35%">
-                                {{ name.split('_').join(' ') }}
-                            </span>
-                            <v-tooltip v-if="name === 'commit'" :key="copyState" top>
-                                <template v-slot:activator="{ on }">
-                                    <div
-                                        style="width:65%;"
-                                        class="pointer d-inline-block text-truncate"
-                                        @dblclick="copyToClipboard(value)"
-                                        v-on="on"
-                                    >
-                                        {{ value }}
-                                    </div>
-                                </template>
-                                <span>
-                                    {{ copyState }}
-                                </span>
-                            </v-tooltip>
-                            <div v-else style="width:65%;" class="d-inline-block ">
-                                {{ formatValue(value, name) }}
-                            </div>
-                        </span>
-                    </div>
-                </v-sheet>
-            </v-menu>
-        </portal>
-
-        <v-row style="margin-right:-8px;margin-left:-8px">
-            <v-col cols="4" style="padding:0px 8px">
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('sessions') }}
-                    </template>
-                    <template v-slot:card-body>
-                        <sessions-chart
-                            :allSessions="allSessions"
-                            :sessionsChartData="sessionsChartData"
-                        />
-                    </template>
-                </outline-small-card>
-            </v-col>
-            <v-col cols="4" style="padding:0px 8px">
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('connections') }}
-                    </template>
-                    <template v-if="allServers.length" v-slot:card-body>
-                        <servers-connection-chart
-                            :allServers="allServers"
-                            :serversConnectionsChartData="serversConnectionsChartData"
-                        />
-                    </template>
-                </outline-small-card>
-            </v-col>
-            <v-col cols="4" style="padding:0px 8px">
-                <outline-small-card
-                    cardWrapper="slide-nav-item"
-                    cardClass="slide-nav-item__card-graph"
-                >
-                    <template v-slot:title>
-                        {{ $t('load') }}
-                    </template>
-                    <template v-slot:card-body>
-                        <threads-chart :isMiniChart="true" />
-                    </template>
-                </outline-small-card>
-            </v-col>
-        </v-row>
-
-        <tab-nav :tabRoutes="tabRoutes" />
-    </div>
+    <v-sheet>
+        <page-header />
+        <graphs
+            :fetchThreads="fetchThreads"
+            :genThreadsDatasetsSchema="genThreadsDatasetsSchema"
+            :fetchAllServers="fetchAllServers"
+            :fetchAllSessions="fetchAllSessions"
+            :fetchAllServices="fetchAllServices"
+        />
+        <tab-nav />
+    </v-sheet>
 </template>
 
 <script>
@@ -139,105 +26,50 @@
  * Public License.
  */
 import { mapGetters, mapActions } from 'vuex'
-import tabRoutes from 'router/tabRoutes'
 import TabNav from './TabNav'
-import ThreadsChart from 'pages/Statistics/ThreadsChart'
-import ServersConnectionChart from 'pages/Servers/ServersConnectionChart'
-import SessionsChart from 'pages/Sessions/SessionsChart'
+import PageHeader from './PageHeader'
+import Graphs from './Graphs'
 
 export default {
     name: 'dashboard',
     components: {
         TabNav,
-        ThreadsChart,
-        ServersConnectionChart,
-        SessionsChart,
-    },
-    data() {
-        return {
-            tabRoutes: tabRoutes,
-            isCopied: false,
-            uptime: null,
-            duration: null,
-            containerWidth: 130,
-            copyState: 'Double click to copy to clipboard',
-        }
-    },
-
-    computed: {
-        ...mapGetters({
-            maxscaleDetails: 'maxscale/maxscaleDetails',
-            allSessions: 'session/allSessions',
-            sessionsChartData: 'session/sessionsChartData',
-            allServers: 'server/allServers',
-            serversConnectionsChartData: 'server/serversConnectionsChartData',
-        }),
-
-        pageTitle: function() {
-            let version =
-                this.maxscaleDetails.version !== undefined ? this.maxscaleDetails.version : ''
-            return `MariaDB ${this.$t('productName')} ${version}`
-        },
-    },
-
-    watch: {
-        isCopied: function(newVal) {
-            if (newVal) {
-                let self = this
-                self.copyState = 'Copied'
-                setTimeout(
-                    () => (
-                        (self.isCopied = false),
-                        (self.copyState = 'Double click to copy to clipboard')
-                    ),
-                    2000
-                )
-            }
-        },
-        maxscaleDetails: function(newVal) {
-            this.uptime = newVal.uptime
-            this.duration = this.$moment.duration(newVal.uptime, 'seconds').format()
-            setInterval(() => {
-                this.updateUpTime()
-            }, 1000)
-        },
+        PageHeader,
+        Graphs,
     },
     async created() {
         await Promise.all([
-            this['maxscale/fetchMaxScaleDetails'](),
-            this['server/fetchAllServers'](),
-            this['monitor/fetchAllMonitors'](),
-            this['session/fetchAllSessions'](),
-            this['service/fetchAllServices'](),
+            this.fetchMaxScaleOverviewInfo(),
+            this.fetchThreads(),
+            this.fetchAllServers(),
+            this.fetchAllMonitors(),
+            this.fetchAllSessions(),
+            this.fetchAllServices(),
+        ])
+
+        await Promise.all([
+            this.genSessionChartDataSetSchema(),
+            this.genServersConnectionsDataSetSchema(),
+            this.genThreadsDatasetsSchema(),
         ])
     },
 
     methods: {
-        ...mapActions([
-            'maxscale/fetchMaxScaleDetails',
-            'server/fetchAllServers',
-            'monitor/fetchAllMonitors',
-            'session/fetchAllSessions',
-            'service/fetchAllServices',
-        ]),
+        ...mapActions({
+            fetchMaxScaleOverviewInfo: 'maxscale/fetchMaxScaleOverviewInfo',
+            fetchThreads: 'maxscale/fetchThreads',
+            genThreadsDatasetsSchema: 'maxscale/genDataSetSchema',
 
-        navigate(path) {
-            this.$router.push(path)
-        },
-        formatValue(value, name) {
-            if (name === 'started_at' || name === 'activated_at') {
-                return this.$moment(value).format('MM.DD.YYYY HH:mm:ss ')
-            }
-            return value
-        },
-        copyToClipboard(value) {
-            document.execCommand('copy')
-            this.isCopied = true
-        },
-        updateUpTime() {
-            this.uptime = this.uptime + 1
-            this.duration = this.$moment.duration(this.uptime, 'seconds').format()
-        },
+            fetchAllServers: 'server/fetchAllServers',
+            genServersConnectionsDataSetSchema: 'server/genDataSetSchema',
+
+            fetchAllMonitors: 'monitor/fetchAllMonitors',
+
+            fetchAllSessions: 'session/fetchAllSessions',
+            genSessionChartDataSetSchema: 'session/genDataSetSchema',
+
+            fetchAllServices: 'service/fetchAllServices',
+        }),
     },
 }
 </script>

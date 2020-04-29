@@ -94,18 +94,12 @@
                     </details-table-wrapper>
                 </v-col>
                 <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->
-                <delete-dialog
+                <confirm-dialog
                     v-model="showDeleteDialog"
                     :title="dialogTitle"
                     :type="deleteDialogType"
-                    :resourceId="currentService.id"
-                    :resourceName="`${$t('service')}`"
                     :item="Array.isArray(targetItem) ? {} : targetItem"
-                    :dispatchDelete="
-                        () => {
-                            confirmDelete()
-                        }
-                    "
+                    :onSave="() => confirmDelete()"
                     :onClose="() => (showDeleteDialog = false)"
                     :onCancel="() => (showDeleteDialog = false)"
                 />
@@ -125,7 +119,7 @@
                 />
             </v-row>
         </v-col>
-        <SessionPart :loading="loading" :sessionsByService="sessionsByService" />
+        <sessions-table :loading="loading" :sessionsByService="sessionsByService" />
     </v-row>
 </template>
 
@@ -145,12 +139,12 @@
 
 import { mapMutations, mapGetters, mapActions } from 'vuex'
 import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
-import SessionPart from './SessionPart'
+import SessionsTable from './SessionsTable'
 
 export default {
     name: 'server-session-tab',
     components: {
-        SessionPart,
+        SessionsTable,
     },
     props: {
         currentService: { type: Object, required: true },
@@ -185,7 +179,7 @@ export default {
 
             //select dialog
             showSelectDialog: false,
-            targetSelectItemType: 'server',
+            targetSelectItemType: 'servers',
             itemsList: [],
         }
     },

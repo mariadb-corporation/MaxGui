@@ -7,6 +7,7 @@
             :onClose="onClose"
             :title="title"
             :saveText="mode"
+            :disabledSaveBtn="$help.isEmpty(selectEntities)"
         >
             <template v-slot:body>
                 <fragment>
@@ -74,7 +75,7 @@ export default {
     data() {
         return {
             show: false,
-            selectEntities: null,
+            selectEntities: [],
         }
     },
     computed: {
@@ -99,6 +100,7 @@ export default {
             if (val) {
                 this.returnSelectedEntities(val)
             }
+            console.log(val)
         },
     },
 

@@ -11,7 +11,8 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, orderBy } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, orderBy, isUndefined, isFunction } from 'utils/helpers'
+
 export default {
     namespaced: true,
     state: {
@@ -50,31 +51,38 @@ export default {
         },
 
         /**
-         * @param {Object} serverData Server object
-         * @param {String} serverData.mode Mode to perform async request POST or Patch
-         * @param {String} serverData.id Name of the server
-         * @param {Object} serverData.relationships Relationships of the server
-         * @param {Object} serverData.parameters Parameters for the server
+         * @param {Object} payload payload object
+         * @param {String} payload.mode Mode to perform async request POST or Patch
+         * @param {String} payload.id Name of the server
+         * @param {Object} payload.parameters Parameters for the server
          */
-        async createOrUpdateServer({ commit, dispatch }, serverData) {
-            const payload = {
+        async createOrUpdateServerParameters({ commit }, payload) {
+            const body = {
                 data: {
-                    id: serverData.id,
+                    id: payload.id,
                     type: 'servers',
-                    attributes: { parameters: serverData.parameters },
-                    relationships: serverData.relationships,
+                    attributes: {},
                 },
             }
             let res
             let message
-            switch (serverData.mode) {
+
+            switch (payload.mode) {
                 case 'post':
-                    res = await Vue.axios.post(`/servers/`, payload)
-                    message = [`Server ${serverData.id} is created`]
+                    body.data.attributes.parameters = payload.parameters
+                    body.data.relationships = payload.relationships
+                    res = await Vue.axios.post(`/servers/`, body)
+                    message = [`Server ${payload.id} is created`]
+
                     break
+
                 case 'patch':
-                    res = await Vue.axios.patch(`/servers/${serverData.id}`, payload)
-                    message = [`Server ${serverData.id} is updated`]
+                    if (!isUndefined(payload.parameters)) {
+                        body.data.attributes.parameters = payload.parameters
+                    }
+
+                    res = await Vue.axios.patch(`/servers/${payload.id}`, body)
+                    message = [`Server ${payload.id} is updated`]
                     break
             }
 
@@ -88,9 +96,41 @@ export default {
                     },
                     { root: true }
                 )
-                await dispatch('fetchAllServers')
+                if (isFunction(payload.callback)) await payload.callback()
             }
         },
+        //-----------------------------------------------Service relationship update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the server
+         * @param {Array} payload.services services array
+         * @param {Array} payload.monitors monitors array
+         * @param {Object} payload.type Type of relationships
+         * @param {Function} payload.callback callback function after successfully updated
+         */
+        async updateServerRelationship({ commit }, payload) {
+            let res
+            let message
+
+            res = await Vue.axios.patch(`/servers/${payload.id}/relationships/${payload.type}`, {
+                data: payload.type === 'services' ? payload.services : payload.monitors,
+            })
+            message = [`The ${payload.type} relationships in ${payload.id} is updated`]
+
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
+
         /**
          * @param {String} id id of the server
          */

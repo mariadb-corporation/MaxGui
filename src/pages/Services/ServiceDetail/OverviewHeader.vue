@@ -39,14 +39,21 @@
                 <template v-slot:title>
                     {{ $t('currentConnections') }}
                     <span class="text-lowercase font-weight-medium">
-                        ({{ currentConnections }}/{{ totalConnections }})</span
+                        ({{ connectionInfo.connections }}/{{
+                            connectionInfo.total_connections
+                        }})</span
                     >
                 </template>
                 <template v-slot:card-body>
-                    <v-col v-if="!$help.isEmpty(currentService)">
-                        <current-connections-chart
-                            :totalConnectionsChartData="totalConnectionsChartData"
-                            :updatingChart="updatingChart"
+                    <v-col>
+                        <line-chart
+                            v-if="totalConnectionsChartData.datasets.length"
+                            id="total-connections-chart"
+                            ref="totalConnectionsChart"
+                            :styles="{ height: '70px' }"
+                            :chart-data="totalConnectionsChartData"
+                            :options="options"
+                            :isRealTime="true"
                         />
                     </v-col>
                 </template>
@@ -68,32 +75,41 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
-import CurrentConnectionsChart from './CurrentConnectionsChart'
 export default {
     name: 'overview-header',
-    components: {
-        CurrentConnectionsChart,
-    },
+
     props: {
-        totalConnectionsChartData: { type: Object, required: true },
         currentService: { type: Object, required: true },
-        connectionInfo: { type: Object, required: true },
         fetchSessions: { type: Function, required: true },
         fetchNewConnectionsInfo: { type: Function, required: true },
     },
-
+    data() {
+        return {
+            options: {
+                plugins: {
+                    streaming: {
+                        duration: 20000,
+                        refresh: 10000, // onRefresh callback will be called every 10000 ms
+                        /* delay of 10000 ms, so upcoming values are known before plotting a line
+                      delay value can be larger but not smaller than refresh value to remain realtime streaming data */
+                        delay: 10000,
+                        onRefresh: this.updateChart,
+                    },
+                },
+            },
+        }
+    },
     computed: {
-        totalConnections: function() {
-            return this.connectionInfo.total_connections
-        },
-        currentConnections: function() {
-            return this.connectionInfo.connections
-        },
+        ...mapGetters({
+            connectionInfo: 'service/connectionInfo',
+            totalConnectionsChartData: 'service/totalConnectionsChartData',
+        }),
     },
 
     methods: {
-        async updatingChart(chart) {
+        async updateChart(chart) {
             let self = this
             // fetching connections chart info should be at the same time with fetchSessionsFilterByServiceId
             await Promise.all([self.fetchNewConnectionsInfo(), self.fetchSessions()])

@@ -19,9 +19,10 @@ import OutlineSmallCard from './OutlineSmallCard'
 import TreeData from './TreeData'
 import DetailsTableWrapper from './DetailsTableWrapper'
 import IconGroupWrapper from './IconGroupWrapper'
-import DeleteDialog from './DeleteDialog'
+import ConfirmDialog from './ConfirmDialog'
 import SelectDialog from './SelectDialog'
 import ParameterInput from './ParameterInput'
+import LineChart from './LineChart.vue'
 
 export default {
     'base-dialog': BaseDialog,
@@ -33,7 +34,8 @@ export default {
     'tree-data': TreeData,
     'details-table-wrapper': DetailsTableWrapper,
     'icon-group-wrapper': IconGroupWrapper,
-    'delete-dialog': DeleteDialog,
+    'confirm-dialog': ConfirmDialog,
     'select-dialog': SelectDialog,
     'parameter-input': ParameterInput,
+    'line-chart': LineChart,
 }
