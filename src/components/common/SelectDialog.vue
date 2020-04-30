@@ -90,6 +90,8 @@ export default {
         value: function(val) {
             if (val) {
                 this.$emit('get-all-entities')
+            } else {
+                this.selectEntities = []
             }
         },
         selectEntities: function(val) {

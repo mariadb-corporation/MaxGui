@@ -24,7 +24,7 @@
                     type="destroy"
                     :onSave="() => monitorManipulate({ id: item.id, mode: 'destroy' })"
                     :title="`${$t('destroy')} ${$t('monitor')}`"
-                    :smallInfo="$t('info.monitorDeleteModal')"
+                    :smallInfo="$t('info.monitorDelete')"
                 />
             </template> -->
         </data-table>

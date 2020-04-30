@@ -218,24 +218,26 @@ export default {
                 targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
             }
         },
+
         closeConfirmDialog() {
             this.showConfirmDialog = false
         },
 
+        // this simply put everything back to original state
         cancelEdit() {
             this.closeConfirmDialog()
             this.editableCell = false
             this.changesItems = []
         },
-        acceptEdit() {
+
+        async acceptEdit() {
             let self = this
-            self.editableCell = false
-            self.closeConfirmDialog()
-            self.updateServerParameters({
+            await self.updateServerParameters({
                 id: self.currentServer.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,
             })
+            self.cancelEdit()
         },
     },
 }

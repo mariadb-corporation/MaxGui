@@ -148,8 +148,7 @@ export default {
     },
     props: {
         currentService: { type: Object, required: true },
-        fetchServerState: { type: Function, required: true },
-        updateServiceRelationship: { type: Function, required: true },
+        getServerState: { type: Function, required: true },
         loading: { type: Boolean, required: true },
         dispatchRelationshipUpdate: { type: Function, required: true },
         sessionsByService: { type: Array, required: true },
@@ -187,7 +186,6 @@ export default {
     computed: {
         ...mapGetters({
             allFilters: 'filter/allFilters',
-            allServers: 'server/allServers',
         }),
         filtersLinked: function() {
             const {
@@ -205,7 +203,6 @@ export default {
             hideOverlay: 'hideOverlay',
         }),
         ...mapActions({
-            fetchAllServers: 'server/fetchAllServers',
             fetchAllFilters: 'filter/fetchAllFilters',
         }),
         //--------------------------------------------------------- FILTERS ------------------------------------------
@@ -268,8 +265,8 @@ export default {
             switch (this.targetSelectItemType) {
                 case 'servers':
                     {
-                        let res = await this.fetchServerState()
-                        let all = res.map(server => ({
+                        let data = await this.getServerState()
+                        let all = data.map(server => ({
                             id: server.id,
                             type: server.type,
                             state: server.attributes.state,

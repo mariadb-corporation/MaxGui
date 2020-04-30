@@ -24,14 +24,14 @@
                         :toggleOnClick="() => (showServices = !showServices)"
                         :toggleVal="showServices"
                         :title="`${$tc('services', 2)}`"
-                        :titleInfo="serviceStateTableRow.length"
+                        :titleInfo="serviceTableRow.length"
                         :onAddClick="() => onAdd('services')"
                         addBtnText="addService"
                     >
                         <template v-slot:table>
                             <data-table
                                 :headers="servicesTableHeader"
-                                :data="serviceStateTableRow"
+                                :data="serviceTableRow"
                                 :sortDesc="false"
                                 :noDataText="$t('noServices')"
                                 sortBy="id"
@@ -112,7 +112,6 @@
  */
 
 import { mapMutations, mapGetters, mapActions } from 'vuex'
-import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 import SessionsTable from './SessionsTable'
 
 export default {
@@ -122,11 +121,11 @@ export default {
     },
     props: {
         currentServer: { type: Object, required: true },
-        serviceStateTableRow: { type: Array, required: true },
+        serviceTableRow: { type: Array, required: true },
         updateServerRelationship: { type: Function, required: true },
         dispatchRelationshipUpdate: { type: Function, required: true },
         loading: { type: Boolean, required: true },
-        fetchServiceState: { type: Function, required: true },
+        getServiceState: { type: Function, required: true },
     },
     data() {
         return {
@@ -188,7 +187,7 @@ export default {
             switch (self.targetItem.type) {
                 case 'services':
                     {
-                        let ori = self.serviceStateTableRow
+                        let ori = self.serviceTableRow
                         let servicesRelationship = []
                         for (let i = 0; i < ori.length; ++i) {
                             if (ori[i].id !== self.targetItem.id) {
@@ -209,8 +208,8 @@ export default {
             switch (this.targetSelectItemType) {
                 case 'services':
                     {
-                        let res = await this.fetchServiceState()
-                        let all = res.map(service => ({
+                        let data = await this.getServiceState()
+                        let all = data.map(service => ({
                             id: service.id,
                             type: service.type,
                             state: service.attributes.state,
@@ -219,7 +218,7 @@ export default {
                         let self = this
                         let availableEntities = self.$help.xorWith(
                             all,
-                            self.serviceStateTableRow,
+                            self.serviceTableRow,
                             self.$help.isEqual
                         )
                         this.itemsList = availableEntities
@@ -249,7 +248,7 @@ export default {
             switch (self.targetSelectItemType) {
                 case 'services':
                     {
-                        let ori = self.serviceStateTableRow
+                        let ori = self.serviceTableRow
                         let merge = [...ori, ...self.targetItem]
                         let servicesRelationship = []
                         for (let i = 0; i < merge.length; ++i) {

@@ -218,9 +218,10 @@ export function objToArrOfObj(obj, keyName, keyValue) {
  */
 export function arrOfObjToObj(a, keyName, keyValue) {
     if (Array.isArray(a)) {
+        let array = cloneDeep(a)
         let o = {}
-        for (let i = 0; i < a.length; ++i) {
-            let innerObj = a[i]
+        for (let i = 0; i < array.length; ++i) {
+            let innerObj = array[i]
             if (!isEmpty(innerObj)) {
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */

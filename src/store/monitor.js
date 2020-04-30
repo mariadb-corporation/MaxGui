@@ -11,6 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
+import { isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -98,11 +99,41 @@ export default {
                 await dispatch('fetchAllMonitors')
             }
         },
+
+        //-----------------------------------------------Monitor parameter update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the monitor
+         * @param {Object} payload.parameters Parameters for the monitor
+         * @param {Object} payload.callback callback function after successfully updated
+         */
+        async updateMonitorParameters({ commit }, payload) {
+            const body = {
+                data: {
+                    id: payload.id,
+                    type: 'monitors',
+                    attributes: { parameters: payload.parameters },
+                },
+            }
+            let res = await Vue.axios.patch(`/monitors/${payload.id}`, body)
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Monitor ${payload.id} is updated`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
         /**
          * @param {String} id id of the monitor to be manipulated
          * @param {String} mode Mode to manipulate the monitor ( destroy, stop, start)
          */
-        async monitorManipulate({ dispatch, commit }, { id, mode }) {
+        async monitorManipulate({ commit }, { id, mode, callback }) {
             let res, message
             switch (mode) {
                 case 'destroy':
@@ -124,7 +155,6 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchAllMonitors')
                 await commit(
                     'showMessage',
                     {
@@ -133,6 +163,37 @@ export default {
                     },
                     { root: true }
                 )
+                if (isFunction(callback)) await callback()
+            }
+        },
+
+        //-----------------------------------------------Monitor relationship update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the monitor
+         * @param {Array} payload.servers servers array
+         * @param {Function} payload.callback callback function after successfully updated
+         */
+        async updateMonitorRelationship({ commit }, payload) {
+            let res
+            let message
+
+            res = await Vue.axios.patch(`/monitors/${payload.id}/relationships/servers`, {
+                data: payload.servers,
+            })
+            message = [`The servers relationships in ${payload.id} is updated`]
+
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
             }
         },
     },

@@ -17,11 +17,10 @@
                     <ServerSessionTab
                         :currentService="currentService"
                         :serverStateTableRow="serverStateTableRow"
-                        :updateServiceRelationship="updateServiceRelationship"
                         :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                         :sessionsByService="sessionsByService"
-                        :fetchServerState="fetchServerState"
+                        :getServerState="getServerState"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->
@@ -103,26 +102,26 @@ export default {
         // call this when edit server table
         async fetchAll() {
             await this.fetchService()
-            await this.fetchServerStateLoop()
+            await this.serverStateTableRowProcessing()
         },
         // reuse functions for fetch loop or after finish editing
         async fetchService() {
             await this.fetchServiceById(this.$route.params.id)
         },
 
-        async fetchServerStateLoop() {
+        async serverStateTableRowProcessing() {
             if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
                 let servers = this.currentService.relationships.servers.data
                 let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
 
                 let arr = []
                 for (let i = 0; i < serversIdArr.length; ++i) {
-                    let res = await this.fetchServerState(serversIdArr[i])
+                    let data = await this.getServerState(serversIdArr[i])
                     const {
                         id,
                         type,
                         attributes: { state },
-                    } = res
+                    } = data
                     arr.push({ id: id, state: state, type: type })
                 }
                 this.serverStateTableRow = arr
@@ -137,7 +136,7 @@ export default {
             await this.fetchSessionsFilterByServiceId(this.$route.params.id)
         },
         // fetch server state for all servers or one server
-        async fetchServerState(serverId) {
+        async getServerState(serverId) {
             let res
             if (serverId) {
                 res = await this.axios.get(`/servers/${serverId}?fields[servers]=state`)
@@ -150,15 +149,20 @@ export default {
         // actions to vuex
         async dispatchRelationshipUpdate(type, data) {
             let self = this
-            // self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+
             switch (type) {
                 case 'filters':
+                    // self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
                     await self.updateServiceRelationship({
                         id: self.currentService.id,
                         type: 'filters',
                         filters: data,
                         callback: self.fetchService,
                     })
+                    // // wait time out for loading animation
+                    // await setTimeout(() => {
+                    //     self.hideOverlay()
+                    // }, 300)
                     break
                 case 'servers':
                     await self.updateServiceRelationship({
@@ -169,11 +173,6 @@ export default {
                     })
                     break
             }
-
-            // // wait time out for loading animation
-            // await setTimeout(() => {
-            //     self.hideOverlay()
-            // }, 300)
         },
     },
 }

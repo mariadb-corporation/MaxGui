@@ -16,11 +16,11 @@
                 <v-tab-item class="pt-5">
                     <statistics-session-tab
                         :currentServer="currentServer"
-                        :serviceStateTableRow="serviceStateTableRow"
+                        :serviceTableRow="serviceTableRow"
                         :updateServerRelationship="updateServerRelationship"
                         :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
-                        :fetchServiceState="fetchServiceState"
+                        :getServiceState="getServiceState"
                     />
                 </v-tab-item>
                 <!-- Parameters & Diagnostics tab -->
@@ -72,7 +72,7 @@ export default {
             OVERLAY_TRANSPARENT_LOADING: OVERLAY_TRANSPARENT_LOADING,
             currentActiveTab: null,
             tabs: [{ name: 'Statistics & Sessions' }, { name: 'Parameters & Diagnostics' }],
-            serviceStateTableRow: [],
+            serviceTableRow: [],
         }
     },
     computed: {
@@ -80,7 +80,6 @@ export default {
             overlay: 'overlay',
             searchKeyWord: 'searchKeyWord',
             currentServer: 'server/currentServer',
-            allServicesMap: 'service/allServicesMap',
         }),
     },
 
@@ -97,36 +96,36 @@ export default {
         // call this when edit service table
         async fetchAll() {
             await this.fetchServer()
-            await this.fetchServiceStateLoop()
+            await this.serviceTableRowProcessing()
         },
         // reuse functions for fetch loop or after finish editing
         async fetchServer() {
             await this.fetchServerById(this.$route.params.id)
         },
 
-        async fetchServiceStateLoop() {
+        async serviceTableRowProcessing() {
             if (!this.$help.isEmpty(this.currentServer.relationships.services)) {
                 let services = this.currentServer.relationships.services.data
                 let servicesIdArr = services ? services.map(item => `${item.id}`) : []
 
                 let arr = []
                 for (let i = 0; i < servicesIdArr.length; ++i) {
-                    let res = await this.fetchServiceState(servicesIdArr[i])
+                    let data = await this.getServiceState(servicesIdArr[i])
                     const {
                         id,
                         type,
                         attributes: { state },
-                    } = res
+                    } = data
                     arr.push({ id: id, state: state, type: type })
                 }
-                this.serviceStateTableRow = arr
+                this.serviceTableRow = arr
             } else {
-                this.serviceStateTableRow = []
+                this.serviceTableRow = []
             }
         },
 
         // fetch service state for all services or one service
-        async fetchServiceState(serviceId) {
+        async getServiceState(serviceId) {
             let res
             if (serviceId) {
                 res = await this.axios.get(`/services/${serviceId}?fields[services]=state`)

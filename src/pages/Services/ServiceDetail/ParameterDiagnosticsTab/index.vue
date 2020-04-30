@@ -94,7 +94,6 @@
  * Public License.
  */
 
-import { mapGetters, mapActions } from 'vuex'
 export default {
     name: 'parameter-diagnostics-tab',
 
@@ -150,6 +149,7 @@ export default {
             }
             return []
         },
+
         routerDiagnosticsTableRow: function() {
             let currentService = this.currentService
             if (!this.$help.isEmpty(currentService)) {
@@ -202,24 +202,26 @@ export default {
                 targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
             }
         },
+
         closeConfirmDialog() {
             this.showConfirmDialog = false
         },
 
+        // this simply put everything back to original state
         cancelEdit() {
             this.editableCell = false
             this.closeConfirmDialog()
             this.changesItems = []
         },
-        acceptEdit() {
+
+        async acceptEdit() {
             let self = this
-            self.editableCell = false
-            self.closeConfirmDialog()
-            self.updateServiceParameters({
+            await self.updateServiceParameters({
                 id: self.currentService.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,
             })
+            self.cancelEdit()
         },
     },
 }

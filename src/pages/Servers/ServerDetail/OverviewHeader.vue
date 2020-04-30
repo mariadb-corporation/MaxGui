@@ -17,8 +17,9 @@
                 >
                     {{ name.replace('_', ' ') }}
                 </span>
-                <fragment v-if="name === 'monitor' && value !== 'undefined'">
+                <fragment v-if="name === 'monitor'">
                     <router-link
+                        v-if="value !== 'undefined'"
                         :key="index"
                         :to="`/dashboard/monitors/${value}`"
                         class="detail-overview__card__value body-2 no-underline"
@@ -185,11 +186,14 @@ export default {
                             { id: self.getTopOverviewInfo.monitor, type: 'monitors' },
                         ]
                         // filter out currentMonitor from availableEntities
-                        let availableEntities = self.$help.xorWith(
-                            all,
-                            currentMonitor,
-                            self.$help.isEqual
-                        )
+                        let availableEntities = all
+                        if (currentMonitor[0].id !== 'undefined') {
+                            availableEntities = self.$help.xorWith(
+                                all,
+                                currentMonitor,
+                                self.$help.isEqual
+                            )
+                        }
                         this.itemsList = availableEntities
                     }
                     break
