@@ -6,10 +6,6 @@
         :sortDesc="false"
         sortBy="id"
     >
-        <template v-slot:append-id>
-            <span class="ml-1 color text-field-text"> ({{ allSessions.length }}) </span>
-        </template>
-
         <template v-slot:user="{ data: { item: { user } } }">
             <router-link :key="user" :to="`/users/${user}`" class="no-underline">
                 <span> {{ user }} </span>
@@ -37,7 +33,7 @@
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
                             {{ servicesIdArr.length }}
-                            {{ $t('services').toLowerCase() }}
+                            {{ $tc('services', 2).toLowerCase() }}
                         </span>
                     </template>
                     <template v-for="serviceId in servicesIdArr">

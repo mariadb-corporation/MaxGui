@@ -18,7 +18,7 @@
                         :currentService="currentService"
                         :serverStateTableRow="serverStateTableRow"
                         :updateServiceRelationship="updateServiceRelationship"
-                        :onEditSucceeded="fetchService"
+                        :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                         :sessionsByService="sessionsByService"
                         :fetchServerState="fetchServerState"
@@ -29,7 +29,7 @@
                     <parameter-diagnostics-tab
                         :currentService="currentService"
                         :searchKeyWord="searchKeyWord"
-                        :createOrUpdateService="createOrUpdateService"
+                        :updateServiceParameters="updateServiceParameters"
                         :onEditSucceeded="fetchService"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                 /></v-tab-item>
@@ -88,7 +88,7 @@ export default {
     async created() {
         let self = this
         // Initial fetch, wait for service id
-        await Promise.all([self.fetchService(), self.fetchSessions()])
+        await Promise.all([self.fetchAll(), self.fetchSessions()])
         await self.genDataSetSchema()
     },
     methods: {
@@ -96,15 +96,20 @@ export default {
             fetchServiceById: 'service/fetchServiceById',
             genDataSetSchema: 'service/genDataSetSchema',
             updateServiceRelationship: 'service/updateServiceRelationship',
-            createOrUpdateService: 'service/createOrUpdateService',
+            updateServiceParameters: 'service/updateServiceParameters',
             fetchServiceConnections: 'service/fetchServiceConnections',
             fetchSessionsFilterByServiceId: 'session/fetchSessionsFilterByServiceId',
         }),
+        // call this when edit server table
+        async fetchAll() {
+            await this.fetchService()
+            await this.fetchServerStateLoop()
+        },
         // reuse functions for fetch loop or after finish editing
         async fetchService() {
             await this.fetchServiceById(this.$route.params.id)
-            await this.fetchServerStateLoop()
         },
+
         async fetchServerStateLoop() {
             if (!this.$help.isEmpty(this.currentService.relationships.servers)) {
                 let servers = this.currentService.relationships.servers.data
@@ -141,6 +146,34 @@ export default {
             }
 
             return res.data.data
+        },
+        // actions to vuex
+        async dispatchRelationshipUpdate(type, data) {
+            let self = this
+            // self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+            switch (type) {
+                case 'filters':
+                    await self.updateServiceRelationship({
+                        id: self.currentService.id,
+                        type: 'filters',
+                        filters: data,
+                        callback: self.fetchService,
+                    })
+                    break
+                case 'servers':
+                    await self.updateServiceRelationship({
+                        id: self.currentService.id,
+                        type: 'servers',
+                        servers: data,
+                        callback: self.fetchAll,
+                    })
+                    break
+            }
+
+            // // wait time out for loading animation
+            // await setTimeout(() => {
+            //     self.hideOverlay()
+            // }, 300)
         },
     },
 }

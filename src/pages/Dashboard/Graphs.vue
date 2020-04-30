@@ -1,9 +1,9 @@
 <template>
     <v-row style="margin-right:-8px;margin-left:-8px">
         <v-col cols="4" style="padding:0px 8px">
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+            <outlined-overview-card :tile="false">
                 <template v-slot:title>
-                    {{ $t('sessions') }}
+                    {{ $tc('sessions', 2) }}
                 </template>
                 <template v-slot:card-body>
                     <line-chart
@@ -16,12 +16,12 @@
                         :isRealTime="true"
                     />
                 </template>
-            </outline-small-card>
+            </outlined-overview-card>
         </v-col>
         <v-col cols="4" style="padding:0px 8px">
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+            <outlined-overview-card :tile="false">
                 <template v-slot:title>
-                    {{ $t('connections') }}
+                    {{ $tc('connections', 2) }}
                 </template>
                 <template v-if="allServers.length" v-slot:card-body>
                     <line-chart
@@ -34,10 +34,10 @@
                         :isRealTime="true"
                     />
                 </template>
-            </outline-small-card>
+            </outlined-overview-card>
         </v-col>
         <v-col cols="4" style="padding:0px 8px">
-            <outline-small-card cardWrapper="slide-nav-item" cardClass="slide-nav-item__card-graph">
+            <outlined-overview-card :tile="false">
                 <template v-slot:title>
                     {{ $t('load') }}
                 </template>
@@ -54,7 +54,7 @@
                         :yAxesTicks="{ max: 100, min: 0 }"
                     />
                 </template>
-            </outline-small-card>
+            </outlined-overview-card>
         </v-col>
     </v-row>
 </template>

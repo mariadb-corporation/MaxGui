@@ -91,7 +91,7 @@
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
                             {{ servicesIdArr.length }}
-                            {{ $t('services').toLowerCase() }}
+                            {{ $tc('services', 2).toLowerCase() }}
                         </span>
                     </template>
 

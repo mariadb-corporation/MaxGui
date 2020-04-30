@@ -5,7 +5,7 @@
         :onClose="closeModal"
         :onSave="handleSave"
         maxWidth="890px"
-        :title="`${modalTitle} ${$t('service')}`"
+        :title="`${modalTitle} ${$tc('services', 1)}`"
     >
         <template v-slot:body>
             <v-container class="pa-0">
@@ -369,7 +369,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('service', ['createOrUpdateService']),
+        ...mapActions('service', ['createService']),
 
         //ONLY AVAILABLE FOR POST MODE
         validateServiceId(val) {
@@ -415,7 +415,7 @@ export default {
                 switch (this.mode) {
                     case 'post':
                         // these parameters need to have null value if it is not set
-                        this.parameters.version_string = this.$help.treatEmptyStringAsNull(
+                        this.parameters.version_string = this.$help.treatNullAsEmptyString(
                             this.parameters.version_string
                         )
                         break
@@ -423,7 +423,7 @@ export default {
                     // console.log('update')
                 }
 
-                this.createOrUpdateService({
+                this.createService({
                     mode: this.mode,
                     id: this.serviceId,
                     router: this.router,

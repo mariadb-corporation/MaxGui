@@ -14,11 +14,7 @@
 
         <div class="d-flex mb-2">
             <template v-for="(value, name) in getTopOverviewInfo">
-                <outline-small-card
-                    :key="name"
-                    cardWrapper="detail-overview mt-0"
-                    cardClass="detail-overview__card px-10"
-                >
+                <outlined-overview-card :key="name" cardWrapper="mt-0" cardClass="px-10">
                     <template v-slot:card-body>
                         <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
                             {{ name.replace('_', ' ') }}
@@ -28,7 +24,7 @@
                             {{ value }}
                         </span>
                     </template>
-                </outline-small-card>
+                </outlined-overview-card>
             </template>
         </div>
         <!-- MONITOR DIAGNOSTICS TABLE -->
@@ -37,7 +33,7 @@
                 <details-table-wrapper
                     :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
                     :toggleVal="showMonitorDiagnostics"
-                    title="monitorDiagnostics"
+                    :title="`${$t('monitorDiagnostics')}`"
                     :onAddClick="() => (addServerDialog = true)"
                     addBtnText="addServer"
                 >
@@ -58,7 +54,7 @@
                 <details-table-wrapper
                     :toggleOnClick="() => (showParameters = !showParameters)"
                     :toggleVal="showParameters"
-                    title="parameters"
+                    :title="`${$tc('parameters', 2)}`"
                 >
                     <template v-slot:table>
                         <data-table

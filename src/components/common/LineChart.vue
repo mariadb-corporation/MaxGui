@@ -87,10 +87,10 @@ export default {
             },
             realtimeLayout: {
                 padding: {
-                    left: 5,
-                    bottom: 15,
+                    left: 2,
+                    bottom: 10,
                     right: 0,
-                    top: 0,
+                    top: 15,
                 },
             },
             defaultLayout: {

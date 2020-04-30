@@ -106,7 +106,7 @@ export default {
          * @param {Object} payload.relationships.servers Type of relationships
          * @param {Object} payload.relationships.filters Type of relationships
          */
-        async createOrUpdateService({ commit }, payload) {
+        async createService({ commit }, payload) {
             const body = {
                 data: {
                     id: payload.id,
@@ -143,6 +143,35 @@ export default {
                     'showMessage',
                     {
                         text: message,
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
+        //-----------------------------------------------Service parameter update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the service
+         * @param {Object} payload.parameters Parameters for the service
+         * @param {Object} payload.callback callback function after successfully updated
+         */
+        async updateServiceParameters({ commit }, payload) {
+            const body = {
+                data: {
+                    id: payload.id,
+                    type: 'services',
+                    attributes: { parameters: payload.parameters },
+                },
+            }
+            let res = await Vue.axios.patch(`/services/${payload.id}`, body)
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Service ${payload.id} is updated`],
                         type: 'success',
                     },
                     { root: true }

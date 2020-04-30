@@ -70,13 +70,17 @@ export function monitorStateIcon(monitorState) {
  * @param {String} val String to be handled
  * @return {Object} Return null object when val is an empty string or a string equals to 'null'
  */
-export function treatEmptyStringAsNull(val) {
-    if (val === '') {
-        return null
-    } else if (val === 'null') {
-        return null
+export function treatNullAsEmptyString(val) {
+    switch (val) {
+        case null:
+            return ''
+        case 'null':
+            return ''
+        case '':
+            return ''
+        default:
+            return val
     }
-    return val
 }
 
 export function delay(t, v) {
@@ -88,14 +92,14 @@ export function delay(t, v) {
 export function dynamicColors(dataIndex) {
     const palette = [
         'rgba(171,199,74,1)',
-        'rgba(14,100,136,1)',
-        'rgba(150,221,207,1)',
+        'rgba(245,157,52,1)',
         'rgba(47,153,163,1)',
+        'rgba(150,221,207,1)',
+        'rgba(125,208,18,1)',
+        'rgba(14,100,136,1)',
+        'rgba(66,79,98,1)',
         'rgba(0,53,69,1)',
         'rgba(45,156,219,1)',
-        'rgba(125,208,18,1)',
-        'rgba(66,79,98,1)',
-        'rgba(245,157,52,1)',
     ]
     return palette[dataIndex % palette.length]
 }
@@ -221,9 +225,9 @@ export function arrOfObjToObj(a, keyName, keyValue) {
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
                 if ((keyName, keyValue)) {
-                    o[innerObj[keyName]] = treatEmptyStringAsNull(innerObj[keyValue])
+                    o[innerObj[keyName]] = treatNullAsEmptyString(innerObj[keyValue])
                 } else {
-                    o[innerObj.id] = treatEmptyStringAsNull(innerObj.value)
+                    o[innerObj.id] = treatNullAsEmptyString(innerObj.value)
                 }
             }
         }
@@ -306,7 +310,7 @@ Object.defineProperties(Vue.prototype, {
                 serviceStateIcon,
                 serverStateIcon,
                 monitorStateIcon,
-                treatEmptyStringAsNull,
+                treatNullAsEmptyString,
                 delay,
                 dynamicColors,
                 strReplaceAt,

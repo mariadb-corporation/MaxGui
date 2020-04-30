@@ -3,7 +3,7 @@
         <details-table-wrapper
             :toggleOnClick="() => (showSessions = !showSessions)"
             :toggleVal="showSessions"
-            title="currentSessions"
+            :title="`${$tc('currentSessions', 2)}`"
             :titleInfo="sessionsTableRow.length"
         >
             <template v-slot:table>

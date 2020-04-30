@@ -91,7 +91,6 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
-// import { workerTimer } from 'utils/workerTimer'
 import Worker from 'worker-loader!utils/worker.js'
 export default {
     name: 'page-title',

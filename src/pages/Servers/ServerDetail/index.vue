@@ -1,7 +1,11 @@
 <template>
     <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
         <page-header :currentServer="currentServer" />
-        <overview-header :currentServer="currentServer" />
+        <overview-header
+            :currentServer="currentServer"
+            :updateServerRelationship="updateServerRelationship"
+            :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
+        />
 
         <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
             <v-tab v-for="tab in tabs" :key="tab.name">
@@ -14,7 +18,7 @@
                         :currentServer="currentServer"
                         :serviceStateTableRow="serviceStateTableRow"
                         :updateServerRelationship="updateServerRelationship"
-                        :onEditSucceeded="fetchServer"
+                        :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                         :fetchServiceState="fetchServiceState"
                     />
@@ -23,7 +27,7 @@
                 <v-tab-item class="pt-5">
                     <parameter-diagnostics-tab
                         :currentServer="currentServer"
-                        :createOrUpdateServerParameters="createOrUpdateServerParameters"
+                        :updateServerParameters="updateServerParameters"
                         :onEditSucceeded="fetchServer"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
                 /></v-tab-item>
@@ -81,21 +85,25 @@ export default {
     },
 
     async created() {
-        let self = this
-        // Initial fetch, wait for service id
-        await self.fetchServer()
+        // Initial fetch
+        await this.fetchAll()
     },
     methods: {
         ...mapActions({
             fetchServerById: 'server/fetchServerById',
             updateServerRelationship: 'server/updateServerRelationship',
-            createOrUpdateServerParameters: 'server/createOrUpdateServerParameters',
+            updateServerParameters: 'server/updateServerParameters',
         }),
+        // call this when edit service table
+        async fetchAll() {
+            await this.fetchServer()
+            await this.fetchServiceStateLoop()
+        },
         // reuse functions for fetch loop or after finish editing
         async fetchServer() {
             await this.fetchServerById(this.$route.params.id)
-            await this.fetchServiceStateLoop()
         },
+
         async fetchServiceStateLoop() {
             if (!this.$help.isEmpty(this.currentServer.relationships.services)) {
                 let services = this.currentServer.relationships.services.data
@@ -127,6 +135,28 @@ export default {
             }
 
             return res.data.data
+        },
+        // actions to vuex
+        async dispatchRelationshipUpdate(type, data) {
+            let self = this
+            switch (type) {
+                case 'monitors':
+                    await self.updateServerRelationship({
+                        id: self.currentServer.id,
+                        type: 'monitors',
+                        monitors: data,
+                        callback: self.fetchServer,
+                    })
+                    break
+                case 'services':
+                    await self.updateServerRelationship({
+                        id: self.currentServer.id,
+                        type: 'services',
+                        services: data,
+                        callback: self.fetchAll,
+                    })
+                    break
+            }
         },
     },
 }

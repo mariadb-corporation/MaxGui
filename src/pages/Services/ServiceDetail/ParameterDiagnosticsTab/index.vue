@@ -5,7 +5,7 @@
             <details-table-wrapper
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
-                title="parameters"
+                :title="`${$tc('parameters', 2)}`"
                 :editing="editableCell"
                 :onEdit="() => (editableCell = true)"
                 :doneEditing="() => (showConfirmDialog = true)"
@@ -46,7 +46,11 @@
             >
                 <template v-slot:body>
                     <span class="d-block mb-4">
-                        {{ $t('changeTheFollowingParameters', { quantity: changesItems.length }) }}
+                        {{
+                            $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
+                                quantity: changesItems.length,
+                            })
+                        }}
                     </span>
                     <fragment v-for="item in changesItems" :key="item.id">
                         <p class="d-block mb-1 font-weight-bold">
@@ -60,7 +64,7 @@
             <details-table-wrapper
                 :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
                 :toggleVal="showRouterDiagnostics"
-                title="routerDiagnostics"
+                :title="`${$t('routerDiagnostics')}`"
             >
                 <template v-slot:table>
                     <tree-data
@@ -95,7 +99,7 @@ export default {
     props: {
         searchKeyWord: { type: String, required: true },
         currentService: { type: Object, required: true },
-        createOrUpdateService: { type: Function, required: true },
+        updateServiceParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
     },
@@ -210,8 +214,7 @@ export default {
             let self = this
             self.editableCell = false
             self.showConfirmDialog = false
-            self.createOrUpdateService({
-                mode: 'patch',
+            self.updateServiceParameters({
                 id: self.currentService.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,

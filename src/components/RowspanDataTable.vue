@@ -82,18 +82,16 @@
                     @click="cellClick(item, headers)"
                     @mouseover="
                         e =>
-                            mouse(
+                            cellHoverHanlde(
                                 e,
-                                'mouseOver',
                                 i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
                                 item.id
                             )
                     "
                     @mouseleave="
                         e =>
-                            mouse(
+                            cellHoverHanlde(
                                 e,
-                                'mouseLeave',
                                 i < numOfColsHasRowSpan ? 'rowgroup' : 'cell',
                                 item.id
                             )
@@ -237,23 +235,21 @@ export default {
             return this.$help.isFunction(header.format) ? header.format(value) : value
         },
 
-        mouse: function(e, mouseType, target, rowspanId) {
+        cellHoverHanlde: function(e, target, rowspanId) {
             // Make associated td elements to have the same hover effect
+            let bg = e.type === 'mouseover' ? '#fafcfc' : ''
             if (target === 'cell') {
                 let elements = this.$refs.rowGroup.filter((ele, i) =>
                     ele.attributes.class.value.includes(`${rowspanId}-alterableRowspan`)
                 )
 
-                elements.forEach(
-                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#fafcfc' : '')
-                )
+                elements.forEach(ele => (ele.style.backgroundColor = bg))
             } else if (target === 'rowgroup') {
                 let elements = this.$refs.cell.filter((ele, i) =>
                     ele.attributes.class.value.includes(`${rowspanId}-cell`)
                 )
-                elements.forEach(
-                    ele => (ele.style.backgroundColor = mouseType === 'mouseOver' ? '#fafcfc' : '')
-                )
+
+                elements.forEach(ele => (ele.style.backgroundColor = bg))
             }
         },
     },

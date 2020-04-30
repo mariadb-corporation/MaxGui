@@ -28,7 +28,7 @@ export default [
             size: 22,
             icon: '$vuetify.icons.tachometer',
         },
-        name: 'dashboard',
+        name: 'dashboards',
         children: tabRoutes,
     },
 

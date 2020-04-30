@@ -4,34 +4,50 @@
             <template v-slot:setting-menu>
                 <icon-group-wrapper multiIcons>
                     <template v-slot:body>
-                        <v-btn
-                            text
-                            :disabled="currentService.attributes.state === 'Stopped'"
-                            @click="handleStop"
-                        >
-                            <v-icon size="22" color="primary">
-                                $vuetify.icons.paused
-                            </v-icon>
-                        </v-btn>
-
-                        <v-btn
-                            text
-                            :disabled="currentService.attributes.state === 'Started'"
-                            @click="handleStart"
-                        >
-                            <v-icon size="22" color="primary">
-                                $vuetify.icons.restart
-                            </v-icon>
-                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    text
+                                    :disabled="currentService.attributes.state === 'Stopped'"
+                                    v-on="on"
+                                    @click="handleStop"
+                                >
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.paused
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t('stop') }} {{ $tc('services', 1) }} </span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn
+                                    text
+                                    :disabled="currentService.attributes.state === 'Started'"
+                                    v-on="on"
+                                    @click="handleStart"
+                                >
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.restart
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t('start') }} {{ $tc('services', 1) }} </span>
+                        </v-tooltip>
                     </template>
                 </icon-group-wrapper>
                 <icon-group-wrapper>
                     <template v-slot:body>
-                        <v-btn text @click="handleDelete">
-                            <v-icon size="18" color="error">
-                                $vuetify.icons.delete
-                            </v-icon>
-                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn text v-on="on" @click="handleDelete">
+                                    <v-icon size="18" color="error">
+                                        $vuetify.icons.delete
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t('destroy') }} {{ $tc('services', 1) }} </span>
+                        </v-tooltip>
                     </template>
                 </icon-group-wrapper>
             </template>
@@ -115,19 +131,19 @@ export default {
 
         handleDelete() {
             this.dialogType = 'destroy'
-            this.dialogTitle = `${this.$t('destroy')} ${this.$t('service')}`
+            this.dialogTitle = `${this.$t('destroy')} ${this.$tc('services', 1)}`
             this.smallInfo = 'serviceDelete'
             this.showConfirmDialog = true
         },
         handleStop() {
             this.dialogType = 'stop'
-            this.dialogTitle = `${this.$t('stop')} ${this.$t('service')}`
+            this.dialogTitle = `${this.$t('stop')} ${this.$tc('services', 1)}`
             this.smallInfo = ''
             this.showConfirmDialog = true
         },
         handleStart() {
             this.dialogType = 'start'
-            this.dialogTitle = `${this.$t('start')} ${this.$t('service')}`
+            this.dialogTitle = `${this.$t('start')} ${this.$tc('services', 1)}`
             this.smallInfo = ''
             this.showConfirmDialog = true
         },

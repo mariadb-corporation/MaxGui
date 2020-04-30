@@ -20,7 +20,7 @@ export default {
     &:not(:last-of-type) {
         border-right: 1px solid $field-text;
     }
-    button {
+    ::v-deep .v-btn {
         min-width: unset !important;
         padding: 0px !important;
         width: 42px;
@@ -31,8 +31,8 @@ export default {
         }
     }
     &__multi {
-        button {
-            width: 36px;
+        ::v-deep .v-btn {
+            width: 36px !important;
         }
     }
     svg {

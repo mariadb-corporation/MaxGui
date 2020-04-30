@@ -7,7 +7,7 @@
                     <details-table-wrapper
                         :toggleOnClick="() => (showServers = !showServers)"
                         :toggleVal="showServers"
-                        title="servers"
+                        :title="`${$tc('servers', 2)}`"
                         :titleInfo="serverStateTableRow.length"
                         :onAddClick="() => onAdd('servers')"
                         addBtnText="addServer"
@@ -17,7 +17,7 @@
                                 :headers="serversTableHeader"
                                 :data="serverStateTableRow"
                                 :sortDesc="false"
-                                :noDataText="$t('noServer')"
+                                :noDataText="$t('noServers')"
                                 sortBy="id"
                                 :loading="loading"
                                 :showActionsOnHover="true"
@@ -56,7 +56,7 @@
                     <details-table-wrapper
                         :toggleOnClick="() => (showFilter = !showFilter)"
                         :toggleVal="showFilter"
-                        title="filters"
+                        :title="`${$tc('filters', 2)}`"
                         :titleInfo="filtersLinked.length"
                         :onAddClick="() => onAdd('filters')"
                         addBtnText="addFilter"
@@ -66,7 +66,7 @@
                                 :headers="filterTableHeader"
                                 :data="filtersLinked"
                                 :sortDesc="false"
-                                :noDataText="$t('noFilter')"
+                                :noDataText="$t('noFilters')"
                                 :draggable="true"
                                 :dragReorder="filterDragReorder"
                                 :loading="loading"
@@ -108,14 +108,14 @@
                     v-model="showSelectDialog"
                     :title="dialogTitle"
                     mode="add"
-                    :multiple="true"
+                    multiple
                     :entityName="targetSelectItemType"
                     :onClose="() => (showSelectDialog = false)"
                     :onCancel="() => (showSelectDialog = false)"
                     :handleSave="confirmAdd"
                     :itemsList="itemsList"
-                    :getAllEntities="getAllEntities"
-                    :returnSelectedEntities="selectedItems => (targetItem = selectedItems)"
+                    @get-selected-entities="targetItem = $event"
+                    @get-all-entities="getAllEntities"
                 />
             </v-row>
         </v-col>
@@ -151,7 +151,7 @@ export default {
         fetchServerState: { type: Function, required: true },
         updateServiceRelationship: { type: Function, required: true },
         loading: { type: Boolean, required: true },
-        onEditSucceeded: { type: Function, required: true },
+        dispatchRelationshipUpdate: { type: Function, required: true },
         sessionsByService: { type: Array, required: true },
         serverStateTableRow: { type: Array, required: true },
     },
@@ -214,39 +214,11 @@ export default {
             if (oldIndex !== newIndex) {
                 const moved = self.filtersLinked.splice(oldIndex, 1)[0]
                 self.filtersLinked.splice(newIndex, 0, moved)
-                await self.performAsyncLoadingAction('filters', self.filtersLinked)
+                await self.dispatchRelationshipUpdate('filters', self.filtersLinked)
             }
         },
 
         //--------------------------------------------------------- COMMON ---------------------------------------------
-        // actions to vuex
-        async performAsyncLoadingAction(type, data) {
-            let self = this
-            // self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-            switch (type) {
-                case 'filters':
-                    await self.updateServiceRelationship({
-                        id: self.currentService.id,
-                        type: 'filters',
-                        filters: data,
-                        callback: self.onEditSucceeded,
-                    })
-                    break
-                case 'servers':
-                    await self.updateServiceRelationship({
-                        id: self.currentService.id,
-                        type: 'servers',
-                        servers: data,
-                        callback: self.onEditSucceeded,
-                    })
-                    break
-            }
-
-            // // wait time out for loading animation
-            // await setTimeout(() => {
-            //     self.hideOverlay()
-            // }, 300)
-        },
 
         // -------------- Delete handle
         onDelete(type, item) {
@@ -254,11 +226,11 @@ export default {
             switch (type) {
                 case 'filters':
                     this.deleteDialogType = 'delete'
-                    this.dialogTitle = `${this.$t('delete')} ${this.$t('filter')}`
+                    this.dialogTitle = `${this.$t('delete')} ${this.$tc('filters', 1)}`
                     break
                 case 'servers':
                     this.deleteDialogType = 'unlink'
-                    this.dialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
+                    this.dialogTitle = `${this.$t('unlink')} ${this.$tc('servers', 1)}`
                     break
             }
 
@@ -269,7 +241,7 @@ export default {
             let self = this
             switch (self.targetItem.type) {
                 case 'filters':
-                    await self.performAsyncLoadingAction(
+                    await self.dispatchRelationshipUpdate(
                         'filters',
                         self.filtersLinked.filter(item => item !== self.targetItem)
                     )
@@ -286,7 +258,7 @@ export default {
                             }
                         }
 
-                        await self.performAsyncLoadingAction('servers', serversRelationship)
+                        await self.dispatchRelationshipUpdate('servers', serversRelationship)
                     }
                     break
             }
@@ -334,7 +306,7 @@ export default {
         onAdd(type) {
             let self = this
             self.dialogTitle = `${self.$t(`addEntity`, {
-                entityName: self.$t(type),
+                entityName: self.$tc(type, 2),
             })}`
 
             switch (type) {
@@ -355,7 +327,7 @@ export default {
                 case 'filters':
                     {
                         let clone = self.$help.cloneDeep(self.filtersLinked)
-                        await self.performAsyncLoadingAction('filters', [
+                        await self.dispatchRelationshipUpdate('filters', [
                             ...clone,
                             ...self.targetItem,
                         ])
@@ -372,7 +344,7 @@ export default {
                             delete cloneO.state
                             serversRelationship.push(cloneO)
                         }
-                        await self.performAsyncLoadingAction('servers', serversRelationship)
+                        await self.dispatchRelationshipUpdate('servers', serversRelationship)
                     }
                     break
             }

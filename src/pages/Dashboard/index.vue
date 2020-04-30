@@ -73,12 +73,3 @@ export default {
     },
 }
 </script>
-
-<style scoped lang="scss">
-.slide-nav-item {
-    width: 100%;
-    ::v-deep &__card-graph {
-        padding-top: 6px;
-    }
-}
-</style>

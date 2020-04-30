@@ -15,7 +15,7 @@ import DataTable from './DataTable'
 import SearchBox from './SearchBox'
 import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from './IconSpriteSheet'
-import OutlineSmallCard from './OutlineSmallCard'
+import OutlinedOverviewCard from './OutlinedOverviewCard'
 import TreeData from './TreeData'
 import DetailsTableWrapper from './DetailsTableWrapper'
 import IconGroupWrapper from './IconGroupWrapper'
@@ -30,7 +30,7 @@ export default {
     'search-box': SearchBox,
     'details-page-title': DetailsPageTitle,
     'icon-sprite-sheet': IconSpriteSheet,
-    'outline-small-card': OutlineSmallCard,
+    'outlined-overview-card': OutlinedOverviewCard,
     'tree-data': TreeData,
     'details-table-wrapper': DetailsTableWrapper,
     'icon-group-wrapper': IconGroupWrapper,

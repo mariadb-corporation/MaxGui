@@ -7,7 +7,7 @@
                     <details-table-wrapper
                         :toggleOnClick="() => (showStatistics = !showStatistics)"
                         :toggleVal="showStatistics"
-                        title="statistics"
+                        :title="`${$tc('statistics', 2)}`"
                     >
                         <template v-slot:table>
                             <data-table
@@ -23,7 +23,7 @@
                     <details-table-wrapper
                         :toggleOnClick="() => (showServices = !showServices)"
                         :toggleVal="showServices"
-                        title="services"
+                        :title="`${$tc('services', 2)}`"
                         :titleInfo="serviceStateTableRow.length"
                         :onAddClick="() => onAdd('services')"
                         addBtnText="addService"
@@ -33,7 +33,7 @@
                                 :headers="servicesTableHeader"
                                 :data="serviceStateTableRow"
                                 :sortDesc="false"
-                                :noDataText="$t('noService')"
+                                :noDataText="$t('noServices')"
                                 sortBy="id"
                                 :loading="loading"
                                 :showActionsOnHover="true"
@@ -83,14 +83,14 @@
             v-model="showSelectDialog"
             :title="dialogTitle"
             mode="add"
-            :multiple="true"
+            multiple
             :entityName="targetSelectItemType"
             :onClose="() => (showSelectDialog = false)"
             :onCancel="() => (showSelectDialog = false)"
             :handleSave="confirmAdd"
             :itemsList="itemsList"
-            :getAllEntities="getAllEntities"
-            :returnSelectedEntities="selectedItems => (targetItem = selectedItems)"
+            @get-selected-entities="targetItem = $event"
+            @get-all-entities="getAllEntities"
         />
 
         <sessions-table :currentServer="currentServer" :loading="loading" />
@@ -124,7 +124,7 @@ export default {
         currentServer: { type: Object, required: true },
         serviceStateTableRow: { type: Array, required: true },
         updateServerRelationship: { type: Function, required: true },
-        onEditSucceeded: { type: Function, required: true },
+        dispatchRelationshipUpdate: { type: Function, required: true },
         loading: { type: Boolean, required: true },
         fetchServiceState: { type: Function, required: true },
     },
@@ -170,28 +170,13 @@ export default {
     },
     methods: {
         //--------------------------------------------------------- COMMON ---------------------------------------------
-        // actions to vuex
-        async performAsyncLoadingAction(type, data) {
-            let self = this
-            switch (type) {
-                case 'services':
-                    await self.updateServerRelationship({
-                        id: self.currentServer.id,
-                        type: 'services',
-                        services: data,
-                        callback: self.onEditSucceeded,
-                    })
-                    break
-            }
-        },
-
         // -------------- Delete handle
         onDelete(type, item) {
             this.targetItem = item
             switch (type) {
                 case 'services':
                     this.deleteDialogType = 'unlink'
-                    this.dialogTitle = `${this.$t('unlink')} ${this.$t('service')}`
+                    this.dialogTitle = `${this.$t('unlink')} ${this.$tc('services', 1)}`
                     break
             }
 
@@ -213,7 +198,7 @@ export default {
                             }
                         }
 
-                        await self.performAsyncLoadingAction('services', servicesRelationship)
+                        await self.dispatchRelationshipUpdate('services', servicesRelationship)
                     }
                     break
             }
@@ -246,7 +231,7 @@ export default {
         onAdd(type) {
             let self = this
             self.dialogTitle = `${self.$t(`addEntity`, {
-                entityName: self.$t(type),
+                entityName: self.$tc(type, 2),
             })}`
 
             switch (type) {
@@ -272,7 +257,7 @@ export default {
                             delete cloneO.state
                             servicesRelationship.push(cloneO)
                         }
-                        await self.performAsyncLoadingAction('services', servicesRelationship)
+                        await self.dispatchRelationshipUpdate('services', servicesRelationship)
                     }
                     break
             }

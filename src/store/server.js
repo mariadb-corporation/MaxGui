@@ -56,7 +56,7 @@ export default {
          * @param {String} payload.id Name of the server
          * @param {Object} payload.parameters Parameters for the server
          */
-        async createOrUpdateServerParameters({ commit }, payload) {
+        async createServer({ commit }, payload) {
             const body = {
                 data: {
                     id: payload.id,
@@ -99,7 +99,36 @@ export default {
                 if (isFunction(payload.callback)) await payload.callback()
             }
         },
-        //-----------------------------------------------Service relationship update---------------------------------
+        //-----------------------------------------------Server parameter update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the server
+         * @param {Object} payload.parameters Parameters for the server
+         * @param {Object} payload.callback callback function after successfully updated
+         */
+        async updateServerParameters({ commit }, payload) {
+            const body = {
+                data: {
+                    id: payload.id,
+                    type: 'servers',
+                    attributes: { parameters: payload.parameters },
+                },
+            }
+            let res = await Vue.axios.patch(`/servers/${payload.id}`, body)
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`Server ${payload.id} is updated`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
+        //-----------------------------------------------Server relationship update---------------------------------
         /**
          * @param {Object} payload payload object
          * @param {String} payload.id Name of the server

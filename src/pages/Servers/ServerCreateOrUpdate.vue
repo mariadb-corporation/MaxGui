@@ -5,7 +5,7 @@
         :onClose="closeModal"
         :onSave="handleSave"
         maxWidth="890px"
-        :title="`${modalTitle} ${$t('server')}`"
+        :title="`${modalTitle} ${$tc('servers', 1)}`"
     >
         <template v-slot:body>
             <v-container class="pa-0">
@@ -355,7 +355,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('server', ['createOrUpdateServerParameters']),
+        ...mapActions('server', ['createServer']),
         //ONLY AVAILABLE FOR POST MODE
         validatePortNumber(val) {
             if (!val) {
@@ -409,13 +409,13 @@ export default {
                 switch (this.mode) {
                     case 'post':
                         // these parameters need to have null value if it is not set
-                        this.parameters.socket = this.$help.treatEmptyStringAsNull(
+                        this.parameters.socket = this.$help.treatNullAsEmptyString(
                             this.parameters.socket
                         )
-                        this.parameters.ssl_cert = this.$help.treatEmptyStringAsNull(
+                        this.parameters.ssl_cert = this.$help.treatNullAsEmptyString(
                             this.parameters.ssl_cert
                         )
-                        this.parameters.ssl_ca_cert = this.$help.treatEmptyStringAsNull(
+                        this.parameters.ssl_ca_cert = this.$help.treatNullAsEmptyString(
                             this.parameters.ssl_ca_cert
                         )
                         break
@@ -423,7 +423,7 @@ export default {
                     // console.log('update')
                 }
 
-                this.createOrUpdateServerParameters({
+                this.createServer({
                     mode: this.mode,
                     id: this.serverId,
                     relationships: this.relationships,

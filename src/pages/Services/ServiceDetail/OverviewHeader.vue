@@ -1,10 +1,7 @@
 <template>
     <v-sheet class="d-flex mb-2">
         <div class="d-flex" style="width:40%">
-            <outline-small-card
-                cardWrapper="detail-overview-with-graph mt-5"
-                cardClass="detail-overview-with-graph__card "
-            >
+            <outlined-overview-card cardWrapper="mt-5">
                 <template v-slot:title>
                     {{ $t('overview') }}
                 </template>
@@ -16,11 +13,8 @@
                         {{ currentService.attributes.router }}
                     </span>
                 </template>
-            </outline-small-card>
-            <outline-small-card
-                cardWrapper="detail-overview-with-graph mt-5"
-                cardClass="detail-overview-with-graph__card "
-            >
+            </outlined-overview-card>
+            <outlined-overview-card cardWrapper="mt-5">
                 <template v-slot:card-body>
                     <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
                         STARTED AT
@@ -29,15 +23,12 @@
                         {{ $help.formatValue(currentService.attributes.started) }}
                     </span>
                 </template>
-            </outline-small-card>
+            </outlined-overview-card>
         </div>
         <div style="width:60%" class="pl-3">
-            <outline-small-card
-                cardWrapper="detail-overview-with-graph  mt-5"
-                cardClass="detail-overview-with-graph__card-graph"
-            >
+            <outlined-overview-card :tile="false" cardWrapper="mt-5">
                 <template v-slot:title>
-                    {{ $t('currentConnections') }}
+                    {{ $tc('currentConnections', 2) }}
                     <span class="text-lowercase font-weight-medium">
                         ({{ connectionInfo.connections }}/{{
                             connectionInfo.total_connections
@@ -45,7 +36,7 @@
                     >
                 </template>
                 <template v-slot:card-body>
-                    <v-col>
+                    <v-sheet width="100%">
                         <line-chart
                             v-if="totalConnectionsChartData.datasets.length"
                             id="total-connections-chart"
@@ -55,9 +46,9 @@
                             :options="options"
                             :isRealTime="true"
                         />
-                    </v-col>
+                    </v-sheet>
                 </template>
-            </outline-small-card>
+            </outlined-overview-card>
         </div>
     </v-sheet>
 </template>
@@ -127,27 +118,3 @@ export default {
     },
 }
 </script>
-
-<style lang="scss" scoped>
-.detail-overview-with-graph {
-    width: 100%;
-    ::v-deep &__card {
-        border-radius: 0px !important;
-    }
-    ::v-deep &__card,
-    ::v-deep &__card-graph {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
-    }
-    ::v-deep &__card-graph {
-        padding-top: 6px;
-    }
-    &:not(:first-of-type) {
-        ::v-deep .detail-overview-with-graph__card {
-            border-left: none !important;
-        }
-    }
-}
-</style>

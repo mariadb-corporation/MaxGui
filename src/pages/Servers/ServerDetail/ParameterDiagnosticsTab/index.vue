@@ -5,7 +5,7 @@
             <details-table-wrapper
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
-                title="parameters"
+                :title="`${$tc('parameters', 2)}`"
                 :editing="editableCell"
                 :onEdit="() => (editableCell = true)"
                 :doneEditing="() => (showConfirmDialog = true)"
@@ -45,7 +45,11 @@
             >
                 <template v-slot:body>
                     <span class="d-block mb-4">
-                        {{ $t('changeTheFollowingParameters', { quantity: changesItems.length }) }}
+                        {{
+                            $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
+                                quantity: changesItems.length,
+                            })
+                        }}
                     </span>
                     <fragment v-for="item in changesItems" :key="item.id">
                         <p class="d-block mb-1 font-weight-bold">
@@ -59,7 +63,7 @@
             <details-table-wrapper
                 :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
                 :toggleVal="showMonitorDiagnostics"
-                title="monitorDiagnostics"
+                :title="`${$t('monitorDiagnostics')}`"
             >
                 <template v-slot:table>
                     <tree-data
@@ -92,7 +96,7 @@ export default {
 
     props: {
         currentServer: { type: Object, required: true },
-        createOrUpdateServerParameters: { type: Function, required: true },
+        updateServerParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
     },
@@ -216,16 +220,15 @@ export default {
         },
 
         cancelEdit() {
-            this.editableCell = false
             this.showConfirmDialog = false
+            this.editableCell = false
             this.changesItems = []
         },
         acceptEdit() {
             let self = this
             self.editableCell = false
             self.showConfirmDialog = false
-            self.createOrUpdateServerParameters({
-                mode: 'patch',
+            self.updateServerParameters({
                 id: self.currentServer.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,

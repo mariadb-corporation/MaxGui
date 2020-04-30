@@ -12,11 +12,9 @@
             <template v-slot:body>
                 <fragment>
                     <p>
-                        {{
-                            $t(`specify`, {
-                                entityName: `${$t(entityName)}`,
-                            })
-                        }}
+                        {{ $tc('specify', multiple ? 2 : 1) }}
+
+                        {{ $tc(entityName, multiple ? 2 : 1) }}
                     </p>
                     <v-select
                         v-model="selectEntities"
@@ -30,7 +28,7 @@
                         hide-details
                         :no-data-text="
                             $t(`noEntityText`, {
-                                entityName: `${$t(entityName)}`,
+                                entityName: `${$tc(entityName, 2)}`,
                             })
                         "
                         :multiple="multiple"
@@ -67,10 +65,8 @@ export default {
         handleSave: { type: Function, required: true },
         onClose: { type: Function, required: true },
         onCancel: { type: Function, required: true },
-        multiple: { type: Boolean, required: true },
+        multiple: { type: Boolean, default: false },
         itemsList: { type: Array }, // for add mode
-        getAllEntities: { type: Function },
-        returnSelectedEntities: { type: Function },
     },
     data() {
         return {
@@ -93,14 +89,13 @@ export default {
     watch: {
         value: function(val) {
             if (val) {
-                this.getAllEntities()
+                this.$emit('get-all-entities')
             }
         },
         selectEntities: function(val) {
             if (val) {
-                this.returnSelectedEntities(val)
+                this.$emit('get-selected-entities', val)
             }
-            console.log(val)
         },
     },
 

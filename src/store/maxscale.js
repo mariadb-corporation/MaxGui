@@ -64,7 +64,7 @@ export default {
                         id: `THREAD ID - ${threads[i].id}`,
                         type: 'line',
                         // background of the line
-                        backgroundColor: strReplaceAt(lineColors[i], indexOfOpacity, '0.2'),
+                        backgroundColor: strReplaceAt(lineColors[i], indexOfOpacity, '0.1'),
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,

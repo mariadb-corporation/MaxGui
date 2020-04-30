@@ -28,8 +28,8 @@
                             }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title style="color: white;">
-                                {{ $t(`${item.name}`) }}
+                            <v-list-item-title class="text-capitalize" style="color: white;">
+                                {{ $tc(`${item.name}`, 1) }}
                             </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>

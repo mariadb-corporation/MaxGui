@@ -4,34 +4,54 @@
             <template v-slot:setting-menu>
                 <icon-group-wrapper multiIcons>
                     <template v-slot:body>
-                        <v-btn text>
-                            <v-icon size="22" color="primary">
-                                $vuetify.icons.paused
-                            </v-icon>
-                        </v-btn>
-                        <v-btn text>
-                            <v-icon size="22" color="primary">
-                                $vuetify.icons.restart
-                            </v-icon>
-                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn text v-on="on">
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.paused
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span></span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn text v-on="on">
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.restart
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span></span>
+                        </v-tooltip>
                     </template>
                 </icon-group-wrapper>
                 <icon-group-wrapper>
                     <template v-slot:body>
-                        <v-btn text>
-                            <v-icon size="22" color="primary">
-                                $vuetify.icons.drain
-                            </v-icon>
-                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn text v-on="on">
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.drain
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span></span>
+                        </v-tooltip>
                     </template>
                 </icon-group-wrapper>
                 <icon-group-wrapper>
                     <template v-slot:body>
-                        <v-btn text @click="handleDelete">
-                            <v-icon size="22" color="error">
-                                $vuetify.icons.unlink
-                            </v-icon>
-                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-btn text v-on="on" @click="handleDelete">
+                                    <v-icon size="22" color="error">
+                                        $vuetify.icons.unlink
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t('unlink') }} {{ $tc('servers', 1) }}</span>
+                        </v-tooltip>
                     </template>
                 </icon-group-wrapper>
             </template>
@@ -110,7 +130,7 @@ export default {
         ...mapActions('server', ['destroyServer']),
         handleDelete() {
             this.dialogType = 'unlink'
-            this.dialogTitle = `${this.$t('unlink')} ${this.$t('server')}`
+            this.dialogTitle = `${this.$t('unlink')} ${this.$tc('servers', 1)}`
             this.smallInfo = 'serverUnlink'
             this.showConfirmDialog = true
         },

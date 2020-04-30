@@ -1,28 +1,43 @@
 <template>
     <v-sheet class="d-flex mb-2">
-        <outline-small-card
+        <outlined-overview-card
             v-for="(value, name, index) in getTopOverviewInfo"
             :key="name"
-            cardWrapper="detail-overview mt-5"
-            cardClass="detail-overview__card px-10"
+            cardWrapper="mt-5"
+            cardClass="px-10"
+            :hoverableCard="name === 'monitor'"
+            @card-hover="showEditBtn = $event"
         >
             <template v-if="index === 0" v-slot:title>
                 {{ $t('overview') }}
             </template>
             <template v-slot:card-body>
-                <span class="caption text-uppercase font-weight-bold color text-deep-ocean">
+                <span
+                    class="detail-overview__card__name caption text-uppercase font-weight-bold color text-deep-ocean"
+                >
                     {{ name.replace('_', ' ') }}
                 </span>
-                <router-link
-                    v-if="name === 'monitor' && value !== 'undefined'"
-                    :key="index"
-                    :to="`/dashboard/monitors/${value}`"
-                    class="body-2 no-underline"
-                >
-                    <span>{{ value }} </span>
-                </router-link>
+                <fragment v-if="name === 'monitor' && value !== 'undefined'">
+                    <router-link
+                        :key="index"
+                        :to="`/dashboard/monitors/${value}`"
+                        class="detail-overview__card__value body-2 no-underline"
+                    >
+                        <span>{{ value }} </span>
+                    </router-link>
+                    <div v-if="showEditBtn" style="position:absolute;right:10px;bottom:10px">
+                        <v-btn icon @click="() => onEdit('monitors')">
+                            <v-icon size="18" color="primary">
+                                $vuetify.icons.edit
+                            </v-icon>
+                        </v-btn>
+                    </div>
+                </fragment>
                 <!--  TODO: Determine server healthy to display correct text color -->
-                <span v-else-if="name === 'state'" class="text-no-wrap body-2">
+                <span
+                    v-else-if="name === 'state'"
+                    class="detail-overview__card__value text-no-wrap body-2"
+                >
                     <fragment v-if="value.indexOf(',') > 0">
                         <span class="color text-success font-weight-bold">
                             {{ value.slice(0, value.indexOf(',')) }}
@@ -36,17 +51,29 @@
                         {{ value }}
                     </span>
                 </span>
-                <span v-else class="text-no-wrap body-2">
-                    <span v-if="value !== 'undefined'">
+                <span v-else class="detail-overview__card__value text-no-wrap body-2">
+                    <fragment v-if="value !== 'undefined'">
                         {{
                             name === 'triggered_at' && value !== 'undefined'
                                 ? $help.formatValue(value, 'DATE_RFC2822')
                                 : value
                         }}
-                    </span>
+                    </fragment>
                 </span>
             </template>
-        </outline-small-card>
+        </outlined-overview-card>
+        <select-dialog
+            v-model="showSelectDialog"
+            :title="dialogTitle"
+            mode="change"
+            :entityName="targetSelectItemType"
+            :onClose="() => (showSelectDialog = false)"
+            :onCancel="() => (showSelectDialog = false)"
+            :handleSave="confirmChange"
+            :itemsList="itemsList"
+            @get-selected-entities="targetItem = $event"
+            @get-all-entities="getAllEntities"
+        />
     </v-sheet>
 </template>
 
@@ -69,8 +96,21 @@ export default {
 
     props: {
         currentServer: { type: Object, required: true },
+        updateServerRelationship: { type: Function, required: true },
+        dispatchRelationshipUpdate: { type: Function, required: true },
     },
+    data() {
+        return {
+            showEditBtn: false,
 
+            dialogTitle: '',
+            targetItem: null,
+            //select dialog
+            showSelectDialog: false,
+            targetSelectItemType: 'monitors',
+            itemsList: [],
+        }
+    },
     computed: {
         getTopOverviewInfo: function() {
             let self = this
@@ -112,6 +152,61 @@ export default {
                 )
             }
             return overviewInfo
+        },
+    },
+    methods: {
+        onEdit(type) {
+            let self = this
+            self.dialogTitle = `${self.$t(`changeEntity`, {
+                entityName: self.$tc(type, 1),
+            })}`
+
+            switch (type) {
+                case 'monitors':
+                    self.targetSelectItemType = type
+                    break
+            }
+
+            this.showSelectDialog = true
+        },
+        // -------------- Change handle
+        async getAllEntities() {
+            switch (this.targetSelectItemType) {
+                case 'monitors':
+                    {
+                        let self = this
+                        let res = await self.axios.get(`/monitors?fields[monitors]=state`)
+                        let all = res.data.data.map(monitor => ({
+                            id: monitor.id,
+                            type: monitor.type,
+                        }))
+
+                        let currentMonitor = [
+                            { id: self.getTopOverviewInfo.monitor, type: 'monitors' },
+                        ]
+                        // filter out currentMonitor from availableEntities
+                        let availableEntities = self.$help.xorWith(
+                            all,
+                            currentMonitor,
+                            self.$help.isEqual
+                        )
+                        this.itemsList = availableEntities
+                    }
+                    break
+            }
+        },
+        async confirmChange() {
+            let self = this
+
+            switch (self.targetSelectItemType) {
+                case 'monitors':
+                    {
+                        await self.dispatchRelationshipUpdate(self.targetSelectItemType, [
+                            self.targetItem,
+                        ])
+                    }
+                    break
+            }
         },
     },
 }
