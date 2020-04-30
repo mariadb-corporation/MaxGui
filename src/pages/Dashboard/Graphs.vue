@@ -6,15 +6,17 @@
                     {{ $tc('sessions', 2) }}
                 </template>
                 <template v-slot:card-body>
-                    <line-chart
-                        v-if="sessionsChartData.datasets.length"
-                        id="sessions-Chart"
-                        ref="sessionsChart"
-                        :styles="{ height: '70px' }"
-                        :chart-data="sessionsChartData"
-                        :options="chartOptionsWithOutCallBack"
-                        :isRealTime="true"
-                    />
+                    <v-sheet width="100%">
+                        <line-chart
+                            v-if="sessionsChartData.datasets.length"
+                            id="sessions-Chart"
+                            ref="sessionsChart"
+                            :styles="{ height: '70px' }"
+                            :chart-data="sessionsChartData"
+                            :options="chartOptionsWithOutCallBack"
+                            :isRealTime="true"
+                        />
+                    </v-sheet>
                 </template>
             </outlined-overview-card>
         </v-col>
@@ -24,15 +26,17 @@
                     {{ $tc('connections', 2) }}
                 </template>
                 <template v-if="allServers.length" v-slot:card-body>
-                    <line-chart
-                        v-if="serversConnectionsChartData.datasets.length"
-                        id="servers-connection-Chart"
-                        ref="connectionsChart"
-                        :styles="{ height: '70px' }"
-                        :chart-data="serversConnectionsChartData"
-                        :options="mainChartOptions"
-                        :isRealTime="true"
-                    />
+                    <v-sheet width="100%">
+                        <line-chart
+                            v-if="serversConnectionsChartData.datasets.length"
+                            id="servers-connection-Chart"
+                            ref="connectionsChart"
+                            :styles="{ height: '70px' }"
+                            :chart-data="serversConnectionsChartData"
+                            :options="mainChartOptions"
+                            :isRealTime="true"
+                        />
+                    </v-sheet>
                 </template>
             </outlined-overview-card>
         </v-col>
@@ -42,17 +46,18 @@
                     {{ $t('load') }}
                 </template>
                 <template v-slot:card-body>
-                    <!-- <threads-chart :isMiniChart="true" /> -->
-                    <line-chart
-                        v-if="threadsChartData.datasets.length"
-                        id="threads-Chart"
-                        ref="threadsChart"
-                        :styles="{ height: '70px' }"
-                        :chart-data="threadsChartData"
-                        :options="threadChartOptions"
-                        :isRealTime="true"
-                        :yAxesTicks="{ max: 100, min: 0 }"
-                    />
+                    <v-sheet width="100%">
+                        <line-chart
+                            v-if="threadsChartData.datasets.length"
+                            id="threads-Chart"
+                            ref="threadsChart"
+                            :styles="{ height: '70px' }"
+                            :chart-data="threadsChartData"
+                            :options="threadChartOptions"
+                            :isRealTime="true"
+                            :yAxesTicks="{ max: 100, min: 0 }"
+                        />
+                    </v-sheet>
                 </template>
             </outlined-overview-card>
         </v-col>

@@ -33,9 +33,11 @@ export default {
                 xAxes: [
                     {
                         gridLines: {
-                            color: 'rgba(234, 234, 234, 0.8)',
+                            lineWidth: 0.6,
+                            color: 'rgba(234, 234, 234, 1)',
                             drawTicks: false,
-                            drawBorder: false,
+                            drawBorder: true,
+                            zeroLineColor: 'rgba(234, 234, 234, 1)',
                         },
                         type: 'realtime',
                         ticks: {
@@ -46,13 +48,15 @@ export default {
                 yAxes: [
                     {
                         gridLines: {
-                            color: 'rgba(234, 234, 234, 0.8)',
+                            lineWidth: 0.6,
+                            color: 'rgba(234, 234, 234,1)',
                             drawTicks: false,
                             drawBorder: false,
+                            zeroLineColor: 'transparent',
                         },
                         ticks: {
                             beginAtZero: true,
-                            padding: 20,
+                            padding: 12,
                             fontSize: 10,
                             fontFamily: "'azo-sans-web', adrianna, serif",
                             fontColor: '#424F62',
