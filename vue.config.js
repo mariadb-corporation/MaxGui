@@ -36,7 +36,6 @@ let devServer = {
 process.env.NODE_ENV !== 'development' && (devServer = {})
 
 module.exports = {
-    parallel: false,
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
         types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
@@ -51,7 +50,12 @@ module.exports = {
             rules: [
                 {
                     test: /\.worker\.js$/,
-                    use: { loader: 'worker-loader' },
+                    loader: 'worker-loader',
+                    options: {
+                        inline: true,
+                        fallback: false,
+                        name: '[name]:[hash:8].js',
+                    },
                 },
             ],
         },

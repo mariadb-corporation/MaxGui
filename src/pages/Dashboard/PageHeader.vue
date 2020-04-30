@@ -91,8 +91,8 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
-import { workerTimer } from 'utils/workerTimer'
-
+// import { workerTimer } from 'utils/workerTimer'
+import Worker from 'worker-loader!utils/worker.js'
 export default {
     name: 'page-title',
 
@@ -102,10 +102,7 @@ export default {
             uptime: null,
             duration: null,
             copyState: 'Double click to copy to clipboard',
-            workerList: [
-                { name: 'snapInterval', interval: 10000 },
-                { name: 'intervalFunc', interval: 40 },
-            ],
+            workerList: [{ name: 'MaxScale uptime worker timer', interval: 1000 }],
         }
     },
     computed: {
@@ -134,17 +131,18 @@ export default {
                 )
             }
         },
-        maxScaleOverviewInfo: function(newVal) {
+        'maxScaleOverviewInfo.uptime': function(val) {
             let self = this
-            self.uptime = newVal.uptime
-            self.duration = self.$moment.duration(newVal.uptime, 'seconds').format()
-            this.workertimer = new workerTimer()
-            this.workertimer.timeInterval('MaxScale uptime worker timer', 1000, self.updateUpTime)
+            self.uptime = val
+            self.duration = self.$moment.duration(val, 'seconds').format()
+            self.workerInit()
         },
     },
+
     beforeDestroy() {
-        this.workertimer.terminate('MaxScale uptime worker timer')
+        this.worker.terminate()
     },
+
     methods: {
         //---------------------- MaxScale overview info
         copyToClipboard(value) {
@@ -154,6 +152,14 @@ export default {
         updateUpTime() {
             this.uptime = this.uptime + 1
             this.duration = this.$moment.duration(this.uptime, 'seconds').format()
+        },
+        workerInit() {
+            let self = this
+            self.worker = new Worker()
+            self.worker.postMessage(self.workerList)
+            self.worker.onmessage = params => {
+                self.updateUpTime()
+            }
         },
     },
 }

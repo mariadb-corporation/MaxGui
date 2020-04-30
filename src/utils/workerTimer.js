@@ -10,19 +10,16 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+// https://programming.vip/docs/running-interval-timer-with-worker-in-vue-environment.html
 import Logger from './logging'
 const logger = new Logger('main')
 
 export class workerTimer {
     constructor() {}
-    timeInterval(name, interval, cb) {
+    timeInterval(name, interval, _this) {
         logger.info(name + ' has been set up')
         this[name] = setInterval(() => {
-            cb()
+            _this.postMessage({ name: name, message: `${interval / 1000} Seconds arrived.` })
         }, Number(interval))
-    }
-    terminate(name) {
-        logger.info(name + ' has been terminated')
-        clearInterval(this[name])
     }
 }
