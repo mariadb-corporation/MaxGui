@@ -11,8 +11,10 @@
                 single-line
                 outlined
                 dense
+                autocomplete
                 type="password"
                 hide-details
+                @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'bool'">
@@ -27,6 +29,7 @@
                 outlined
                 dense
                 hide-details
+                @change="handleChange"
             />
         </fragment>
 
@@ -50,6 +53,7 @@
                 dense
                 hide-details
                 onkeypress="return event.charCode >= 48"
+                @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'int'">
@@ -64,6 +68,7 @@
                 outlined
                 dense
                 hide-details
+                @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'enum'">
@@ -78,6 +83,7 @@
                 outlined
                 dense
                 hide-details
+                @change="handleChange"
             />
         </fragment>
 
@@ -92,6 +98,7 @@
                 outlined
                 dense
                 hide-details
+                @change="handleChange"
             />
         </fragment>
     </v-form>
@@ -101,7 +108,6 @@ export default {
     name: 'parameter-input',
     props: {
         item: { type: Object, required: true },
-        onItemChanges: { type: Function, required: true },
     },
     data() {
         return {
@@ -111,17 +117,17 @@ export default {
             },
         }
     },
-    watch: {
-        objectItem: {
-            handler(newVal) {
-                let changed = !this.$help.isEqual(newVal, this.item)
-                this.onItemChanges(newVal, changed)
-            },
-            deep: true,
-        },
-    },
+
     async created() {
         this.objectItem = this.$help.cloneDeep(this.item)
+    },
+    methods: {
+        handleChange(val) {
+            let self = this
+            let changed = !this.$help.isEqual(self.objectItem, self.item)
+            // compare v-model objectItem with props item
+            this.$emit('on-input-change', self.objectItem, changed)
+        },
     },
 }
 </script>

@@ -24,7 +24,7 @@
                         <template v-if="editableCell" v-slot:value="props">
                             <parameter-input
                                 :item="props.data.item"
-                                :onItemChanges="handleItemChange"
+                                @on-input-change="handleItemChange"
                             />
                         </template>
                         <template v-if="editableCell" v-slot:id="props">
@@ -34,32 +34,34 @@
                     </data-table>
                 </template>
             </details-table-wrapper>
-
-            <base-dialog
-                v-model="showConfirmDialog"
-                :onCancel="cancelEdit"
-                :onClose="closeConfirmDialog"
-                :onSave="acceptEdit"
-                :title="`${$t('implementChanges')}`"
-                saveText="thatsRight"
-                :disabledSaveBtn="changesItems.length ? false : true"
-            >
-                <template v-slot:body>
-                    <span class="d-block mb-4">
-                        {{
-                            $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
-                                quantity: changesItems.length,
-                            })
-                        }}
-                    </span>
-                    <fragment v-for="item in changesItems" :key="item.id">
-                        <p class="d-block mb-1 font-weight-bold">
-                            {{ item.id }}
-                        </p>
-                    </fragment>
-                </template>
-            </base-dialog>
         </v-col>
+        <base-dialog
+            v-model="showConfirmDialog"
+            :onCancel="cancelEdit"
+            :onClose="closeConfirmDialog"
+            :onSave="acceptEdit"
+            :title="`${$t('implementChanges')}`"
+            saveText="thatsRight"
+            :disabledSaveBtn="changesItems.length ? false : true"
+        >
+            <template v-slot:body>
+                <span class="d-block mb-4">
+                    {{
+                        $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
+                            quantity: changesItems.length,
+                        })
+                    }}
+                </span>
+
+                <p
+                    v-for="item in changesItems"
+                    :key="item.id"
+                    class="d-block mb-1 font-weight-bold"
+                >
+                    {{ item.id }}
+                </p>
+            </template>
+        </base-dialog>
         <v-col class="py-0 my-0" cols="6">
             <details-table-wrapper
                 :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
@@ -122,7 +124,7 @@ export default {
 
     computed: {
         parametersTableRow: function() {
-            let currentService = this.currentService
+            let currentService = this.$help.cloneDeep(this.currentService)
             if (!this.$help.isEmpty(currentService)) {
                 const { attributes: { parameters = {} } = {} } = currentService
                 let tableRow = this.$help.objToArrOfObj(parameters)
@@ -144,7 +146,6 @@ export default {
                 } else {
                     arr = tableRow
                 }
-
                 return arr
             }
             return []
@@ -185,7 +186,7 @@ export default {
                 const { attributes: { parameters = [] } = {} } = res.data.data
                 this.routerParameters = parameters
                 this.loadingEditableParams = true
-                await setTimeout(() => (this.loadingEditableParams = false), 200)
+                await setTimeout(() => (this.loadingEditableParams = false), 150)
             } else {
                 this.loadingEditableParams = false
             }
@@ -207,13 +208,13 @@ export default {
 
         cancelEdit() {
             this.editableCell = false
-            this.showConfirmDialog = false
+            this.closeConfirmDialog()
             this.changesItems = []
         },
         acceptEdit() {
             let self = this
             self.editableCell = false
-            self.showConfirmDialog = false
+            self.closeConfirmDialog()
             self.updateServiceParameters({
                 id: self.currentService.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),

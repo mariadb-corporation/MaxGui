@@ -23,7 +23,7 @@
                         <template v-if="editableCell" v-slot:value="props">
                             <parameter-input
                                 :item="props.data.item"
-                                :onItemChanges="handleItemChange"
+                                @on-input-change="handleItemChange"
                             />
                         </template>
                         <template v-if="editableCell" v-slot:id="props">
@@ -51,11 +51,14 @@
                             })
                         }}
                     </span>
-                    <fragment v-for="item in changesItems" :key="item.id">
-                        <p class="d-block mb-1 font-weight-bold">
-                            {{ item.id }}
-                        </p>
-                    </fragment>
+
+                    <p
+                        v-for="item in changesItems"
+                        :key="item.id"
+                        class="d-block mb-1 font-weight-bold"
+                    >
+                        {{ item.id }}
+                    </p>
                 </template>
             </base-dialog>
         </v-col>
@@ -220,14 +223,14 @@ export default {
         },
 
         cancelEdit() {
-            this.showConfirmDialog = false
+            this.closeConfirmDialog()
             this.editableCell = false
             this.changesItems = []
         },
         acceptEdit() {
             let self = this
             self.editableCell = false
-            self.showConfirmDialog = false
+            self.closeConfirmDialog()
             self.updateServerParameters({
                 id: self.currentServer.id,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
