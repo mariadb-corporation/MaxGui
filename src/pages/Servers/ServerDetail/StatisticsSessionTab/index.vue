@@ -4,23 +4,23 @@
             <v-row class="pa-0 ma-0">
                 <!-- STATISTICS TABLE -->
                 <v-col cols="12" class="pa-0 ma-0">
-                    <details-table-wrapper
+                    <collapse
                         :toggleOnClick="() => (showStatistics = !showStatistics)"
                         :toggleVal="showStatistics"
                         :title="`${$tc('statistics', 2)}`"
                     >
-                        <template v-slot:table>
+                        <template v-slot:content>
                             <data-table
                                 :headers="variableValueTableHeaders"
                                 :data="statisticsTableRow"
                                 :tdBorderLeft="true"
                             />
                         </template>
-                    </details-table-wrapper>
+                    </collapse>
                 </v-col>
                 <!-- SERVICE TABLE -->
                 <v-col cols="12" class="pa-0 mt-4">
-                    <details-table-wrapper
+                    <collapse
                         :toggleOnClick="() => (showServices = !showServices)"
                         :toggleVal="showServices"
                         :title="`${$tc('services', 2)}`"
@@ -28,7 +28,7 @@
                         :onAddClick="() => onAdd('services')"
                         addBtnText="addService"
                     >
-                        <template v-slot:table>
+                        <template v-slot:content>
                             <data-table
                                 :headers="servicesTableHeader"
                                 :data="serviceTableRow"
@@ -65,7 +65,7 @@
                                 </template>
                             </data-table>
                         </template>
-                    </details-table-wrapper>
+                    </collapse>
                 </v-col>
             </v-row>
         </v-col>

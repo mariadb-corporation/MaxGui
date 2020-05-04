@@ -13,7 +13,7 @@
                     {{ title }}
                 </h3>
                 <v-btn class="close" icon @click="close">
-                    <v-icon size="18" color="#424F62"> $vuetify.icons.close</v-icon>
+                    <v-icon size="20" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
             <v-card-text class="v-card-text_padding">
@@ -134,11 +134,8 @@ export default {
 .base-dialog {
     .close {
         position: absolute;
-        top: 12px;
-        right: 12px;
-        svg.v-icon {
-            width: 18px;
-        }
+        top: 18px;
+        right: 18px;
     }
     $paddingLeft: 62px;
     .v-card-title_padding {

@@ -1,12 +1,12 @@
 <template>
     <v-col class="py-0 ma-0" cols="8">
-        <details-table-wrapper
+        <collapse
             :toggleOnClick="() => (showSessions = !showSessions)"
             :toggleVal="showSessions"
             :title="`${$tc('currentSessions', 2)}`"
             :titleInfo="sessionsTableRow.length"
         >
-            <template v-slot:table>
+            <template v-slot:content>
                 <data-table
                     :headers="sessionsTableHeader"
                     :data="sessionsTableRow"
@@ -24,7 +24,7 @@
                     </template>
                 </data-table>
             </template>
-        </details-table-wrapper>
+        </collapse>
     </v-col>
 </template>
 

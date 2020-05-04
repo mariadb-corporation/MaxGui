@@ -258,7 +258,8 @@ export function handleValue(value) {
     }
     // handle typeof null object and empty string
     if (value === null) newVal = 'null'
-    if (value === '') newVal = "''"
+    //TODO: decide whether to display single quote or ... nothing at all "''"
+    if (value === '') newVal = ''
     return newVal
 }
 

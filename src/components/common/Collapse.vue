@@ -1,10 +1,11 @@
 <template>
     <div
+        :class="wrapperClass"
         @mouseover="() => $help.isFunction(onEdit) && (showEditBtn = true)"
         @mouseleave="() => $help.isFunction(onEdit) && (showEditBtn = false)"
     >
         <div class="mb-1 d-flex align-center">
-            <div class="d-flex align-center">
+            <div class="d-flex align-center" :class="titleWrapperClass">
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
                     <v-icon :class="[!toggleVal ? 'arrow-down' : 'arrow-up']" size="32">
                         $expand
@@ -51,7 +52,7 @@
         </div>
         <v-expand-transition>
             <div v-show="toggleVal">
-                <slot name="table"></slot>
+                <slot name="content"></slot>
             </div>
         </v-expand-transition>
     </div>
@@ -72,9 +73,11 @@
  */
 /* eslint-disable no-console */
 export default {
-    /* SLOTS available for details-table-wrapper */
-    // name="table"
+    /* SLOTS available for collapse */
+    // name="content"
     props: {
+        wrapperClass: String,
+        titleWrapperClass: String,
         // props for the toggle
         toggleOnClick: { type: Function, required: true },
         toggleVal: { type: Boolean, required: true },

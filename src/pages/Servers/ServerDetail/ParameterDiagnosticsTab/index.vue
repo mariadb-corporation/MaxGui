@@ -2,7 +2,7 @@
     <v-row>
         <!-- PARAMETERS TABLE -->
         <v-col class="py-0 my-0" cols="6">
-            <details-table-wrapper
+            <collapse
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
                 :title="`${$tc('parameters', 2)}`"
@@ -10,7 +10,7 @@
                 :onEdit="() => (editableCell = true)"
                 :doneEditing="() => (showConfirmDialog = true)"
             >
-                <template v-slot:table>
+                <template v-slot:content>
                     <data-table
                         :headers="variableValueTableHeaders"
                         :data="parametersTableRow"
@@ -32,7 +32,7 @@
                         </template>
                     </data-table>
                 </template>
-            </details-table-wrapper>
+            </collapse>
 
             <base-dialog
                 v-model="showConfirmDialog"
@@ -63,18 +63,18 @@
             </base-dialog>
         </v-col>
         <v-col class="py-0 my-0" cols="6">
-            <details-table-wrapper
+            <collapse
                 :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
                 :toggleVal="showMonitorDiagnostics"
                 :title="`${$t('monitorDiagnostics')}`"
             >
-                <template v-slot:table>
+                <template v-slot:content>
                     <tree-data
                         :headers="variableValueTableHeaders"
                         :data="monitorDiagnosticsTableRow"
                     />
                 </template>
-            </details-table-wrapper>
+            </collapse>
         </v-col>
     </v-row>
 </template>

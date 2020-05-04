@@ -1,6 +1,6 @@
 <template>
     <v-col cols="6">
-        <details-table-wrapper
+        <collapse
             :toggleOnClick="() => (showParameters = !showParameters)"
             :toggleVal="showParameters"
             :title="`${$tc('parameters', 2)}`"
@@ -8,7 +8,7 @@
             :onEdit="() => (editableCell = true)"
             :doneEditing="() => (showConfirmDialog = true)"
         >
-            <template v-slot:table>
+            <template v-slot:content>
                 <data-table
                     :headers="variableValueTableHeaders"
                     :data="parametersTableRow"
@@ -31,7 +31,7 @@
                     </template>
                 </data-table>
             </template>
-        </details-table-wrapper>
+        </collapse>
         <base-dialog
             v-model="showConfirmDialog"
             :onCancel="cancelEdit"

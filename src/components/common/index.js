@@ -17,7 +17,7 @@ import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from './IconSpriteSheet'
 import OutlinedOverviewCard from './OutlinedOverviewCard'
 import TreeData from './TreeData'
-import DetailsTableWrapper from './DetailsTableWrapper'
+import Collapse from './Collapse'
 import IconGroupWrapper from './IconGroupWrapper'
 import ConfirmDialog from './ConfirmDialog'
 import SelectDialog from './SelectDialog'
@@ -32,7 +32,7 @@ export default {
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
     'tree-data': TreeData,
-    'details-table-wrapper': DetailsTableWrapper,
+    collapse: Collapse,
     'icon-group-wrapper': IconGroupWrapper,
     'confirm-dialog': ConfirmDialog,
     'select-dialog': SelectDialog,

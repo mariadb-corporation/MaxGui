@@ -52,6 +52,10 @@
     "addEntity": "Add {entityName}",
     "createNew": "Create New",
     "thatsRight": "That's Right",
+    "createANew": "Create a new",
+    "nameYour": "Name your {resourceName}",
+    "selectARouter": "Select a router",
+    "selectServers": "Select servers",
 
     "servers": "server | servers",
     "noServers": "No Servers",
@@ -69,6 +73,8 @@
     "noSessions": "No Sessions",
 
     "monitors": "monitor",
+
+    "router": "router | routers",
 
     "noEntityText": "No {entityName} available",
 

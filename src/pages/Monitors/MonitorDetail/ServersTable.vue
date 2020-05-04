@@ -1,7 +1,7 @@
 <template>
     <fragment>
         <v-col cols="6">
-            <details-table-wrapper
+            <collapse
                 :toggleOnClick="() => (showServers = !showServers)"
                 :toggleVal="showServers"
                 :title="`${$tc('servers', 2)}`"
@@ -9,7 +9,7 @@
                 :onAddClick="() => onAdd('servers')"
                 addBtnText="addServer"
             >
-                <template v-slot:table>
+                <template v-slot:content>
                     <data-table
                         :headers="serversTableHeader"
                         :data="serverStateTableRow"
@@ -46,7 +46,7 @@
                         </template>
                     </data-table>
                 </template>
-            </details-table-wrapper>
+            </collapse>
         </v-col>
 
         <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->

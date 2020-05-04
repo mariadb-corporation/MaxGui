@@ -2,7 +2,7 @@
     <v-row>
         <!-- PARAMETERS TABLE -->
         <v-col class="py-0 my-0" cols="6">
-            <details-table-wrapper
+            <collapse
                 :toggleOnClick="() => (showParameters = !showParameters)"
                 :toggleVal="showParameters"
                 :title="`${$tc('parameters', 2)}`"
@@ -10,7 +10,7 @@
                 :onEdit="() => (editableCell = true)"
                 :doneEditing="() => (showConfirmDialog = true)"
             >
-                <template v-slot:table>
+                <template v-slot:content>
                     <data-table
                         :headers="variableValueTableHeaders"
                         :data="parametersTableRow"
@@ -33,7 +33,7 @@
                         </template>
                     </data-table>
                 </template>
-            </details-table-wrapper>
+            </collapse>
         </v-col>
         <base-dialog
             v-model="showConfirmDialog"
@@ -63,19 +63,19 @@
             </template>
         </base-dialog>
         <v-col class="py-0 my-0" cols="6">
-            <details-table-wrapper
+            <collapse
                 :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
                 :toggleVal="showRouterDiagnostics"
                 :title="`${$t('routerDiagnostics')}`"
             >
-                <template v-slot:table>
+                <template v-slot:content>
                     <tree-data
                         :headers="variableValueTableHeaders"
                         :data="routerDiagnosticsTableRow"
                         :search="searchKeyWord"
                     />
                 </template>
-            </details-table-wrapper>
+            </collapse>
         </v-col>
     </v-row>
 </template>

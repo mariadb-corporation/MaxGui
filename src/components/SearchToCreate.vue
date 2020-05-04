@@ -33,11 +33,7 @@
                 + {{ $t('createNew') }}
             </v-btn>
         </div>
-        <service-create-or-update
-            v-model="serviceDialog"
-            :close-modal="() => (serviceDialog = false)"
-            mode="post"
-        />
+        <create-wizard-dialog v-model="createDialog" :close-modal="() => (createDialog = false)" />
         <server-create-or-update
             v-model="serverDialog"
             :close-modal="() => (serverDialog = false)"
@@ -60,13 +56,13 @@
  * Public License.
  */
 import { mapMutations, mapGetters } from 'vuex'
-import ServiceCreateOrUpdate from 'pages/Services/ServiceCreateOrUpdate'
+import CreateWizardDialog from './CreateWizardDialog'
 import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
 
 export default {
     name: 'search-to-create',
     components: {
-        ServiceCreateOrUpdate,
+        CreateWizardDialog,
         ServerCreateOrUpdate,
     },
     props: {
@@ -78,24 +74,14 @@ export default {
         return {
             search: '',
             isBtnDisabled: true,
-            serviceDialog: false,
+            createDialog: false,
             serverDialog: false,
         }
     },
-    computed: {
-        ...mapGetters(['searchKeyWord']),
-    },
+
     watch: {
         search: function(newVal) {
-            // let keyword = newVal.toLowerCase()
             this.setSearchKeyWord(newVal)
-            /*Display create button when the current route belongs to tabRoute, 
-            when search keyword is empty, currentRouteName is */
-            if (newVal === '') {
-                this.isBtnDisabled = false
-            } else {
-                this.isBtnDisabled = this.isMatchTabRoutes(newVal.toLowerCase())
-            }
         },
         currentRouteName: function(newRoute) {
             this.isBtnDisabled = this.isMatchTabRoutes(newRoute)
@@ -122,17 +108,20 @@ export default {
         createType(type) {
             switch (type) {
                 case 'services':
-                    this.serviceDialog = true
+                case 'service':
+                    this.createDialog = true
+
                     break
                 case 'servers':
-                    this.serverDialog = true
+                case 'server':
+                    this.createDialog = true
             }
         },
         isMatchTabRoutes(keyword) {
             let arr = this.tabRoutes.slice()
             let match = false
             for (let i = arr.length - 1; i >= 0; --i) {
-                if (arr[i].name === keyword) {
+                if (arr[i].name.includes(keyword)) {
                     match = false
                     break
                 } else {

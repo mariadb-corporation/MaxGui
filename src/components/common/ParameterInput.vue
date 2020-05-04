@@ -6,14 +6,29 @@
                 :id="objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
-                class="std"
-                height="35px"
-                single-line
+                class="std error--text__bottom error--text__bottom--no-margin"
+                height="36px"
                 outlined
                 dense
                 autocomplete
                 type="password"
-                hide-details
+                :rules="rules.password"
+                required
+                @change="handleChange"
+            />
+        </fragment>
+        <fragment v-else-if="objectItem.id === 'user'">
+            <v-text-field
+                :id="objectItem.id"
+                v-model="objectItem.value"
+                :name="objectItem.id"
+                class="std error--text__bottom error--text__bottom--no-margin"
+                height="36px"
+                outlined
+                dense
+                autocomplete
+                :rules="rules.username"
+                required
                 @change="handleChange"
             />
         </fragment>
@@ -22,13 +37,12 @@
                 :id="objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
-                class="std mariadb-select-input"
+                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="35px"
+                height="36px"
                 :items="[true, false]"
                 outlined
                 dense
-                hide-details
                 @change="handleChange"
             />
         </fragment>
@@ -46,12 +60,11 @@
                 type="number"
                 min="0"
                 :name="objectItem.id"
-                class="std"
-                height="35px"
+                class="std error--text__bottom error--text__bottom--no-margin"
+                height="36px"
                 single-line
                 outlined
                 dense
-                hide-details
                 onkeypress="return event.charCode >= 48"
                 @change="handleChange"
             />
@@ -62,12 +75,11 @@
                 v-model.trim.number="objectItem.value"
                 type="number"
                 :name="objectItem.id"
-                class="std"
-                height="35px"
+                class="std error--text__bottom error--text__bottom--no-margin"
+                height="36px"
                 single-line
                 outlined
                 dense
-                hide-details
                 @change="handleChange"
             />
         </fragment>
@@ -76,13 +88,12 @@
                 :id="objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
-                class="std mariadb-select-input"
+                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="35px"
+                height="36px"
                 :items="objectItem.enum_values"
                 outlined
                 dense
-                hide-details
                 @change="handleChange"
             />
         </fragment>
@@ -92,12 +103,11 @@
                 :id="objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
-                class="std"
-                height="35px"
+                class="std error--text__bottom error--text__bottom--no-margin"
+                height="36px"
                 single-line
                 outlined
                 dense
-                hide-details
                 @change="handleChange"
             />
         </fragment>
@@ -112,8 +122,9 @@ export default {
     data() {
         return {
             objectItem: {},
-            objectItemRules: {
-                count: [val => this.validatePositiveNumber(val)],
+            rules: {
+                username: [val => !!val || this.$t('errors.usernameRequired')],
+                password: [val => !!val || this.$t('errors.passwordRequired')],
             },
         }
     },
@@ -131,3 +142,16 @@ export default {
     },
 }
 </script>
+<style lang="scss" scoped>
+::v-deep .std.v-input.v-text-field.error--text.error--text__bottom--no-margin {
+    margin: 14px 0px 6px;
+    .v-text-field__details {
+        margin: 0px;
+    }
+}
+::v-deep .std > .v-input__control {
+    .v-input__slot {
+        margin: 0;
+    }
+}
+</style>

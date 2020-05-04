@@ -4,7 +4,7 @@
             <v-row class="pa-0 ma-0">
                 <!-- SERVER TABLE -->
                 <v-col cols="12" class="pa-0 ma-0">
-                    <details-table-wrapper
+                    <collapse
                         :toggleOnClick="() => (showServers = !showServers)"
                         :toggleVal="showServers"
                         :title="`${$tc('servers', 2)}`"
@@ -12,7 +12,7 @@
                         :onAddClick="() => onAdd('servers')"
                         addBtnText="addServer"
                     >
-                        <template v-slot:table>
+                        <template v-slot:content>
                             <data-table
                                 :headers="serversTableHeader"
                                 :data="serverStateTableRow"
@@ -49,11 +49,11 @@
                                 </template>
                             </data-table>
                         </template>
-                    </details-table-wrapper>
+                    </collapse>
                 </v-col>
                 <!-- Filter TABLE -->
                 <v-col cols="12" class="pa-0 mt-4">
-                    <details-table-wrapper
+                    <collapse
                         :toggleOnClick="() => (showFilter = !showFilter)"
                         :toggleVal="showFilter"
                         :title="`${$tc('filters', 2)}`"
@@ -61,7 +61,7 @@
                         :onAddClick="() => onAdd('filters')"
                         addBtnText="addFilter"
                     >
-                        <template v-slot:table>
+                        <template v-slot:content>
                             <data-table
                                 :headers="filterTableHeader"
                                 :data="filtersLinked"
@@ -91,7 +91,7 @@
                                 </template>
                             </data-table>
                         </template>
-                    </details-table-wrapper>
+                    </collapse>
                 </v-col>
                 <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->
                 <confirm-dialog

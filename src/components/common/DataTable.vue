@@ -286,7 +286,7 @@ export default {
         },
         dataProcess: function() {
             let self = this
-            let oriData = self.data
+            let oriData = self.$help.cloneDeep(self.data)
             for (let i = 0; i < oriData.length; ++i) {
                 let obj = oriData[i]
                 Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))

@@ -17,6 +17,7 @@ export default {
     namespaced: true,
     state: {
         maxScaleOverviewInfo: {},
+        allModules: [],
         threads: [],
         threadsChartData: {
             datasets: [],
@@ -28,6 +29,9 @@ export default {
          */
         setMaxScaleOverviewInfo(state, payload) {
             state.maxScaleOverviewInfo = payload
+        },
+        setAllModules(state, payload) {
+            state.allModules = payload
         },
         // ---------------------------- last two second threads--------------------------
         setThreads(state, payload) {
@@ -43,6 +47,10 @@ export default {
                 `/maxscale?fields[maxscale]=version,commit,started_at,activated_at,uptime`
             )
             await commit('setMaxScaleOverviewInfo', res.data.data.attributes)
+        },
+        async fetchAllModules({ commit }) {
+            let res = await Vue.axios.get(`/maxscale/modules`)
+            await commit('setAllModules', res.data.data)
         },
         // ---------------------------- last two second threads--------------------------
         async fetchThreads({ commit }) {
@@ -81,6 +89,7 @@ export default {
     },
     getters: {
         maxScaleOverviewInfo: state => state.maxScaleOverviewInfo,
+        allModules: state => state.allModules,
         threadsChartData: state => state.threadsChartData,
         threads: state => state.threads,
     },

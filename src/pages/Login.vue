@@ -28,8 +28,8 @@
                                     v-model="credential.username"
                                     :rules="rules.username"
                                     :error-messages="errorMessage"
-                                    class="std mt-4"
-                                    height="36"
+                                    class="std mt-5"
+                                    height="36px"
                                     name="username"
                                     autocomplete="username"
                                     autofocus
@@ -47,8 +47,8 @@
                                     :rules="rules.password"
                                     :error-messages="!displayOneError ? errorMessage : ''"
                                     :type="isPwdVisible ? 'text' : 'password'"
-                                    class="std mt-4"
-                                    height="36"
+                                    class="std mt-5"
+                                    height="36px"
                                     name="password"
                                     autocomplete
                                     single-line
@@ -88,7 +88,6 @@
                                 depressed
                                 color="primary"
                                 small
-                                height="36px"
                                 @click="handleSubmit"
                             >
                                 <span class="font-weight-bold text-capitalize">{{
