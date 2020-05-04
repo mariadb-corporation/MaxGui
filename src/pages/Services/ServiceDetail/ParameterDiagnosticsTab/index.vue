@@ -118,6 +118,7 @@ export default {
             showRouterDiagnostics: true,
             routerParameters: [],
             loadingEditableParams: false,
+            loadingEditableParamsCount: 0,
         }
     },
 
@@ -177,16 +178,22 @@ export default {
     watch: {
         editableCell: async function(val) {
             if (val) {
+                let self = this
                 const {
                     attributes: { router },
-                } = this.currentService
-                let res = await this.axios.get(
+                } = self.currentService
+                let res = await self.axios.get(
                     `/maxscale/modules/${router}?fields[module]=parameters`
                 )
                 const { attributes: { parameters = [] } = {} } = res.data.data
-                this.routerParameters = parameters
-                this.loadingEditableParams = true
-                await setTimeout(() => (this.loadingEditableParams = false), 150)
+                self.routerParameters = parameters
+
+                if (self.loadingEditableParamsCount === 0) {
+                    self.loadingEditableParamsCount = self.loadingEditableParamsCount + 1
+                    // only display loading animation once to fix no data (aka empty array in the table)
+                    self.loadingEditableParams = true
+                    await setTimeout(() => (self.loadingEditableParams = false), 150)
+                }
             } else {
                 this.loadingEditableParams = false
             }

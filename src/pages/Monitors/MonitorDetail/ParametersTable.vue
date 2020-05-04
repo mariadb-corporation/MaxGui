@@ -94,10 +94,11 @@ export default {
                 { text: 'Value', value: 'value', width: '35%' },
             ],
             loadingEditableParams: false,
+            loadingEditableParamsCount: 0,
             monitorParameters: [],
             editableCell: false,
             changesItems: [],
-            //COMMOn
+            //COMMON
             showConfirmDialog: false,
         }
     },
@@ -144,8 +145,13 @@ export default {
                     )
                     const { attributes: { parameters = [] } = {} } = res.data.data
                     self.monitorParameters = parameters
-                    self.loadingEditableParams = true
-                    await setTimeout(() => (self.loadingEditableParams = false), 150)
+
+                    if (self.loadingEditableParamsCount === 0) {
+                        self.loadingEditableParamsCount = self.loadingEditableParamsCount + 1
+                        // only display loading animation once to fix no data (aka empty array in the table)
+                        self.loadingEditableParams = true
+                        await setTimeout(() => (self.loadingEditableParams = false), 150)
+                    }
                 }
             } else {
                 self.loadingEditableParams = false
