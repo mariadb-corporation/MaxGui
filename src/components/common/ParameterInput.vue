@@ -1,6 +1,5 @@
 <template>
-    <!-- Each input will has its form validation TODO: add validation -->
-    <v-form>
+    <fragment>
         <fragment v-if="objectItem.type === 'password string'">
             <v-text-field
                 :id="objectItem.id"
@@ -10,9 +9,9 @@
                 height="36px"
                 outlined
                 dense
-                autocomplete
+                autocomplete="on"
                 type="password"
-                :rules="rules.password"
+                :rules="[v => !!v || `${objectItem.id} is required`]"
                 required
                 @change="handleChange"
             />
@@ -26,13 +25,13 @@
                 height="36px"
                 outlined
                 dense
-                autocomplete
-                :rules="rules.username"
+                :rules="[v => !!v || `${objectItem.id} is required`]"
                 required
                 @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'bool'">
+            <!-- No need rules for v-select as it always has predefined value-->
             <v-select
                 :id="objectItem.id"
                 v-model="objectItem.value"
@@ -43,6 +42,7 @@
                 :items="[true, false]"
                 outlined
                 dense
+                required
                 @change="handleChange"
             />
         </fragment>
@@ -54,6 +54,11 @@
                     objectItem.type === 'size'
             "
         >
+            <!-- Allow to enter positive integer only, omit E or e char,
+                 onkeypress is triggered when pressing keys but it doesn't bypass direct paste,
+                 hence display error text in rules.
+                   onkeypress="return Number(event.key) >= 0"
+             -->
             <v-text-field
                 :id="objectItem.id"
                 v-model.trim.number="objectItem.value"
@@ -65,10 +70,16 @@
                 single-line
                 outlined
                 dense
-                onkeypress="return event.charCode >= 48"
+                :rules="rules.naturalNumber"
+                required
                 @change="handleChange"
             />
         </fragment>
+        <!-- Allow to enter integer only , omit E or e char, 
+             onkeypress is triggered when pressing keys but it doesn't bypass direct paste,
+             hence display error text in rules
+               onkeypress="return event.key.toLowerCase()!=='e'"
+         -->
         <fragment v-else-if="objectItem.type === 'int'">
             <v-text-field
                 :id="objectItem.id"
@@ -80,10 +91,13 @@
                 single-line
                 outlined
                 dense
+                :rules="rules.int"
+                required
                 @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'enum'">
+            <!-- No need rules for v-select as it always has predefined value-->
             <v-select
                 :id="objectItem.id"
                 v-model="objectItem.value"
@@ -94,6 +108,7 @@
                 :items="objectItem.enum_values"
                 outlined
                 dense
+                required
                 @change="handleChange"
             />
         </fragment>
@@ -108,12 +123,26 @@
                 single-line
                 outlined
                 dense
+                :rules="[v => !!v || `${objectItem.id} is required`]"
+                required
                 @change="handleChange"
             />
         </fragment>
-    </v-form>
+    </fragment>
 </template>
 <script>
+/*
+ * Copyright (c) 2020 MariaDB Corporation Ab
+ *
+ * Use of this software is governed by the Business Source License included
+ * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
+ *
+ * Change Date: 2024-07-01
+ *
+ * On the date above, in accordance with the Business Source License, use
+ * of this software will be governed by version 2 or later of the General
+ * Public License.
+ */
 export default {
     name: 'parameter-input',
     props: {
@@ -123,8 +152,8 @@ export default {
         return {
             objectItem: {},
             rules: {
-                username: [val => !!val || this.$t('errors.usernameRequired')],
-                password: [val => !!val || this.$t('errors.passwordRequired')],
+                naturalNumber: [val => this.validateNaturalNumber(val)],
+                int: [val => this.validateInteger(val)],
             },
         }
     },
@@ -139,17 +168,34 @@ export default {
             // compare v-model objectItem with props item
             this.$emit('on-input-change', self.objectItem, changed)
         },
+        validateNaturalNumber(val) {
+            if (val < 0 && Number.isInteger(val)) {
+                return `${this.objectItem.id} does not accept negative values`
+            } else if (val === '') {
+                return `${this.objectItem.id} is required`
+            }
+            return true
+        },
+        validateInteger(val) {
+            if (!Number.isInteger(parseInt(val, 10))) {
+                return `${this.objectItem.id} accepts only integer`
+            } else if (val === '') {
+                return `${this.objectItem.id} is required`
+            }
+            return true
+        },
     },
 }
 </script>
+
 <style lang="scss" scoped>
-::v-deep .std.v-input.v-text-field.error--text.error--text__bottom--no-margin {
+.std.v-input.v-text-field.error--text.error--text__bottom--no-margin {
     margin: 14px 0px 6px;
-    .v-text-field__details {
+    ::v-deep .v-text-field__details {
         margin: 0px;
     }
 }
-::v-deep .std > .v-input__control {
+.std ::v-deep .v-input__control {
     .v-input__slot {
         margin: 0;
     }

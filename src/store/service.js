@@ -95,48 +95,28 @@ export default {
         //-----------------------------------------------Service Create/Update/Delete----------------------------------
         /**
          * @param {Object} payload payload object
-         * @param {String} payload.mode Mode to perform async request POST or Patch
          * @param {String} payload.id Name of the service
          * @param {String} payload.router The router module to use
-
          * @param {Object} payload.parameters Parameters for the server
-         * @param {String} payload.parameters.user The user to use
-         * @param {String} payload.parameters.password The password to use
          * @param {Object} payload.relationships The relationships of the service to other resources
          * @param {Object} payload.relationships.servers Type of relationships
          * @param {Object} payload.relationships.filters Type of relationships
+         * @param {Function} payload.callback callback function after successfully updated
          */
         async createService({ commit }, payload) {
             const body = {
                 data: {
                     id: payload.id,
                     type: 'services',
-                    attributes: {},
+                    attributes: {
+                        router: payload.router,
+                        parameters: payload.parameters,
+                        relationships: payload.relationships,
+                    },
                 },
             }
-            let res
-            let message
-            switch (payload.mode) {
-                case 'post':
-                    body.data.attributes.router = payload.router
-                    body.data.attributes.parameters = payload.parameters
-                    body.data.relationships = payload.relationships
-                    res = await Vue.axios.post(`/services/`, body)
-                    message = [`Service ${payload.id} is created`]
-
-                    break
-                case 'patch':
-                    if (!isUndefined(payload.parameters)) {
-                        body.data.attributes.parameters = payload.parameters
-                    }
-                    if (!isUndefined(payload.relationships)) {
-                        body.data.relationships = payload.relationships
-                    }
-                    res = await Vue.axios.patch(`/services/${payload.id}`, body)
-                    message = [`Service ${payload.id} is updated`]
-                    break
-            }
-
+            let res = await Vue.axios.post(`/services/`, body)
+            let message = [`Service ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -155,7 +135,7 @@ export default {
          * @param {Object} payload payload object
          * @param {String} payload.id Name of the service
          * @param {Object} payload.parameters Parameters for the service
-         * @param {Object} payload.callback callback function after successfully updated
+         * @param {Function} payload.callback callback function after successfully updated
          */
         async updateServiceParameters({ commit }, payload) {
             const body = {

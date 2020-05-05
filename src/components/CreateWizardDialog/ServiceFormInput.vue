@@ -39,6 +39,7 @@
                 >
                     <template v-slot:value="props">
                         <parameter-input
+                            ref="parameterInput"
                             :item="props.data.item"
                             @on-input-change="handleItemChange"
                         />
@@ -55,7 +56,7 @@
         >
             <template v-slot:content>
                 <v-select
-                    id="servers-select"
+                    id="servers-relationship-select"
                     v-model="selectedServers"
                     :items="allServers"
                     item-text="id"
@@ -91,7 +92,9 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'service-form-input',
     props: {
+        resourceId: { type: String, required: true }, //null Object
         resourceModules: { type: Array, required: true },
+        createService: { type: Function, required: true },
     },
     data: function() {
         return {
@@ -103,12 +106,14 @@ export default {
                 { text: 'Value', value: 'value', width: '35%', editableCol: true },
             ],
             showParameters: true,
-            changesItems: [],
+            changedParameters: [],
 
             // server relationship
             showServers: true,
             selectedServers: null,
             allServers: [],
+            // Relationship obj
+            relationships: {},
         }
     },
     computed: {
@@ -157,22 +162,32 @@ export default {
             return arr
         },
     },
-    // watch: {
-    //     selectedModule: function(val) {
-    //         if (val) {
-    //             this.$emit('get-selected-Modu', val)
-    //         }
-    //     },
-    // },
+    watch: {
+        changedParameters: function(val) {
+            if (val) {
+                // console.log(val)
+            }
+        },
+    },
     methods: {
         handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changesItems)
+            let clone = this.$help.cloneDeep(this.changedParameters)
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
             if (changed) {
-                targetIndex === -1 && this.changesItems.push(newItem)
+                targetIndex === -1 && this.changedParameters.push(newItem)
             } else {
-                targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
+                targetIndex > -1 && this.changedParameters.splice(targetIndex, 1)
             }
+        },
+        async dispatchCreatingService() {
+            let parameters = this.changedParameters
+
+            // await this.createService({
+            //     id: this.resourceId,
+            //     router: this.selectedModule.id,
+            //     relationships: this.relationships,
+            //     parameters: parameters,
+            // })
         },
     },
 }

@@ -1,6 +1,5 @@
 <template>
     <fragment>
-        <!-- TODO: Ability to configure the unit value for duration and size parameter type  -->
         <!-- MAXSCALE TABLE
         <v-row>
             <v-col cols="6">

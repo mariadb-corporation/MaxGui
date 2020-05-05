@@ -17,7 +17,9 @@
                 </v-btn>
             </v-card-title>
             <v-card-text class="v-card-text_padding">
-                <slot name="body"></slot>
+                <v-form ref="form" v-model="isFormValid" lazy-validation class="mt-4">
+                    <slot name="body"></slot>
+                </v-form>
             </v-card-text>
             <v-card-actions class="v-card-actions_padding color border-top-reflection">
                 <v-spacer></v-spacer>
@@ -41,7 +43,7 @@
                         class="save font-weight-medium px-7 text-capitalize"
                         rounded
                         depressed
-                        :disabled="disabledSaveBtn"
+                        :disabled="disabledSaveBtn || !isFormValid"
                         @click="save"
                     >
                         {{ $t(saveText) }}
@@ -83,11 +85,13 @@ export default {
 
         cancelText: { type: String, default: 'cancel' },
         saveText: { type: String, default: 'save' },
+        // manually control btn disabled
         disabledSaveBtn: { type: Boolean, default: false },
     },
     data() {
         return {
             show: false,
+            isFormValid: true,
         }
     },
     computed: {
@@ -102,7 +106,11 @@ export default {
             },
         },
     },
-
+    // watch: {
+    //     isFormValid: function(val) {
+    //         val === false && this.$emit('form-valid', this.isFormValid)
+    //     },
+    // },
     methods: {
         ...mapMutations(['showMessage', 'showOverlay', 'hideOverlay']),
         cancel() {
@@ -117,13 +125,24 @@ export default {
 
         async save() {
             let self = this
-            if (self.onSave) {
-                self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
-                await self.onSave()
-                // wait time out for loading animation
-                await setTimeout(() => {
-                    self.hideOverlay()
-                }, 600)
+            await !self.$refs.form.validate()
+
+            if (!self.$refs.form.validate()) {
+                let invalidEles = document.getElementsByClassName('v-messages__message')
+                //TODO: check crossbrowser scrollIntoView API.
+                return invalidEles[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'start',
+                })
+            } else {
+                if (self.onSave) {
+                    self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
+                    await self.onSave()
+                    // wait time out for loading animation
+                    await (self.value === false)
+                    await self.$help.delay(600).then(() => self.hideOverlay())
+                }
             }
         },
     },

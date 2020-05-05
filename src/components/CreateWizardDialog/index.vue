@@ -8,50 +8,45 @@
         :title="`${$t('createANew')}...`"
     >
         <template v-slot:body>
-            <v-form
-                ref="form"
-                v-model="isValid"
-                class="mt-4"
-                @keyup.native.enter="isValid && handleSave()"
-            >
-                <v-select
-                    id="resource-select"
-                    v-model="selectedResource"
-                    :items="resourcesList"
-                    name="resourceName"
-                    outlined
-                    dense
-                    class="std mariadb-select-input error--text__bottom"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                    height="36px"
-                    hide-details
+            <v-select
+                id="resource-select"
+                v-model="selectedResource"
+                :items="resourcesList"
+                name="resourceName"
+                outlined
+                dense
+                class="std mariadb-select-input error--text__bottom"
+                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                height="36px"
+                hide-details
+                required
+            />
+            <v-divider class="divider" />
+            <div class="mb-0">
+                <label class="label color text-small-text d-block">
+                    {{ `${selectedResource} name` }}
+                </label>
+                <v-text-field
+                    id="id"
+                    v-model="resourceId"
+                    :rules="rules.resourceId"
+                    name="id"
                     required
+                    class="std error--text__bottom"
+                    height="36px"
+                    dense
+                    outlined
+                    :placeholder="$t('nameYour', { resourceName: selectedResource.toLowerCase() })"
                 />
-                <v-divider class="divider" />
-                <div class="mb-0">
-                    <label class="label color text-small-text d-block">
-                        {{ `${selectedResource} name` }}
-                    </label>
-                    <v-text-field
-                        id="id"
-                        v-model="resourceId"
-                        :rules="rules.resourceId"
-                        name="id"
-                        required
-                        class="std error--text__bottom"
-                        height="36px"
-                        dense
-                        outlined
-                        :placeholder="
-                            $t('nameYour', { resourceName: selectedResource.toLowerCase() })
-                        "
-                    />
-                </div>
+            </div>
 
-                <div v-if="selectedResource === 'Service'" class="mb-0">
-                    <service-form-input :resourceModules="resourceModules" />
-                </div>
-            </v-form>
+            <div v-if="selectedResource === 'Service'" class="mb-0">
+                <service-form-input
+                    :resourceId="resourceId"
+                    :resourceModules="resourceModules"
+                    :createService="createService"
+                />
+            </div>
         </template>
     </base-dialog>
 </template>
@@ -83,15 +78,16 @@ export default {
     },
     data: function() {
         return {
-            isValid: false,
             show: false,
             selectedResource: 'Service',
             resourcesList: ['Service', 'Server', 'Monitor', 'Filter', 'Listener'],
             //COMMON
-            resourceId: null,
+            resourceId: '', // resourceId is the name of resource being created
             rules: {
                 resourceId: [val => this.validateResourceId(val)],
             },
+
+            // module for monitor, service, and filter
             resourceModules: [],
         }
     },
@@ -99,8 +95,8 @@ export default {
     computed: {
         ...mapGetters({
             allModules: 'maxscale/allModules',
-            allServicesInfo: 'service/allServicesInfo',
-            allServicesMap: 'service/allServicesMap',
+            // allServicesInfo: 'service/allServicesInfo',
+            // allServicesMap: 'service/allServicesMap',
         }),
         computeShowDialog: {
             // get value from props
@@ -114,6 +110,7 @@ export default {
         },
     },
     watch: {
+        // when dialog is open, fetchAllModules for Monitor, Service and Filter
         value: async function(val) {
             if (val) {
                 await this.fetchAllModules()
@@ -141,7 +138,10 @@ export default {
     },
 
     methods: {
-        ...mapActions({ fetchAllModules: 'maxscale/fetchAllModules' }),
+        ...mapActions({
+            fetchAllModules: 'maxscale/fetchAllModules',
+            createService: 'service/createService',
+        }),
         getModuleType(type) {
             let modules = []
             for (let i = 0; i < this.allModules.length; ++i) {
@@ -151,27 +151,19 @@ export default {
             return modules
         },
         handleSave() {
-            this.$refs.form.validate()
-            if (this.isValid) {
-                // switch (this.mode) {
-                //     case 'post':
-                //         // these parameters need to have null value if it is not set
-                //         this.parameters.version_string = this.$help.treatNullAsEmptyString(
-                //             this.parameters.version_string
-                //         )
-                //         break
-                //     case 'patch':
-                //     // console.log('update')
-                // }
-                // this.createService({
-                //     mode: this.mode,
-                //     id: this.serviceId,
-                //     router: this.router,
-                //     relationships: this.relationships,
-                //     parameters: this.parameters,
-                // })
-                // this.closeModal()
+            switch (this.selectedResource) {
+                case 'Service':
+                    // this.createService({
+                    //     id: this.resourceId,
+
+                    //     router: this.router,
+                    //     relationships: this.relationships,
+                    //     parameters: this.parameters,
+                    // })
+                    break
             }
+
+            this.closeModal()
         },
         validateResourceId(val) {
             if (!val) {

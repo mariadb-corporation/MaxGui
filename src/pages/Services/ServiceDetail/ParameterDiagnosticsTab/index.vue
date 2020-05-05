@@ -11,30 +11,33 @@
                 :doneEditing="() => (showConfirmDialog = true)"
             >
                 <template v-slot:content>
-                    <data-table
-                        :headers="variableValueTableHeaders"
-                        :data="parametersTableRow"
-                        :tdBorderLeft="true"
-                        :itemsPerPage="parametersTableRow.length"
-                        :showAll="true"
-                        :search="searchKeyWord"
-                        :editableCell="editableCell"
-                        :loading="editableCell ? loadingEditableParams : loading"
-                    >
-                        <template v-if="editableCell" v-slot:value="props">
-                            <parameter-input
-                                :item="props.data.item"
-                                @on-input-change="handleItemChange"
-                            />
-                        </template>
-                        <template v-if="editableCell" v-slot:id="props">
-                            <b>{{ props.data.item.type }}</b
-                            >: {{ props.data.item.id }}
-                        </template>
-                    </data-table>
+                    <v-form ref="form" v-model="isValid">
+                        <data-table
+                            :headers="variableValueTableHeaders"
+                            :data="parametersTableRow"
+                            :tdBorderLeft="true"
+                            :itemsPerPage="parametersTableRow.length"
+                            :showAll="true"
+                            :search="searchKeyWord"
+                            :editableCell="editableCell"
+                            :loading="editableCell ? loadingEditableParams : loading"
+                        >
+                            <template v-if="editableCell" v-slot:value="props">
+                                <parameter-input
+                                    :item="props.data.item"
+                                    @on-input-change="handleItemChange"
+                                />
+                            </template>
+                            <template v-if="editableCell" v-slot:id="props">
+                                <b>{{ props.data.item.type }}</b
+                                >: {{ props.data.item.id }}
+                            </template>
+                        </data-table>
+                    </v-form>
                 </template>
             </collapse>
         </v-col>
+
         <base-dialog
             v-model="showConfirmDialog"
             :onCancel="cancelEdit"
@@ -42,7 +45,7 @@
             :onSave="acceptEdit"
             :title="`${$t('implementChanges')}`"
             saveText="thatsRight"
-            :disabledSaveBtn="changesItems.length ? false : true"
+            :disabledSaveBtn="shouldDisableSaveBtn"
         >
             <template v-slot:body>
                 <span class="d-block mb-4">
@@ -107,6 +110,7 @@ export default {
 
     data() {
         return {
+            isValid: false,
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%', editableCol: true },
@@ -174,6 +178,10 @@ export default {
             }
             return []
         },
+        shouldDisableSaveBtn: function() {
+            if (this.changesItems.length > 0 && this.isValid) return false
+            else return true
+        },
     },
     watch: {
         editableCell: async function(val) {
@@ -192,11 +200,14 @@ export default {
                     self.loadingEditableParamsCount = self.loadingEditableParamsCount + 1
                     // only display loading animation once to fix no data (aka empty array in the table)
                     self.loadingEditableParams = true
-                    await setTimeout(() => (self.loadingEditableParams = false), 150)
+                    await self.$help.delay(150).then(() => (self.loadingEditableParams = false))
                 }
             } else {
                 this.loadingEditableParams = false
             }
+        },
+        showConfirmDialog: function(val) {
+            if (val && this.editableCell) this.$refs.form.validate()
         },
     },
     methods: {
