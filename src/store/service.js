@@ -241,6 +241,10 @@ export default {
     getters: {
         allServices: state => state.allServices,
         currentService: state => state.currentService,
+
+        totalConnectionsChartData: state => state.totalConnectionsChartData,
+        connectionInfo: state => state.connectionInfo,
+        // -------------- below getters are available only when fetchAllServices has been dispatched
         allServicesMap: state => {
             let map = new Map()
             state.allServices.forEach(ele => {
@@ -256,7 +260,5 @@ export default {
                 return (accumulator = { idArr: idArr })
             }, [])
         },
-        totalConnectionsChartData: state => state.totalConnectionsChartData,
-        connectionInfo: state => state.connectionInfo,
     },
 }

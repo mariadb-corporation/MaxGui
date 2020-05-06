@@ -46,7 +46,7 @@
                 </data-table>
             </template>
         </collapse>
-        <!-- <collapse
+        <collapse
             wrapperClass="mt-4"
             titleWrapperClass="mx-n9"
             :toggleOnClick="() => (showServers = !showServers)"
@@ -70,7 +70,7 @@
                     hide-details
                 />
             </template>
-        </collapse> -->
+        </collapse>
     </div>
 </template>
 
@@ -91,28 +91,24 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'service-form-input',
     props: {
-        resourceId: { type: String, required: true, default: 'Service' },
         resourceModules: { type: Array, required: true },
-        createService: { type: Function, required: true },
     },
     data: function() {
         return {
-            // router module
+            // router module input
             selectedModule: undefined,
-            // Parameters table
+            // Parameters table section
+            showParameters: true,
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '1px' },
                 { text: 'Value', value: 'value', width: '1px', editableCol: true },
             ],
-            showParameters: true,
-            changedParameters: [],
-
-            // server relationship
+            // parameters input
+            changedParametersArr: [],
+            // Relationships section
             showServers: true,
             selectedServers: null,
             allServers: [],
-            // Relationship obj
-            relationships: {},
         }
     },
     computed: {
@@ -161,35 +157,27 @@ export default {
             return arr
         },
     },
-    watch: {
-        changedParameters: function(val) {
-            if (val) {
-                // console.log(val)
-            }
-        },
-        selectedModule: function(val) {
-            this.$emit('show-parameters-table', val)
-        },
-    },
+
     methods: {
         handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changedParameters)
+            let clone = this.$help.cloneDeep(this.changedParametersArr)
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
             if (changed) {
-                targetIndex === -1 && this.changedParameters.push(newItem)
+                targetIndex === -1 && this.changedParametersArr.push(newItem)
             } else {
-                targetIndex > -1 && this.changedParameters.splice(targetIndex, 1)
+                targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
             }
-        },
-        async dispatchCreatingService() {
-            let parameters = this.changedParameters
+            /* 
+            When using module parameters, only parameters that have changed by the user 
+            will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
+            */
+            let parametersObj = this.$help.arrOfObjToObj(this.changedParametersArr)
 
-            // await this.createService({
-            //     id: this.resourceId,
-            //     router: this.selectedModule.id,
-            //     relationships: this.relationships,
-            //     parameters: parameters,
-            // })
+            const formValues = {
+                router: this.selectedModule.id,
+                parameters: parametersObj,
+            }
+            this.$emit('form-values', formValues)
         },
     },
 }

@@ -154,7 +154,6 @@ export default {
             allMonitorsMap: 'monitor/allMonitorsMap',
             allMonitors: 'monitor/allMonitors',
             allServers: 'server/allServers',
-            allServersMap: 'server/allServersMap',
         }),
         dataProcessing: function() {
             if (this.allServers.length && this.allMonitorsMap.size) {

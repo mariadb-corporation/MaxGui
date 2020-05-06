@@ -247,6 +247,8 @@ export default {
     getters: {
         allServers: state => state.allServers,
         currentServer: state => state.currentServer,
+        serversConnectionsChartData: state => state.serversConnectionsChartData,
+        // -------------- below getters are available only when fetchAllServers has been dispatched
         allServersMap: state => {
             let map = new Map()
             state.allServers.forEach(ele => {
@@ -254,6 +256,7 @@ export default {
             })
             return map
         },
+
         allServersInfo: state => {
             let idArr = []
             let portNumArr = []
@@ -264,7 +267,5 @@ export default {
                 return (accumulator = { idArr: idArr, portNumArr: portNumArr })
             }, [])
         },
-
-        serversConnectionsChartData: state => state.serversConnectionsChartData,
     },
 }

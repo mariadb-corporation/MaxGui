@@ -84,5 +84,21 @@ export default {
     },
     getters: {
         allFilters: state => state.allFilters,
+        // -------------- below getters are available only when fetchAllMonitors has been dispatched
+        allFiltersMap: state => {
+            let map = new Map()
+            state.allFilters.forEach(ele => {
+                map.set(ele.id, ele)
+            })
+            return map
+        },
+
+        allFiltersInfo: state => {
+            let idArr = []
+            return state.allFilters.reduce((accumulator, _, index, array) => {
+                idArr.push(array[index].id)
+                return (accumulator = { idArr: idArr })
+            }, [])
+        },
     },
 }

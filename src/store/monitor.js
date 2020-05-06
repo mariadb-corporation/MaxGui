@@ -199,6 +199,8 @@ export default {
     },
     getters: {
         allMonitors: state => state.allMonitors,
+        currentMonitor: state => state.currentMonitor,
+        // -------------- below getters are available only when fetchAllMonitors has been dispatched
         allMonitorsMap: state => {
             let map = new Map()
             state.allMonitors.forEach(ele => {
@@ -206,6 +208,13 @@ export default {
             })
             return map
         },
-        currentMonitor: state => state.currentMonitor,
+
+        allMonitorsInfo: state => {
+            let idArr = []
+            return state.allMonitors.reduce((accumulator, _, index, array) => {
+                idArr.push(array[index].id)
+                return (accumulator = { idArr: idArr })
+            }, [])
+        },
     },
 }

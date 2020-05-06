@@ -6,6 +6,7 @@
         width="unset"
         content-class="base-dialog"
         persistent
+        :scrollable="scrollable"
     >
         <v-card class="v-card-custom" :min-width="minBodyWidth">
             <v-card-title class="v-card-title_padding">
@@ -74,6 +75,7 @@ export default {
     name: 'base-dialog',
     props: {
         minBodyWidth: { type: String, default: '466px' },
+        scrollable: { type: Boolean, default: false },
         title: { type: String, required: true },
         value: { type: Boolean, required: true },
         /* These functions are requires since the computeShowDialog depends on the value props.

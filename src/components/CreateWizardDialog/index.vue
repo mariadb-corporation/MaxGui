@@ -5,6 +5,7 @@
         :onClose="closeModal"
         :onSave="handleSave"
         :title="`${$t('createANew')}...`"
+        scrollable
     >
         <template v-slot:body>
             <fragment v-if="selectedResource">
@@ -45,10 +46,8 @@
 
                 <div v-if="selectedResource === 'Service'" class="mb-0">
                     <service-form-input
-                        :resourceId="resourceId"
                         :resourceModules="resourceModules"
-                        :createService="createService"
-                        @show-parameters-table="isParametersTableShown = $event"
+                        @form-values="formValues = $event"
                     />
                 </div>
             </fragment>
@@ -86,15 +85,15 @@ export default {
             show: false,
             selectedResource: '',
             resourcesList: ['Service', 'Server', 'Monitor', 'Filter', 'Listener'],
+            // module for monitor, service, and filter
+            resourceModules: [],
             //COMMON
             isParametersTableShown: false,
             resourceId: '', // resourceId is the name of resource being created
             rules: {
                 resourceId: [val => this.validateResourceId(val)],
             },
-
-            // module for monitor, service, and filter
-            resourceModules: [],
+            validateInfo: {},
             // this is used to auto assign default selectedResource
             matchRoutes: [
                 'monitor',
@@ -108,14 +107,17 @@ export default {
                 'filter',
                 'filters',
             ],
+            formValues: {},
         }
     },
 
     computed: {
         ...mapGetters({
             allModules: 'maxscale/allModules',
-            // allServicesInfo: 'service/allServicesInfo',
-            // allServicesMap: 'service/allServicesMap',
+            allServicesInfo: 'service/allServicesInfo',
+            allServersInfo: 'server/allServersInfo',
+            allMonitorsInfo: 'monitor/allMonitorsInfo',
+            allFiltersInfo: 'filter/allFiltersInfo',
         }),
 
         computeShowDialog: {
@@ -139,19 +141,32 @@ export default {
                     this.resourceModules = this.getModuleType('Router')
             }
         },
-
-        selectedResource: function(val) {
+        resourceId: function(val) {
+            // add hyphens when ever input have whitespace
+            this.resourceId = val.split(' ').join('-')
+        },
+        selectedResource: async function(val) {
             switch (val) {
                 case 'Service':
-                    this.resourceModules = this.getModuleType('Router')
+                    {
+                        this.resourceModules = this.getModuleType('Router')
+                        await this.fetchAllServices()
+                        this.validateInfo = this.allServicesInfo
+                    }
                     break
                 case 'Server':
+                    await this.fetchAllServers()
+                    this.validateInfo = this.allServersInfo
                     break
                 case 'Monitor':
                     this.resourceModules = this.getModuleType('Monitor')
+                    await this.fetchAllMonitors()
+                    this.validateInfo = this.allMonitorsInfo
                     break
                 case 'Filter':
                     this.resourceModules = this.getModuleType('Filter')
+                    await this.fetchAllFilters()
+                    this.validateInfo = this.allFiltersInfo
                     break
                 case 'Listener':
                     break
@@ -171,6 +186,10 @@ export default {
         ...mapActions({
             fetchAllModules: 'maxscale/fetchAllModules',
             createService: 'service/createService',
+            fetchAllServices: 'service/fetchAllServices',
+            fetchAllServers: 'server/fetchAllServers',
+            fetchAllMonitors: 'monitor/fetchAllMonitors',
+            fetchAllFilters: 'filter/fetchAllFilters',
         }),
 
         setDefaultSelectedResource(resource) {
@@ -204,13 +223,15 @@ export default {
         handleSave() {
             switch (this.selectedResource) {
                 case 'Service':
-                    // this.createService({
-                    //     id: this.resourceId,
-
-                    //     router: this.router,
-                    //     relationships: this.relationships,
-                    //     parameters: this.parameters,
-                    // })
+                    {
+                        const { router, parameters } = this.formValues
+                        this.createService({
+                            id: this.resourceId,
+                            router: router,
+                            parameters: parameters,
+                            callback: this.fetchAllServices,
+                        })
+                    }
                     break
             }
 
@@ -220,10 +241,9 @@ export default {
         validateResourceId(val) {
             if (!val) {
                 return 'id is required'
+            } else if (this.validateInfo.idArr.includes(val)) {
+                return 'id is already registered'
             }
-            //  else if (this.allServicesInfo.idArr.includes(val)) {
-            //     return 'id is already registered'
-            // }
             return true
         },
     },
