@@ -13,7 +13,7 @@
                             <data-table
                                 :headers="variableValueTableHeaders"
                                 :data="statisticsTableRow"
-                                :tdBorderLeft="true"
+                                tdBorderLeft
                             />
                         </template>
                     </collapse>
@@ -36,7 +36,7 @@
                                 :noDataText="$t('noServices')"
                                 sortBy="id"
                                 :loading="loading"
-                                :showActionsOnHover="true"
+                                showActionsOnHover
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link

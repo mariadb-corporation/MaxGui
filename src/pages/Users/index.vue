@@ -4,8 +4,6 @@
         :data="generateTableRows"
         :sortDesc="false"
         :loading="!generateTableRows.length"
-        :singleExpand="false"
-        :showExpand="true"
         sortBy="id"
     >
         <template v-slot:id="{ data }">

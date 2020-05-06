@@ -1,10 +1,12 @@
 <template>
+    <!-- TODO: animation for dynamicWidth feature -->
     <base-dialog
         v-model="computeShowDialog"
         :onCancel="closeModal"
         :onClose="closeModal"
         :onSave="handleSave"
         :title="`${$t('createANew')}...`"
+        dynamicWidth
         scrollable
     >
         <template v-slot:body>
@@ -22,6 +24,7 @@
                     hide-details
                     :rules="[v => !!v || 'This field is required']"
                     required
+                    @input="handleResourceSelected"
                 />
                 <v-divider class="divider" />
                 <div class="mb-0">
@@ -47,6 +50,9 @@
                 <div v-if="selectedResource === 'Service'" class="mb-0">
                     <service-form-input
                         :resourceModules="resourceModules"
+                        :allServers="allServers"
+                        :allFilters="allFilters"
+                        :emittingFormValuesEvent="emittingFormValuesEvent"
                         @form-values="formValues = $event"
                     />
                 </div>
@@ -107,6 +113,7 @@ export default {
                 'filter',
                 'filters',
             ],
+            emittingFormValuesEvent: false,
             formValues: {},
         }
     },
@@ -114,10 +121,13 @@ export default {
     computed: {
         ...mapGetters({
             allModules: 'maxscale/allModules',
+            allServices: 'service/allServices',
             allServicesInfo: 'service/allServicesInfo',
+            allServers: 'server/allServers',
             allServersInfo: 'server/allServersInfo',
             allMonitorsInfo: 'monitor/allMonitorsInfo',
             allFiltersInfo: 'filter/allFiltersInfo',
+            allFilters: 'filter/allFilters',
         }),
 
         computeShowDialog: {
@@ -132,26 +142,36 @@ export default {
         },
     },
     watch: {
-        // when dialog is open, fetchAllModules for Monitor, Service and Filter
-        value: async function(val) {
-            if (val) {
-                await this.fetchAllModules()
-                this.setDefaultSelectedResource(this.$route.name)
-                if (this.selectedResource === 'Service')
-                    this.resourceModules = this.getModuleType('Router')
-            }
-        },
         resourceId: function(val) {
             // add hyphens when ever input have whitespace
-            this.resourceId = val.split(' ').join('-')
+            this.resourceId = val ? val.split(' ').join('-') : val
         },
-        selectedResource: async function(val) {
+
+        $route: function(to, from) {
+            this.setDefaultSelectedResource(to.name)
+        },
+    },
+    mounted() {
+        this.setDefaultSelectedResource(this.$route.name)
+    },
+    methods: {
+        ...mapActions({
+            createService: 'service/createService',
+            fetchAllServices: 'service/fetchAllServices',
+            fetchAllServers: 'server/fetchAllServers',
+            fetchAllMonitors: 'monitor/fetchAllMonitors',
+            fetchAllFilters: 'filter/fetchAllFilters',
+        }),
+
+        async handleResourceSelected(val) {
             switch (val) {
                 case 'Service':
                     {
                         this.resourceModules = this.getModuleType('Router')
                         await this.fetchAllServices()
                         this.validateInfo = this.allServicesInfo
+                        await this.fetchAllServers()
+                        await this.fetchAllFilters()
                     }
                     break
                 case 'Server':
@@ -173,29 +193,14 @@ export default {
             }
         },
 
-        $route: function(to, from) {
-            this.setDefaultSelectedResource(to.name)
-        },
-    },
-
-    created() {
-        this.setDefaultSelectedResource(this.$route.name)
-    },
-
-    methods: {
-        ...mapActions({
-            fetchAllModules: 'maxscale/fetchAllModules',
-            createService: 'service/createService',
-            fetchAllServices: 'service/fetchAllServices',
-            fetchAllServers: 'server/fetchAllServers',
-            fetchAllMonitors: 'monitor/fetchAllMonitors',
-            fetchAllFilters: 'filter/fetchAllFilters',
-        }),
-
         setDefaultSelectedResource(resource) {
             if (this.matchRoutes.includes(resource)) {
                 this.selectedResource = this.textTransform(resource)
-            } else this.selectedResource = 'Service'
+                this.handleResourceSelected(this.selectedResource)
+            } else {
+                this.selectedResource = 'Service'
+                this.handleResourceSelected('Service')
+            }
         },
 
         /**
@@ -221,21 +226,32 @@ export default {
         },
 
         handleSave() {
-            switch (this.selectedResource) {
-                case 'Service':
-                    {
-                        const { router, parameters } = this.formValues
-                        this.createService({
-                            id: this.resourceId,
-                            router: router,
-                            parameters: parameters,
-                            callback: this.fetchAllServices,
-                        })
-                    }
-                    break
-            }
+            this.emittingFormValuesEvent = true
+            //https://vuejs.org/v2/guide/reactivity.html#Async-Update-Queue
+            this.$nextTick(async function() {
+                switch (this.selectedResource) {
+                    case 'Service':
+                        {
+                            const { router, parameters, relationships } = this.formValues
+                            const payload = {
+                                id: this.resourceId,
+                                router: router,
+                                parameters: parameters,
+                                relationships: relationships,
+                                callback: this.fetchAllServices,
+                            }
 
-            this.closeModal()
+                            await this.createService(payload)
+                            /* after service is created, fetchAllServices will be triggered,
+                            hence validateInfo need to be updated. This solves edge case when
+                            selectedResource watcher doesn't update. aka: user has not change the route
+
+                             */
+                        }
+                        break
+                }
+                this.closeModal()
+            })
         },
 
         validateResourceId(val) {
@@ -249,6 +265,7 @@ export default {
     },
 }
 </script>
+
 <style lang="scss" scoped>
 .divider {
     max-width: calc(100% + 124px);

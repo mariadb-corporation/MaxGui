@@ -17,7 +17,7 @@
                         :noDataText="$t('noServers')"
                         sortBy="id"
                         :loading="loading"
-                        :showActionsOnHover="true"
+                        showActionsOnHover
                     >
                         <template v-slot:id="{ data: { item: { id } } }">
                             <router-link

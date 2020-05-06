@@ -56,14 +56,14 @@ export default {
         async logout({ commit }) {
             commit('logout')
             await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
-            await delay(1500).then(() => {
-                return commit('hideOverlay', null, { root: true }), router.push('/login')
-            })
             const user = JSON.parse(localStorage.getItem('user'))
             user.isLoggedIn = false
             localStorage.setItem('user', JSON.stringify(user))
             !user.rememberMe && localStorage.removeItem('user')
             commit('setUser', {})
+            await delay(1500).then(() => {
+                return commit('hideOverlay', null, { root: true }), router.push('/login')
+            })
         },
         // --------------------------------------------------- Network users -------------------------------------
         async fetchCurrentNetworkUser({ dispatch, commit, state }) {

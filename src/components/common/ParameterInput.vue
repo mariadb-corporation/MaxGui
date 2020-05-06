@@ -9,7 +9,7 @@
                 height="36px"
                 outlined
                 dense
-                autocomplete="on"
+                autocomplete="off"
                 type="password"
                 :rules="[v => !!v || `${objectItem.id} is required`]"
                 required

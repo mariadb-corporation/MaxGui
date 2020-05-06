@@ -20,7 +20,7 @@
                                 :noDataText="$t('noServers')"
                                 sortBy="id"
                                 :loading="loading"
-                                :showActionsOnHover="true"
+                                showActionsOnHover
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
@@ -67,11 +67,11 @@
                                 :data="filtersLinked"
                                 :sortDesc="false"
                                 :noDataText="$t('noFilters')"
-                                :draggable="true"
+                                draggable
                                 :dragReorder="filterDragReorder"
                                 :loading="loading"
-                                :showActionsOnHover="true"
-                                :hasOrderNumber="true"
+                                showActionsOnHover
+                                hasOrderNumber
                             >
                                 <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
@@ -240,7 +240,7 @@ export default {
                 case 'filters':
                     await self.dispatchRelationshipUpdate(
                         'filters',
-                        self.filtersLinked.filter(item => item !== self.targetItem)
+                        self.filtersLinked.filter(item => item.id !== self.targetItem.id)
                     )
                     break
                 case 'servers':

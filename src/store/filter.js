@@ -11,6 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
+import { isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -32,32 +33,36 @@ export default {
         },
 
         /**
-         * @param {Object} object Object payload for creating filter
-         * @param {String} object.id Name of the filter
-         * @param {String} object.module The filter uses the qlafilter module
-         * @param {Object} object.parameters Filter parameters
+         * @param {Object} payload payload object for creating filter
+         * @param {String} payload.id Name of the filter
+         * @param {String} payload.module The filter module to use
+         * @param {Object} payload.parameters Parameters for the filter
+         * @param {Function} payload.callback callback function after successfully updated
          */
-        async createFilter({ dispatch, commit }, object) {
-            let res = await Vue.axios.post(`/filters`, {
+        async createFilter({ commit }, payload) {
+            const body = {
                 data: {
-                    id: object.id,
+                    id: payload.id,
                     type: 'filters',
                     attributes: {
-                        module: object.module,
-                        parameters: object.parameters,
+                        router: payload.module,
+                        parameters: payload.parameters,
                     },
                 },
-            })
+            }
+            let res = await Vue.axios.post(`/filters/`, body)
+            let message = [`Filter ${payload.id} is created`]
+            // response ok
             if (res.status === 204) {
-                await dispatch('fetchAllFilters')
                 await commit(
                     'showMessage',
                     {
-                        text: [`Filter ${object.id} is created`],
+                        text: message,
                         type: 'success',
                     },
                     { root: true }
                 )
+                if (isFunction(payload.callback)) await payload.callback()
             }
         },
         /**

@@ -13,9 +13,8 @@
                     <data-table
                         :headers="variableValueTableHeaders"
                         :data="parametersTableRow"
-                        :tdBorderLeft="true"
-                        :itemsPerPage="parametersTableRow.length"
-                        :showAll="true"
+                        tdBorderLeft
+                        showAll
                         :editableCell="editableCell"
                         :search="searchKeyWord"
                         :loading="editableCell ? loadingEditableParams : loading"

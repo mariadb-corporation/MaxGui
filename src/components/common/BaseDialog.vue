@@ -8,7 +8,11 @@
         persistent
         :scrollable="scrollable"
     >
-        <v-card class="v-card-custom" :min-width="minBodyWidth">
+        <v-card
+            class="v-card-custom"
+            :min-width="minBodyWidth"
+            :max-width="dynamicWidth ? 'unset' : minBodyWidth"
+        >
             <v-card-title class="v-card-title_padding">
                 <h3 class="font-weight-light color text-navigation ">
                     {{ title }}
@@ -75,6 +79,7 @@ export default {
     name: 'base-dialog',
     props: {
         minBodyWidth: { type: String, default: '466px' },
+        dynamicWidth: { type: Boolean, default: false },
         scrollable: { type: Boolean, default: false },
         title: { type: String, required: true },
         value: { type: Boolean, required: true },
@@ -140,6 +145,8 @@ export default {
                     await self.onSave()
                     // wait time out for loading animation
                     await (self.value === false)
+                    self.$refs.form.reset()
+                    self.$refs.form.resetValidation()
                     await self.$help.delay(600).then(() => self.hideOverlay())
                 }
             }

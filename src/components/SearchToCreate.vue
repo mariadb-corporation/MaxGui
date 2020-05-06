@@ -33,7 +33,11 @@
                 + {{ $t('createNew') }}
             </v-btn>
         </div>
-        <create-wizard-dialog v-model="createDialog" :closeModal="() => (createDialog = false)" />
+        <create-wizard-dialog
+            v-if="createDialog"
+            v-model="createDialog"
+            :closeModal="() => (createDialog = false)"
+        />
         <server-create-or-update
             v-model="serverDialog"
             :close-modal="() => (serverDialog = false)"
@@ -55,7 +59,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import CreateWizardDialog from './CreateWizardDialog'
 import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
 
@@ -108,7 +112,11 @@ export default {
 
     methods: {
         ...mapMutations(['setSearchKeyWord']),
-        create() {
+        ...mapActions({
+            fetchAllModules: 'maxscale/fetchAllModules',
+        }),
+        async create() {
+            await this.fetchAllModules()
             switch (this.currentRouteName) {
                 case 'services':
                 case 'service':

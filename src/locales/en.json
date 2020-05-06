@@ -54,20 +54,21 @@
     "thatsRight": "That's Right",
     "createANew": "Create a new",
     "nameYour": "Name your {resourceName}",
-    "selectARouter": "Select a router",
-    "selectServers": "Select servers",
 
     "servers": "server | servers",
     "noServers": "No Servers",
     "addServer": "Add server",
+    "selectServers": "Select servers",
 
     "services": "service | services",
     "noServices": "No Services",
     "addService": "Add service",
+    "selectARouter": "Select a router",
 
     "filters": "filter | filters",
     "noFilters": "No Filters",
     "addFilter": "Add filter",
+    "selectFilters": "Select filters",
 
     "sessions": "session | sessions",
     "noSessions": "No Sessions",

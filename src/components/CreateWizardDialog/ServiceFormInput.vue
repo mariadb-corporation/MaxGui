@@ -30,11 +30,11 @@
         >
             <template v-slot:content>
                 <data-table
+                    :key="selectedModule.id"
                     :headers="variableValueTableHeaders"
                     :data="parametersTableRow"
-                    :itemsPerPage="parametersTableRow.length"
-                    :showAll="true"
-                    :editableCell="true"
+                    showAll
+                    editableCell
                 >
                     <template v-slot:value="props">
                         <parameter-input
@@ -55,11 +55,11 @@
         >
             <template v-slot:content>
                 <v-select
-                    id="servers-relationship-select"
                     v-model="selectedServers"
-                    :items="allServers"
+                    :items="serversList"
                     item-text="id"
                     return-object
+                    multiple
                     name="servers"
                     outlined
                     dense
@@ -67,6 +67,33 @@
                     :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                     height="36px"
                     :placeholder="$t('selectServers')"
+                    :no-data-text="$t('noServers')"
+                    hide-details
+                />
+            </template>
+        </collapse>
+        <collapse
+            wrapperClass="mt-4"
+            titleWrapperClass="mx-n9"
+            :toggleOnClick="() => (showFilters = !showFilters)"
+            :toggleVal="showFilters"
+            :title="`${$tc('filters', 2)}`"
+        >
+            <template v-slot:content>
+                <v-select
+                    v-model="selectedFilters"
+                    :items="filtersList"
+                    item-text="id"
+                    return-object
+                    multiple
+                    name="filters"
+                    outlined
+                    dense
+                    class="std mariadb-select-input"
+                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                    height="36px"
+                    :placeholder="$t('selectFilters')"
+                    :no-data-text="$t('noFilters')"
                     hide-details
                 />
             </template>
@@ -92,6 +119,9 @@ export default {
     name: 'service-form-input',
     props: {
         resourceModules: { type: Array, required: true },
+        allServers: { type: Array, required: true },
+        allFilters: { type: Array, required: true },
+        emittingFormValuesEvent: { type: Boolean, required: true },
     },
     data: function() {
         return {
@@ -107,11 +137,34 @@ export default {
             changedParametersArr: [],
             // Relationships section
             showServers: true,
-            selectedServers: null,
-            allServers: [],
+            selectedServers: [],
+            showFilters: true,
+            selectedFilters: [],
         }
     },
     computed: {
+        serversList: function() {
+            let cloneArr = this.$help.cloneDeep(this.allServers)
+            for (let i = 0; i < cloneArr.length; ++i) {
+                let obj = cloneArr[i]
+                delete obj.attributes
+                delete obj.links
+                delete obj.relationships
+                delete obj.idNum
+            }
+            return cloneArr
+        },
+        filtersList: function() {
+            let cloneArr = this.$help.cloneDeep(this.allFilters)
+            for (let i = 0; i < cloneArr.length; ++i) {
+                let obj = cloneArr[i]
+                delete obj.attributes
+                delete obj.links
+                delete obj.relationships
+            }
+            return cloneArr
+        },
+
         getModuleParameters: function() {
             const self = this
             if (self.selectedModule) {
@@ -157,7 +210,26 @@ export default {
             return arr
         },
     },
-
+    watch: {
+        emittingFormValuesEvent: function(val) {
+            if (val) {
+                /* 
+            When using module parameters, only parameters that have changed by the user 
+            will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
+            */
+                let parametersObj = this.$help.arrOfObjToObj(this.changedParametersArr)
+                const formValues = {
+                    router: this.selectedModule.id,
+                    parameters: parametersObj,
+                    relationships: {
+                        servers: { data: this.selectedServers },
+                        filters: { data: this.selectedFilters },
+                    },
+                }
+                this.$emit('form-values', formValues)
+            }
+        },
+    },
     methods: {
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changedParametersArr)
@@ -167,17 +239,6 @@ export default {
             } else {
                 targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
             }
-            /* 
-            When using module parameters, only parameters that have changed by the user 
-            will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
-            */
-            let parametersObj = this.$help.arrOfObjToObj(this.changedParametersArr)
-
-            const formValues = {
-                router: this.selectedModule.id,
-                parameters: parametersObj,
-            }
-            this.$emit('form-values', formValues)
         },
     },
 }

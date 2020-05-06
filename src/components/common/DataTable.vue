@@ -1,13 +1,11 @@
 <template>
-    <!-- Add a component key as table item length to v-data-table to trigger rerender since refs is not reactive-->
     <v-data-table
-        :key="dataProcess.length"
         v-sortable-table
         :headers="visibleHeaders"
         :items="!loading ? dataProcess : []"
         :hide-default-header="true"
         :hide-default-footer="showAll ? true : dataProcess.length <= 10"
-        :items-per-page="itemsPerPage"
+        :items-per-page="showAll ? dataProcess.length : itemsPerPage"
         :class="['data-table-full', tableClass]"
         :loading="loading"
         :options.sync="pagination"
@@ -287,6 +285,7 @@ export default {
         dataProcess: function() {
             let self = this
             let oriData = self.$help.cloneDeep(self.data)
+
             for (let i = 0; i < oriData.length; ++i) {
                 let obj = oriData[i]
                 Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
@@ -378,6 +377,7 @@ export default {
                         // positioning the drag handle to the center of the table row
                         if (self.draggable) {
                             let tableRowWidth = self.$refs.tableRow.clientWidth
+
                             let dragHandle = document.getElementsByClassName('drag-handle')
                             let center = `calc(100% - ${tableRowWidth / 2}px)`
                             if (dragHandle.length && dragHandle[0].style.left !== center) {

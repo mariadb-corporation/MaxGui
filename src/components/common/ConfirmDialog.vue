@@ -9,7 +9,7 @@
             :saveText="type"
         >
             <template v-slot:body>
-                <div style="max-width:342px">
+                <fragment>
                     <p v-if="!$help.isNull(item)">
                         <span>
                             {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
@@ -18,7 +18,7 @@
                     <small>
                         {{ smallInfo }}
                     </small>
-                </div>
+                </fragment>
             </template>
         </base-dialog>
     </span>

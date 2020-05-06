@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, isUndefined, isFunction } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -111,8 +111,8 @@ export default {
                     attributes: {
                         router: payload.router,
                         parameters: payload.parameters,
-                        relationships: payload.relationships,
                     },
+                    relationships: payload.relationships,
                 },
             }
             let res = await Vue.axios.post(`/services/`, body)
