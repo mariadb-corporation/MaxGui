@@ -248,7 +248,7 @@ export default {
         loading: { type: Boolean, default: false },
         singleExpand: { type: Boolean, default: false },
         showExpand: { type: Boolean, default: false },
-        tableClass: { type: String, default: 'data-table-full' },
+        tableClass: { type: String },
         hasColumnToggle: { type: Boolean, default: false },
         onRowClick: { type: Function },
         onCellClick: { type: Function },

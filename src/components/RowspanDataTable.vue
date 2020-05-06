@@ -6,7 +6,7 @@
         :items="dataProcess"
         :hide-default-header="true"
         :hide-default-footer="dataProcess.length <= 10"
-        :class="['rowspan-table', tableClass]"
+        :class="['rowspan-table data-table-full', tableClass]"
         :loading="loading"
         :options.sync="pagination"
         :page="page"
@@ -142,7 +142,7 @@ export default {
         search: { type: String, default: '' },
         sortDesc: { type: Boolean },
         loading: { type: Boolean, default: false },
-        tableClass: { type: String, default: 'data-table-full' },
+        tableClass: { type: String },
         onCellClick: { type: Function },
         itemsPerPage: { type: Number, defalut: 10 },
         page: { type: Number, default: 1 },

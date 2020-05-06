@@ -4,7 +4,6 @@
         :onCancel="closeModal"
         :onClose="closeModal"
         :onSave="handleSave"
-        maxWidth="890px"
         :title="`${modalTitle} ${$tc('servers', 1)}`"
     >
         <template v-slot:body>

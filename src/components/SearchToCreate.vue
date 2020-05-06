@@ -20,7 +20,7 @@
             </v-text-field>
 
             <v-btn
-                :disabled="isBtnDisabled"
+                :disabled="handleShowCreateBtn"
                 width="160"
                 outlined
                 height="36"
@@ -33,7 +33,7 @@
                 + {{ $t('createNew') }}
             </v-btn>
         </div>
-        <create-wizard-dialog v-model="createDialog" :close-modal="() => (createDialog = false)" />
+        <create-wizard-dialog v-model="createDialog" :closeModal="() => (createDialog = false)" />
         <server-create-or-update
             v-model="serverDialog"
             :close-modal="() => (serverDialog = false)"
@@ -65,48 +65,51 @@ export default {
         CreateWizardDialog,
         ServerCreateOrUpdate,
     },
-    props: {
-        tabRoutes: { type: Array, default: () => [], required: true },
-        currentRouteName: { type: String, default: '', required: true },
-    },
 
     data() {
         return {
             search: '',
-            isBtnDisabled: true,
             createDialog: false,
             serverDialog: false,
         }
     },
-
+    computed: {
+        currentRouteName: function() {
+            return this.$route.name
+        },
+        handleShowCreateBtn: function() {
+            const matchArr = [
+                'monitor',
+                'monitors',
+                'server',
+                'servers',
+                'service',
+                'services',
+                'session',
+                'sessions',
+                'filter',
+                'filters',
+            ]
+            if (matchArr.includes(this.currentRouteName)) return false
+            return true
+        },
+    },
     watch: {
         search: function(newVal) {
             this.setSearchKeyWord(newVal)
         },
-        currentRouteName: function(newRoute) {
-            this.isBtnDisabled = this.isMatchTabRoutes(newRoute)
-        },
+
         $route: function(to, from) {
             // Clear local search and global search state when route changes
             this.search = ''
             this.setSearchKeyWord('')
         },
     },
-    created() {
-        this.isBtnDisabled = this.isMatchTabRoutes(this.currentRouteName)
-    },
 
     methods: {
         ...mapMutations(['setSearchKeyWord']),
         create() {
-            if (this.search && !this.isBtnDisabled) {
-                this.createType(this.search.toLowerCase())
-            } else {
-                this.createType(this.currentRouteName)
-            }
-        },
-        createType(type) {
-            switch (type) {
+            switch (this.currentRouteName) {
                 case 'services':
                 case 'service':
                     this.createDialog = true
@@ -115,20 +118,10 @@ export default {
                 case 'servers':
                 case 'server':
                     this.createDialog = true
-            }
-        },
-        isMatchTabRoutes(keyword) {
-            let arr = this.tabRoutes.slice()
-            let match = false
-            for (let i = arr.length - 1; i >= 0; --i) {
-                if (arr[i].name.includes(keyword)) {
-                    match = false
                     break
-                } else {
-                    match = true
-                }
+                default:
+                    this.createDialog = true
             }
-            return match
         },
     },
 }

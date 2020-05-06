@@ -8,6 +8,7 @@
         >
             <template v-slot:content>
                 <data-table
+                    tableClass="data-table-full--max-width-columns"
                     :headers="sessionsTableHeader"
                     :data="sessionsTableRow"
                     :sortDesc="false"

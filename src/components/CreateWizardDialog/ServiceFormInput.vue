@@ -21,7 +21,7 @@
         />
 
         <collapse
-            v-if="selectedModule !== null"
+            v-if="selectedModule"
             wrapperClass="mt-4"
             titleWrapperClass="mx-n9"
             :toggleOnClick="() => (showParameters = !showParameters)"
@@ -32,7 +32,6 @@
                 <data-table
                     :headers="variableValueTableHeaders"
                     :data="parametersTableRow"
-                    :tdBorderLeft="true"
                     :itemsPerPage="parametersTableRow.length"
                     :showAll="true"
                     :editableCell="true"
@@ -92,18 +91,18 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'service-form-input',
     props: {
-        resourceId: { type: String, required: true }, //null Object
+        resourceId: { type: String, required: true, default: 'Service' },
         resourceModules: { type: Array, required: true },
         createService: { type: Function, required: true },
     },
     data: function() {
         return {
             // router module
-            selectedModule: null,
+            selectedModule: undefined,
             // Parameters table
             variableValueTableHeaders: [
-                { text: 'Variable', value: 'id', width: '65%' },
-                { text: 'Value', value: 'value', width: '35%', editableCol: true },
+                { text: 'Variable', value: 'id', width: '1px' },
+                { text: 'Value', value: 'value', width: '1px', editableCol: true },
             ],
             showParameters: true,
             changedParameters: [],
@@ -119,7 +118,7 @@ export default {
     computed: {
         getModuleParameters: function() {
             const self = this
-            if (self.selectedModule !== null) {
+            if (self.selectedModule) {
                 const {
                     attributes: { parameters = [] },
                 } = self.$help.cloneDeep(self.selectedModule)
@@ -167,6 +166,9 @@ export default {
             if (val) {
                 // console.log(val)
             }
+        },
+        selectedModule: function(val) {
+            this.$emit('show-parameters-table', val)
         },
     },
     methods: {

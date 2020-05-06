@@ -54,11 +54,6 @@
                     objectItem.type === 'size'
             "
         >
-            <!-- Allow to enter positive integer only, omit E or e char,
-                 onkeypress is triggered when pressing keys but it doesn't bypass direct paste,
-                 hence display error text in rules.
-                   onkeypress="return Number(event.key) >= 0"
-             -->
             <v-text-field
                 :id="objectItem.id"
                 v-model.trim.number="objectItem.value"
@@ -75,11 +70,6 @@
                 @change="handleChange"
             />
         </fragment>
-        <!-- Allow to enter integer only , omit E or e char, 
-             onkeypress is triggered when pressing keys but it doesn't bypass direct paste,
-             hence display error text in rules
-               onkeypress="return event.key.toLowerCase()!=='e'"
-         -->
         <fragment v-else-if="objectItem.type === 'int'">
             <v-text-field
                 :id="objectItem.id"

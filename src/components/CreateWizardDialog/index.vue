@@ -4,49 +4,54 @@
         :onCancel="closeModal"
         :onClose="closeModal"
         :onSave="handleSave"
-        maxWidth="760px"
         :title="`${$t('createANew')}...`"
     >
         <template v-slot:body>
-            <v-select
-                id="resource-select"
-                v-model="selectedResource"
-                :items="resourcesList"
-                name="resourceName"
-                outlined
-                dense
-                class="std mariadb-select-input error--text__bottom"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="36px"
-                hide-details
-                required
-            />
-            <v-divider class="divider" />
-            <div class="mb-0">
-                <label class="label color text-small-text d-block">
-                    {{ `${selectedResource} name` }}
-                </label>
-                <v-text-field
-                    id="id"
-                    v-model="resourceId"
-                    :rules="rules.resourceId"
-                    name="id"
-                    required
-                    class="std error--text__bottom"
-                    height="36px"
-                    dense
+            <fragment v-if="selectedResource">
+                <v-select
+                    id="resource-select"
+                    v-model="selectedResource"
+                    :items="resourcesList"
+                    name="resourceName"
                     outlined
-                    :placeholder="$t('nameYour', { resourceName: selectedResource.toLowerCase() })"
+                    dense
+                    class="std mariadb-select-input error--text__bottom"
+                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                    height="36px"
+                    hide-details
+                    :rules="[v => !!v || 'This field is required']"
+                    required
                 />
-            </div>
+                <v-divider class="divider" />
+                <div class="mb-0">
+                    <label class="label color text-small-text d-block">
+                        {{ `${selectedResource} name` }}
+                    </label>
+                    <v-text-field
+                        id="id"
+                        v-model="resourceId"
+                        :rules="rules.resourceId"
+                        name="id"
+                        required
+                        class="std error--text__bottom"
+                        height="36px"
+                        dense
+                        outlined
+                        :placeholder="
+                            $t('nameYour', { resourceName: selectedResource.toLowerCase() })
+                        "
+                    />
+                </div>
 
-            <div v-if="selectedResource === 'Service'" class="mb-0">
-                <service-form-input
-                    :resourceId="resourceId"
-                    :resourceModules="resourceModules"
-                    :createService="createService"
-                />
-            </div>
+                <div v-if="selectedResource === 'Service'" class="mb-0">
+                    <service-form-input
+                        :resourceId="resourceId"
+                        :resourceModules="resourceModules"
+                        :createService="createService"
+                        @show-parameters-table="isParametersTableShown = $event"
+                    />
+                </div>
+            </fragment>
         </template>
     </base-dialog>
 </template>
@@ -79,9 +84,10 @@ export default {
     data: function() {
         return {
             show: false,
-            selectedResource: 'Service',
+            selectedResource: '',
             resourcesList: ['Service', 'Server', 'Monitor', 'Filter', 'Listener'],
             //COMMON
+            isParametersTableShown: false,
             resourceId: '', // resourceId is the name of resource being created
             rules: {
                 resourceId: [val => this.validateResourceId(val)],
@@ -89,6 +95,19 @@ export default {
 
             // module for monitor, service, and filter
             resourceModules: [],
+            // this is used to auto assign default selectedResource
+            matchRoutes: [
+                'monitor',
+                'monitors',
+                'server',
+                'servers',
+                'service',
+                'services',
+                'listener',
+                'listeners',
+                'filter',
+                'filters',
+            ],
         }
     },
 
@@ -98,6 +117,7 @@ export default {
             // allServicesInfo: 'service/allServicesInfo',
             // allServicesMap: 'service/allServicesMap',
         }),
+
         computeShowDialog: {
             // get value from props
             get() {
@@ -114,11 +134,13 @@ export default {
         value: async function(val) {
             if (val) {
                 await this.fetchAllModules()
+                this.setDefaultSelectedResource(this.$route.name)
                 if (this.selectedResource === 'Service')
                     this.resourceModules = this.getModuleType('Router')
             }
         },
-        selectedResource: async function(val) {
+
+        selectedResource: function(val) {
             switch (val) {
                 case 'Service':
                     this.resourceModules = this.getModuleType('Router')
@@ -135,6 +157,14 @@ export default {
                     break
             }
         },
+
+        $route: function(to, from) {
+            this.setDefaultSelectedResource(to.name)
+        },
+    },
+
+    created() {
+        this.setDefaultSelectedResource(this.$route.name)
     },
 
     methods: {
@@ -142,6 +172,26 @@ export default {
             fetchAllModules: 'maxscale/fetchAllModules',
             createService: 'service/createService',
         }),
+
+        setDefaultSelectedResource(resource) {
+            if (this.matchRoutes.includes(resource)) {
+                this.selectedResource = this.textTransform(resource)
+            } else this.selectedResource = 'Service'
+        },
+
+        /**
+         * @param {String} str Plural string to be processed
+         * @return {String} return str that removed last char s and capitalized first char
+         */
+        textTransform(str) {
+            const suffix = 's'
+            const arr = str.split('')
+            if (arr[arr.length - 1] === suffix) {
+                str = this.$help.strReplaceAt(str, arr.length - 1, '')
+            }
+            return str.charAt(0).toUpperCase() + str.slice(1)
+        },
+
         getModuleType(type) {
             let modules = []
             for (let i = 0; i < this.allModules.length; ++i) {
@@ -150,6 +200,7 @@ export default {
             }
             return modules
         },
+
         handleSave() {
             switch (this.selectedResource) {
                 case 'Service':
@@ -165,6 +216,7 @@ export default {
 
             this.closeModal()
         },
+
         validateResourceId(val) {
             if (!val) {
                 return 'id is required'
