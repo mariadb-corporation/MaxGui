@@ -4,8 +4,8 @@
 
 #### Use webpack dev-server with https
 
-Note that the application is using cookie with http-only and secure attributes for authenticating the user. So to run the application in localhost,
-webpack devServer needs to be served with https:
+Note that the application is using cookie with http-only and secure attributes for authenticating the user.
+So to run the application in localhost, webpack devServer needs to be served with https:
 
 First, install [mkcert](https://github.com/FiloSottile/mkcert), then create a new local CA by executing:
 
@@ -16,13 +16,14 @@ mkcert -install
 Create cert:
 
 ```
-mkcert maxgui.com "*.maxgui.com" maxgui.test localhost 127.0.0.1 ::1
+mkcert localhost 127.0.0.1
+
 ```
 
-After creating SSL cert for local development, create `.certs` directory in the root directory of the project and copy all created files to that folder
+After creating CA cert for local development, create `.certs` directory in the root directory of the project and copy all created files to that folder
 Check `vue.config.js` file, `devServer` section for more configuration
 
-Note that MaxScale REST API also needs to be set up to use SSL. [Instructions](https://github.com/mariadb-corporation/MaxScale/blob/develop/Documentation/Getting-Started/Configuration-Guide.md#admin_ssl_key)
+Note that MaxScale also needs to be set up to use TLS/SSL. [Instructions](https://github.com/mariadb-corporation/MaxScale/blob/develop/Documentation/Getting-Started/Configuration-Guide.md#admin_ssl_key)
 
 #### Disable CORS when sending request to MaxScale REST API
 

@@ -57,9 +57,11 @@ export default {
             commit('logout')
             await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
             const user = JSON.parse(localStorage.getItem('user'))
-            user.isLoggedIn = false
-            localStorage.setItem('user', JSON.stringify(user))
-            !user.rememberMe && localStorage.removeItem('user')
+            if (user) {
+                user.isLoggedIn = false
+                localStorage.setItem('user', JSON.stringify(user))
+                !user.rememberMe && localStorage.removeItem('user')
+            }
             commit('setUser', {})
             await delay(1500).then(() => {
                 return commit('hideOverlay', null, { root: true }), router.push('/login')
