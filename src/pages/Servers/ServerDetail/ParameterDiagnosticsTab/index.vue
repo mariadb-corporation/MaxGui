@@ -19,6 +19,7 @@
                             showAll
                             :editableCell="editableCell"
                             :loading="loading"
+                            keepPrimitiveValue
                         >
                             <template v-if="editableCell" v-slot:value="props">
                                 <parameter-input
@@ -151,7 +152,8 @@ export default {
             let currentServer = this.$help.cloneDeep(this.currentServer)
             if (!this.$help.isEmpty(currentServer)) {
                 const { attributes: { parameters = {} } = {} } = currentServer
-                let tableRow = this.$help.objToArrOfObj(parameters)
+                const keepPrimitiveValue = true
+                let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
                 let editableParams = this.$help.cloneDeep(this.editableParams)
                 let arr = []
                 if (this.editableCell) {

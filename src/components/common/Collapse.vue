@@ -47,7 +47,7 @@
                 class="text-capitalize"
                 @click="onAddClick"
             >
-                + {{ $t(addBtnText) }}
+                + {{ addBtnText }}
             </v-btn>
         </div>
         <v-expand-transition>

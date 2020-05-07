@@ -56,6 +56,14 @@
                         @form-values="formValues = $event"
                     />
                 </div>
+                <div v-else-if="selectedResource === 'Monitor'" class="mb-0">
+                    <monitor-form-input
+                        :resourceModules="resourceModules"
+                        :allServers="allServers"
+                        :emittingFormValuesEvent="emittingFormValuesEvent"
+                        @form-values="formValues = $event"
+                    />
+                </div>
             </fragment>
         </template>
     </base-dialog>
@@ -76,11 +84,12 @@
  */
 import { mapActions, mapGetters } from 'vuex'
 import ServiceFormInput from './ServiceFormInput'
-
+import MonitorFormInput from './MonitorFormInput'
 export default {
     name: 'create-wizard-dialog',
     components: {
         ServiceFormInput,
+        MonitorFormInput,
     },
     props: {
         value: Boolean,
@@ -157,6 +166,7 @@ export default {
     methods: {
         ...mapActions({
             createService: 'service/createService',
+            createMonitor: 'monitor/createMonitor',
             fetchAllServices: 'service/fetchAllServices',
             fetchAllServers: 'server/fetchAllServers',
             fetchAllMonitors: 'monitor/fetchAllMonitors',
@@ -182,6 +192,7 @@ export default {
                     this.resourceModules = this.getModuleType('Monitor')
                     await this.fetchAllMonitors()
                     this.validateInfo = this.allMonitorsInfo
+                    await this.fetchAllServers()
                     break
                 case 'Filter':
                     this.resourceModules = this.getModuleType('Filter')
@@ -240,13 +251,20 @@ export default {
                                 relationships: relationships,
                                 callback: this.fetchAllServices,
                             }
-
                             await this.createService(payload)
-                            /* after service is created, fetchAllServices will be triggered,
-                            hence validateInfo need to be updated. This solves edge case when
-                            selectedResource watcher doesn't update. aka: user has not change the route
-
-                             */
+                        }
+                        break
+                    case 'Monitor':
+                        {
+                            const { module: moduleId, parameters, relationships } = this.formValues
+                            const payload = {
+                                id: this.resourceId,
+                                module: moduleId,
+                                parameters: parameters,
+                                relationships: relationships,
+                                callback: this.fetchAllMonitors,
+                            }
+                            await this.createMonitor(payload)
                         }
                         break
                 }

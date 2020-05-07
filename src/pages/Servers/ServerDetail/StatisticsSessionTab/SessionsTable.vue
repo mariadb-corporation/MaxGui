@@ -12,7 +12,7 @@
                     :headers="sessionsTableHeader"
                     :data="sessionsTableRow"
                     :sortDesc="false"
-                    :noDataText="$t('noSessions')"
+                    :noDataText="$t('noEntity', { entityName: $tc('sessions', 2) })"
                     :loading="loading"
                 >
                     <template v-slot:user="{ data: { item: { user } } }">

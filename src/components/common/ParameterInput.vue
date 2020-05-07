@@ -1,36 +1,6 @@
 <template>
     <fragment>
-        <fragment v-if="objectItem.type === 'password string'">
-            <v-text-field
-                :id="objectItem.id"
-                v-model="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
-                outlined
-                dense
-                autocomplete="off"
-                type="password"
-                :rules="[v => !!v || `${objectItem.id} is required`]"
-                required
-                @change="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.id === 'user'">
-            <v-text-field
-                :id="objectItem.id"
-                v-model="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
-                outlined
-                dense
-                :rules="[v => !!v || `${objectItem.id} is required`]"
-                required
-                @change="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'bool'">
+        <fragment v-if="objectItem.type === 'bool'">
             <!-- No need rules for v-select as it always has predefined value-->
             <v-select
                 :id="objectItem.id"
@@ -42,18 +12,26 @@
                 :items="[true, false]"
                 outlined
                 dense
-                required
                 @change="handleChange"
             />
         </fragment>
 
-        <fragment
-            v-else-if="
-                objectItem.type === 'count' ||
-                    objectItem.type === 'duration' ||
-                    objectItem.type === 'size'
-            "
-        >
+        <fragment v-else-if="objectItem.type === 'enum'">
+            <!-- No need rules for v-select as it always has predefined value-->
+            <v-select
+                :id="objectItem.id"
+                v-model="objectItem.value"
+                :name="objectItem.id"
+                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                height="36px"
+                :items="objectItem.enum_values"
+                outlined
+                dense
+                @change="handleChange"
+            />
+        </fragment>
+        <fragment v-else-if="objectItem.type === 'count'">
             <v-text-field
                 :id="objectItem.id"
                 v-model.trim.number="objectItem.value"
@@ -66,7 +44,6 @@
                 outlined
                 dense
                 :rules="rules.naturalNumber"
-                required
                 @change="handleChange"
             />
         </fragment>
@@ -82,27 +59,24 @@
                 outlined
                 dense
                 :rules="rules.int"
-                required
                 @change="handleChange"
             />
         </fragment>
-        <fragment v-else-if="objectItem.type === 'enum'">
-            <!-- No need rules for v-select as it always has predefined value-->
-            <v-select
+        <fragment v-else-if="objectItem.type === 'password string'">
+            <v-text-field
                 :id="objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
-                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                class="std error--text__bottom error--text__bottom--no-margin"
                 height="36px"
-                :items="objectItem.enum_values"
                 outlined
                 dense
-                required
+                autocomplete="new-password"
+                type="password"
+                :rules="rules.requiredField"
                 @change="handleChange"
             />
         </fragment>
-
         <fragment v-else>
             <v-text-field
                 :id="objectItem.id"
@@ -113,8 +87,7 @@
                 single-line
                 outlined
                 dense
-                :rules="[v => !!v || `${objectItem.id} is required`]"
-                required
+                :rules="rules.requiredField"
                 @change="handleChange"
             />
         </fragment>
@@ -137,6 +110,12 @@ export default {
     name: 'parameter-input',
     props: {
         item: { type: Object, required: true },
+        required: { type: Boolean, default: false },
+        /* this props need to be added if parameter-input is called to have default value for count and int type
+        MaxScale module return the value for count and int as string, so this createMode is true, 
+        objectItem.value will be converted to number
+        */
+        createMode: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -144,6 +123,7 @@ export default {
             rules: {
                 naturalNumber: [val => this.validateNaturalNumber(val)],
                 int: [val => this.validateInteger(val)],
+                requiredField: [val => this.handleRequiredField(val)],
             },
         }
     },
@@ -159,18 +139,28 @@ export default {
             this.$emit('on-input-change', self.objectItem, changed)
         },
         validateNaturalNumber(val) {
-            if (val < 0 && Number.isInteger(val)) {
+            let value = val
+            if (this.createMode) value = parseInt(val, 10)
+            if (typeof value === 'string') {
+                return `${this.objectItem.id} does not accept non numeric values`
+            } else if (value < 0) {
                 return `${this.objectItem.id} does not accept negative values`
-            } else if (val === '') {
-                return `${this.objectItem.id} is required`
             }
             return true
         },
         validateInteger(val) {
-            if (!Number.isInteger(parseInt(val, 10))) {
+            let value = val
+            if (this.createMode) value = parseInt(val, 10)
+            if (typeof value === 'string') {
+                return `${this.objectItem.id} does not accept non numeric values`
+            } else if (!Number.isInteger(value)) {
                 return `${this.objectItem.id} accepts only integer`
-            } else if (val === '') {
-                return `${this.objectItem.id} is required`
+            }
+            return true
+        },
+        handleRequiredField(val) {
+            if (!val) {
+                return this.required ? `${this.objectItem.id} is required` : true
             }
             return true
         },

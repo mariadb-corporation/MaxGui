@@ -66,23 +66,6 @@ export function monitorStateIcon(monitorState) {
     } else return ''
 }
 
-/**
- * @param {String} val String to be handled
- * @return {Object} Return null object when val is an empty string or a string equals to 'null'
- */
-export function treatNullAsEmptyString(val) {
-    switch (val) {
-        case null:
-            return ''
-        case 'null':
-            return ''
-        case '':
-            return ''
-        default:
-            return val
-    }
-}
-
 export function delay(t, v) {
     return new Promise(function(resolve) {
         setTimeout(resolve.bind(null, v), t)
@@ -185,24 +168,20 @@ export function formatValue(value, formatType) {
  * @param {Object} obj Object to be converted to array
  * @param {String} keyName keyName
  * @param {String} keyValue keyValue
+ * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
  */
-export function objToArrOfObj(obj, keyName, keyValue) {
+export function objToArrOfObj(obj, keepPrimitiveValue, keyName = 'id', keyValue = 'value') {
     if (typeof obj === 'object') {
         let data = []
         let targetObj = cloneDeep(obj)
 
         if (!isEmpty(targetObj)) {
             Object.keys(targetObj).map(key => {
-                if ((keyName, keyValue)) {
-                    let o = {}
-                    o[`${keyName}`] = key
-                    o[`${keyValue}`] = handleValue(targetObj[key])
-
-                    data.push(o)
-                } else {
-                    data.push({ id: key, value: handleValue(targetObj[key]) })
-                }
+                data.push({
+                    [keyName]: key,
+                    [keyValue]: keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key]),
+                })
             })
             return data
         }
@@ -216,7 +195,7 @@ export function objToArrOfObj(obj, keyName, keyValue) {
  * @param {String} keyValue keyValue
  * @return {Object}  return original object of the objToArrOfObj function
  */
-export function arrOfObjToObj(a, keyName, keyValue) {
+export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
     if (Array.isArray(a)) {
         let array = cloneDeep(a)
         let o = {}
@@ -225,11 +204,7 @@ export function arrOfObjToObj(a, keyName, keyValue) {
             if (!isEmpty(innerObj)) {
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
-                if ((keyName, keyValue)) {
-                    o[innerObj[keyName]] = treatNullAsEmptyString(innerObj[keyValue])
-                } else {
-                    o[innerObj.id] = treatNullAsEmptyString(innerObj.value)
-                }
+                o[innerObj[keyName]] = innerObj[keyValue]
             }
         }
         return o
@@ -258,8 +233,7 @@ export function handleValue(value) {
     }
     // handle typeof null object and empty string
     if (value === null) newVal = 'null'
-    //TODO: decide whether to display single quote or ... nothing at all "''"
-    if (value === '') newVal = ''
+
     return newVal
 }
 
@@ -312,7 +286,7 @@ Object.defineProperties(Vue.prototype, {
                 serviceStateIcon,
                 serverStateIcon,
                 monitorStateIcon,
-                treatNullAsEmptyString,
+
                 delay,
                 dynamicColors,
                 strReplaceAt,

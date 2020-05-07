@@ -26,14 +26,14 @@
                         :title="`${$tc('services', 2)}`"
                         :titleInfo="serviceTableRow.length"
                         :onAddClick="() => onAdd('services')"
-                        addBtnText="addService"
+                        :addBtnText="`${$t('addEntity', { entityName: $tc('services', 1) })}`"
                     >
                         <template v-slot:content>
                             <data-table
                                 :headers="servicesTableHeader"
                                 :data="serviceTableRow"
                                 :sortDesc="false"
-                                :noDataText="$t('noServices')"
+                                :noDataText="$t('noEntity', { entityName: $tc('services', 2) })"
                                 sortBy="id"
                                 :loading="loading"
                                 showActionsOnHover

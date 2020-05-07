@@ -18,12 +18,27 @@
                         :editableCell="editableCell"
                         :search="searchKeyWord"
                         :loading="editableCell ? loadingEditableParams : loading"
+                        keepPrimitiveValue
                     >
                         <template v-if="editableCell" v-slot:value="props">
-                            <parameter-input
-                                :item="props.data.item"
-                                @on-input-change="handleItemChange"
-                            />
+                            <fragment
+                                v-if="
+                                    props.data.item.id === 'user' ||
+                                        props.data.item.id === 'password'
+                                "
+                            >
+                                <parameter-input
+                                    :item="props.data.item"
+                                    required
+                                    @on-input-change="handleItemChange"
+                                />
+                            </fragment>
+                            <fragment v-else>
+                                <parameter-input
+                                    :item="props.data.item"
+                                    @on-input-change="handleItemChange"
+                                />
+                            </fragment>
                         </template>
                         <template v-if="editableCell" v-slot:id="props">
                             <b>{{ props.data.item.type }}</b
@@ -108,7 +123,8 @@ export default {
             let currentMonitor = this.$help.cloneDeep(this.currentMonitor)
             if (!this.$help.isEmpty(currentMonitor)) {
                 const { attributes: { parameters = {} } = {} } = currentMonitor
-                let tableRow = this.$help.objToArrOfObj(parameters)
+                const keepPrimitiveValue = true
+                let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
                 let editableParams = this.$help.cloneDeep(this.monitorParameters)
                 let arr = []
                 if (this.editableCell) {

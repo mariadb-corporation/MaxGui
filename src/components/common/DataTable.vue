@@ -259,6 +259,8 @@ export default {
         tdBorderLeft: { type: Boolean, default: false },
         // For editable feature
         editableCell: { type: Boolean, default: false },
+        // For table wants to keep primitive value, eg: null/undefined won't be displayed
+        keepPrimitiveValue: { type: Boolean, default: false },
         // For draggable feature
         draggable: { type: Boolean, default: false },
         dragReorder: { type: Function, default: () => null },
@@ -285,11 +287,11 @@ export default {
         dataProcess: function() {
             let self = this
             let oriData = self.$help.cloneDeep(self.data)
-
-            for (let i = 0; i < oriData.length; ++i) {
-                let obj = oriData[i]
-                Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
-            }
+            if (!self.keepPrimitiveValue)
+                for (let i = 0; i < oriData.length; ++i) {
+                    let obj = oriData[i]
+                    Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
+                }
             return oriData
         },
     },

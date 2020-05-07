@@ -39,53 +39,30 @@ export default {
             let res = await Vue.axios.get(`/monitors/${id}`)
             await commit('setCurrentMonitor', res.data.data)
         },
+
         /**
-         * @param {Object} data Monitor data object
-         * @param {String} data.mode Mode to perform async request POST or Patch
-         * @param {String} data.id Name of the monitor
-         * @param {String} data.module The monitor module to use
-         * @param {Object} data.parameters All monitor parameters can be defined at creation time.
-         * @param {Array} data.servers Servers to be monitored
+         * @param {Object} payload payload object
+         * @param {String} payload.id Name of the monitor
+         * @param {String} payload.module The module to use
+         * @param {Object} payload.parameters Parameters for the monitor
+         * @param {Object} payload.relationships The relationships of the monitor to other resources
+         * @param {Object} payload.relationships.servers severs relationships
+         * @param {Function} payload.callback callback function after successfully updated
          */
-        async createOrUpdateMonitor({ commit, dispatch }, data) {
-            let res
-            let message
-            const payload = {
+        async createMonitor({ commit }, payload) {
+            const body = {
                 data: {
-                    id: data.id,
+                    id: payload.id,
                     type: 'monitors',
                     attributes: {
-                        module: data.module,
-                        parameters: data.parameters,
-                        /* These are standard Modifiable parameters
-                        user
-                        password
-                        monitor_interval
-                        backend_connect_timeout
-                        backend_write_timeout
-                        backend_read_timeout
-                        backend_connect_attempts
-                        */
+                        module: payload.module,
+                        parameters: payload.parameters,
                     },
-                    relationships: {
-                        servers: { data: data.servers }, // [{id:"severId", type:"servers"}]
-                    },
+                    relationships: payload.relationships,
                 },
             }
-            switch (data.mode) {
-                case 'post':
-                    {
-                        res = await Vue.axios.post(`/monitors`, payload)
-                        message = [`Monitor ${data.id} is created`]
-                    }
-                    break
-                case 'patch':
-                    {
-                        res = await Vue.axios.patch(`/monitors/${data.id}`, payload)
-                        message = [`Monitor ${data.id} is updated`]
-                    }
-                    break
-            }
+            let res = await Vue.axios.post(`/monitors/`, body)
+            let message = [`Monitor ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -96,7 +73,7 @@ export default {
                     },
                     { root: true }
                 )
-                await dispatch('fetchAllMonitors')
+                if (isFunction(payload.callback)) await payload.callback()
             }
         },
 

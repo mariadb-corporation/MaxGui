@@ -27,7 +27,7 @@
                         :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                         hide-details
                         :no-data-text="
-                            $t(`noEntityText`, {
+                            $t(`noEntityAvailable`, {
                                 entityName: `${$tc(entityName, 2)}`,
                             })
                         "

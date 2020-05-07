@@ -53,34 +53,25 @@
     "createNew": "Create New",
     "thatsRight": "That's Right",
     "createANew": "Create a new",
+
     "nameYour": "Name your {resourceName}",
-
-    "servers": "server | servers",
-    "noServers": "No Servers",
-    "addServer": "Add server",
-    "selectServers": "Select servers",
-
-    "services": "service | services",
-    "noServices": "No Services",
-    "addService": "Add service",
-    "selectARouter": "Select a router",
-
-    "filters": "filter | filters",
-    "noFilters": "No Filters",
-    "addFilter": "Add filter",
-    "selectFilters": "Select filters",
-
-    "sessions": "session | sessions",
-    "noSessions": "No Sessions",
-
-    "monitors": "monitor",
-
-    "router": "router | routers",
-
-    "noEntityText": "No {entityName} available",
-
+    "select": "Select a {entityName} | Select {entityName}",
     "changeTheFollowingParameter": "You've changed the following {quantity} parameter: | You've changed the following {quantity} parameters:",
     "specify": "Specify a | Specify",
+    "noEntityAvailable": "No {entityName} available",
+    "noEntity": "No {entityName}",
+
+    "servers": "server | servers",
+
+    "services": "service | services",
+    "router": "router | routers",
+
+    "filters": "filter | filters",
+
+    "sessions": "session | sessions",
+
+    "monitors": "monitor",
+    "module": "module | modules",
 
     "errors": {
         "usernameRequired": "Username is required.",

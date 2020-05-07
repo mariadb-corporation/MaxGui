@@ -1,7 +1,7 @@
 <template>
     <div class="mb-2">
         <label class="text-capitalize label color text-small-text d-block">
-            {{ $tc('router', 1) }}
+            {{ $tc('module', 1) }}
         </label>
         <v-select
             id="module-select"
@@ -15,8 +15,8 @@
             class="std mariadb-select-input error--text__bottom"
             :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
             height="36px"
-            :placeholder="$tc('select', 1, { entityName: $tc('router', 1) })"
-            :rules="[v => !!v || 'Router is required']"
+            :placeholder="$tc('select', 1, { entityName: $tc('module', 1) })"
+            :rules="[v => !!v || 'Module is required']"
             required
         />
 
@@ -90,32 +90,6 @@
                 />
             </template>
         </collapse>
-        <collapse
-            wrapperClass="mt-4"
-            titleWrapperClass="mx-n9"
-            :toggleOnClick="() => (showFilters = !showFilters)"
-            :toggleVal="showFilters"
-            :title="`${$tc('filters', 2)}`"
-        >
-            <template v-slot:content>
-                <v-select
-                    v-model="selectedFilters"
-                    :items="filtersList"
-                    item-text="id"
-                    return-object
-                    multiple
-                    name="filters"
-                    outlined
-                    dense
-                    class="std mariadb-select-input"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                    height="36px"
-                    :placeholder="$tc('select', 2, { entityName: $tc('filters', 2) })"
-                    :no-data-text="$t('noEntityAvailable', { entityName: $tc('filters', 2) })"
-                    hide-details
-                />
-            </template>
-        </collapse>
     </div>
 </template>
 
@@ -134,11 +108,10 @@
  */
 import { mapActions, mapGetters } from 'vuex'
 export default {
-    name: 'service-form-input',
+    name: 'monitor-form-input',
     props: {
         resourceModules: { type: Array, required: true },
         allServers: { type: Array, required: true },
-        allFilters: { type: Array, required: true },
         emittingFormValuesEvent: { type: Boolean, required: true },
     },
     data: function() {
@@ -156,31 +129,23 @@ export default {
             // Relationships section
             showServers: true,
             selectedServers: [],
-            showFilters: true,
-            selectedFilters: [],
         }
     },
     computed: {
         serversList: function() {
             let cloneArr = this.$help.cloneDeep(this.allServers)
+            let result = []
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
-                delete obj.attributes
-                delete obj.links
-                delete obj.relationships
-                delete obj.idNum
+                if (this.$help.isUndefined(obj.relationships.monitors)) {
+                    delete obj.attributes
+                    delete obj.links
+                    delete obj.relationships
+                    delete obj.idNum
+                    result.push(obj)
+                }
             }
-            return cloneArr
-        },
-        filtersList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allFilters)
-            for (let i = 0; i < cloneArr.length; ++i) {
-                let obj = cloneArr[i]
-                delete obj.attributes
-                delete obj.links
-                delete obj.relationships
-            }
-            return cloneArr
+            return result
         },
 
         getModuleParameters: function() {
@@ -222,17 +187,16 @@ export default {
     watch: {
         emittingFormValuesEvent: function(val) {
             if (val) {
-                /* 
-            When using module parameters, only parameters that have changed by the user 
+                /*
+            When using module parameters, only parameters that have changed by the user
             will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
             */
                 let parametersObj = this.$help.arrOfObjToObj(this.changedParametersArr)
                 const formValues = {
-                    router: this.selectedModule.id,
+                    module: this.selectedModule.id,
                     parameters: parametersObj,
                     relationships: {
                         servers: { data: this.selectedServers },
-                        filters: { data: this.selectedFilters },
                     },
                 }
                 this.$emit('form-values', formValues)

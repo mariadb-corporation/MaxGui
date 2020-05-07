@@ -20,12 +20,27 @@
                             :search="searchKeyWord"
                             :editableCell="editableCell"
                             :loading="editableCell ? loadingEditableParams : loading"
+                            keepPrimitiveValue
                         >
                             <template v-if="editableCell" v-slot:value="props">
-                                <parameter-input
-                                    :item="props.data.item"
-                                    @on-input-change="handleItemChange"
-                                />
+                                <fragment
+                                    v-if="
+                                        props.data.item.id === 'user' ||
+                                            props.data.item.id === 'password'
+                                    "
+                                >
+                                    <parameter-input
+                                        :item="props.data.item"
+                                        required
+                                        @on-input-change="handleItemChange"
+                                    />
+                                </fragment>
+                                <fragment v-else>
+                                    <parameter-input
+                                        :item="props.data.item"
+                                        @on-input-change="handleItemChange"
+                                    />
+                                </fragment>
                             </template>
                             <template v-if="editableCell" v-slot:id="props">
                                 <b>{{ props.data.item.type }}</b
@@ -130,7 +145,8 @@ export default {
             let currentService = this.$help.cloneDeep(this.currentService)
             if (!this.$help.isEmpty(currentService)) {
                 const { attributes: { parameters = {} } = {} } = currentService
-                let tableRow = this.$help.objToArrOfObj(parameters)
+                const keepPrimitiveValue = true
+                let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
                 let editableParams = this.$help.cloneDeep(this.routerParameters)
                 let arr = []
                 if (this.editableCell) {
