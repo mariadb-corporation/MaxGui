@@ -230,21 +230,20 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px white inset !important;
 }
 // vuetify input restyle
+fieldset {
+    border-width: 1px;
+}
 .std.v-text-field--outlined > .v-input__control {
-    .v-input__slot {
-        min-height: 0 !important;
-    }
-
-    fieldset {
-        border-width: 1px !important;
-    }
-
     & input {
-        margin-top: 1px;
-        font-size: 0.875rem !important;
+        font-size: 0.875rem;
+    }
+}
+.std.v-text-field--outlined:not(.v-input--is-disabled) > .v-input__control {
+    & input {
         color: $navigation !important;
     }
 }
+
 .v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
     > .v-input__control
     > .v-input__slot
@@ -254,16 +253,10 @@ input:-webkit-autofill:active {
 .search-restyle.v-text-field--rounded {
     .v-input__control {
         .v-input__slot {
-            min-height: 0 !important;
             padding: 0px 15px;
         }
 
-        fieldset {
-            border-width: 1px !important;
-        }
-
         & input {
-            margin-top: 1px;
             font-size: 15px;
             color: $navigation;
         }

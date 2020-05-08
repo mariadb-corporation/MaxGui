@@ -29,7 +29,6 @@
                                     :rules="rules.username"
                                     :error-messages="errorMessage"
                                     class="std mt-5"
-                                    height="36px"
                                     name="username"
                                     autocomplete="username"
                                     autofocus
@@ -48,7 +47,6 @@
                                     :error-messages="!displayOneError ? errorMessage : ''"
                                     :type="isPwdVisible ? 'text' : 'password'"
                                     class="std mt-5"
-                                    height="36px"
                                     name="password"
                                     autocomplete
                                     single-line

@@ -120,3 +120,6 @@ $menu-content-border-radius: 10px;
 $snackbar-border-radius: 10px;
 $snackbar-font-size: map-deep-get($headings, 'subtitle-1', 'size');
 $snackbar-multi-line-content-min-height: 50px;
+
+// override v-text-field
+$text-field-filled-full-width-outlined-single-line-slot-min-height: 36px;

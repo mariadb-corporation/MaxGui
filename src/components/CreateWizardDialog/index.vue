@@ -38,7 +38,6 @@
                         name="id"
                         required
                         class="std error--text__bottom"
-                        height="36px"
                         dense
                         outlined
                         :placeholder="
@@ -65,6 +64,13 @@
                 <div v-else-if="selectedResource === 'Filter'" class="mb-0">
                     <filter-form-input ref="filterForm" :resourceModules="resourceModules" />
                 </div>
+                <div v-else-if="selectedResource === 'Listener'" class="mb-0">
+                    <listener-form-input
+                        ref="listenerForm"
+                        :resourceModules="resourceModules"
+                        :allServices="allServices"
+                    />
+                </div>
             </fragment>
         </template>
     </base-dialog>
@@ -87,6 +93,7 @@ import { mapActions, mapGetters } from 'vuex'
 import ServiceFormInput from './Forms/ServiceFormInput'
 import MonitorFormInput from './Forms/MonitorFormInput'
 import FilterFormInput from './Forms/FilterFormInput'
+import ListenerFormInput from './Forms/ListenerFormInput'
 
 export default {
     name: 'create-wizard-dialog',
@@ -94,6 +101,7 @@ export default {
         ServiceFormInput,
         MonitorFormInput,
         FilterFormInput,
+        ListenerFormInput,
     },
     props: {
         value: Boolean,
@@ -141,6 +149,7 @@ export default {
             allMonitorsInfo: 'monitor/allMonitorsInfo',
             allFiltersInfo: 'filter/allFiltersInfo',
             allFilters: 'filter/allFilters',
+            allListenersInfo: 'listener/allListenersInfo',
         }),
 
         computeShowDialog: {
@@ -172,10 +181,12 @@ export default {
             createService: 'service/createService',
             createMonitor: 'monitor/createMonitor',
             createFilter: 'filter/createFilter',
+            createListener: 'listener/createListener',
             fetchAllServices: 'service/fetchAllServices',
             fetchAllServers: 'server/fetchAllServers',
             fetchAllMonitors: 'monitor/fetchAllMonitors',
             fetchAllFilters: 'filter/fetchAllFilters',
+            fetchAllListeners: 'listener/fetchAllListeners',
         }),
 
         async handleResourceSelected(val) {
@@ -205,6 +216,37 @@ export default {
                     this.validateInfo = this.allFiltersInfo
                     break
                 case 'Listener':
+                    {
+                        let authenticators = this.getModuleType('Authenticator')
+                        let authenticatorId = authenticators.map(item => `${item.id}`)
+
+                        let protocols = this.getModuleType('Protocol')
+                        for (let i = 0; i < protocols.length; ++i) {
+                            let protocol = protocols[i]
+                            // add default_value for protocol param
+                            let protocolParamObj = protocol.attributes.parameters.find(
+                                o => o.name === 'protocol'
+                            )
+                            protocolParamObj.default_value = protocol.id
+                            protocolParamObj.disabled = true
+                            /*TODO: "Each protocol module defines a default authentication module", 
+                            but the authenticator parameter receives from /maxscale/module doesnt have default_value
+                            The type should be enum_mask
+                            */
+                            // add default_value for authenticator
+                            let authenticatorParamObj = protocol.attributes.parameters.find(
+                                o => o.name === 'authenticator'
+                            )
+                            authenticatorParamObj.type = 'enum'
+                            authenticatorParamObj.enum_values = authenticatorId
+                            authenticatorParamObj.default_value = ''
+                        }
+
+                        this.resourceModules = protocols
+                        await this.fetchAllListeners()
+                        this.validateInfo = this.allListenersInfo
+                        await this.fetchAllServices()
+                    }
                     break
             }
         },
@@ -287,6 +329,19 @@ export default {
                             callback: this.fetchAllFilters,
                         }
                         this.createFilter(payload)
+                    }
+                    break
+                case 'Listener':
+                    {
+                        const { parameters, relationships } = this.$refs.listenerForm.getValues()
+                        console.log('relationships', relationships)
+                        const payload = {
+                            id: this.resourceId,
+                            parameters: parameters,
+                            relationships: relationships,
+                            callback: this.fetchAllFilters,
+                        }
+                        this.createListener(payload)
                     }
                     break
             }

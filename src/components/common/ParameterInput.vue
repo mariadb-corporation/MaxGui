@@ -40,11 +40,11 @@
                 min="0"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
                 single-line
                 outlined
                 dense
                 :rules="rules.naturalNumber"
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             />
         </fragment>
@@ -55,40 +55,41 @@
                 type="number"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
                 single-line
                 outlined
                 dense
                 :rules="rules.int"
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'password string'">
             <v-text-field
                 :id="objectItem.id"
-                v-model="objectItem.value"
+                v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
                 outlined
                 dense
                 autocomplete="new-password"
                 type="password"
                 :rules="rules.requiredField"
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             />
         </fragment>
         <fragment v-else>
             <v-text-field
                 :id="objectItem.id"
-                v-model="objectItem.value"
+                v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
-                height="36px"
                 single-line
                 outlined
                 dense
                 :rules="rules.requiredField"
+                :disabled="objectItem.disabled"
+                autocomplete="off"
                 @change="handleChange"
             />
         </fragment>
@@ -136,13 +137,27 @@ export default {
         handleChange(val) {
             let self = this
             let changed = !this.$help.isEqual(self.objectItem, self.item)
+            let obj = self.objectItem
+            /* 
+                Handling edge case, either socket or address needs to be defined, 
+                that leads to the issue when empty port or empty socket will be treated as string
+                This converts it to null
+
+            */
+            if (
+                (self.objectItem.id === 'port' || self.objectItem.id === 'socket') &&
+                self.objectItem.value === ''
+            ) {
+                obj.value = null
+            }
+
             // compare v-model objectItem with props item
             this.$emit('on-input-change', self.objectItem, changed)
         },
         validateNaturalNumber(val) {
             let value = val
             if (this.createMode) value = parseInt(val, 10)
-            if (typeof value === 'string') {
+            if (typeof value === 'string' && this.objectItem.id !== 'port') {
                 return `${this.objectItem.id} does not accept non numeric values`
             } else if (value < 0) {
                 return `${this.objectItem.id} does not accept negative values`

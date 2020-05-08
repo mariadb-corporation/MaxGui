@@ -2,83 +2,17 @@
     <v-row>
         <!-- PARAMETERS TABLE -->
         <v-col class="py-0 my-0" cols="6">
-            <collapse
-                :toggleOnClick="() => (showParameters = !showParameters)"
-                :toggleVal="showParameters"
-                :title="`${$tc('parameters', 2)}`"
-                :editing="editableCell"
-                :onEdit="() => (editableCell = true)"
-                :doneEditing="() => (showConfirmDialog = true)"
-            >
-                <template v-slot:content>
-                    <v-form ref="form" v-model="isValid">
-                        <data-table
-                            :headers="variableValueTableHeaders"
-                            :data="parametersTableRow"
-                            tdBorderLeft
-                            showAll
-                            :search="searchKeyWord"
-                            :editableCell="editableCell"
-                            :loading="editableCell ? loadingEditableParams : loading"
-                            keepPrimitiveValue
-                        >
-                            <template v-if="editableCell" v-slot:value="props">
-                                <fragment
-                                    v-if="
-                                        props.data.item.id === 'user' ||
-                                            props.data.item.id === 'password'
-                                    "
-                                >
-                                    <parameter-input
-                                        :item="props.data.item"
-                                        required
-                                        @on-input-change="handleItemChange"
-                                    />
-                                </fragment>
-                                <fragment v-else>
-                                    <parameter-input
-                                        :item="props.data.item"
-                                        @on-input-change="handleItemChange"
-                                    />
-                                </fragment>
-                            </template>
-                            <template v-if="editableCell" v-slot:id="props">
-                                <b>{{ props.data.item.type }}</b
-                                >: {{ props.data.item.id }}
-                            </template>
-                        </data-table>
-                    </v-form>
-                </template>
-            </collapse>
+            <details-parameters-collapse
+                :searchKeyWord="searchKeyWord"
+                :resourceId="currentService.id"
+                :parameters="currentService.attributes.parameters"
+                :moduleParameters="moduleParameters"
+                :updateResourceParameters="updateServiceParameters"
+                :onEditSucceeded="onEditSucceeded"
+                :loading="loadingModuleParams ? true : loading"
+            />
         </v-col>
 
-        <base-dialog
-            v-model="showConfirmDialog"
-            :onCancel="cancelEdit"
-            :onClose="closeConfirmDialog"
-            :onSave="acceptEdit"
-            :title="`${$t('implementChanges')}`"
-            saveText="thatsRight"
-            :disabledSaveBtn="shouldDisableSaveBtn"
-        >
-            <template v-slot:body>
-                <span class="d-block mb-4">
-                    {{
-                        $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
-                            quantity: changesItems.length,
-                        })
-                    }}
-                </span>
-
-                <p
-                    v-for="item in changesItems"
-                    :key="item.id"
-                    class="d-block mb-1 font-weight-bold"
-                >
-                    {{ item.id }}
-                </p>
-            </template>
-        </base-dialog>
         <v-col class="py-0 my-0" cols="6">
             <collapse
                 :toggleOnClick="() => (showRouterDiagnostics = !showRouterDiagnostics)"
@@ -124,52 +58,19 @@ export default {
 
     data() {
         return {
-            isValid: false,
+            // diagnostics table
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '65%' },
                 { text: 'Value', value: 'value', width: '35%', editableCol: true },
             ],
-            showParameters: true,
-            editableCell: false,
-            showConfirmDialog: false,
-            changesItems: [],
             showRouterDiagnostics: true,
-            routerParameters: [],
-            loadingEditableParams: false,
-            loadingEditableParamsCount: 0,
+            // for parameters
+            moduleParameters: [],
+            loadingModuleParams: true,
         }
     },
 
     computed: {
-        parametersTableRow: function() {
-            let currentService = this.$help.cloneDeep(this.currentService)
-            if (!this.$help.isEmpty(currentService)) {
-                const { attributes: { parameters = {} } = {} } = currentService
-                const keepPrimitiveValue = true
-                let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
-                let editableParams = this.$help.cloneDeep(this.routerParameters)
-                let arr = []
-                if (this.editableCell) {
-                    for (let o = 0; o < tableRow.length; ++o) {
-                        for (let i = 0; i < editableParams.length; ++i) {
-                            if (tableRow[o].id === editableParams[i].name) {
-                                let paramObj = this.$help.cloneDeep(editableParams[i])
-                                paramObj['value'] = tableRow[o].value
-                                // param in editableParams has name propery instead of id
-                                paramObj['id'] = paramObj.name
-                                delete paramObj.name
-                                arr.push(paramObj)
-                            }
-                        }
-                    }
-                } else {
-                    arr = tableRow
-                }
-                return arr
-            }
-            return []
-        },
-
         routerDiagnosticsTableRow: function() {
             let currentService = this.currentService
             if (!this.$help.isEmpty(currentService)) {
@@ -193,69 +94,18 @@ export default {
             }
             return []
         },
-        shouldDisableSaveBtn: function() {
-            if (this.changesItems.length > 0 && this.isValid) return false
-            else return true
-        },
     },
-    watch: {
-        editableCell: async function(val) {
-            if (val) {
-                let self = this
-                const {
-                    attributes: { router },
-                } = self.currentService
-                let res = await self.axios.get(
-                    `/maxscale/modules/${router}?fields[module]=parameters`
-                )
-                const { attributes: { parameters = [] } = {} } = res.data.data
-                self.routerParameters = parameters
 
-                if (self.loadingEditableParamsCount === 0) {
-                    self.loadingEditableParamsCount = self.loadingEditableParamsCount + 1
-                    // only display loading animation once to fix no data (aka empty array in the table)
-                    self.loadingEditableParams = true
-                    await self.$help.delay(150).then(() => (self.loadingEditableParams = false))
-                }
-            } else {
-                this.loadingEditableParams = false
-            }
-        },
-        showConfirmDialog: function(val) {
-            if (val && this.editableCell) this.$refs.form.validate()
-        },
-    },
-    methods: {
-        handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changesItems)
-            let targetIndex = clone.findIndex(o => o.id == newItem.id)
-            if (changed) {
-                targetIndex === -1 && this.changesItems.push(newItem)
-            } else {
-                targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
-            }
-        },
+    async created() {
+        let self = this
+        let res = await self.axios.get(
+            `/maxscale/modules/${self.currentService.attributes.router}?fields[module]=parameters`
+        )
+        const { attributes: { parameters = [] } = {} } = res.data.data
+        self.moduleParameters = parameters
 
-        closeConfirmDialog() {
-            this.showConfirmDialog = false
-        },
-
-        // this simply put everything back to original state
-        cancelEdit() {
-            this.editableCell = false
-            this.closeConfirmDialog()
-            this.changesItems = []
-        },
-
-        async acceptEdit() {
-            let self = this
-            await self.updateServiceParameters({
-                id: self.currentService.id,
-                parameters: self.$help.arrOfObjToObj(self.changesItems),
-                callback: self.onEditSucceeded,
-            })
-            self.cancelEdit()
-        },
+        self.loadingModuleParams = true
+        await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
     },
 }
 </script>

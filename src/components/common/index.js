@@ -13,29 +13,35 @@
 import BaseDialog from './BaseDialog'
 import DataTable from './DataTable'
 import SearchBox from './SearchBox'
-import DetailsPageTitle from './DetailsPageTitle'
 import IconSpriteSheet from './IconSpriteSheet'
 import OutlinedOverviewCard from './OutlinedOverviewCard'
 import TreeData from './TreeData'
 import Collapse from './Collapse'
-import IconGroupWrapper from './IconGroupWrapper'
 import ConfirmDialog from './ConfirmDialog'
 import SelectDialog from './SelectDialog'
 import ParameterInput from './ParameterInput'
 import LineChart from './LineChart.vue'
 
+import DetailsParametersCollapse from './DetailsPage/DetailsParametersCollapse'
+import DetailsPageTitle from './DetailsPage/DetailsPageTitle'
+import DetailsIconGroupWrapper from './DetailsPage/DetailsIconGroupWrapper'
+
 export default {
     'base-dialog': BaseDialog,
     'data-table': DataTable,
     'search-box': SearchBox,
-    'details-page-title': DetailsPageTitle,
+
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
     'tree-data': TreeData,
     collapse: Collapse,
-    'icon-group-wrapper': IconGroupWrapper,
+
     'confirm-dialog': ConfirmDialog,
     'select-dialog': SelectDialog,
     'parameter-input': ParameterInput,
     'line-chart': LineChart,
+
+    'details-parameters-collapse': DetailsParametersCollapse,
+    'details-page-title': DetailsPageTitle,
+    'details-icon-group-wrapper': DetailsIconGroupWrapper,
 }

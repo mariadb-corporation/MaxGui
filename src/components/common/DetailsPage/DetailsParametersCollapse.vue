@@ -1,5 +1,5 @@
 <template>
-    <v-col cols="6">
+    <fragment>
         <collapse
             :toggleOnClick="() => (showParameters = !showParameters)"
             :toggleVal="showParameters"
@@ -17,14 +17,15 @@
                         showAll
                         :editableCell="editableCell"
                         :search="searchKeyWord"
-                        :loading="editableCell ? loadingEditableParams : loading"
+                        :loading="loading"
                         keepPrimitiveValue
                     >
                         <template v-if="editableCell" v-slot:value="props">
                             <fragment
                                 v-if="
-                                    props.data.item.id === 'user' ||
-                                        props.data.item.id === 'password'
+                                    isServiceOrMonitor &&
+                                        (props.data.item.id === 'user' ||
+                                            props.data.item.id === 'password')
                                 "
                             >
                                 <parameter-input
@@ -75,7 +76,7 @@
                 </p>
             </template>
         </base-dialog>
-    </v-col>
+    </fragment>
 </template>
 
 <script>
@@ -91,15 +92,19 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-
+/* isServiceOrMonitor simply enable required attribute for user and password input fields 
+which should be true when creating a service or monitor */
 export default {
-    name: 'parameters-table',
+    name: 'details-parameters-collapse',
     props: {
         searchKeyWord: { type: String, required: true },
-        currentMonitor: { type: Object, required: true },
-        updateMonitorParameters: { type: Function, required: true },
+        resourceId: { type: String, required: true },
+        parameters: { type: Object, required: true },
+        moduleParameters: { type: Array, required: true },
+        updateResourceParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
+        isServiceOrMonitor: { type: Boolean, default: true },
     },
     data() {
         return {
@@ -111,8 +116,6 @@ export default {
                 { text: 'Value', value: 'value', width: '35%' },
             ],
             loadingEditableParams: false,
-            loadingEditableParamsCount: 0,
-            monitorParameters: [],
             editableCell: false,
             changesItems: [],
             showConfirmDialog: false,
@@ -120,32 +123,19 @@ export default {
     },
     computed: {
         parametersTableRow: function() {
-            let currentMonitor = this.$help.cloneDeep(this.currentMonitor)
-            if (!this.$help.isEmpty(currentMonitor)) {
-                const { attributes: { parameters = {} } = {} } = currentMonitor
-                const keepPrimitiveValue = true
-                let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
-                let editableParams = this.$help.cloneDeep(this.monitorParameters)
-                let arr = []
-                if (this.editableCell) {
-                    for (let o = 0; o < tableRow.length; ++o) {
-                        for (let i = 0; i < editableParams.length; ++i) {
-                            if (tableRow[o].id === editableParams[i].name) {
-                                let paramObj = this.$help.cloneDeep(editableParams[i])
-                                paramObj['value'] = tableRow[o].value
-                                // param in editableParams has name propery instead of id
-                                paramObj['id'] = paramObj.name
-                                delete paramObj.name
-                                arr.push(paramObj)
-                            }
-                        }
-                    }
-                } else {
-                    arr = tableRow
-                }
-                return arr
+            const parameters = this.$help.cloneDeep(this.parameters)
+            const keepPrimitiveValue = true
+            let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
+            let editableParams = this.$help.cloneDeep(this.moduleParameters)
+            let arr = []
+
+            for (let o = 0; o < tableRow.length; ++o) {
+                const resourceParam = tableRow[o]
+                let readMode = !this.editableCell
+                this.assignTypeAndUnit(arr, resourceParam, editableParams, readMode)
             }
-            return []
+
+            return arr
         },
         shouldDisableSaveBtn: function() {
             if (this.changesItems.length > 0 && this.isValid) return false
@@ -153,37 +143,29 @@ export default {
         },
     },
     watch: {
-        editableCell: async function(val) {
-            if (val) {
-                let self = this
-                if (!self.$help.isEmpty(self.currentMonitor)) {
-                    const {
-                        attributes: { module: moduleName },
-                    } = self.currentMonitor
-
-                    let res = await self.axios.get(
-                        `/maxscale/modules/${moduleName}?fields[module]=parameters`
-                    )
-                    const { attributes: { parameters = [] } = {} } = res.data.data
-                    self.monitorParameters = parameters
-
-                    if (self.loadingEditableParamsCount === 0) {
-                        self.loadingEditableParamsCount = self.loadingEditableParamsCount + 1
-                        // only display loading animation once to fix no data (aka empty array in the table)
-                        self.loadingEditableParams = true
-                        await self.$help.delay(150).then(() => (self.loadingEditableParams = false))
-                    }
-                }
-            } else {
-                self.loadingEditableParams = false
-            }
-        },
         showConfirmDialog: function(val) {
             if (val && this.editableCell) this.$refs.form.validate()
         },
     },
 
     methods: {
+        assignTypeAndUnit(arr, resourceParam, editableParams, readMode) {
+            const { id: resourceParamName, value: resourceParamValue } = resourceParam
+            const moduleParam = editableParams.find(param => param.name === resourceParamName)
+            const newParam = this.$help.cloneDeep(resourceParam)
+            if (moduleParam) {
+                const { type, unit } = moduleParam
+
+                newParam['type'] = type
+                if (newParam.type === 'duration' || newParam.type === 'size') {
+                    newParam.value = `${newParam.value}${unit}`
+                }
+                arr.push(newParam)
+            } else {
+                // if readMode is true, push uneditable params as well
+                readMode && arr.push(newParam)
+            }
+        },
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changesItems)
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
@@ -208,8 +190,8 @@ export default {
         async acceptEdit() {
             let self = this
 
-            await self.updateMonitorParameters({
-                id: self.currentMonitor.id,
+            await self.updateResourceParameters({
+                id: self.resourceId,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),
                 callback: self.onEditSucceeded,
             })

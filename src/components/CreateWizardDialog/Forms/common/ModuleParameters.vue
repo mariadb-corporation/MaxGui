@@ -20,52 +20,13 @@
             required
         />
 
-        <collapse
+        <editable-parameters-collapse
             v-if="selectedModule"
-            wrapperClass="mt-4"
-            titleWrapperClass="mx-n9"
-            :toggleOnClick="() => (showParameters = !showParameters)"
-            :toggleVal="showParameters"
-            :title="`${$tc('parameters', 2)}`"
-        >
-            <template v-slot:content>
-                <data-table
-                    :key="selectedModule.id"
-                    :headers="variableValueTableHeaders"
-                    :data="parametersTableRow"
-                    showAll
-                    editableCell
-                    keepPrimitiveValue
-                >
-                    <template v-slot:value="props">
-                        <fragment
-                            v-if="
-                                isServiceOrMonitor &&
-                                    (props.data.item.id === 'user' ||
-                                        props.data.item.id === 'password')
-                            "
-                        >
-                            <parameter-input
-                                :item="props.data.item"
-                                required
-                                @on-input-change="handleItemChange"
-                            />
-                        </fragment>
-                        <fragment v-else>
-                            <parameter-input
-                                :item="props.data.item"
-                                createMode
-                                @on-input-change="handleItemChange"
-                            />
-                        </fragment>
-                    </template>
-                    <template v-slot:id="props">
-                        <b>{{ props.data.item.type }}</b>
-                        : {{ props.data.item.id }}
-                    </template>
-                </data-table>
-            </template>
-        </collapse>
+            :key="selectedModule.id"
+            ref="parametersTable"
+            :parameters="getModuleParameters"
+            :isServiceOrMonitor="isServiceOrMonitor"
+        />
     </fragment>
 </template>
 
@@ -89,8 +50,13 @@ moduleName props is defined to render correct label for select input
 isServiceOrMonitor simply enable required attribute for user and password input fields 
 which should be true when creating a service or monitor
 */
+import EditableParametersCollapse from './EditableParametersCollapse'
+
 export default {
     name: 'module-parameters',
+    components: {
+        EditableParametersCollapse,
+    },
     props: {
         moduleName: { type: String, required: true },
         modules: { type: Array, required: true },
@@ -100,14 +66,6 @@ export default {
         return {
             // router module input
             selectedModule: undefined,
-            // Parameters table section
-            showParameters: true,
-            variableValueTableHeaders: [
-                { text: 'Variable', value: 'id', width: '1px' },
-                { text: 'Value', value: 'value', width: '1px', editableCol: true },
-            ],
-            // parameters input
-            changedParametersArr: [],
         }
     },
     computed: {
@@ -121,51 +79,18 @@ export default {
             }
             return []
         },
-        parametersTableRow: function() {
-            const self = this
-            let parameters = self.getModuleParameters
-            let arr = []
-            for (let i = 0; i < parameters.length; ++i) {
-                let paramObj = self.$help.cloneDeep(parameters[i])
-                let defaultValue
-                switch (paramObj.type) {
-                    case 'bool':
-                        defaultValue = paramObj.default_value === 'true'
-                        break
-                    default:
-                        defaultValue = paramObj.default_value || null
-                }
-
-                paramObj['value'] = defaultValue
-                delete paramObj.default_value
-                // param in editableParams has name propery instead of id
-                paramObj['id'] = paramObj.name
-                delete paramObj.name
-                arr.push(paramObj)
-            }
-
-            return arr
-        },
     },
 
     methods: {
-        handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changedParametersArr)
-            let targetIndex = clone.findIndex(o => o.id == newItem.id)
-            if (changed) {
-                targetIndex === -1 && this.changedParametersArr.push(newItem)
-            } else {
-                targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
-            }
-        },
         getModuleInputValues() {
             /*
             When using module parameters, only parameters that have changed by the user
             will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
             */
+
             const moduleInputs = {
                 moduleId: this.selectedModule.id,
-                parameters: this.$help.arrOfObjToObj(this.changedParametersArr),
+                parameters: this.$refs.parametersTable.getParameterObj(),
             }
             return moduleInputs
         },

@@ -30,6 +30,7 @@
                         :updateServerParameters="updateServerParameters"
                         :onEditSucceeded="fetchServer"
                         :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
+                        :searchKeyWord="searchKeyWord"
                 /></v-tab-item>
             </v-tabs-items>
         </v-tabs>

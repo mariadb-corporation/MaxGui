@@ -16,42 +16,43 @@ import { isFunction } from 'utils/helpers'
 export default {
     namespaced: true,
     state: {
-        allFilters: [],
+        allListeners: [],
     },
     mutations: {
         /**
-         * @param {Array} payload  // Array of filter resources
+         * @param {Array} payload  // Array of listeners resources
          */
-        setAllFilters(state, payload) {
-            state.allFilters = payload
+        setAllListeners(state, payload) {
+            state.allListeners = payload
         },
     },
     actions: {
-        async fetchAllFilters({ commit }) {
-            let res = await Vue.axios.get(`/filters`)
-            await commit('setAllFilters', res.data.data)
+        async fetchAllListeners({ commit }) {
+            let res = await Vue.axios.get(`/listeners`)
+            await commit('setAllListeners', res.data.data)
         },
 
         /**
-         * @param {Object} payload payload object for creating filter
-         * @param {String} payload.id Name of the filter
-         * @param {String} payload.module The filter module to use
-         * @param {Object} payload.parameters Parameters for the filter
+         * @param {Object} payload payload object for creating listener
+         * @param {String} payload.id Name of the listener
+         * @param {Object} payload.parameters listener parameters
+         * @param {Object} payload.relationships feed a service
          * @param {Function} payload.callback callback function after successfully updated
          */
-        async createFilter({ commit }, payload) {
+        async createListener({ commit }, payload) {
             const body = {
                 data: {
                     id: payload.id,
-                    type: 'filters',
+                    type: 'listeners',
                     attributes: {
-                        module: payload.module,
                         parameters: payload.parameters,
                     },
+                    relationships: payload.relationships,
                 },
             }
-            let res = await Vue.axios.post(`/filters`, body)
-            let message = [`Filter ${payload.id} is created`]
+
+            let res = await Vue.axios.post(`/listeners`, body)
+            let message = [`Listener ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -72,14 +73,14 @@ export default {
          * Note that the service → filter relationship cannot be modified from the filters resource and must
          * be done via the services resource.
          */
-        async destroyFilter({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/filters/${id}`)
+        async destroyListener({ dispatch, commit }, id) {
+            let res = await Vue.axios.delete(`/listeners/${id}`)
             if (res.status === 204) {
-                await dispatch('fetchAllFilters')
+                await dispatch('fetchAllListeners')
                 await commit(
                     'showMessage',
                     {
-                        text: [`Filter ${id} is destroyed`],
+                        text: [`Listeners ${id} is destroyed`],
                         type: 'success',
                     },
                     { root: true }
@@ -88,19 +89,19 @@ export default {
         },
     },
     getters: {
-        allFilters: state => state.allFilters,
-        // -------------- below getters are available only when fetchAllFilters has been dispatched
-        allFiltersMap: state => {
+        allListeners: state => state.allListeners,
+        // -------------- below getters are available only when fetchAllListeners has been dispatched
+        allListenersMap: state => {
             let map = new Map()
-            state.allFilters.forEach(ele => {
+            state.allListeners.forEach(ele => {
                 map.set(ele.id, ele)
             })
             return map
         },
 
-        allFiltersInfo: state => {
+        allListenersInfo: state => {
             let idArr = []
-            return state.allFilters.reduce((accumulator, _, index, array) => {
+            return state.allListeners.reduce((accumulator, _, index, array) => {
                 idArr.push(array[index].id)
                 return (accumulator = { idArr: idArr })
             }, [])

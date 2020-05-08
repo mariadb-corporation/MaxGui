@@ -4,7 +4,7 @@
         titleWrapperClass="mx-n9"
         :toggleOnClick="() => (showSelect = !showSelect)"
         :toggleVal="showSelect"
-        :title="`${$tc(relationshipsType, 2)}`"
+        :title="`${$tc(relationshipsType, multiple ? 2 : 1)}`"
     >
         <template v-slot:content>
             <v-select
@@ -12,16 +12,23 @@
                 :items="items"
                 item-text="id"
                 return-object
-                multiple
+                :multiple="multiple"
                 :name="relationshipsType"
                 outlined
                 dense
                 class="std mariadb-select-input"
+                :class="[required && 'error--text__bottom']"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                 height="36px"
-                :placeholder="$tc('select', 2, { entityName: $tc(relationshipsType, 2) })"
+                :placeholder="
+                    $tc('select', multiple ? 2 : 1, {
+                        entityName: $tc(relationshipsType, multiple ? 2 : 1),
+                    })
+                "
                 :no-data-text="$t('noEntityAvailable', { entityName: $tc(relationshipsType, 2) })"
-                hide-details
+                :rules="rules.requiredField"
+                :required="required"
+                :hide-details="!required"
             />
         </template>
     </collapse>
@@ -52,17 +59,32 @@ export default {
     props: {
         relationshipsType: { type: String, required: true },
         items: { type: Array, required: true },
+        multiple: { type: Boolean, default: true },
+        required: { type: Boolean, default: false },
     },
 
     data: function() {
         return {
             showSelect: true,
             selectedItems: [],
+            rules: {
+                requiredField: [val => this.handleRequiredField(val)],
+            },
         }
     },
     methods: {
+        // always return array
         getSelectedItems() {
-            return this.selectedItems
+            if (this.multiple) return this.selectedItems
+            else return [this.selectedItems]
+        },
+        handleRequiredField(val) {
+            if (val.length === 0) {
+                return this.required
+                    ? `${this.$tc(this.relationshipsType, this.multiple ? 2 : 1)} is required`
+                    : true
+            }
+            return true
         },
     },
 }

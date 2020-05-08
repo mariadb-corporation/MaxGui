@@ -4,13 +4,17 @@
         <overview-header :currentMonitor="currentMonitor" />
         <v-row>
             <!-- PARAMETERS TABLE -->
-            <parameters-table
-                :searchKeyWord="searchKeyWord"
-                :currentMonitor="currentMonitor"
-                :updateMonitorParameters="updateMonitorParameters"
-                :onEditSucceeded="fetchMonitor"
-                :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
-            />
+            <v-col cols="6">
+                <details-parameters-collapse
+                    :searchKeyWord="searchKeyWord"
+                    :resourceId="currentMonitor.id"
+                    :parameters="currentMonitor.attributes.parameters"
+                    :moduleParameters="moduleParameters"
+                    :updateResourceParameters="updateMonitorParameters"
+                    :onEditSucceeded="fetchMonitor"
+                    :loading="loadingModuleParams ? true : overlay === OVERLAY_TRANSPARENT_LOADING"
+                />
+            </v-col>
             <servers-table
                 :currentMonitor="currentMonitor"
                 :getServers="getServers"
@@ -39,20 +43,21 @@ import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 import { mapGetters, mapActions } from 'vuex'
 import PageHeader from './PageHeader'
 import OverviewHeader from './OverviewHeader'
-import ParametersTable from './ParametersTable'
 import ServersTable from './ServersTable'
 
 export default {
     components: {
         PageHeader,
         OverviewHeader,
-        ParametersTable,
+
         ServersTable,
     },
     data() {
         return {
             OVERLAY_TRANSPARENT_LOADING: OVERLAY_TRANSPARENT_LOADING,
             serverStateTableRow: [],
+            moduleParameters: [],
+            loadingModuleParams: true,
         }
     },
     computed: {
@@ -64,7 +69,16 @@ export default {
     },
 
     async created() {
-        await this.fetchAll()
+        let self = this
+        await self.fetchAll()
+        let res = await self.axios.get(
+            `/maxscale/modules/${self.currentMonitor.attributes.module}?fields[module]=parameters`
+        )
+        const { attributes: { parameters = [] } = {} } = res.data.data
+        self.moduleParameters = parameters
+
+        self.loadingModuleParams = true
+        await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
     },
 
     methods: {

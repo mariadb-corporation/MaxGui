@@ -23,6 +23,7 @@
                         return-object
                         outlined
                         dense
+                        height="36px"
                         class="std mariadb-select-input"
                         :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                         hide-details
@@ -94,9 +95,11 @@ export default {
                 this.selectEntities = []
             }
         },
+        // always return array
         selectEntities: function(val) {
             if (val) {
-                this.$emit('get-selected-entities', val)
+                if (this.multiple) return this.$emit('get-selected-entities', val)
+                else return this.$emit('get-selected-entities', [val])
             }
         },
     },

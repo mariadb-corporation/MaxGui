@@ -2,7 +2,7 @@
     <fragment>
         <details-page-title>
             <template v-slot:setting-menu>
-                <icon-group-wrapper multiIcons>
+                <details-icon-group-wrapper multiIcons>
                     <template v-slot:body>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
@@ -35,8 +35,8 @@
                             <span>{{ $t('start') }} {{ $tc('services', 1) }} </span>
                         </v-tooltip>
                     </template>
-                </icon-group-wrapper>
-                <icon-group-wrapper>
+                </details-icon-group-wrapper>
+                <details-icon-group-wrapper>
                     <template v-slot:body>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
@@ -49,7 +49,7 @@
                             <span>{{ $t('destroy') }} {{ $tc('services', 1) }} </span>
                         </v-tooltip>
                     </template>
-                </icon-group-wrapper>
+                </details-icon-group-wrapper>
             </template>
         </details-page-title>
         <confirm-dialog

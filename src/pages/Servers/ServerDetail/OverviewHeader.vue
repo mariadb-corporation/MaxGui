@@ -205,9 +205,10 @@ export default {
             switch (self.targetSelectItemType) {
                 case 'monitors':
                     {
-                        await self.dispatchRelationshipUpdate(self.targetSelectItemType, [
-                            self.targetItem,
-                        ])
+                        await self.dispatchRelationshipUpdate(
+                            self.targetSelectItemType,
+                            self.targetItem
+                        )
                     }
                     break
             }

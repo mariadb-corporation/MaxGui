@@ -18,6 +18,7 @@ import service from './service'
 import monitor from './monitor'
 import filter from './filter'
 import session from './session'
+import listener from './listener'
 import { APP_CONFIG } from 'utils/constants'
 
 export default new Vuex.Store({
@@ -68,6 +69,7 @@ export default new Vuex.Store({
     },
     modules: {
         filter,
+        listener,
         maxscale,
         monitor,
         server,

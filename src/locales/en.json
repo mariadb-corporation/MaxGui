@@ -71,6 +71,8 @@
     "sessions": "session | sessions",
 
     "monitors": "monitor",
+
+    "protocol": "protocol | protocols",
     "module": "module | modules",
 
     "errors": {
