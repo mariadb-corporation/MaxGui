@@ -16,6 +16,7 @@
             />
         </fragment>
 
+        <!-- TODO: enum_mask type to whether allow multiple values-->
         <fragment v-else-if="objectItem.type === 'enum'">
             <!-- No need rules for v-select as it always has predefined value-->
             <v-select

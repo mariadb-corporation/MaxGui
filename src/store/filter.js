@@ -45,12 +45,12 @@ export default {
                     id: payload.id,
                     type: 'filters',
                     attributes: {
-                        router: payload.module,
+                        module: payload.module,
                         parameters: payload.parameters,
                     },
                 },
             }
-            let res = await Vue.axios.post(`/filters/`, body)
+            let res = await Vue.axios.post(`/filters`, body)
             let message = [`Filter ${payload.id} is created`]
             // response ok
             if (res.status === 204) {

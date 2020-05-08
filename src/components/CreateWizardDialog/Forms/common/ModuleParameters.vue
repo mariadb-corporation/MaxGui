@@ -1,12 +1,12 @@
 <template>
-    <div class="mb-2">
+    <fragment>
         <label class="text-capitalize label color text-small-text d-block">
-            {{ $tc('router', 1) }}
+            {{ $tc(moduleName, 1) }}
         </label>
         <v-select
             id="module-select"
             v-model="selectedModule"
-            :items="resourceModules"
+            :items="modules"
             item-text="id"
             return-object
             name="resource"
@@ -15,8 +15,8 @@
             class="std mariadb-select-input error--text__bottom"
             :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
             height="36px"
-            :placeholder="$tc('select', 1, { entityName: $tc('router', 1) })"
-            :rules="[v => !!v || 'Router is required']"
+            :placeholder="$tc('select', 1, { entityName: $tc(moduleName, 1) })"
+            :rules="[v => !!v || `${$tc(moduleName, 1)} is required`]"
             required
         />
 
@@ -40,7 +40,9 @@
                     <template v-slot:value="props">
                         <fragment
                             v-if="
-                                props.data.item.id === 'user' || props.data.item.id === 'password'
+                                isServiceOrMonitor &&
+                                    (props.data.item.id === 'user' ||
+                                        props.data.item.id === 'password')
                             "
                         >
                             <parameter-input
@@ -64,59 +66,7 @@
                 </data-table>
             </template>
         </collapse>
-        <collapse
-            wrapperClass="mt-4"
-            titleWrapperClass="mx-n9"
-            :toggleOnClick="() => (showServers = !showServers)"
-            :toggleVal="showServers"
-            :title="`${$tc('servers', 2)}`"
-        >
-            <template v-slot:content>
-                <v-select
-                    v-model="selectedServers"
-                    :items="serversList"
-                    item-text="id"
-                    return-object
-                    multiple
-                    name="servers"
-                    outlined
-                    dense
-                    class="std mariadb-select-input"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                    height="36px"
-                    :placeholder="$tc('select', 2, { entityName: $tc('servers', 2) })"
-                    :no-data-text="$t('noEntityAvailable', { entityName: $tc('servers', 2) })"
-                    hide-details
-                />
-            </template>
-        </collapse>
-        <collapse
-            wrapperClass="mt-4"
-            titleWrapperClass="mx-n9"
-            :toggleOnClick="() => (showFilters = !showFilters)"
-            :toggleVal="showFilters"
-            :title="`${$tc('filters', 2)}`"
-        >
-            <template v-slot:content>
-                <v-select
-                    v-model="selectedFilters"
-                    :items="filtersList"
-                    item-text="id"
-                    return-object
-                    multiple
-                    name="filters"
-                    outlined
-                    dense
-                    class="std mariadb-select-input"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                    height="36px"
-                    :placeholder="$tc('select', 2, { entityName: $tc('filters', 2) })"
-                    :no-data-text="$t('noEntityAvailable', { entityName: $tc('filters', 2) })"
-                    hide-details
-                />
-            </template>
-        </collapse>
-    </div>
+    </fragment>
 </template>
 
 <script>
@@ -132,14 +82,19 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapActions, mapGetters } from 'vuex'
+/*
+This component takes modules props to render v-select component for selecting a module.
+When a module is selelcted, a parameters input table will be rendered.
+moduleName props is defined to render correct label for select input 
+isServiceOrMonitor simply enable required attribute for user and password input fields 
+which should be true when creating a service or monitor
+*/
 export default {
-    name: 'service-form-input',
+    name: 'module-parameters',
     props: {
-        resourceModules: { type: Array, required: true },
-        allServers: { type: Array, required: true },
-        allFilters: { type: Array, required: true },
-        emittingFormValuesEvent: { type: Boolean, required: true },
+        moduleName: { type: String, required: true },
+        modules: { type: Array, required: true },
+        isServiceOrMonitor: { type: Boolean, default: true },
     },
     data: function() {
         return {
@@ -153,36 +108,9 @@ export default {
             ],
             // parameters input
             changedParametersArr: [],
-            // Relationships section
-            showServers: true,
-            selectedServers: [],
-            showFilters: true,
-            selectedFilters: [],
         }
     },
     computed: {
-        serversList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allServers)
-            for (let i = 0; i < cloneArr.length; ++i) {
-                let obj = cloneArr[i]
-                delete obj.attributes
-                delete obj.links
-                delete obj.relationships
-                delete obj.idNum
-            }
-            return cloneArr
-        },
-        filtersList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allFilters)
-            for (let i = 0; i < cloneArr.length; ++i) {
-                let obj = cloneArr[i]
-                delete obj.attributes
-                delete obj.links
-                delete obj.relationships
-            }
-            return cloneArr
-        },
-
         getModuleParameters: function() {
             const self = this
             if (self.selectedModule) {
@@ -219,26 +147,7 @@ export default {
             return arr
         },
     },
-    watch: {
-        emittingFormValuesEvent: function(val) {
-            if (val) {
-                /* 
-            When using module parameters, only parameters that have changed by the user 
-            will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
-            */
-                let parametersObj = this.$help.arrOfObjToObj(this.changedParametersArr)
-                const formValues = {
-                    router: this.selectedModule.id,
-                    parameters: parametersObj,
-                    relationships: {
-                        servers: { data: this.selectedServers },
-                        filters: { data: this.selectedFilters },
-                    },
-                }
-                this.$emit('form-values', formValues)
-            }
-        },
-    },
+
     methods: {
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changedParametersArr)
@@ -248,6 +157,17 @@ export default {
             } else {
                 targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
             }
+        },
+        getModuleInputValues() {
+            /*
+            When using module parameters, only parameters that have changed by the user
+            will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
+            */
+            const moduleInputs = {
+                moduleId: this.selectedModule.id,
+                parameters: this.$help.arrOfObjToObj(this.changedParametersArr),
+            }
+            return moduleInputs
         },
     },
 }

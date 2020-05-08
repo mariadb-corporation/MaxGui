@@ -38,11 +38,6 @@
             v-model="createDialog"
             :closeModal="() => (createDialog = false)"
         />
-        <server-create-or-update
-            v-model="serverDialog"
-            :close-modal="() => (serverDialog = false)"
-            mode="post"
-        />
     </fragment>
 </template>
 
@@ -61,20 +56,16 @@
  */
 import { mapMutations, mapActions } from 'vuex'
 import CreateWizardDialog from './CreateWizardDialog'
-import ServerCreateOrUpdate from 'pages/Servers/ServerCreateOrUpdate'
-
 export default {
     name: 'search-to-create',
     components: {
         CreateWizardDialog,
-        ServerCreateOrUpdate,
     },
 
     data() {
         return {
             search: '',
             createDialog: false,
-            serverDialog: false,
         }
     },
     computed: {
@@ -117,19 +108,7 @@ export default {
         }),
         async create() {
             await this.fetchAllModules()
-            switch (this.currentRouteName) {
-                case 'services':
-                case 'service':
-                    this.createDialog = true
-
-                    break
-                case 'servers':
-                case 'server':
-                    this.createDialog = true
-                    break
-                default:
-                    this.createDialog = true
-            }
+            this.createDialog = true
         },
     },
 }

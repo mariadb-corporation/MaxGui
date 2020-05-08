@@ -143,10 +143,11 @@ export default {
                 if (self.onSave) {
                     self.showOverlay(OVERLAY_TRANSPARENT_LOADING)
                     await self.onSave()
+                    if (self.$refs.form) {
+                        self.$refs.form.reset()
+                        self.$refs.form.resetValidation()
+                    }
                     // wait time out for loading animation
-                    await (self.value === false)
-                    self.$refs.form.reset()
-                    self.$refs.form.resetValidation()
                     await self.$help.delay(600).then(() => self.hideOverlay())
                 }
             }

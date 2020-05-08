@@ -49,20 +49,21 @@
 
                 <div v-if="selectedResource === 'Service'" class="mb-0">
                     <service-form-input
+                        ref="serviceForm"
                         :resourceModules="resourceModules"
                         :allServers="allServers"
                         :allFilters="allFilters"
-                        :emittingFormValuesEvent="emittingFormValuesEvent"
-                        @form-values="formValues = $event"
                     />
                 </div>
                 <div v-else-if="selectedResource === 'Monitor'" class="mb-0">
                     <monitor-form-input
+                        ref="monitorForm"
                         :resourceModules="resourceModules"
                         :allServers="allServers"
-                        :emittingFormValuesEvent="emittingFormValuesEvent"
-                        @form-values="formValues = $event"
                     />
+                </div>
+                <div v-else-if="selectedResource === 'Filter'" class="mb-0">
+                    <filter-form-input ref="filterForm" :resourceModules="resourceModules" />
                 </div>
             </fragment>
         </template>
@@ -83,13 +84,16 @@
  * Public License.
  */
 import { mapActions, mapGetters } from 'vuex'
-import ServiceFormInput from './ServiceFormInput'
-import MonitorFormInput from './MonitorFormInput'
+import ServiceFormInput from './Forms/ServiceFormInput'
+import MonitorFormInput from './Forms/MonitorFormInput'
+import FilterFormInput from './Forms/FilterFormInput'
+
 export default {
     name: 'create-wizard-dialog',
     components: {
         ServiceFormInput,
         MonitorFormInput,
+        FilterFormInput,
     },
     props: {
         value: Boolean,
@@ -167,6 +171,7 @@ export default {
         ...mapActions({
             createService: 'service/createService',
             createMonitor: 'monitor/createMonitor',
+            createFilter: 'filter/createFilter',
             fetchAllServices: 'service/fetchAllServices',
             fetchAllServers: 'server/fetchAllServers',
             fetchAllMonitors: 'monitor/fetchAllMonitors',
@@ -237,39 +242,55 @@ export default {
         },
 
         handleSave() {
-            this.emittingFormValuesEvent = true
-            //https://vuejs.org/v2/guide/reactivity.html#Async-Update-Queue
-            this.$nextTick(async function() {
-                switch (this.selectedResource) {
-                    case 'Service':
-                        {
-                            const { router, parameters, relationships } = this.formValues
-                            const payload = {
-                                id: this.resourceId,
-                                router: router,
-                                parameters: parameters,
-                                relationships: relationships,
-                                callback: this.fetchAllServices,
-                            }
-                            await this.createService(payload)
+            switch (this.selectedResource) {
+                case 'Service':
+                    {
+                        const {
+                            moduleId,
+                            parameters,
+                            relationships,
+                        } = this.$refs.serviceForm.getValues()
+                        const payload = {
+                            id: this.resourceId,
+                            router: moduleId,
+                            parameters: parameters,
+                            relationships: relationships,
+                            callback: this.fetchAllServices,
                         }
-                        break
-                    case 'Monitor':
-                        {
-                            const { module: moduleId, parameters, relationships } = this.formValues
-                            const payload = {
-                                id: this.resourceId,
-                                module: moduleId,
-                                parameters: parameters,
-                                relationships: relationships,
-                                callback: this.fetchAllMonitors,
-                            }
-                            await this.createMonitor(payload)
+                        this.createService(payload)
+                    }
+                    break
+                case 'Monitor':
+                    {
+                        const {
+                            moduleId,
+                            parameters,
+                            relationships,
+                        } = this.$refs.monitorForm.getValues()
+                        const payload = {
+                            id: this.resourceId,
+                            module: moduleId,
+                            parameters: parameters,
+                            relationships: relationships,
+                            callback: this.fetchAllMonitors,
                         }
-                        break
-                }
-                this.closeModal()
-            })
+                        this.createMonitor(payload)
+                    }
+                    break
+                case 'Filter':
+                    {
+                        const { moduleId, parameters } = this.$refs.filterForm.getValues()
+                        const payload = {
+                            id: this.resourceId,
+                            module: moduleId,
+                            parameters: parameters,
+                            callback: this.fetchAllFilters,
+                        }
+                        this.createFilter(payload)
+                    }
+                    break
+            }
+            this.closeModal()
         },
 
         validateResourceId(val) {
