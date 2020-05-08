@@ -11,12 +11,14 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { Line, mixins } from 'vue-chartjs'
+import { Line } from 'vue-chartjs'
 import 'chartjs-plugin-streaming'
 export default {
     extends: Line,
-    mixins: [mixins.reactiveProp],
     props: {
+        chartData: {
+            type: Object,
+        },
         options: {
             type: Object,
         },
@@ -107,117 +109,136 @@ export default {
             },
         }
     },
+    watch: {
+        /* This chartData watcher doesn't make the chart reactivity, but it helps to
+        destroy the chart when it's unmounted from the page. Eg: moving from dashboard page (have 3 charts)
+        to service-detail page (1 chart), the chart will be destroyed and rerender to avoid 
+        several problems within vue-chartjs while using chartjs-plugin-streaming
+        */
+        chartData: function() {
+            this.$data._chart.destroy()
+            this.renderLineChart()
+        },
+    },
+
     mounted() {
-        let self = this
-        let uniqueTooltipId = self.$help.uniqueId('tooltip_')
-        this.renderChart(this.chartData, {
-            showLines: true,
+        this.renderLineChart()
+    },
+    methods: {
+        renderLineChart() {
+            let self = this
+            let uniqueTooltipId = self.$help.uniqueId('tooltip_')
+            this.renderChart(this.chartData, {
+                showLines: true,
 
-            layout: self.isRealTime ? self.realtimeLayout : self.defaultLayout,
-            legend: {
-                display: false,
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            elements: {
-                point: {
-                    radius: 0,
+                layout: self.isRealTime ? self.realtimeLayout : self.defaultLayout,
+                legend: {
+                    display: false,
                 },
-            },
-            hover: {
-                mode: 'index',
-                intersect: false,
-            },
-
-            tooltips: {
-                mode: 'x-axis',
-                intersect: true,
-                titleFontFamily: "'azo-sans-web', adrianna, serif",
-                bodyFontFamily: "'azo-sans-web', adrianna, serif",
-
-                enabled: false,
-                custom: function(tooltipModel) {
-                    // Tooltip Element
-
-                    let tooltipEl = document.getElementById(uniqueTooltipId)
-
-                    // Create element on first render
-                    if (!tooltipEl) {
-                        tooltipEl = document.createElement('div')
-                        tooltipEl.id = uniqueTooltipId
-                        tooltipEl.className = ['chartjs-tooltip shadow-drop']
-                        tooltipEl.innerHTML = '<table></table>'
-                        document.body.appendChild(tooltipEl)
-                    }
-
-                    // Hide if no tooltip
-                    if (tooltipModel.opacity === 0) {
-                        tooltipEl.style.opacity = 0
-                        return
-                    }
-
-                    // Set caret Position
-                    tooltipEl.classList.remove('above', 'below', 'no-transform')
-                    if (tooltipModel.yAlign) {
-                        tooltipEl.classList.add(tooltipModel.yAlign)
-                    } else {
-                        tooltipEl.classList.add('no-transform')
-                    }
-
-                    function getBody(bodyItem) {
-                        return bodyItem.lines
-                    }
-
-                    // Set Text
-                    if (tooltipModel.body) {
-                        let titleLines = tooltipModel.title || []
-                        let bodyLines = tooltipModel.body.map(getBody)
-
-                        let innerHtml = '<thead>'
-
-                        titleLines.forEach(function(title) {
-                            innerHtml += '<tr><th>' + title + '</th></tr>'
-                        })
-                        innerHtml += '</thead><tbody>'
-
-                        bodyLines.forEach(function(body, i) {
-                            let colors = tooltipModel.labelColors[i]
-                            let style = 'background:' + colors.backgroundColor
-                            style += '; border-color:' + colors.borderColor
-                            style += '; border-width: 2px;margin-right:4px'
-                            let span =
-                                '<span class="chartjs-tooltip-key" style="' + style + '"></span>'
-                            innerHtml += '<tr><td>' + span + body + '</td></tr>'
-                        })
-                        innerHtml += '</tbody>'
-
-                        let tableRoot = tooltipEl.querySelector('table')
-                        tableRoot.innerHTML = innerHtml
-                    }
-
-                    // `this` will be the overall tooltip
-                    let chart = this._chart.canvas.getBoundingClientRect()
-
-                    // Display, position, and set styles for font
-                    tooltipEl.style.opacity = 1
-                    // this makes sure the tooltip wont go over client view width when realtime chart is used
-                    let left =
-                        chart.left + tooltipModel.caretX > chart.width + chart.left
-                            ? chart.width + chart.left
-                            : chart.left + tooltipModel.caretX
-
-                    tooltipEl.style.left = left + 'px'
-                    tooltipEl.style.top = chart.top + tooltipModel.caretY + 'px'
-                    tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
-                    tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
-                    tooltipEl.style.padding =
-                        tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    point: {
+                        radius: 0,
+                    },
                 },
-            },
+                hover: {
+                    mode: 'index',
+                    intersect: false,
+                },
 
-            scales: this.isRealTime ? this.realtimeScales : this.defaultScales,
-            ...this.options,
-        })
+                tooltips: {
+                    mode: 'x-axis',
+                    intersect: false,
+                    titleFontFamily: "'azo-sans-web', adrianna, serif",
+                    bodyFontFamily: "'azo-sans-web', adrianna, serif",
+
+                    enabled: false,
+                    custom: function(tooltipModel) {
+                        // Tooltip Element
+
+                        let tooltipEl = document.getElementById(uniqueTooltipId)
+
+                        // Create element on first render
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div')
+                            tooltipEl.id = uniqueTooltipId
+                            tooltipEl.className = ['chartjs-tooltip shadow-drop']
+                            tooltipEl.innerHTML = '<table></table>'
+                            document.body.appendChild(tooltipEl)
+                        }
+
+                        // Hide if no tooltip
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.opacity = 0
+                            return
+                        }
+
+                        // Set caret Position
+                        tooltipEl.classList.remove('above', 'below', 'no-transform')
+                        if (tooltipModel.yAlign) {
+                            tooltipEl.classList.add(tooltipModel.yAlign)
+                        } else {
+                            tooltipEl.classList.add('no-transform')
+                        }
+
+                        function getBody(bodyItem) {
+                            return bodyItem.lines
+                        }
+
+                        // Set Text
+                        if (tooltipModel.body) {
+                            let titleLines = tooltipModel.title || []
+                            let bodyLines = tooltipModel.body.map(getBody)
+
+                            let innerHtml = '<thead>'
+
+                            titleLines.forEach(function(title) {
+                                innerHtml += '<tr><th>' + title + '</th></tr>'
+                            })
+                            innerHtml += '</thead><tbody>'
+
+                            bodyLines.forEach(function(body, i) {
+                                let colors = tooltipModel.labelColors[i]
+                                let style = 'background:' + colors.backgroundColor
+                                style += '; border-color:' + colors.borderColor
+                                style += '; border-width: 2px;margin-right:4px'
+                                let span =
+                                    '<span class="chartjs-tooltip-key" style="' +
+                                    style +
+                                    '"></span>'
+                                innerHtml += '<tr><td>' + span + body + '</td></tr>'
+                            })
+                            innerHtml += '</tbody>'
+
+                            let tableRoot = tooltipEl.querySelector('table')
+                            tableRoot.innerHTML = innerHtml
+                        }
+
+                        // `this` will be the overall tooltip
+                        let chart = this._chart.canvas.getBoundingClientRect()
+
+                        // Display, position, and set styles for font
+                        tooltipEl.style.opacity = 1
+                        // this makes sure the tooltip wont go over client view width when realtime chart is used
+                        let left =
+                            chart.left + tooltipModel.caretX > chart.width + chart.left
+                                ? chart.width + chart.left
+                                : chart.left + tooltipModel.caretX
+
+                        tooltipEl.style.left = left + 'px'
+                        tooltipEl.style.top = chart.top + tooltipModel.caretY + 'px'
+                        tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+                        tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+                        tooltipEl.style.padding =
+                            tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px'
+                    },
+                },
+
+                scales: this.isRealTime ? this.realtimeScales : this.defaultScales,
+                ...this.options,
+            })
+        },
     },
 }
 </script>

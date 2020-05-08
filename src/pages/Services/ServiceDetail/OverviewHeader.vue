@@ -44,7 +44,6 @@
                             :styles="{ height: '70px' }"
                             :chart-data="totalConnectionsChartData"
                             :options="options"
-                            :isRealTime="true"
                         />
                     </v-sheet>
                 </template>

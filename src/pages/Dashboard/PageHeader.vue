@@ -139,7 +139,7 @@ export default {
     },
 
     beforeDestroy() {
-        this.worker.terminate()
+        this.worker && this.worker.terminate()
     },
 
     methods: {

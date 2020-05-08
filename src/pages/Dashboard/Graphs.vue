@@ -11,10 +11,9 @@
                             v-if="sessionsChartData.datasets.length"
                             id="sessions-Chart"
                             ref="sessionsChart"
-                            :styles="{ height: '70px' }"
+                            :styles="{ height: '70px', position: 'relative' }"
                             :chart-data="sessionsChartData"
                             :options="chartOptionsWithOutCallBack"
-                            :isRealTime="true"
                         />
                     </v-sheet>
                 </template>
@@ -31,10 +30,9 @@
                             v-if="serversConnectionsChartData.datasets.length"
                             id="servers-connection-Chart"
                             ref="connectionsChart"
-                            :styles="{ height: '70px' }"
+                            :styles="{ height: '70px', position: 'relative' }"
                             :chart-data="serversConnectionsChartData"
                             :options="mainChartOptions"
-                            :isRealTime="true"
                         />
                     </v-sheet>
                 </template>
@@ -51,10 +49,9 @@
                             v-if="threadsChartData.datasets.length"
                             id="threads-Chart"
                             ref="threadsChart"
-                            :styles="{ height: '70px' }"
+                            :styles="{ height: '70px', position: 'relative' }"
                             :chart-data="threadsChartData"
                             :options="threadChartOptions"
-                            :isRealTime="true"
                             :yAxesTicks="{ max: 100, min: 0 }"
                         />
                     </v-sheet>
@@ -179,6 +176,7 @@ export default {
 
             self.allServers.forEach((server, i) => {
                 if (gap > 0 && i > connectionsChart.chartData.datasets.length - 1) {
+                    // push new datasets
                     let lineColors = self.$help.dynamicColors(i)
                     let indexOfOpacity = lineColors.lastIndexOf(')') - 1
                     let dataset = {
@@ -205,9 +203,10 @@ export default {
                         y: server.attributes.statistics.connections,
                     })
                 }
-                connectionsChart.$data._chart.update({
-                    preservation: true,
-                })
+            })
+
+            connectionsChart.$data._chart.update({
+                preservation: true,
             })
 
             // ------------------------- update sessions chart
