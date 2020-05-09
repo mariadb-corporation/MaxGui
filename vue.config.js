@@ -43,6 +43,12 @@ module.exports = {
     },
 
     configureWebpack: {
+        optimization: {
+            splitChunks: {
+                minSize: 10000,
+                maxSize: 250000,
+            },
+        },
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },

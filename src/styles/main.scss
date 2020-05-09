@@ -106,9 +106,7 @@ html {
 
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 // reset hover effect
-.theme--light.v-data-table
-    tbody
-    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+.theme--light.v-data-table tbody tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
     background: unset;
 }
 .data-table-full {
@@ -230,10 +228,11 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 0 30px white inset !important;
 }
 // vuetify input restyle
-fieldset {
-    border-width: 1px;
-}
+
 .std.v-text-field--outlined > .v-input__control {
+    fieldset {
+        border-width: 1px;
+    }
     & input {
         font-size: 0.875rem;
     }
@@ -244,14 +243,14 @@ fieldset {
     }
 }
 
-.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
-    > .v-input__control
-    > .v-input__slot
-    fieldset {
+.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
     color: $text-subtle !important;
 }
 .search-restyle.v-text-field--rounded {
     .v-input__control {
+        fieldset {
+            border-width: 1px;
+        }
         .v-input__slot {
             padding: 0px 15px;
         }

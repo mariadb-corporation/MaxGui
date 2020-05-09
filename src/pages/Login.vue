@@ -21,6 +21,7 @@
                                 ref="form"
                                 v-model="isValid"
                                 class="pt-4"
+                                lazy-validation
                                 @keyup.native.enter="isValid && handleSubmit()"
                             >
                                 <v-text-field
@@ -37,24 +38,24 @@
                                     outlined
                                     required
                                     :placeholder="$t('username')"
-                                    @input="errorMessage = ''"
+                                    @input="onInput"
                                 />
                                 <v-text-field
                                     id="password"
                                     v-model="credential.password"
                                     :append-icon="isPwdVisible ? 'visibility_off' : 'visibility'"
                                     :rules="rules.password"
-                                    :error-messages="!displayOneError ? errorMessage : ''"
+                                    :error-messages="!displayOneError ? errorMessage : ' '"
                                     :type="isPwdVisible ? 'text' : 'password'"
                                     class="std mt-5"
                                     name="password"
-                                    autocomplete
+                                    autocomplete="current-password"
                                     single-line
                                     dense
                                     outlined
                                     required
                                     :placeholder="$t('password')"
-                                    @input="errorMessage = ''"
+                                    @input="onInput"
                                     @click:append="isPwdVisible = !isPwdVisible"
                                 />
 
@@ -170,12 +171,14 @@ export default {
     },
 
     methods: {
-        ...mapMutations('user', ['setUser']),
+        ...mapMutations({ setUser: 'user/setUser' }),
+
+        onInput() {
+            this.errorMessage = ''
+            this.displayOneError && (this.displayOneError = false)
+        },
 
         async handleSubmit() {
-            if (!this.$refs.form.validate()) {
-                return
-            }
             this.isLoading = true
             let self = this
             try {
@@ -201,12 +204,10 @@ export default {
                 await self.$router.push(self.$route.query.redirect || '/dashboard/servers')
             } catch (error) {
                 this.displayOneError = true
-                if (error) {
-                    this.errorMessage =
-                        error.response.status === 401
-                            ? this.$t('errors.wrongCredentials')
-                            : this.$help.getErrorsArr(error)
-                }
+                this.errorMessage =
+                    error.response.status === 401
+                        ? this.$t('errors.wrongCredentials')
+                        : error.response.statusText
             }
             this.isLoading = false
         },

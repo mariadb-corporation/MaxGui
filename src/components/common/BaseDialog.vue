@@ -115,7 +115,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations(['showMessage', 'showOverlay', 'hideOverlay']),
+        ...mapMutations(['showOverlay', 'hideOverlay']),
         cancel() {
             this.$refs.form.reset()
             this.$refs.form.resetValidation()
@@ -131,7 +131,7 @@ export default {
             let self = this
             await !self.$refs.form.validate()
 
-            if (!self.$refs.form.validate()) {
+            if (!self.isFormValid) {
                 let invalidEles = document.getElementsByClassName('v-messages__message')
                 //TODO: check crossbrowser scrollIntoView API.
                 return invalidEles[0].scrollIntoView({

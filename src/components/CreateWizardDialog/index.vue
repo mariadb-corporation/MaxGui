@@ -334,7 +334,6 @@ export default {
                 case 'Listener':
                     {
                         const { parameters, relationships } = this.$refs.listenerForm.getValues()
-                        console.log('relationships', relationships)
                         const payload = {
                             id: this.resourceId,
                             parameters: parameters,
