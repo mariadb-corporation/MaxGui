@@ -25,7 +25,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import TabNav from './TabNav'
 import PageHeader from './PageHeader'
 import Graphs from './Graphs'

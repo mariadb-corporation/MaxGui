@@ -29,7 +29,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapGetters, mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
     name: 'overview-header',

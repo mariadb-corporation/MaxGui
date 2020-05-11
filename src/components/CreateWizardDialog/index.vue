@@ -168,7 +168,7 @@ export default {
             this.resourceId = val ? val.split(' ').join('-') : val
         },
 
-        $route: function(to, from) {
+        $route: function(to) {
             this.setDefaultSelectedResource(to.name)
         },
     },

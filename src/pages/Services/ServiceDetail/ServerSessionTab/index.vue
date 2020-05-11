@@ -138,7 +138,6 @@
  */
 
 import { mapMutations, mapGetters, mapActions } from 'vuex'
-import { OVERLAY_TRANSPARENT_LOADING } from 'store/overlayTypes'
 import SessionsTable from './SessionsTable'
 
 export default {

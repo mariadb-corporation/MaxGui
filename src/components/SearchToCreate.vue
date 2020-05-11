@@ -94,7 +94,7 @@ export default {
             this.setSearchKeyWord(newVal)
         },
 
-        $route: function(to, from) {
+        $route: function() {
             // Clear local search and global search state when route changes
             this.search = ''
             this.setSearchKeyWord('')

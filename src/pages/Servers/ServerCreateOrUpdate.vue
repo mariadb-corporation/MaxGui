@@ -310,7 +310,7 @@ export default {
         /**
          * ONLY AVAILABLE FOR POST MODE
          */
-        serverId: function(newVal, oldVal) {
+        serverId: function(newVal) {
             if (this.mode === 'post') {
                 // add hyphens when ever input have whitespace
                 this.serverId = newVal.split(' ').join('-')
@@ -319,7 +319,7 @@ export default {
         /**
          * ONLY AVAILABLE FOR POST MODE
          */
-        radioGroup: function(newVal, oldVal) {
+        radioGroup: function(newVal) {
             if (this.mode === 'post') {
                 if (newVal === 'address') {
                     this.parameters.socket = null
@@ -332,7 +332,7 @@ export default {
          * A watch on show to trigger deep clone object from vuex state for local state modification purpose
          * ONLY AVAILABLE FOR PATCH MODE
          */
-        computeShowDialog: function(newVal, oldVal) {
+        computeShowDialog: function(newVal) {
             if (this.mode === 'patch' && newVal === true) {
                 const {
                     attributes: { parameters },

@@ -127,7 +127,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import RowspanDataTable from 'components/RowspanDataTable'
 
 export default {

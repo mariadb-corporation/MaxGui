@@ -67,7 +67,6 @@ import Navigation from './Navigation'
 import Header from './Header'
 import Snackbars from './Snackbars'
 import { mapGetters } from 'vuex'
-import { routes } from 'router/routes'
 
 import tabRoutes from 'router/tabRoutes'
 import SearchToCreate from 'components/SearchToCreate'

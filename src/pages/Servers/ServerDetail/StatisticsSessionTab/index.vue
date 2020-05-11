@@ -111,7 +111,6 @@
  * Public License.
  */
 
-import { mapMutations, mapGetters, mapActions } from 'vuex'
 import SessionsTable from './SessionsTable'
 
 export default {

@@ -90,8 +90,6 @@
  * Public License.
  */
 
-import { mapMutations, mapGetters, mapActions } from 'vuex'
-
 export default {
     name: 'servers-table',
 

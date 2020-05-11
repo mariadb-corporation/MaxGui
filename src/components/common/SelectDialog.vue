@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 /*
  * Copyright (c) 2020 MariaDB Corporation Ab
  *

@@ -50,7 +50,7 @@
                                 <div
                                     style="width:65%;"
                                     class="pointer d-inline-block text-truncate"
-                                    @dblclick="copyToClipboard(value)"
+                                    @dblclick="copyToClipboard()"
                                     v-on="on"
                                 >
                                     {{ value }}
@@ -144,7 +144,7 @@ export default {
 
     methods: {
         //---------------------- MaxScale overview info
-        copyToClipboard(value) {
+        copyToClipboard() {
             document.execCommand('copy')
             this.isCopied = true
         },
@@ -156,7 +156,7 @@ export default {
             let self = this
             self.worker = new Worker()
             self.worker.postMessage(self.workerList)
-            self.worker.onmessage = params => {
+            self.worker.onmessage = () => {
                 self.updateUpTime()
             }
         },

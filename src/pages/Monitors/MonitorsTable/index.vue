@@ -122,7 +122,7 @@ export default {
             this.serverDialog = true
             this.chosenItem = item
         },
-        onRowClick(item, header) {
+        onRowClick(item) {
             this.$router.push('/dashboard/monitor/' + item.id)
         },
     },

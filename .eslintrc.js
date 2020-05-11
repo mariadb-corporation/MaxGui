@@ -25,7 +25,7 @@ module.exports = {
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        'no-unused-vars': 1,
+        'no-unused-vars': 'error',
         'comma-dangle': 0,
         'no-tabs': 2,
         'no-var': 2,
@@ -60,7 +60,7 @@ module.exports = {
         ],
         'vue/this-in-template': 'error',
         'vue/order-in-components': 'error',
-        'vue/no-unused-components': 1,
+        'vue/no-unused-components': 'error',
         'vuetify/no-deprecated-classes': 'error',
         'vuetify/no-legacy-grid': 'error',
         'vue/attribute-hyphenation': 0,

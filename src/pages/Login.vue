@@ -120,7 +120,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -190,7 +190,7 @@ export default {
                 */
                 let url = '/auth?persist=yes'
 
-                let res = await login.get(`${url}${self.rememberMe ? '&max-age=28800' : ''}`, {
+                await login.get(`${url}${self.rememberMe ? '&max-age=28800' : ''}`, {
                     auth: self.credential,
                 })
 
@@ -227,7 +227,7 @@ export default {
                       document.getElementsByTagName('body')[0].clientHeight
 
             this.scratch.width = this.$refs.canvas.width = width
-            this.scratch.height = this.$refs.canvas.height = window.innerHeight
+            this.scratch.height = this.$refs.canvas.height = height
         },
         drawCircle(circle) {
             this.ctx.strokeStyle = circle.color

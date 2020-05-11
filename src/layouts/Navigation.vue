@@ -28,7 +28,7 @@
                             }}</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content>
-                            <v-list-item-title class="text-capitalize" style="color: white;">
+                            <v-list-item-title class="text-capitalize">
                                 {{ $tc(`${item.name}`, 1) }}
                             </v-list-item-title>
                         </v-list-item-content>
@@ -102,6 +102,10 @@ export default {
             margin: 0;
             align-items: center;
             justify-content: center;
+        }
+        .v-list-item__title {
+            color: white;
+            font-size: 0.875rem;
         }
     }
 }

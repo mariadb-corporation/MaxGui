@@ -23,7 +23,6 @@
  * Public License.
  */
 import ModuleParameters from './common/ModuleParameters'
-import ResourceRelationships from './common/ResourceRelationships'
 
 export default {
     name: 'filter-form-input',

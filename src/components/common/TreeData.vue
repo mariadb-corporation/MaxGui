@@ -108,7 +108,7 @@ export default {
         },
     },
     methods: {
-        handleItemClick(item) {
+        handleItemClick() {
             // console.log('item', item)
         },
     },

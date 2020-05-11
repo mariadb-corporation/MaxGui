@@ -66,6 +66,7 @@ module.exports = {
             ],
         },
         devServer: devServer,
+        devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
     },
 
     // css: {

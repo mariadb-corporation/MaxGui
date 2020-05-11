@@ -239,13 +239,13 @@ export default {
             // Make associated td elements to have the same hover effect
             let bg = e.type === 'mouseover' ? '#fafcfc' : ''
             if (target === 'cell') {
-                let elements = this.$refs.rowGroup.filter((ele, i) =>
+                let elements = this.$refs.rowGroup.filter(ele =>
                     ele.attributes.class.value.includes(`${rowspanId}-alterableRowspan`)
                 )
 
                 elements.forEach(ele => (ele.style.backgroundColor = bg))
             } else if (target === 'rowgroup') {
-                let elements = this.$refs.cell.filter((ele, i) =>
+                let elements = this.$refs.cell.filter(ele =>
                     ele.attributes.class.value.includes(`${rowspanId}-cell`)
                 )
 

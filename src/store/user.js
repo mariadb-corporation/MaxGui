@@ -12,7 +12,7 @@
  */
 import Vue from 'vue'
 import { OVERLAY_LOGOUT } from 'store/overlayTypes'
-import { delay, getCookie } from 'utils/helpers'
+import { delay } from 'utils/helpers'
 import router from 'router'
 
 export default {
