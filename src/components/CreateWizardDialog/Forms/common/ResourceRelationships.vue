@@ -19,7 +19,6 @@
                 class="std mariadb-select-input"
                 :class="[required && 'error--text__bottom']"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="36px"
                 :placeholder="
                     $tc('select', multiple ? 2 : 1, {
                         entityName: $tc(relationshipsType, multiple ? 2 : 1),

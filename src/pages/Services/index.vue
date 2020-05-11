@@ -32,35 +32,37 @@
                     </router-link>
                 </template>
             </fragment>
-
-            <v-menu
-                v-else
-                :key="i"
-                transition="slide-x-transition"
-                :close-on-content-click="false"
-                open-on-hover
-                offset-x
-                content-class="shadow-drop"
-            >
-                <template v-slot:activator="{ on }">
-                    <span class="pointer color text-links" v-on="on">
-                        {{ servers.length }}
-                        {{ $tc('servers', 2).toLowerCase() }}
-                    </span>
-                </template>
-
-                <v-sheet style="border-radius: 4px;" class="px-4 py-2">
-                    <template v-for="serverId in servers">
-                        <router-link
-                            :key="serverId"
-                            :to="`/dashboard/servers/${serverId}`"
-                            class="body-2 d-block no-underline"
-                        >
-                            <span>{{ serverId }} </span>
-                        </router-link>
+            <fragment v-else>
+                <v-menu
+                    :key="i"
+                    offset-x
+                    transition="slide-x-transition"
+                    :close-on-content-click="false"
+                    open-on-hover
+                    nudge-right="20"
+                    nudge-top="12.5"
+                    content-class="shadow-drop"
+                >
+                    <template v-slot:activator="{ on }">
+                        <span class="pointer color text-links" v-on="on">
+                            {{ servers.length }}
+                            {{ $tc('servers', 2).toLowerCase() }}
+                        </span>
                     </template>
-                </v-sheet>
-            </v-menu>
+
+                    <v-sheet style="border-radius: 10px;" class="pa-4">
+                        <template v-for="serverId in servers">
+                            <router-link
+                                :key="serverId"
+                                :to="`/dashboard/servers/${serverId}`"
+                                class="body-2 d-block no-underline"
+                            >
+                                <span>{{ serverId }} </span>
+                            </router-link>
+                        </template>
+                    </v-sheet>
+                </v-menu>
+            </fragment>
         </template>
     </data-table>
 </template>

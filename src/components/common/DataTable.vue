@@ -95,13 +95,9 @@
                     'draggable-row': draggable,
                 }"
                 @click="rowClick(item, headers, visibleHeaders)"
-                @mouseover="
-                    () =>
-                        draggable || showActionsOnHover ? onRowHover(rowIndex, 'mouseover') : null
-                "
+                @mouseover="e => (draggable || showActionsOnHover ? onRowHover(e, rowIndex) : null)"
                 @mouseleave="
-                    () =>
-                        draggable || showActionsOnHover ? onRowHover(rowIndex, 'mouseleave') : null
+                    e => (draggable || showActionsOnHover ? onRowHover(e, rowIndex) : null)
                 "
             >
                 <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
@@ -123,9 +119,11 @@
                         tdBorderLeft && 'color border-left-table-border',
                         editableCell && header.editableCol && 'v-data-table__editable-cell',
                         header.value === 'action' && 'pr-3',
+                        header.cellTruncated && 'text-truncate cell-truncate',
                     ]"
-                    style="position:relative"
+                    style="position:relative;"
                     @click="cellClick(item, headers, visibleHeaders)"
+                    @mouseenter="e => (header.cellTruncated ? handleShowTruncatedText(e) : null)"
                 >
                     <v-icon
                         v-show="
@@ -139,15 +137,43 @@
                     >
                         drag_handle
                     </v-icon>
-                    <div :style="cellAlignHandle(header)" style="position:relative">
-                        <span>
-                            <slot :name="header.value" :data="{ item, header, i }">
-                                <!-- no content for the corresponding header, usually this is an error -->
-                                <span v-if="$help.isUndefined(item[header.value])"></span>
-                                <!-- regular cell -->
-                                <span v-else>{{ getValue(item, header) }}</span>
-                            </slot>
-                        </span>
+                    <div
+                        :style="cellAlignHandle(header)"
+                        style="position:relative"
+                        :class="[
+                            header.cellTruncated && 'text-truncate',
+                            displayTruncatedText && 'pointer',
+                        ]"
+                    >
+                        <slot :name="header.value" :data="{ item, header, i }">
+                            <!-- no content for the corresponding header, usually this is an error -->
+                            <span v-if="$help.isUndefined(item[header.value])"></span>
+                            <v-menu
+                                v-else
+                                :key="i"
+                                offset-x
+                                transition="slide-x-transition"
+                                :close-on-content-click="false"
+                                open-on-hover
+                                :nudge-left="truncatedMenuPos.x"
+                                :nudge-top="truncatedMenuPos.y"
+                                content-class="shadow-drop"
+                            >
+                                <template v-slot:activator="{ on }">
+                                    <!-- regular cell -->
+                                    <span v-on="on">{{ getValue(item, header) }}</span>
+                                </template>
+
+                                <v-sheet
+                                    v-if="displayTruncatedText"
+                                    style="border-radius: 10px;"
+                                    class="pa-4"
+                                >
+                                    <span class="body-2"> {{ getValue(item, header) }}</span>
+                                </v-sheet>
+                            </v-menu>
+                        </slot>
+
                         <!-- Actions slot includes expandIndicator slot -->
                         <div
                             v-if="
@@ -174,9 +200,12 @@
                                             :expanded="expandedRows.includes(item.id)"
                                             name="expandIndicator"
                                         >
-                                            <v-icon v-if="!expandedRows.includes(item.id)" size="24"
-                                                >keyboard_arrow_down</v-icon
+                                            <v-icon
+                                                v-if="!expandedRows.includes(item.id)"
+                                                size="24"
                                             >
+                                                keyboard_arrow_down
+                                            </v-icon>
                                             <v-icon v-else size="24">keyboard_arrow_up</v-icon>
                                         </slot>
                                     </v-btn>
@@ -278,6 +307,8 @@ export default {
             showDragEntity: false,
             showActionsEntity: false,
             showEntityAt: null,
+            displayTruncatedText: false,
+            truncatedMenuPos: { x: 0, y: 16.5 },
         }
     },
     computed: {
@@ -325,6 +356,20 @@ export default {
     },
 
     methods: {
+        handleShowTruncatedText(e) {
+            const { offsetWidth: wrapperOffsetwidth, children } = e.target
+            let truncatedEleWidth = 0
+
+            for (let i = 0; i < children.length; ++i) {
+                truncatedEleWidth = children[i].childNodes[0].offsetWidth
+            }
+
+            if (wrapperOffsetwidth < truncatedEleWidth) {
+                this.displayTruncatedText = true
+                let offset = 25 / 2
+                this.truncatedMenuPos.x = truncatedEleWidth - wrapperOffsetwidth + offset
+            } else this.displayTruncatedText = false
+        },
         changeSort(column) {
             // TODO: support multiple column sorting
             if (this.pagination.sortBy[0] === column) {
@@ -356,7 +401,7 @@ export default {
             // data type shouldn't be handled here as it will break the filter result
             // use helper function to handle value before passing the data to table
             let value = item[header.value]
-            return this.$help.isFunction(header.format) ? header.format(value) : value
+            return this.$help.isFunction(header.format) ? header.format(value) : `${value}`
         },
         columnToggle() {
             this.isColumnToggleVisible = !this.isColumnToggleVisible
@@ -371,7 +416,8 @@ export default {
                 marginRight: `${marginRight}px`,
             }
         },
-        onRowHover(index, type) {
+        onRowHover(e, index) {
+            const { type } = e
             let self = this
             switch (type) {
                 case 'mouseover':
@@ -435,5 +481,8 @@ export default {
     right: 0px;
     top: 50%;
     transform: translate(0%, -50%);
+}
+.cell-truncate {
+    max-width: 1px;
 }
 </style>

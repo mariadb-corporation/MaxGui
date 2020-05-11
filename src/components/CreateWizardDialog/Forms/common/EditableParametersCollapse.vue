@@ -58,9 +58,10 @@
  * Public License.
  */
 /*
+This component allows to edit parameters taken from parameters array that must have format similar to
+module parameters
 isServiceOrMonitor simply enable required attribute for user and password input fields 
 which should be true when creating a service or monitor
-The parameters array accepts array that has similar format to module parameters
 */
 export default {
     name: 'editable-parameters-collapse',
@@ -112,9 +113,15 @@ export default {
             let clone = this.$help.cloneDeep(this.changedParametersArr)
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
             if (changed) {
-                targetIndex === -1 && this.changedParametersArr.push(newItem)
+                // if item is not in the changesItems list
+                if (targetIndex === -1) {
+                    this.changesItems.push(newItem)
+                } else {
+                    // if item is already in the array,eg: value of enum_mask param has changed
+                    this.changesItems[targetIndex] = newItem
+                }
             } else {
-                targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
+                targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
             }
         },
         getParameterObj() {

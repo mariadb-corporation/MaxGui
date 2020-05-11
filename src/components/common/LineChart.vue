@@ -107,6 +107,7 @@ export default {
                     bottom: 0,
                 },
             },
+            uniqueTooltipId: this.$help.uniqueId('tooltip_'),
         }
     },
     watch: {
@@ -121,6 +122,8 @@ export default {
         },
     },
     beforeDestroy() {
+        let tooltipEl = document.getElementById(this.uniqueTooltipId)
+        tooltipEl && tooltipEl.remove()
         if (this.$data._chart) this.$data._chart.destroy()
     },
     mounted() {
@@ -129,7 +132,6 @@ export default {
     methods: {
         renderLineChart() {
             let self = this
-            let uniqueTooltipId = self.$help.uniqueId('tooltip_')
             this.renderChart(this.chartData, {
                 showLines: true,
 
@@ -159,12 +161,12 @@ export default {
                     custom: function(tooltipModel) {
                         // Tooltip Element
 
-                        let tooltipEl = document.getElementById(uniqueTooltipId)
+                        let tooltipEl = document.getElementById(self.uniqueTooltipId)
 
                         // Create element on first render
                         if (!tooltipEl) {
                             tooltipEl = document.createElement('div')
-                            tooltipEl.id = uniqueTooltipId
+                            tooltipEl.id = self.uniqueTooltipId
                             tooltipEl.className = ['chartjs-tooltip shadow-drop']
                             tooltipEl.innerHTML = '<table></table>'
                             document.body.appendChild(tooltipEl)

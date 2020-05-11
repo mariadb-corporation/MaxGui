@@ -21,7 +21,6 @@
                                 ref="form"
                                 v-model="isValid"
                                 class="pt-4"
-                                lazy-validation
                                 @keyup.native.enter="isValid && handleSubmit()"
                             >
                                 <v-text-field
@@ -45,7 +44,7 @@
                                     v-model="credential.password"
                                     :append-icon="isPwdVisible ? 'visibility_off' : 'visibility'"
                                     :rules="rules.password"
-                                    :error-messages="!displayOneError ? errorMessage : ' '"
+                                    :error-messages="showEmptyMessage ? ' ' : errorMessage"
                                     :type="isPwdVisible ? 'text' : 'password'"
                                     class="std mt-5"
                                     name="password"
@@ -137,7 +136,7 @@ export default {
                 password: '',
             },
             errorMessage: '',
-            displayOneError: false, // errors receives from api
+            showEmptyMessage: false, // errors receives from api
             rules: {
                 username: [val => !!val || this.$t('errors.usernameRequired')],
                 password: [val => !!val || this.$t('errors.passwordRequired')],
@@ -174,8 +173,10 @@ export default {
         ...mapMutations({ setUser: 'user/setUser' }),
 
         onInput() {
-            this.errorMessage = ''
-            this.displayOneError && (this.displayOneError = false)
+            if (this.showEmptyMessage) {
+                this.showEmptyMessage = false
+                this.errorMessage = ''
+            }
         },
 
         async handleSubmit() {
@@ -203,7 +204,7 @@ export default {
 
                 await self.$router.push(self.$route.query.redirect || '/dashboard/servers')
             } catch (error) {
-                this.displayOneError = true
+                this.showEmptyMessage = true
                 this.errorMessage =
                     error.response.status === 401
                         ? this.$t('errors.wrongCredentials')

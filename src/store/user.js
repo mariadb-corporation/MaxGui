@@ -18,7 +18,7 @@ import router from 'router'
 export default {
     namespaced: true,
     state: {
-        user: JSON.parse(localStorage.getItem('user')),
+        user: {},
         currentNetworkUser: null,
         allNetworkUsers: [],
         allUNIXAccounts: [],

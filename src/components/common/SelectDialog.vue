@@ -23,7 +23,6 @@
                         return-object
                         outlined
                         dense
-                        height="36px"
                         class="std mariadb-select-input"
                         :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                         hide-details

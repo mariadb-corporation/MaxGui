@@ -44,6 +44,7 @@
                     href="https://mariadb.com/product-terms-condition/"
                     >Terms of Use</a
                 >
+                {{ user }}
             </span>
         </v-footer>
     </fragment>

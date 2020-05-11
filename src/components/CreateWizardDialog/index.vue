@@ -20,7 +20,6 @@
                     dense
                     class="std mariadb-select-input error--text__bottom"
                     :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                    height="36px"
                     hide-details
                     :rules="[v => !!v || 'This field is required']"
                     required

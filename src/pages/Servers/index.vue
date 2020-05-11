@@ -79,13 +79,15 @@
                 </template>
             </fragment>
 
-            <template v-else>
+            <fragment v-else>
                 <v-menu
                     :key="i"
+                    offset-x
                     transition="slide-x-transition"
                     :close-on-content-click="false"
                     open-on-hover
-                    offset-x
+                    nudge-right="20"
+                    nudge-top="12.5"
                     content-class="shadow-drop"
                 >
                     <template v-slot:activator="{ on }">
@@ -95,7 +97,7 @@
                         </span>
                     </template>
 
-                    <v-sheet style="border-radius: 4px;" class="px-4 py-2">
+                    <v-sheet style="border-radius: 10px;" class="pa-4">
                         <template v-for="serviceId in servicesIdArr">
                             <router-link
                                 :key="serviceId"
@@ -107,7 +109,7 @@
                         </template>
                     </v-sheet>
                 </v-menu>
-            </template>
+            </fragment>
         </template>
     </rowspan-data-table>
 </template>

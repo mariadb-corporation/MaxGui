@@ -49,38 +49,69 @@ html {
         }
     }
 }
-// --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
+// --------------------------------- Vuetify custom v-menu ----------------------------------------------------------------------
 .v-menu--with-arrow {
     contain: initial;
     overflow: visible;
-    margin-top: 10px;
     &:after {
-        bottom: 100%;
-        left: 30px;
         border: solid transparent;
         content: '';
         position: absolute;
         pointer-events: none;
         border-color: rgba(255, 255, 255, 0);
         border-top-color: $background;
-        border-width: 10px;
+        border-width: 8px;
         border-top-width: 8px;
-        margin-left: -10px;
-        transform: rotate(180deg);
     }
     &::before {
         content: '';
         background: rgba(255, 255, 255, 0);
         position: absolute;
-        transform: rotate(45deg);
         width: 18px;
         height: 18px;
-        top: -4px;
-        left: 21px;
         z-index: -1;
         box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.4);
     }
+    &--top-left {
+        margin-top: 10px;
+        &:after {
+            transform: rotate(180deg);
+            bottom: 100%;
+            left: 21px;
+        }
+        &::before {
+            top: -4px;
+            left: 20px;
+            transform: rotate(45deg);
+        }
+    }
+    &--top-right {
+        margin-top: 10px;
+        &:after {
+            transform: rotate(180deg);
+            bottom: 100%;
+            right: 21px;
+        }
+        &::before {
+            top: -4px;
+            right: 20px;
+            transform: rotate(45deg);
+        }
+    }
+    &--center-left {
+        &:after {
+            transform: rotate(180deg);
+            bottom: 100%;
+            right: 21px;
+        }
+        &::before {
+            top: -4px;
+            right: 20px;
+            transform: rotate(45deg);
+        }
+    }
 }
+
 // --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
 .tab-navigation-wrapper {
     .v-slide-group__wrapper {
@@ -106,12 +137,12 @@ html {
 
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
 // reset hover effect
-.theme--light.v-data-table tbody tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+.theme--light.v-data-table
+    tbody
+    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
     background: unset;
 }
 .data-table-full {
-    table-layout: fixed;
-
     a:hover {
         text-decoration: underline;
     }
@@ -199,7 +230,7 @@ html {
                 }
             }
             .v-data-table__editable-cell {
-                padding: 0px 10px;
+                padding: 2px 10px;
             }
         }
     }
@@ -243,7 +274,10 @@ input:-webkit-autofill:active {
     }
 }
 
-.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
+.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+    > .v-input__control
+    > .v-input__slot
+    fieldset {
     color: $text-subtle !important;
 }
 .search-restyle.v-text-field--rounded {
@@ -304,9 +338,15 @@ input:-webkit-autofill:active {
 
 // vuetify select restyle
 .mariadb-select-input {
-    .v-select__selection--comma {
-        font-size: 0.875rem !important;
-        color: $navigation !important;
+    .v-input__control {
+        min-height: 36px;
+        .v-select__selection--comma {
+            font-size: 0.875rem !important;
+            color: $navigation !important;
+        }
+        input {
+            max-height: 28px !important;
+        }
     }
 }
 

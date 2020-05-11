@@ -92,8 +92,11 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-/* isServiceOrMonitor simply enable required attribute for user and password input fields 
-which should be true when creating a service or monitor */
+/* 
+This component allows to read parameters and edit parameters
+isServiceOrMonitor simply enable required attribute for user and password input fields 
+which should be true when creating a service or monitor 
+*/
 export default {
     name: 'details-parameters-collapse',
     props: {
@@ -113,7 +116,13 @@ export default {
             showParameters: true,
             variableValueTableHeaders: [
                 { text: 'Variable', value: 'id', width: '65%' },
-                { text: 'Value', value: 'value', width: '35%' },
+                {
+                    text: 'Value',
+                    value: 'value',
+                    width: '35%',
+                    editableCol: true,
+                    cellTruncated: true,
+                },
             ],
             loadingEditableParams: false,
             editableCell: false,
@@ -132,7 +141,7 @@ export default {
             for (let o = 0; o < tableRow.length; ++o) {
                 const resourceParam = tableRow[o]
                 let readMode = !this.editableCell
-                this.assignTypeAndUnit(arr, resourceParam, editableParams, readMode)
+                this.assignParamsTypeInfo(arr, resourceParam, editableParams, readMode)
             }
 
             return arr
@@ -149,16 +158,19 @@ export default {
     },
 
     methods: {
-        assignTypeAndUnit(arr, resourceParam, editableParams, readMode) {
-            const { id: resourceParamName, value: resourceParamValue } = resourceParam
+        assignParamsTypeInfo(arr, resourceParam, editableParams, readMode) {
+            const { id: resourceParamName } = resourceParam
             const moduleParam = editableParams.find(param => param.name === resourceParamName)
             const newParam = this.$help.cloneDeep(resourceParam)
-            if (moduleParam) {
-                const { type, unit } = moduleParam
 
+            if (moduleParam) {
+                const { type, unit, enum_values } = moduleParam
+                // assign
                 newParam['type'] = type
                 if (newParam.type === 'duration' || newParam.type === 'size') {
                     newParam.value = `${newParam.value}${unit}`
+                } else if (newParam.type === 'enum' || newParam.type === 'enum_mask') {
+                    newParam['enum_values'] = enum_values
                 }
                 arr.push(newParam)
             } else {
@@ -166,11 +178,19 @@ export default {
                 readMode && arr.push(newParam)
             }
         },
+
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changesItems)
+
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
             if (changed) {
-                targetIndex === -1 && this.changesItems.push(newItem)
+                // if item is not in the changesItems list
+                if (targetIndex === -1) {
+                    this.changesItems.push(newItem)
+                } else {
+                    // if item is already in the array,eg: value of enum_mask param has changed
+                    this.changesItems[targetIndex] = newItem
+                }
             } else {
                 targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
             }
@@ -189,7 +209,6 @@ export default {
 
         async acceptEdit() {
             let self = this
-
             await self.updateResourceParameters({
                 id: self.resourceId,
                 parameters: self.$help.arrOfObjToObj(self.changesItems),

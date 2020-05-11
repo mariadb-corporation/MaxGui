@@ -17,7 +17,7 @@
             open-on-hover
             offset-y
             nudge-left="20"
-            content-class="v-menu--with-arrow shadow-drop"
+            content-class="v-menu--with-arrow v-menu--with-arrow--top-left shadow-drop"
         >
             <template v-slot:activator="{ on }">
                 <v-icon
@@ -31,7 +31,7 @@
                 </v-icon>
             </template>
 
-            <v-sheet style="border-radius: 10px;" class="px-6 py-4" max-width="320px">
+            <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
                 <span class="d-block mb-1 body-2 font-weight-bold"> About MaxScale</span>
                 <div
                     v-for="(value, name) in $help.pick(maxScaleOverviewInfo, [

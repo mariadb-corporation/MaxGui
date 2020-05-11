@@ -8,7 +8,6 @@
                 :name="objectItem.id"
                 class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="36px"
                 :items="[true, false]"
                 outlined
                 dense
@@ -16,7 +15,31 @@
             />
         </fragment>
 
-        <!-- TODO: enum_mask type to whether allow multiple values-->
+        <fragment v-else-if="objectItem.type === 'enum_mask'">
+            <!-- No need rules for v-select as it always has predefined value-->
+
+            <v-select
+                :id="objectItem.id"
+                v-model="objectItem.value"
+                :name="objectItem.id"
+                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                :items="objectItem.enum_values"
+                outlined
+                dense
+                multiple
+                @change="handleChange"
+            >
+                <template v-slot:selection="{ item, index }">
+                    <span v-if="index === 0" class="v-select__selection v-select__selection--comma">
+                        {{ item }}
+                    </span>
+                    <span v-if="index === 1" class="ml-1 color caption text-field-text ">
+                        (+{{ objectItem.value.length - 1 }} others)
+                    </span>
+                </template>
+            </v-select>
+        </fragment>
         <fragment v-else-if="objectItem.type === 'enum'">
             <!-- No need rules for v-select as it always has predefined value-->
             <v-select
@@ -25,13 +48,13 @@
                 :name="objectItem.id"
                 class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
                 :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                height="36px"
                 :items="objectItem.enum_values"
                 outlined
                 dense
                 @change="handleChange"
             />
         </fragment>
+
         <fragment v-else-if="objectItem.type === 'count'">
             <v-text-field
                 :id="objectItem.id"
@@ -131,28 +154,42 @@ export default {
     },
 
     async created() {
-        this.objectItem = this.$help.cloneDeep(this.item)
+        this.objectItem = this.convertEnumMaskStringtoArray()
     },
     methods: {
-        handleChange(val) {
+        /*
+        Workaround enum_mask type, when multiple props is enabled,
+        v-select component accepts array as value type for v-model
+        But when sending the values back to parent component, it will be converted
+        to a string.
+        */
+        convertEnumMaskStringtoArray() {
+            let cloned = this.$help.cloneDeep(this.item)
+            if (this.item.type === 'enum_mask') {
+                cloned.value = cloned.value.split(',') // convert string to array
+            }
+            return cloned
+        },
+        handleChange() {
             let self = this
-            let changed = !this.$help.isEqual(self.objectItem, self.item)
-            let obj = self.objectItem
+            let item = self.convertEnumMaskStringtoArray()
+            let newObj = self.objectItem
+            let changed = !self.$help.isEqual(newObj, item)
+
             /* 
                 Handling edge case, either socket or address needs to be defined, 
                 that leads to the issue when empty port or empty socket will be treated as string
                 This converts it to null
 
             */
-            if (
-                (self.objectItem.id === 'port' || self.objectItem.id === 'socket') &&
-                self.objectItem.value === ''
-            ) {
-                obj.value = null
+            if ((newObj.id === 'port' || newObj.id === 'socket') && newObj.value === '') {
+                newObj.value = null
             }
-
-            // compare v-model objectItem with props item
-            this.$emit('on-input-change', self.objectItem, changed)
+            let cloned = self.$help.cloneDeep(newObj)
+            if (this.item.type === 'enum_mask') {
+                cloned.value = cloned.value.toString()
+            }
+            this.$emit('on-input-change', cloned, changed)
         },
         validateNaturalNumber(val) {
             let value = val

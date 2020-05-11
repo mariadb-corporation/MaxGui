@@ -161,65 +161,71 @@ export default {
 
         async updateSessionsConnectionsChart() {
             let self = this
-            //  LOOP polling
-            await Promise.all([
-                self.fetchAllServers(),
-                self.fetchAllSessions(),
-                self.fetchAllServices(),
-            ])
-
             const { sessionsChart, connectionsChart } = self.$refs
-            const time = Date.now()
-            //-------------------- update connections chart
+            if (sessionsChart && connectionsChart) {
+                //  LOOP polling
+                await Promise.all([
+                    self.fetchAllServers(),
+                    self.fetchAllSessions(),
+                    self.fetchAllServices(),
+                ])
 
-            let gap = self.allServers.length - connectionsChart.chartData.datasets.length
+                const time = Date.now()
+                //-------------------- update connections chart
 
-            self.allServers.forEach((server, i) => {
-                if (gap > 0 && i > connectionsChart.chartData.datasets.length - 1) {
-                    // push new datasets
-                    let lineColors = self.$help.dynamicColors(i)
-                    let indexOfOpacity = lineColors.lastIndexOf(')') - 1
-                    let dataset = {
-                        label: `Server ID - ${server.id}`,
-                        id: `Server ID - ${server.id}`,
-                        type: 'line',
-                        // background of the line
-                        backgroundColor: self.$help.strReplaceAt(lineColors, indexOfOpacity, '0.2'),
-                        borderColor: lineColors, //theme.palette.primary.main, // line color
-                        borderWidth: 1,
-                        lineTension: 0,
-                        data: [
-                            {
-                                x: time,
-                                y: server.attributes.statistics.connections,
-                            },
-                        ],
+                let gap = self.allServers.length - connectionsChart.chartData.datasets.length
+
+                self.allServers.forEach((server, i) => {
+                    if (gap > 0 && i > connectionsChart.chartData.datasets.length - 1) {
+                        // push new datasets
+                        let lineColors = self.$help.dynamicColors(i)
+                        let indexOfOpacity = lineColors.lastIndexOf(')') - 1
+                        let dataset = {
+                            label: `Server ID - ${server.id}`,
+                            id: `Server ID - ${server.id}`,
+                            type: 'line',
+                            // background of the line
+                            backgroundColor: self.$help.strReplaceAt(
+                                lineColors,
+                                indexOfOpacity,
+                                '0.2'
+                            ),
+                            borderColor: lineColors, //theme.palette.primary.main, // line color
+                            borderWidth: 1,
+                            lineTension: 0,
+                            data: [
+                                {
+                                    x: time,
+                                    y: server.attributes.statistics.connections,
+                                },
+                            ],
+                        }
+
+                        connectionsChart.chartData.datasets.push(dataset)
+                    } else {
+                        connectionsChart.chartData.datasets[i].data.push({
+                            x: time,
+                            y: server.attributes.statistics.connections,
+                        })
                     }
-
-                    connectionsChart.chartData.datasets.push(dataset)
-                } else {
-                    connectionsChart.chartData.datasets[i].data.push({
-                        x: time,
-                        y: server.attributes.statistics.connections,
-                    })
-                }
-            })
-
-            connectionsChart.$data._chart.update({
-                preservation: true,
-            })
-
-            // ------------------------- update sessions chart
-
-            sessionsChart.chartData.datasets.forEach(function(dataset) {
-                dataset.data.push({
-                    x: time,
-                    y: self.allSessions.length,
                 })
-            })
-            sessionsChart.$data._chart.update({
-                preservation: true,
-            })
+
+                connectionsChart.$data._chart.update({
+                    preservation: true,
+                })
+
+                // ------------------------- update sessions chart
+
+                sessionsChart.chartData.datasets.forEach(function(dataset) {
+                    dataset.data.push({
+                        x: time,
+                        y: self.allSessions.length,
+                    })
+                })
+                sessionsChart.$data._chart.update({
+                    preservation: true,
+                })
+            }
         },
     },
 }
