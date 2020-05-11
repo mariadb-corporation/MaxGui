@@ -4,7 +4,7 @@
             ref="moduleInputs"
             moduleName="module"
             :modules="resourceModules"
-            :isServiceOrMonitor="false"
+            :requiredParams="['filebase']"
         />
     </div>
 </template>

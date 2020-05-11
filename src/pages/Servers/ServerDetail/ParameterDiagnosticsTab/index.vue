@@ -10,7 +10,6 @@
                 :updateResourceParameters="updateServerParameters"
                 :onEditSucceeded="onEditSucceeded"
                 :loading="loading"
-                :isServiceOrMonitor="false"
             />
         </v-col>
         <v-col class="py-0 my-0" cols="6">

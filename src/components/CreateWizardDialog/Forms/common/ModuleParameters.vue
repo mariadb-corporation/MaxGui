@@ -24,7 +24,7 @@
             :key="selectedModule.id"
             ref="parametersTable"
             :parameters="getModuleParameters"
-            :isServiceOrMonitor="isServiceOrMonitor"
+            :requiredParams="requiredParams"
         />
     </fragment>
 </template>
@@ -46,8 +46,7 @@
 This component takes modules props to render v-select component for selecting a module.
 When a module is selelcted, a parameters input table will be rendered.
 moduleName props is defined to render correct label for select input 
-isServiceOrMonitor simply enable required attribute for user and password input fields 
-which should be true when creating a service or monitor
+requiredParams simply enable required attribute in parameter-input
 */
 import EditableParametersCollapse from './EditableParametersCollapse'
 
@@ -59,7 +58,7 @@ export default {
     props: {
         moduleName: { type: String, required: true },
         modules: { type: Array, required: true },
-        isServiceOrMonitor: { type: Boolean, default: true },
+        requiredParams: { type: Array, default: () => [] },
     },
     data: function() {
         return {

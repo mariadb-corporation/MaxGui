@@ -7,6 +7,7 @@
                 :resourceId="currentService.id"
                 :parameters="currentService.attributes.parameters"
                 :moduleParameters="moduleParameters"
+                :requiredParams="['user', 'password']"
                 :updateResourceParameters="updateServiceParameters"
                 :onEditSucceeded="onEditSucceeded"
                 :loading="loadingModuleParams ? true : loading"

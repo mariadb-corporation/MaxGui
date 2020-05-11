@@ -1,11 +1,6 @@
 <template>
     <div class="mb-2">
-        <module-parameters
-            ref="moduleInputs"
-            moduleName="protocol"
-            :modules="resourceModules"
-            :isServiceOrMonitor="false"
-        />
+        <module-parameters ref="moduleInputs" moduleName="protocol" :modules="resourceModules" />
         <!-- A listener may be associated with a single service, so multiple select options is false-->
         <resource-relationships
             ref="servicesRelationship"

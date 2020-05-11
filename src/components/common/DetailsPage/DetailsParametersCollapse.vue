@@ -21,13 +21,8 @@
                         keepPrimitiveValue
                     >
                         <template v-if="editableCell" v-slot:value="props">
-                            <fragment
-                                v-if="
-                                    isServiceOrMonitor &&
-                                        (props.data.item.id === 'user' ||
-                                            props.data.item.id === 'password')
-                                "
-                            >
+                            {{ requiredParams.includes(props.data.item.id) }}
+                            <fragment v-if="requiredParams.includes(props.data.item.id)">
                                 <parameter-input
                                     :item="props.data.item"
                                     required
@@ -94,8 +89,7 @@
  */
 /* 
 This component allows to read parameters and edit parameters
-isServiceOrMonitor simply enable required attribute for user and password input fields 
-which should be true when creating a service or monitor 
+requiredParams simply enable required attribute in parameter-input
 */
 export default {
     name: 'details-parameters-collapse',
@@ -107,7 +101,7 @@ export default {
         updateResourceParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
-        isServiceOrMonitor: { type: Boolean, default: true },
+        requiredParams: { type: Array, default: () => [] },
     },
     data() {
         return {

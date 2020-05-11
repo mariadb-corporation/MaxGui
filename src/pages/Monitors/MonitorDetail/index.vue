@@ -10,6 +10,7 @@
                     :resourceId="currentMonitor.id"
                     :parameters="currentMonitor.attributes.parameters"
                     :moduleParameters="moduleParameters"
+                    :requiredParams="['user', 'password']"
                     :updateResourceParameters="updateMonitorParameters"
                     :onEditSucceeded="fetchMonitor"
                     :loading="loadingModuleParams ? true : overlay === OVERLAY_TRANSPARENT_LOADING"

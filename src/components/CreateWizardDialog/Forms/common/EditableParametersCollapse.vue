@@ -15,12 +15,7 @@
                 keepPrimitiveValue
             >
                 <template v-slot:value="props">
-                    <fragment
-                        v-if="
-                            isServiceOrMonitor &&
-                                (props.data.item.id === 'user' || props.data.item.id === 'password')
-                        "
-                    >
+                    <fragment v-if="requiredParams.includes(props.data.item.id)">
                         <parameter-input
                             :item="props.data.item"
                             required
@@ -60,14 +55,13 @@
 /*
 This component allows to edit parameters taken from parameters array that must have format similar to
 module parameters
-isServiceOrMonitor simply enable required attribute for user and password input fields 
-which should be true when creating a service or monitor
+requiredParams simply enable required attribute in parameter-input
 */
 export default {
     name: 'editable-parameters-collapse',
     props: {
         parameters: { type: Array, required: true },
-        isServiceOrMonitor: { type: Boolean, default: true },
+        requiredParams: { type: Array, default: () => [] },
     },
     data: function() {
         return {
