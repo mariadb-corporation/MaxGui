@@ -73,7 +73,12 @@
                     />
                 </div>
                 <div v-else-if="selectedResource === 'Server'" class="mb-0">
-                    <server-form-input ref="serverForm" :parentForm="$refs.baseDialog.$refs.form" />
+                    <server-form-input
+                        ref="serverForm"
+                        :allServices="allServices"
+                        :allMonitors="allMonitors"
+                        :parentForm="$refs.baseDialog.$refs.form"
+                    />
                 </div>
             </fragment>
         </template>
@@ -150,11 +155,16 @@ export default {
             allModules: 'maxscale/allModules',
             allServices: 'service/allServices',
             allServicesInfo: 'service/allServicesInfo',
+
             allServers: 'server/allServers',
             allServersInfo: 'server/allServersInfo',
+
             allMonitorsInfo: 'monitor/allMonitorsInfo',
+            allMonitors: 'monitor/allMonitors',
+
             allFiltersInfo: 'filter/allFiltersInfo',
             allFilters: 'filter/allFilters',
+
             allListenersInfo: 'listener/allListenersInfo',
         }),
 
@@ -210,6 +220,8 @@ export default {
                 case 'Server':
                     await this.fetchAllServers()
                     this.validateInfo = this.allServersInfo
+                    await this.fetchAllServices()
+                    await this.fetchAllMonitors()
                     break
                 case 'Monitor':
                     this.resourceModules = this.getModuleType('Monitor')

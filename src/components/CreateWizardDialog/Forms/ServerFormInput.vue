@@ -6,6 +6,19 @@
             usePortOrSocket
             :parentForm="parentForm"
         />
+        <resource-relationships
+            ref="servicesRelationship"
+            relationshipsType="services"
+            :items="servicesList"
+        />
+        <!-- A server can be only monitored with a monitor, so multiple select options is false-->
+        <resource-relationships
+            ref="monitorsRelationship"
+            relationshipsType="monitors"
+            :items="monitorsList"
+            :multiple="false"
+            required
+        />
     </div>
 </template>
 
@@ -23,15 +36,20 @@
  * Public License.
  */
 import EditableParametersCollapse from './common/EditableParametersCollapse'
+import ResourceRelationships from './common/ResourceRelationships'
 
 export default {
     name: 'server-form-input',
     components: {
         EditableParametersCollapse,
+        ResourceRelationships,
     },
     props: {
         parentForm: { type: Object, required: true },
+        allServices: { type: Array, required: true },
+        allMonitors: { type: Array, required: true },
     },
+
     data() {
         return {
             // same format with module parameters, all default_value are returned as string
@@ -79,11 +97,41 @@ export default {
             ],
         }
     },
+
+    computed: {
+        servicesList: function() {
+            let cloneArr = this.$help.cloneDeep(this.allServices)
+            for (let i = 0; i < cloneArr.length; ++i) {
+                let obj = cloneArr[i]
+                delete obj.attributes
+                delete obj.links
+                delete obj.relationships
+                delete obj.idNum
+            }
+            return cloneArr
+        },
+
+        monitorsList: function() {
+            let cloneArr = this.$help.cloneDeep(this.allMonitors)
+            for (let i = 0; i < cloneArr.length; ++i) {
+                let obj = cloneArr[i]
+                delete obj.attributes
+                delete obj.links
+                delete obj.relationships
+                delete obj.idNum
+            }
+            return cloneArr
+        },
+    },
+
     methods: {
         getValues() {
             return {
                 parameters: this.$refs.parametersTable.getParameterObj(),
-                relationships: {},
+                relationships: {
+                    services: { data: this.$refs.servicesRelationship.getSelectedItems() },
+                    monitors: { data: this.$refs.monitorsRelationship.getSelectedItems() },
+                },
             }
         },
     },
