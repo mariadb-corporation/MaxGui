@@ -25,6 +25,8 @@
             ref="parametersTable"
             :parameters="getModuleParameters"
             :requiredParams="requiredParams"
+            :usePortOrSocket="usePortOrSocket"
+            :parentForm="parentForm"
         />
     </fragment>
 </template>
@@ -46,7 +48,11 @@
 This component takes modules props to render v-select component for selecting a module.
 When a module is selelcted, a parameters input table will be rendered.
 moduleName props is defined to render correct label for select input 
-requiredParams simply enable required attribute in parameter-input
+PROPS:
+_requiredParams: accepts array of string , it simply enables required attribute in parameter-input dynamically
+_usePortOrSocket: accepts boolean , if true, get portValue, addressValue, and socketValue to pass to parameter-input for
+handling special input field when editting server or listener. If editing listener, 
+_isListener:accepts boolean , if true, address won't be required
 */
 import EditableParametersCollapse from './EditableParametersCollapse'
 
@@ -58,7 +64,11 @@ export default {
     props: {
         moduleName: { type: String, required: true },
         modules: { type: Array, required: true },
+        // specical props to manipulate required or dependent input attribute
+        usePortOrSocket: { type: Boolean, default: false },
         requiredParams: { type: Array, default: () => [] },
+        parentForm: { type: Object },
+        isListener: { type: Boolean, default: false },
     },
     data: function() {
         return {

@@ -21,8 +21,19 @@
                         keepPrimitiveValue
                     >
                         <template v-if="editableCell" v-slot:value="props">
-                            {{ requiredParams.includes(props.data.item.id) }}
-                            <fragment v-if="requiredParams.includes(props.data.item.id)">
+                            <!-- rendered if usePortOrSocket -->
+                            <fragment v-if="handleShowSpecialInputs(props.data.item.id)">
+                                <parameter-input
+                                    :parentForm="$refs.form"
+                                    :item="props.data.item"
+                                    :portValue="portValue"
+                                    :socketValue="socketValue"
+                                    :addressValue="addressValue"
+                                    @on-input-change="handleItemChange"
+                                />
+                            </fragment>
+
+                            <fragment v-else-if="requiredParams.includes(props.data.item.id)">
                                 <parameter-input
                                     :item="props.data.item"
                                     required
@@ -37,8 +48,8 @@
                             </fragment>
                         </template>
                         <template v-if="editableCell" v-slot:id="props">
-                            <b>{{ props.data.item.type }}</b
-                            >: {{ props.data.item.id }}
+                            <b>{{ props.data.item.type }}</b>
+                            : {{ props.data.item.id }}
                         </template>
                     </data-table>
                 </v-form>
@@ -56,14 +67,18 @@
             <template v-slot:body>
                 <span class="d-block mb-4">
                     {{
-                        $tc('changeTheFollowingParameter', changesItems.length > 1 ? 2 : 1, {
-                            quantity: changesItems.length,
-                        })
+                        $tc(
+                            'changeTheFollowingParameter',
+                            changedParametersArr.length > 1 ? 2 : 1,
+                            {
+                                quantity: changedParametersArr.length,
+                            }
+                        )
                     }}
                 </span>
 
                 <p
-                    v-for="item in changesItems"
+                    v-for="item in changedParametersArr"
                     :key="item.id"
                     class="d-block mb-1 font-weight-bold"
                 >
@@ -87,10 +102,15 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-/* 
-This component allows to read parameters and edit parameters
-requiredParams simply enable required attribute in parameter-input
-*/
+
+/*
+This component allows to read parameters and edit parameters. It means to be used for details page
+
+PROPS:
+_requiredParams: accepts array of string , it simply enables required attribute in parameter-input dynamically
+_usePortOrSocket: accepts boolean , if true, get portValue, addressValue, and socketValue to pass to parameter-input for
+handling special input field when editting server or listener. If editing listener, addressValue will be null
+ */
 export default {
     name: 'details-parameters-collapse',
     props: {
@@ -101,6 +121,8 @@ export default {
         updateResourceParameters: { type: Function, required: true },
         onEditSucceeded: { type: Function, required: true },
         loading: { type: Boolean, required: true },
+        // specical props to manipulate required or dependent input attribute
+        usePortOrSocket: { type: Boolean, default: false },
         requiredParams: { type: Array, default: () => [] },
     },
     data() {
@@ -109,19 +131,23 @@ export default {
             isValid: false,
             showParameters: true,
             variableValueTableHeaders: [
-                { text: 'Variable', value: 'id', width: '65%' },
+                { text: 'Variable', value: 'id', width: '55%' },
                 {
                     text: 'Value',
                     value: 'value',
-                    width: '35%',
+                    width: '45%',
                     editableCol: true,
                     cellTruncated: true,
                 },
             ],
             loadingEditableParams: false,
             editableCell: false,
-            changesItems: [],
+            changedParametersArr: [],
             showConfirmDialog: false,
+
+            addressValue: null,
+            portValue: null,
+            socketValue: null,
         }
     },
     computed: {
@@ -141,7 +167,7 @@ export default {
             return arr
         },
         shouldDisableSaveBtn: function() {
-            if (this.changesItems.length > 0 && this.isValid) return false
+            if (this.changedParametersArr.length > 0 && this.isValid) return false
             else return true
         },
     },
@@ -152,9 +178,23 @@ export default {
     },
 
     methods: {
+        /**
+         * @param {String} id id of parameter
+         * @return {Boolean} true if usePortOrSocket is true and id matches requirements
+         */
+        handleShowSpecialInputs(id) {
+            return this.usePortOrSocket && (id === 'port' || id === 'socket' || id === 'address')
+        },
+
+        /**
+         * @param {Array} arr Array to be pushed to.
+         * @param {Object} resourceParam table object {id:'', value:''}
+         * @param {Array} editableParams Module/editable parameters object {id:'', value:'', type:'', unit:'',...}
+         * @param {Boolean} readMode Detect when to push uneditable parameters
+         */
         assignParamsTypeInfo(arr, resourceParam, editableParams, readMode) {
-            const { id: resourceParamName } = resourceParam
-            const moduleParam = editableParams.find(param => param.name === resourceParamName)
+            const { id: resourceParamId, value: resourceParamValue } = resourceParam
+            const moduleParam = editableParams.find(param => param.name === resourceParamId)
             const newParam = this.$help.cloneDeep(resourceParam)
 
             if (moduleParam) {
@@ -171,22 +211,53 @@ export default {
                 // if readMode is true, push uneditable params as well
                 readMode && arr.push(newParam)
             }
+
+            this.assignPortSocketDependencyValues(resourceParamId, resourceParamValue)
         },
 
+        /**
+         * @param {Object} newItem Object item received from parameter-input {id:'', value:"", type:""}
+         * @param {Boolean} changed Detect whether the input has been modified
+         * @return push or re-assign or splice newItem to changedParametersArr which be rendered in showConfirmDialog
+         * Also assigining value to component's data: portValue, socketValue, addressValue for
+         * validation in parameter-input
+         */
         handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changesItems)
+            let clone = this.$help.cloneDeep(this.changedParametersArr)
 
             let targetIndex = clone.findIndex(o => o.id == newItem.id)
             if (changed) {
-                // if item is not in the changesItems list
+                // if item is not in the changedParametersArr list
                 if (targetIndex === -1) {
-                    this.changesItems.push(newItem)
+                    this.changedParametersArr.push(newItem)
                 } else {
                     // if item is already in the array,eg: value of enum_mask param has changed
-                    this.changesItems[targetIndex] = newItem
+                    this.changedParametersArr[targetIndex] = newItem
                 }
             } else {
-                targetIndex > -1 && this.changesItems.splice(targetIndex, 1)
+                targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
+            }
+            this.assignPortSocketDependencyValues(newItem.id, newItem.value)
+        },
+
+        /**
+         * @param {String} resourceParamId Name of the parameter
+         * @param {String} resourceParamValue Value of the parameter
+         * @return assigining value to component's data: portValue, socketValue, addressValue
+         */
+        assignPortSocketDependencyValues(resourceParamId, resourceParamValue) {
+            if (this.usePortOrSocket) {
+                switch (resourceParamId) {
+                    case 'port':
+                        this.portValue = resourceParamValue
+                        break
+                    case 'socket':
+                        this.socketValue = resourceParamValue
+                        break
+                    case 'address':
+                        this.addressValue = resourceParamValue
+                        break
+                }
             }
         },
 
@@ -198,14 +269,14 @@ export default {
         cancelEdit() {
             this.editableCell = false
             this.closeConfirmDialog()
-            this.changesItems = []
+            this.changedParametersArr = []
         },
 
         async acceptEdit() {
             let self = this
             await self.updateResourceParameters({
                 id: self.resourceId,
-                parameters: self.$help.arrOfObjToObj(self.changesItems),
+                parameters: self.$help.arrOfObjToObj(self.changedParametersArr),
                 callback: self.onEditSucceeded,
             })
             self.cancelEdit()

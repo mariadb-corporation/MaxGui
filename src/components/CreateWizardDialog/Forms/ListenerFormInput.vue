@@ -1,6 +1,13 @@
 <template>
     <div class="mb-2">
-        <module-parameters ref="moduleInputs" moduleName="protocol" :modules="resourceModules" />
+        <module-parameters
+            ref="moduleInputs"
+            :parentForm="parentForm"
+            :isListener="true"
+            moduleName="protocol"
+            :modules="resourceModules"
+            usePortOrSocket
+        />
         <!-- A listener may be associated with a single service, so multiple select options is false-->
         <resource-relationships
             ref="servicesRelationship"
@@ -37,12 +44,14 @@ export default {
     props: {
         resourceModules: { type: Array, required: true },
         allServices: { type: Array, required: true },
+        parentForm: { type: Object, required: true },
     },
     data() {
         return {
             parameters: [],
         }
     },
+
     computed: {
         //  several listeners may be associated with the same service, so list all current services
         serviceList: function() {

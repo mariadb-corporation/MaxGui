@@ -1,6 +1,7 @@
 <template>
     <!-- TODO: animation for dynamicWidth feature -->
     <base-dialog
+        ref="baseDialog"
         v-model="computeShowDialog"
         :onCancel="closeModal"
         :onClose="closeModal"
@@ -66,6 +67,7 @@
                 <div v-else-if="selectedResource === 'Listener'" class="mb-0">
                     <listener-form-input
                         ref="listenerForm"
+                        :parentForm="$refs.baseDialog.$refs.form"
                         :resourceModules="resourceModules"
                         :allServices="allServices"
                     />
@@ -337,7 +339,7 @@ export default {
                             id: this.resourceId,
                             parameters: parameters,
                             relationships: relationships,
-                            callback: this.fetchAllFilters,
+                            callback: this.fetchAllListeners,
                         }
                         this.createListener(payload)
                     }

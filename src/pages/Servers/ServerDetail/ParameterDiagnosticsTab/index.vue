@@ -7,6 +7,7 @@
                 :resourceId="currentServer.id"
                 :parameters="currentServer.attributes.parameters"
                 :moduleParameters="editableParams"
+                usePortOrSocket
                 :updateResourceParameters="updateServerParameters"
                 :onEditSucceeded="onEditSucceeded"
                 :loading="loading"

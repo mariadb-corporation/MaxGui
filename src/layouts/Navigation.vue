@@ -1,46 +1,42 @@
 <template>
-    <div>
-        <v-navigation-drawer
-            :mini-variant.sync="isMini"
-            color="#424F62"
-            class="main-nav"
-            width="200"
-            mini-variant-width="50"
-            fixed
-            left
-            clipped
-            app
-            permanent
-            @mouseover.native="isMini = false"
-            @mouseout.native="isMini = true"
-        >
-            <v-list>
-                <template v-for="item in items">
-                    <!-- includes(item.name) for partial active  -->
-                    <v-list-item
-                        :key="item.name"
-                        :class="{ navitem: true, active: currentPath.includes(item.name) }"
-                        @click="navigate(item)"
-                    >
-                        <v-list-item-icon class="mx-0">
-                            <v-icon :size="item.meta.size" color="white">{{
-                                item.meta.icon
-                            }}</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                            <v-list-item-title class="text-capitalize">
-                                {{ $tc(`${item.name}`, 1) }}
-                            </v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-divider :key="`divider-${item.name}`"></v-divider>
-                </template>
-            </v-list>
-            <div class="version caption text-center font-weight-bold white--text">
-                {{ version }}
-            </div>
-        </v-navigation-drawer>
-    </div>
+    <v-navigation-drawer
+        :mini-variant.sync="isMini"
+        color="#424F62"
+        class="main-nav"
+        width="200"
+        mini-variant-width="50"
+        fixed
+        left
+        clipped
+        app
+        permanent
+        @mouseover.native="isMini = false"
+        @mouseout.native="isMini = true"
+    >
+        <v-list>
+            <template v-for="item in items">
+                <!-- includes(item.name) for partial active  -->
+                <v-list-item
+                    :key="item.name"
+                    :class="{ navitem: true, active: currentPath.includes(item.name) }"
+                    @click="navigate(item)"
+                >
+                    <v-list-item-icon class="mx-0">
+                        <v-icon :size="item.meta.size" color="white">{{ item.meta.icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title class="text-capitalize">
+                            {{ $tc(`${item.name}`, 1) }}
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-divider :key="`divider-${item.name}`"></v-divider>
+            </template>
+        </v-list>
+        <div class="version caption text-center font-weight-bold white--text">
+            {{ version }}
+        </div>
+    </v-navigation-drawer>
 </template>
 
 <script>
