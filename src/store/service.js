@@ -97,10 +97,10 @@ export default {
          * @param {Object} payload payload object
          * @param {String} payload.id Name of the service
          * @param {String} payload.router The router module to use
-         * @param {Object} payload.parameters Parameters for the server
+         * @param {Object} payload.parameters Parameters for the service
          * @param {Object} payload.relationships The relationships of the service to other resources
-         * @param {Object} payload.relationships.servers Type of relationships
-         * @param {Object} payload.relationships.filters Type of relationships
+         * @param {Object} payload.relationships.servers servers object
+         * @param {Object} payload.relationships.filters filters object
          * @param {Function} payload.callback callback function after successfully updated
          */
         async createService({ commit }, payload) {

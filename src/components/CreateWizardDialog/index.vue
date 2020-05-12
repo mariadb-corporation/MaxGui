@@ -72,6 +72,9 @@
                         :allServices="allServices"
                     />
                 </div>
+                <div v-else-if="selectedResource === 'Server'" class="mb-0">
+                    <server-form-input ref="serverForm" :parentForm="$refs.baseDialog.$refs.form" />
+                </div>
             </fragment>
         </template>
     </base-dialog>
@@ -95,6 +98,7 @@ import ServiceFormInput from './Forms/ServiceFormInput'
 import MonitorFormInput from './Forms/MonitorFormInput'
 import FilterFormInput from './Forms/FilterFormInput'
 import ListenerFormInput from './Forms/ListenerFormInput'
+import ServerFormInput from './Forms/ServerFormInput'
 
 export default {
     name: 'create-wizard-dialog',
@@ -103,6 +107,7 @@ export default {
         MonitorFormInput,
         FilterFormInput,
         ListenerFormInput,
+        ServerFormInput,
     },
     props: {
         value: Boolean,
@@ -113,7 +118,7 @@ export default {
             show: false,
             selectedResource: '',
             resourcesList: ['Service', 'Server', 'Monitor', 'Filter', 'Listener'],
-            // module for monitor, service, and filter
+            // module for monitor, service, and filter, listener
             resourceModules: [],
             //COMMON
             isParametersTableShown: false,
@@ -183,6 +188,7 @@ export default {
             createMonitor: 'monitor/createMonitor',
             createFilter: 'filter/createFilter',
             createListener: 'listener/createListener',
+            createServer: 'server/createServer',
             fetchAllServices: 'service/fetchAllServices',
             fetchAllServers: 'server/fetchAllServers',
             fetchAllMonitors: 'monitor/fetchAllMonitors',
@@ -342,6 +348,18 @@ export default {
                             callback: this.fetchAllListeners,
                         }
                         this.createListener(payload)
+                    }
+                    break
+                case 'Server':
+                    {
+                        const { parameters, relationships } = this.$refs.serverForm.getValues()
+                        const payload = {
+                            id: this.resourceId,
+                            parameters: parameters,
+                            relationships: relationships,
+                            callback: this.fetchAllServers,
+                        }
+                        this.createServer(payload)
                     }
                     break
             }

@@ -69,8 +69,9 @@
  */
 
 /*
-This component allows to edit parameters taken from parameters array that must have format similar to
-module parameters. It means to be used for creating resource
+This component allows to edit parameters taken from parameters array that must have similar format to
+module parameters. All default_values will be returned as string regardless of type
+The component is meant to be used for creating resource
 
 PROPS:
 _requiredParams: accepts array of string , it simply enables required attribute in parameter-input dynamically

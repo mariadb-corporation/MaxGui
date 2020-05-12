@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, orderBy, isUndefined, isFunction } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, orderBy, isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -49,43 +49,30 @@ export default {
             })
             commit('setCurrentServer', res.data.data)
         },
+        //-----------------------------------------------Server Create/Update/Delete----------------------------------
 
         /**
          * @param {Object} payload payload object
-         * @param {String} payload.mode Mode to perform async request POST or Patch
          * @param {String} payload.id Name of the server
          * @param {Object} payload.parameters Parameters for the server
+         * @param {Object} payload.relationships The relationships of the server to other resources
+         * @param {Object} payload.relationships.services services object
+         * @param {Object} payload.relationships.monitors monitors object
+         * @param {Function} payload.callback callback function after successfully updated
          */
         async createServer({ commit }, payload) {
             const body = {
                 data: {
                     id: payload.id,
                     type: 'servers',
-                    attributes: {},
+                    attributes: {
+                        parameters: payload.parameters,
+                    },
+                    relationships: payload.relationships,
                 },
             }
-            let res
-            let message
-
-            switch (payload.mode) {
-                case 'post':
-                    body.data.attributes.parameters = payload.parameters
-                    body.data.relationships = payload.relationships
-                    res = await Vue.axios.post(`/servers/`, body)
-                    message = [`Server ${payload.id} is created`]
-
-                    break
-
-                case 'patch':
-                    if (!isUndefined(payload.parameters)) {
-                        body.data.attributes.parameters = payload.parameters
-                    }
-
-                    res = await Vue.axios.patch(`/servers/${payload.id}`, body)
-                    message = [`Server ${payload.id} is updated`]
-                    break
-            }
-
+            let res = await Vue.axios.post(`/servers/`, body)
+            let message = [`Server ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
                 await commit(
