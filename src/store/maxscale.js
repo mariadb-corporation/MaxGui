@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -22,11 +22,9 @@ export default {
         threadsChartData: {
             datasets: [],
         },
+        maxScaleParameters: {},
     },
     mutations: {
-        /**
-         * @param {Object} payload setMaxScaleOverviewInfo array
-         */
         setMaxScaleOverviewInfo(state, payload) {
             state.maxScaleOverviewInfo = payload
         },
@@ -40,8 +38,16 @@ export default {
         setThreadsChartData(state, payload) {
             state.threadsChartData = payload
         },
+        setMaxScaleParameters(state, payload) {
+            state.maxScaleParameters = payload
+        },
     },
     actions: {
+        async fetchMaxScaleParameters({ commit }) {
+            let res = await Vue.axios.get(`/maxscale?fields[maxscale]=parameters`)
+            await commit('setMaxScaleParameters', res.data.data.attributes.parameters)
+        },
+
         async fetchMaxScaleOverviewInfo({ commit }) {
             let res = await Vue.axios.get(
                 `/maxscale?fields[maxscale]=version,commit,started_at,activated_at,uptime`
@@ -86,8 +92,38 @@ export default {
                 commit('setThreadsChartData', threadsChartDataSchema)
             }
         },
+        //-----------------------------------------------Maxscale parameter update---------------------------------
+        /**
+         * @param {Object} payload payload object
+         * @param {String} payload.id maxscale
+         * @param {Object} payload.parameters Parameters for the monitor
+         * @param {Object} payload.callback callback function after successfully updated
+         */
+        async updateMaxScaleParameters({ commit }, payload) {
+            const body = {
+                data: {
+                    id: payload.id,
+                    type: 'maxscale',
+                    attributes: { parameters: payload.parameters },
+                },
+            }
+            let res = await Vue.axios.patch(`/maxscale`, body)
+            // response ok
+            if (res.status === 204) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: [`MaxScale parameters is updated`],
+                        type: 'success',
+                    },
+                    { root: true }
+                )
+                if (isFunction(payload.callback)) await payload.callback()
+            }
+        },
     },
     getters: {
+        maxScaleParameters: state => state.maxScaleParameters,
         maxScaleOverviewInfo: state => state.maxScaleOverviewInfo,
         allModules: state => state.allModules,
         threadsChartData: state => state.threadsChartData,

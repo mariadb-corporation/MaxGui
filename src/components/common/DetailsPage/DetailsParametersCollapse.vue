@@ -155,6 +155,7 @@ export default {
             const parameters = this.$help.cloneDeep(this.parameters)
             const keepPrimitiveValue = true
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
+
             let editableParams = this.$help.cloneDeep(this.moduleParameters)
             let arr = []
 
@@ -201,7 +202,7 @@ export default {
                 const { type, unit, enum_values } = moduleParam
                 // assign
                 newParam['type'] = type
-                if (newParam.type === 'duration' || newParam.type === 'size') {
+                if (newParam.type === 'duration' && unit) {
                     newParam.value = `${newParam.value}${unit}`
                 } else if (newParam.type === 'enum' || newParam.type === 'enum_mask') {
                     newParam['enum_values'] = enum_values

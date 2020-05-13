@@ -20,5 +20,3 @@
  * Public License.
  */
 </script>
-
-<style lang="scss" scoped></style>

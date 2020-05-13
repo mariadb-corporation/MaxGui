@@ -178,10 +178,16 @@ export function objToArrOfObj(obj, keepPrimitiveValue, keyName = 'id', keyValue 
 
         if (!isEmpty(targetObj)) {
             Object.keys(targetObj).map(key => {
-                data.push({
+                let value = keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key])
+
+                let newObj = {
                     [keyName]: key,
-                    [keyValue]: keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key]),
-                })
+                    [keyValue]: value,
+                }
+                // if (value !== null && typeof value === 'object') {
+                //     console.log(key, value)
+                // }
+                data.push(newObj)
             })
             return data
         }
