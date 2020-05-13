@@ -190,6 +190,7 @@ export default {
         },
 
         getParameterObj() {
+            console.log(this.$help.arrOfObjToObj(this.changedParametersArr))
             return this.$help.arrOfObjToObj(this.changedParametersArr)
         },
     },

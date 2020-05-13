@@ -186,7 +186,7 @@
                             <slot :data="{ item }" name="actions" />
 
                             <!-- expandle activator -->
-                            <v-tooltip top>
+                            <!-- <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-btn
                                         v-show="$scopedSlots['expandable']"
@@ -195,7 +195,6 @@
                                         v-on="on"
                                         @click="toggleRow(item.id)"
                                     >
-                                        <!-- optional expand indicator icon -->
                                         <slot
                                             :expanded="expandedRows.includes(item.id)"
                                             name="expandIndicator"
@@ -211,7 +210,7 @@
                                     </v-btn>
                                 </template>
                                 <span>Show detailed information</span>
-                            </v-tooltip>
+                            </v-tooltip> -->
                         </div>
                     </div>
                 </td>

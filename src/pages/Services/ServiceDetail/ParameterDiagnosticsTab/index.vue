@@ -76,22 +76,9 @@ export default {
             let currentService = this.currentService
             if (!this.$help.isEmpty(currentService)) {
                 const { attributes: { router_diagnostics = {} } = {} } = currentService
-                let arrData
-                let arr = this.$help.objToArrOfObj(router_diagnostics)
-                if (arr.length) {
-                    arrData = arr.map(obj => {
-                        return {
-                            id: obj.id,
-                            value: this.$help.isObject(obj.value) ? '' : obj.value,
-                            isLink: false,
-                            children: this.$help.processTreeData(obj.value, 0),
-                            level: 0,
-                            colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
-                            colValueWidth: 'calc(35% - 11px)',
-                        }
-                    })
-                }
-                return arrData
+                let level = 0
+                const keepPrimitiveValue = false
+                return this.$help.objToArrOfObj(router_diagnostics, keepPrimitiveValue, level)
             }
             return []
         },

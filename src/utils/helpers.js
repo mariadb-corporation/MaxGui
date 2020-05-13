@@ -171,8 +171,9 @@ export function formatValue(value, formatType) {
  * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
  */
-export function objToArrOfObj(obj, keepPrimitiveValue, keyName = 'id', keyValue = 'value') {
-    if (typeof obj === 'object') {
+export function objToArrOfObj(obj, keepPrimitiveValue, level, keyName = 'id', keyValue = 'value') {
+    const isValidObj = obj !== null && typeof obj === 'object'
+    if (isValidObj) {
         let data = []
         let targetObj = cloneDeep(obj)
 
@@ -184,9 +185,30 @@ export function objToArrOfObj(obj, keepPrimitiveValue, keyName = 'id', keyValue 
                     [keyName]: key,
                     [keyValue]: value,
                 }
-                // if (value !== null && typeof value === 'object') {
-                //     console.log(key, value)
-                // }
+
+                if (level !== undefined) {
+                    newObj.level = level
+                    /* width of one v-treeview-node__level is 24, by default
+                     */
+                    newObj.colNameWidth = `calc(65% - 11px -  ${(level + 1) * 8.5}px)`
+                    newObj.colValueWidth = `calc(35% - 11px - ${(level + 1) * 8.5}px)`
+                }
+                const hasChild =
+                    (value !== null && typeof value === 'object') || Array.isArray(value)
+                let children = []
+
+                if (hasChild) {
+                    // assigning original value to originalValue in order let arrOfObjToObj reverse back to obj
+                    newObj.originalValue = value
+                    newObj[keyValue] = null
+                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1)
+                }
+                if (Array.isArray(value)) {
+                    // convert to object
+                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1)
+                }
+                newObj.children = children
+                newObj.isLeaf = !hasChild
                 data.push(newObj)
             })
             return data
@@ -210,7 +232,9 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
             if (!isEmpty(innerObj)) {
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
-                o[innerObj[keyName]] = innerObj[keyValue]
+                if (!innerObj.isLeaf) {
+                    o[innerObj[keyName]] = innerObj.originalValue
+                } else o[innerObj[keyName]] = innerObj[keyValue]
             }
         }
         return o
@@ -243,46 +267,6 @@ export function handleValue(value) {
     return newVal
 }
 
-/**
- * @param {Object} obj Object to be processed in to tree data arr
- * @param {Number} level level of data
- * @return {Array} return tree data arr
- */
-export function processTreeData(obj, level) {
-    if (typeof obj === 'object') {
-        let data = []
-        let targetObj = cloneDeep(obj)
-
-        if (!isEmpty(targetObj)) {
-            Object.keys(targetObj).map(key => {
-                const value = handleValue(targetObj[key])
-                let newValue = cloneDeep(value)
-
-                let typeOfValue = typeof value
-                if (typeOfValue === 'object') {
-                    newValue = null
-                } else if (Array.isArray(value)) {
-                    newValue = { ...newValue } // convert to object
-                }
-                let children = processTreeData(handleValue(targetObj[key]), level + 1)
-
-                data.push({
-                    id: key,
-                    level: level + 1,
-                    value: newValue,
-                    children: children,
-                    /* width of one v-treeview-node__level is 24, by default
-                     */
-                    colNameWidth: `calc(65% - 11px -  ${(level + 1) * 8.5}px)`,
-                    colValueWidth: `calc(35% - 11px - ${(level + 1) * 8.5}px)`,
-                })
-            })
-            return data
-        }
-    }
-    return []
-}
-
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -303,7 +287,6 @@ Object.defineProperties(Vue.prototype, {
                 objToArrOfObj,
                 arrOfObjToObj,
                 handleValue,
-                processTreeData,
                 pluralToSingularStr,
                 // arrayObjDeepCompare,
                 // lodash

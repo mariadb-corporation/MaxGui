@@ -28,8 +28,8 @@
         >
             <template v-slot:label="{ item, open }">
                 <div
-                    class="pointer d-flex align-center tree-node"
-                    :class="[open ? 'font-weight-bold' : '']"
+                    class=" d-flex align-center tree-node"
+                    :class="[open ? 'font-weight-bold' : '', item.children.length && 'pointer']"
                     @click="handleItemClick(item)"
                 >
                     <div
@@ -38,14 +38,7 @@
                             width: item.colNameWidth,
                         }"
                     >
-                        <router-link
-                            v-if="item.isLink"
-                            :to="`/dashboard/servers/${item.id}`"
-                            class="no-underline"
-                        >
-                            <span>{{ item.id }} </span>
-                        </router-link>
-                        <span v-else> {{ item.id }}</span>
+                        <span> {{ item.id }}</span>
                     </div>
                     <div
                         class="d-flex align-center pl-10"
@@ -122,6 +115,8 @@ export default {
 }
 .header {
     height: 48px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
     &__item {
         font-size: 11px;
         border-bottom: none;
@@ -132,13 +127,19 @@ export default {
 .v-treeview {
     border-left: thin solid #e7eef1;
     border-right: thin solid #e7eef1;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 ::v-deep .v-treeview-node__root {
     border-bottom: thin solid #e7eef1;
     padding-left: 18px;
 }
-
+::v-deep .v-treeview-node:last-of-type {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    overflow: hidden;
+}
 ::v-deep .v-treeview-node__toggle {
     transform: none;
 }

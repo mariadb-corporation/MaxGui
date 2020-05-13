@@ -399,7 +399,7 @@ export default {
 }
 .mariadb-select-input {
     ::v-deep .v-select__selection--comma {
-        font-weight: bold !important;
+        font-weight: bold;
     }
 }
 ::v-deep .label {

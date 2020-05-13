@@ -155,7 +155,6 @@ export default {
             const parameters = this.$help.cloneDeep(this.parameters)
             const keepPrimitiveValue = true
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
-
             let editableParams = this.$help.cloneDeep(this.moduleParameters)
             let arr = []
 

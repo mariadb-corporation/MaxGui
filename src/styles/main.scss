@@ -359,6 +359,7 @@ input:-webkit-autofill:active {
         border-radius: 0px;
         &-item {
             &__title {
+                font-weight: 400 !important;
                 font-size: 0.875rem !important;
             }
         }

@@ -112,23 +112,13 @@ export default {
                 let monitorDiagnosticsObj = server_info.find(
                     server => server.name === self.currentServer.id
                 )
-                let arrData
-                let arr = self.$help.objToArrOfObj(monitorDiagnosticsObj)
-                if (arr.length) {
-                    arrData = arr.map(obj => {
-                        return {
-                            id: obj.id,
-                            value: self.$help.isObject(obj.value) ? '' : obj.value,
-                            isLink: false,
-                            children: self.$help.processTreeData(obj.value, 0),
-                            level: 0,
-                            colNameWidth: `calc(65% - 11px -  ${0 * 8}px)`,
-                            colValueWidth: 'calc(35% - 11px)',
-                        }
-                    })
-                }
-
-                this.monitorDiagnosticsTableRow = arrData
+                let level = 0
+                const keepPrimitiveValue = false
+                this.monitorDiagnosticsTableRow = self.$help.objToArrOfObj(
+                    monitorDiagnosticsObj,
+                    keepPrimitiveValue,
+                    level
+                )
             }
         },
     },
