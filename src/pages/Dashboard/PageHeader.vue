@@ -14,7 +14,8 @@
                         style="position:relative;top:-15px"
                         class="field-text-info color text-field-text "
                     >
-                        Uptime {{ duration }}
+                        Uptime
+                        {{ [uptime, 'seconds'] | duration('format') }}
                     </span>
 
                     <v-menu
@@ -73,7 +74,7 @@
                                         style="width:65%;"
                                         class="d-inline-block "
                                     >
-                                        {{ $moment(value).format('MM.DD.YYYY HH:mm:ss ') }}
+                                        {{ value | moment('MM.DD.YYYY HH:mm:ss') }}
                                     </div>
                                     <div v-else style="width:65%;" class="d-inline-block ">
                                         {{ value }}
@@ -116,7 +117,6 @@ export default {
         return {
             isCopied: false,
             uptime: null,
-            duration: null,
             copyState: 'Double click to copy to clipboard',
             workerList: [{ name: 'MaxScale uptime worker timer', interval: 1000 }],
         }
@@ -150,7 +150,6 @@ export default {
         'maxScaleOverviewInfo.uptime': function(val) {
             let self = this
             self.uptime = val
-            self.duration = self.$moment.duration(val, 'seconds').format()
             self.workerInit()
         },
     },
@@ -167,7 +166,6 @@ export default {
         },
         updateUpTime() {
             this.uptime = this.uptime + 1
-            this.duration = this.$moment.duration(this.uptime, 'seconds').format()
         },
         workerInit() {
             let self = this
