@@ -18,7 +18,7 @@ import router from 'router'
 export default {
     namespaced: true,
     state: {
-        user: {},
+        user: JSON.parse(localStorage.getItem('user')),
         currentNetworkUser: null,
         allNetworkUsers: [],
         allUNIXAccounts: [],
@@ -28,7 +28,7 @@ export default {
         /**
          * @param {Object} userObj User rememberMe info
          * @param {Boolean} userObj.rememberMe rememberMe
-         * @param {String} userObj.username username
+         * @param {String} userObj.name username
          */
         setUser(state, userObj) {
             state.user = userObj

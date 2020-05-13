@@ -1,13 +1,5 @@
 <template>
-    <v-row justify="center">
-        <v-col :xs="12" :md="8" align="center" justify="center" class="pt-0">
-            <v-card width="100%" class="v-card-custom pa-6">
-                <!-- <h2 style="text-align:center">{{ $t('lastTwoSecondsThreads') }}</h2>
-                <br />
-                <threads-chart /> -->
-            </v-card>
-        </v-col>
-    </v-row>
+    <page-wrapper></page-wrapper>
 </template>
 
 <script>

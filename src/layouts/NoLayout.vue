@@ -19,5 +19,3 @@ export default {
     name: 'no-layout',
 }
 </script>
-
-<style lang="scss" scoped></style>

@@ -194,8 +194,9 @@ export default {
                     auth: self.credential,
                 })
 
+                // for now, using username as name
                 let userObj = {
-                    username: self.credential.username,
+                    name: self.credential.username,
                     rememberMe: self.rememberMe,
                     isLoggedIn: self.$help.getCookie('token_body') ? true : false,
                 }

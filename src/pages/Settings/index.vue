@@ -1,14 +1,21 @@
 <template>
-    <v-row class="mt-5">
-        <portal to="page-title">
-            <h4
-                style="margin-bottom: 0px; line-height: 10px;"
-                class="color text-navigation text-navigation display-1 text-capitalize page-title"
-            >
-                {{ $route.name }}
-            </h4>
+    <page-wrapper>
+        <portal to="page-header">
+            <div class="d-flex align-center">
+                <div class="d-inline-flex align-center">
+                    <h4
+                        style="line-height: normal;"
+                        class="ml-1 mb-0 color text-navigation display-1 text-capitalize"
+                    >
+                        {{ $route.name }}
+                    </h4>
+                </div>
+            </div>
         </portal>
-    </v-row>
+        <portal to="page-search">
+            <global-search />
+        </portal>
+    </page-wrapper>
 </template>
 
 <script>

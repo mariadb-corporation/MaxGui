@@ -1,40 +1,41 @@
 <template>
-    <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
-        <page-header :currentServer="currentServer" />
-        <overview-header
-            :currentServer="currentServer"
-            :updateServerRelationship="updateServerRelationship"
-            :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
-        />
+    <page-wrapper>
+        <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
+            <page-header :currentServer="currentServer" />
+            <overview-header
+                :currentServer="currentServer"
+                :updateServerRelationship="updateServerRelationship"
+                :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
+            />
+            <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
+                <v-tab v-for="tab in tabs" :key="tab.name">
+                    {{ tab.name }}
+                </v-tab>
 
-        <v-tabs v-model="currentActiveTab" class="tab-navigation-wrapper">
-            <v-tab v-for="tab in tabs" :key="tab.name">
-                {{ tab.name }}
-            </v-tab>
-
-            <v-tabs-items v-model="currentActiveTab">
-                <v-tab-item class="pt-5">
-                    <statistics-session-tab
-                        :currentServer="currentServer"
-                        :serviceTableRow="serviceTableRow"
-                        :updateServerRelationship="updateServerRelationship"
-                        :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
-                        :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
-                        :getServiceState="getServiceState"
-                    />
-                </v-tab-item>
-                <!-- Parameters & Diagnostics tab -->
-                <v-tab-item class="pt-5">
-                    <parameter-diagnostics-tab
-                        :currentServer="currentServer"
-                        :updateServerParameters="updateServerParameters"
-                        :onEditSucceeded="fetchServer"
-                        :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
-                        :searchKeyWord="searchKeyWord"
-                /></v-tab-item>
-            </v-tabs-items>
-        </v-tabs>
-    </v-sheet>
+                <v-tabs-items v-model="currentActiveTab">
+                    <v-tab-item class="pt-5">
+                        <statistics-session-tab
+                            :currentServer="currentServer"
+                            :serviceTableRow="serviceTableRow"
+                            :updateServerRelationship="updateServerRelationship"
+                            :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
+                            :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
+                            :getServiceState="getServiceState"
+                        />
+                    </v-tab-item>
+                    <!-- Parameters & Diagnostics tab -->
+                    <v-tab-item class="pt-5">
+                        <parameter-diagnostics-tab
+                            :currentServer="currentServer"
+                            :updateServerParameters="updateServerParameters"
+                            :onEditSucceeded="fetchServer"
+                            :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
+                            :searchKeyWord="searchKeyWord"
+                    /></v-tab-item>
+                </v-tabs-items>
+            </v-tabs>
+        </v-sheet>
+    </page-wrapper>
 </template>
 
 <script>

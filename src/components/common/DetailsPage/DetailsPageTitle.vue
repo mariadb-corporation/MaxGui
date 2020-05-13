@@ -1,34 +1,42 @@
 <template>
-    <portal to="page-title">
-        <div class="d-flex align-center">
-            <v-btn class="ml-n4" icon @click="$router.go(-1)">
-                <v-icon class="mr-1" color="#013646">
-                    $vuetify.icons.arrowLeft
-                </v-icon>
-            </v-btn>
-            <div class="d-inline-flex align-center">
-                <h4
-                    style="line-height: normal;"
-                    class="ml-1 mb-0 color text-navigation display-1  page-title"
-                >
-                    {{ $route.params.id }}
-                </h4>
-                <v-menu transition="slide-y-transition" offset-y content-class="setting-menu">
-                    <template v-slot:activator="{ on }">
-                        <v-btn class="ml-2 " icon v-on="on">
-                            <v-icon size="18" color="primary">
-                                $vuetify.icons.settings
-                            </v-icon>
-                        </v-btn>
-                    </template>
+    <fragment>
+        <portal to="page-header">
+            <div class="d-flex align-center">
+                <v-btn class="ml-n4" icon @click="$router.go(-1)">
+                    <v-icon class="mr-1" color="#013646">
+                        $vuetify.icons.arrowLeft
+                    </v-icon>
+                </v-btn>
+                <div class="d-inline-flex align-center">
+                    <h4
+                        style="line-height: normal;"
+                        class="ml-1 mb-0 color text-navigation display-1  page-title"
+                    >
+                        {{ $route.params.id }}
+                    </h4>
+                    <v-menu transition="slide-y-transition" offset-y content-class="setting-menu">
+                        <template v-slot:activator="{ on }">
+                            <v-btn class="ml-2 " icon v-on="on">
+                                <v-icon size="18" color="primary">
+                                    $vuetify.icons.settings
+                                </v-icon>
+                            </v-btn>
+                        </template>
 
-                    <div class="color bg-background d-inline-flex icon-wrapper-list">
-                        <slot name="setting-menu"></slot>
-                    </div>
-                </v-menu>
+                        <div class="color bg-background d-inline-flex icon-wrapper-list">
+                            <slot name="setting-menu"></slot>
+                        </div>
+                    </v-menu>
+                </div>
             </div>
-        </div>
-    </portal>
+        </portal>
+        <portal to="page-search">
+            <global-search />
+        </portal>
+        <portal to="create-resource">
+            <create-resource />
+        </portal>
+    </fragment>
 </template>
 
 <style lang="scss" scoped>

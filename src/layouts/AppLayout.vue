@@ -1,27 +1,13 @@
 <template>
     <fragment>
-        <top-header :user="user" />
-        <navigation :currentPath="currentPath" />
+        <app-header />
+        <navigation />
         <snackbars />
         <v-content>
             <div class="fill-height py-6 px-10">
-                <div class="wrapper-container fill-height">
-                    <div class="d-flex ml-n1">
-                        <portal-target name="page-title">
-                            <!--
-                        This component can be located anywhere in your App.
-                        The slot content of the above portal component will be rendered here.
-                        -->
-                        </portal-target>
-                        <v-spacer />
-
-                        <search-to-create v-if="showSearchToCreate" />
-                    </div>
-
-                    <transition name="fade" mode="out-in">
-                        <router-view v-if="$route.meta.requiresAuth" />
-                    </transition>
-                </div>
+                <transition name="fade" mode="out-in">
+                    <router-view v-if="$route.meta.requiresAuth" />
+                </transition>
             </div>
         </v-content>
         <v-footer
@@ -44,7 +30,6 @@
                     href="https://mariadb.com/product-terms-condition/"
                     >Terms of Use</a
                 >
-                {{ user }}
             </span>
         </v-footer>
     </fragment>
@@ -64,53 +49,19 @@
  * Public License.
  */
 import Navigation from './Navigation'
-import Header from './Header'
+import AppHeader from './AppHeader'
 import Snackbars from './Snackbars'
-import { mapGetters } from 'vuex'
-
-import tabRoutes from 'router/tabRoutes'
-import SearchToCreate from 'components/SearchToCreate'
 
 export default {
     name: 'app-layout',
     components: {
-        SearchToCreate,
         navigation: Navigation,
-        'top-header': Header,
+        'app-header': AppHeader,
         snackbars: Snackbars,
-    },
-    data() {
-        return {
-            tabRoutes: tabRoutes,
-        }
-    },
-    computed: {
-        ...mapGetters('user', ['user']),
-
-        currentPath: function() {
-            return this.$route.path
-        },
-        showSearchToCreate: function() {
-            let arr = this.tabRoutes
-            let show = false
-            for (let i = arr.length - 1; i >= 0; --i) {
-                if (arr[i].path.includes(this.$route.name)) {
-                    show = true
-                }
-            }
-            if (this.$route.name === 'monitor') {
-                show = true
-            }
-            return show
-        },
     },
 }
 </script>
 <style lang="scss">
-.page-title {
-    margin-bottom: 55px;
-}
-
 .footer-text {
     font-size: 10px;
     a {
@@ -122,6 +73,7 @@ export default {
 /* durations and timing functions.              */
 .fade-enter-active,
 .fade-leave-active {
+    height: 100%;
     transition-duration: 0.2s;
     transition-property: opacity;
     transition-timing-function: ease;

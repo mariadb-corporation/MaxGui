@@ -15,7 +15,6 @@
     >
         <v-list>
             <template v-for="item in items">
-                <!-- includes(item.name) for partial active  -->
                 <v-list-item
                     :key="item.name"
                     :class="{ navitem: true, active: currentPath.includes(item.name) }"
@@ -26,7 +25,11 @@
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title class="text-capitalize">
-                            {{ $tc(`${item.name}`, 1) }}
+                            {{
+                                item.path === '/settings'
+                                    ? $tc(`${item.name}`, 2)
+                                    : $tc(`${item.name}`, 1)
+                            }}
                         </v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
@@ -55,9 +58,6 @@
 import sideBarRoutes from 'router/sideBarRoutes'
 export default {
     name: 'navigation',
-    props: {
-        currentPath: { type: String, required: true },
-    },
     data() {
         return {
             isMini: true,
@@ -65,7 +65,11 @@ export default {
             version: process.env.VUE_APP_VERSION || '',
         }
     },
-
+    computed: {
+        currentPath: function() {
+            return this.$route.path
+        },
+    },
     methods: {
         navigate({ path, url }) {
             if (url) {

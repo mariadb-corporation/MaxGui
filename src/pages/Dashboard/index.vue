@@ -1,15 +1,17 @@
 <template>
-    <v-sheet>
-        <page-header />
-        <graphs
-            :fetchThreads="fetchThreads"
-            :genThreadsDatasetsSchema="genThreadsDatasetsSchema"
-            :fetchAllServers="fetchAllServers"
-            :fetchAllSessions="fetchAllSessions"
-            :fetchAllServices="fetchAllServices"
-        />
-        <tab-nav />
-    </v-sheet>
+    <page-wrapper>
+        <v-sheet>
+            <page-header />
+            <graphs
+                :fetchThreads="fetchThreads"
+                :genThreadsDatasetsSchema="genThreadsDatasetsSchema"
+                :fetchAllServers="fetchAllServers"
+                :fetchAllSessions="fetchAllSessions"
+                :fetchAllServices="fetchAllServices"
+            />
+            <tab-nav />
+        </v-sheet>
+    </page-wrapper>
 </template>
 
 <script>

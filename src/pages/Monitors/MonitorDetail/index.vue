@@ -1,30 +1,34 @@
 <template>
-    <v-sheet v-if="!$help.isEmpty(currentMonitor)" class="px-6">
-        <page-header :currentMonitor="currentMonitor" :onEditSucceeded="fetchMonitor" />
-        <overview-header :currentMonitor="currentMonitor" />
-        <v-row>
-            <!-- PARAMETERS TABLE -->
-            <v-col cols="6">
-                <details-parameters-collapse
-                    :searchKeyWord="searchKeyWord"
-                    :resourceId="currentMonitor.id"
-                    :parameters="currentMonitor.attributes.parameters"
-                    :moduleParameters="moduleParameters"
-                    :requiredParams="['user', 'password']"
-                    :updateResourceParameters="updateMonitorParameters"
-                    :onEditSucceeded="fetchMonitor"
-                    :loading="loadingModuleParams ? true : overlay === OVERLAY_TRANSPARENT_LOADING"
+    <page-wrapper>
+        <v-sheet v-if="!$help.isEmpty(currentMonitor)" class="px-6">
+            <page-header :currentMonitor="currentMonitor" :onEditSucceeded="fetchMonitor" />
+            <overview-header :currentMonitor="currentMonitor" />
+            <v-row>
+                <!-- PARAMETERS TABLE -->
+                <v-col cols="6">
+                    <details-parameters-collapse
+                        :searchKeyWord="searchKeyWord"
+                        :resourceId="currentMonitor.id"
+                        :parameters="currentMonitor.attributes.parameters"
+                        :moduleParameters="moduleParameters"
+                        :requiredParams="['user', 'password']"
+                        :updateResourceParameters="updateMonitorParameters"
+                        :onEditSucceeded="fetchMonitor"
+                        :loading="
+                            loadingModuleParams ? true : overlay === OVERLAY_TRANSPARENT_LOADING
+                        "
+                    />
+                </v-col>
+                <servers-table
+                    :currentMonitor="currentMonitor"
+                    :getServers="getServers"
+                    :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
+                    :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
+                    :serverStateTableRow="serverStateTableRow"
                 />
-            </v-col>
-            <servers-table
-                :currentMonitor="currentMonitor"
-                :getServers="getServers"
-                :loading="overlay === OVERLAY_TRANSPARENT_LOADING"
-                :dispatchRelationshipUpdate="dispatchRelationshipUpdate"
-                :serverStateTableRow="serverStateTableRow"
-            />
-        </v-row>
-    </v-sheet>
+            </v-row>
+        </v-sheet>
+    </page-wrapper>
 </template>
 
 <script>

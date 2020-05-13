@@ -1,80 +1,97 @@
 <template>
-    <portal to="page-title">
-        <h4
-            style="margin-bottom: 0px; line-height: normal;"
-            class="color text-navigation text-navigation display-1 text-capitalize page-title"
-        >
-            {{ pageTitle }}
-        </h4>
+    <fragment>
+        <portal to="page-header">
+            <transition :key="pageTitle" name="fade" mode="out-in">
+                <fragment>
+                    <h4
+                        style="margin-bottom: 0px; line-height: normal;"
+                        class="color text-navigation text-navigation display-1 text-capitalize"
+                    >
+                        {{ pageTitle }}
+                    </h4>
 
-        <span style="position:relative;top:-15px" class="field-text-info color text-field-text ">
-            Uptime {{ duration }}
-        </span>
-
-        <v-menu
-            transition="slide-y-transition"
-            :close-on-content-click="false"
-            open-on-hover
-            offset-y
-            nudge-left="20"
-            content-class="v-menu--with-arrow v-menu--with-arrow--top-left shadow-drop"
-        >
-            <template v-slot:activator="{ on }">
-                <v-icon
-                    class="material-icons-outlined pointer"
-                    style="position:relative;top:-15px"
-                    size="16"
-                    color="#9DB4BB"
-                    v-on="on"
-                >
-                    info
-                </v-icon>
-            </template>
-
-            <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
-                <span class="d-block mb-1 body-2 font-weight-bold"> About MaxScale</span>
-                <div
-                    v-for="(value, name) in $help.pick(maxScaleOverviewInfo, [
-                        'commit',
-                        'started_at',
-                        'activated_at',
-                    ])"
-                    :key="name"
-                >
-                    <span class="d-flex body-2">
-                        <span class="text-capitalize" style="width:35%">
-                            {{ name.split('_').join(' ') }}
-                        </span>
-                        <v-tooltip v-if="name === 'commit'" :key="copyState" top>
-                            <template v-slot:activator="{ on }">
-                                <div
-                                    style="width:65%;"
-                                    class="pointer d-inline-block text-truncate"
-                                    @dblclick="copyToClipboard()"
-                                    v-on="on"
-                                >
-                                    {{ value }}
-                                </div>
-                            </template>
-                            <span>
-                                {{ copyState }}
-                            </span>
-                        </v-tooltip>
-                        <div
-                            v-else-if="name === 'started_at' || name === 'activated_at'"
-                            style="width:65%;"
-                            class="d-inline-block "
-                        >
-                            {{ $moment(value).format('MM.DD.YYYY HH:mm:ss ') }}
-                        </div>
-                        <div v-else style="width:65%;" class="d-inline-block ">
-                            {{ value }}
-                        </div>
+                    <span
+                        style="position:relative;top:-15px"
+                        class="field-text-info color text-field-text "
+                    >
+                        Uptime {{ duration }}
                     </span>
-                </div>
-            </v-sheet>
-        </v-menu>
-    </portal>
+
+                    <v-menu
+                        transition="slide-y-transition"
+                        :close-on-content-click="false"
+                        open-on-hover
+                        offset-y
+                        nudge-left="20"
+                        content-class="v-menu--with-arrow v-menu--with-arrow--top-left shadow-drop"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-icon
+                                class="material-icons-outlined pointer"
+                                style="position:relative;top:-15px"
+                                size="16"
+                                color="#9DB4BB"
+                                v-on="on"
+                            >
+                                info
+                            </v-icon>
+                        </template>
+
+                        <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
+                            <span class="d-block mb-1 body-2 font-weight-bold">
+                                About MaxScale</span
+                            >
+                            <div
+                                v-for="(value, name) in $help.pick(maxScaleOverviewInfo, [
+                                    'commit',
+                                    'started_at',
+                                    'activated_at',
+                                ])"
+                                :key="name"
+                            >
+                                <span class="d-flex body-2">
+                                    <span class="text-capitalize" style="width:35%">
+                                        {{ name.split('_').join(' ') }}
+                                    </span>
+                                    <v-tooltip v-if="name === 'commit'" :key="copyState" top>
+                                        <template v-slot:activator="{ on }">
+                                            <div
+                                                style="width:65%;"
+                                                class="pointer d-inline-block text-truncate"
+                                                @dblclick="copyToClipboard()"
+                                                v-on="on"
+                                            >
+                                                {{ value }}
+                                            </div>
+                                        </template>
+                                        <span>
+                                            {{ copyState }}
+                                        </span>
+                                    </v-tooltip>
+                                    <div
+                                        v-else-if="name === 'started_at' || name === 'activated_at'"
+                                        style="width:65%;"
+                                        class="d-inline-block "
+                                    >
+                                        {{ $moment(value).format('MM.DD.YYYY HH:mm:ss ') }}
+                                    </div>
+                                    <div v-else style="width:65%;" class="d-inline-block ">
+                                        {{ value }}
+                                    </div>
+                                </span>
+                            </div>
+                        </v-sheet>
+                    </v-menu>
+                </fragment>
+            </transition>
+        </portal>
+        <portal to="page-search">
+            <global-search />
+        </portal>
+        <portal to="create-resource">
+            <create-resource />
+        </portal>
+    </fragment>
 </template>
 
 <script>

@@ -3,7 +3,7 @@
         <v-toolbar-title class="headline">
             <router-link to="/dashboard/servers">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                <span class="font-weight-medium  white--text">
+                <span class="product-name font-weight-medium  white--text">
                     {{ $t('productName') }}
                 </span>
             </router-link>
@@ -20,10 +20,12 @@
         >
             <template v-slot:activator="{ on }">
                 <v-btn dark class="mr-0" text tile v-on="on">
-                    <v-icon class="user-icon mr-1 " style="width:30px" size="30">
+                    <v-icon class="mr-1 " size="30">
                         $vuetify.icons.user
                     </v-icon>
-                    <span class="text-capitalize ">{{ user ? user.username : '' }}</span>
+                    <span class="user-name text-capitalize font-weight-regular">
+                        {{ user ? user.name : '' }}
+                    </span>
 
                     <v-icon
                         :class="[!isProfileOpened ? 'arrow-down' : 'arrow-up']"
@@ -58,16 +60,19 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
-    props: { user: Object, default: null },
+    name: 'app-header',
+
     data() {
         return {
             items: [],
             isProfileOpened: false,
         }
     },
-
+    computed: {
+        ...mapGetters('user', ['user']),
+    },
     methods: {
         ...mapActions('user', ['logout']),
         handleLogout() {
@@ -90,12 +95,14 @@ export default {
         vertical-align: middle;
     }
 
-    span {
+    .product-name {
         position: relative;
         vertical-align: middle;
-        font-size: 18px;
-        font-family: 'azo-sans-web';
+        font-size: 1.125rem;
     }
+}
+.user-name {
+    font-size: 1rem;
 }
 .arrow-up {
     transform: rotate(-180deg);

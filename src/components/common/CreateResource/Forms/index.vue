@@ -99,14 +99,14 @@
  * Public License.
  */
 import { mapActions, mapGetters } from 'vuex'
-import ServiceFormInput from './Forms/ServiceFormInput'
-import MonitorFormInput from './Forms/MonitorFormInput'
-import FilterFormInput from './Forms/FilterFormInput'
-import ListenerFormInput from './Forms/ListenerFormInput'
-import ServerFormInput from './Forms/ServerFormInput'
+import ServiceFormInput from './ServiceFormInput'
+import MonitorFormInput from './MonitorFormInput'
+import FilterFormInput from './FilterFormInput'
+import ListenerFormInput from './ListenerFormInput'
+import ServerFormInput from './ServerFormInput'
 
 export default {
-    name: 'create-wizard-dialog',
+    name: 'forms',
     components: {
         ServiceFormInput,
         MonitorFormInput,
