@@ -13,12 +13,8 @@
         >
             + {{ $t('createNew') }}
         </v-btn>
-
-        <forms
-            v-if="createDialog"
-            v-model="createDialog"
-            :closeModal="() => (createDialog = false)"
-        />
+        <!-- v-if="createDialog" -->
+        <forms v-model="createDialog" :closeModal="() => (createDialog = false)" />
     </fragment>
 </template>
 

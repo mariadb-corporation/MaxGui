@@ -67,7 +67,7 @@
                 <div v-else-if="selectedResource === 'Listener'" class="mb-0">
                     <listener-form-input
                         ref="listenerForm"
-                        :parentForm="$refs.baseDialog.$refs.form"
+                        :parentForm="$refs.baseDialog.$refs.form || {}"
                         :resourceModules="resourceModules"
                         :allServices="allServices"
                     />
@@ -77,7 +77,7 @@
                         ref="serverForm"
                         :allServices="allServices"
                         :allMonitors="allMonitors"
-                        :parentForm="$refs.baseDialog.$refs.form"
+                        :parentForm="$refs.baseDialog.$refs.form || {}"
                     />
                 </div>
             </fragment>
@@ -180,18 +180,15 @@ export default {
         },
     },
     watch: {
+        value: function(val) {
+            val && this.setDefaultSelectedResource(this.$route.name)
+        },
         resourceId: function(val) {
             // add hyphens when ever input have whitespace
             this.resourceId = val ? val.split(' ').join('-') : val
         },
+    },
 
-        $route: function(to) {
-            this.setDefaultSelectedResource(to.name)
-        },
-    },
-    mounted() {
-        this.setDefaultSelectedResource(this.$route.name)
-    },
     methods: {
         ...mapActions({
             createService: 'service/createService',
