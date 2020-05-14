@@ -9,9 +9,9 @@
 
                 <v-tabs-items v-model="currentActiveTab">
                     <v-tab-item class="pt-5">
-                        <v-col cols="6">
+                        <v-col cols="7">
                             <details-parameters-collapse
-                                v-if="maxScaleParameters"
+                                v-if="maxScaleParameters && moduleParameters.length"
                                 :searchKeyWord="searchKeyWord"
                                 resourceId="maxscale"
                                 :parameters="maxScaleParameters"
@@ -75,17 +75,20 @@ export default {
         }),
     },
     async created() {
-        const self = this
-        await self.fetchMaxScaleParameters()
-        let res = await self.axios.get(`/maxscale/modules/core?fields[module]=parameters`)
-        const { attributes: { parameters = [] } = {} } = res.data.data
-
-        self.moduleParameters = parameters.filter(param => param.modifiable)
-        self.loadingModuleParams = true
-        await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
+        await Promise.all([this.fetchMaxScaleParameters(), this.fetchModuleParameters()])
     },
     methods: {
         ...mapActions('maxscale', ['updateMaxScaleParameters', 'fetchMaxScaleParameters']),
+
+        async fetchModuleParameters() {
+            const self = this
+            let res = await self.axios.get(`/maxscale/modules/core?fields[module]=parameters`)
+            const { attributes: { parameters = [] } = {} } = res.data.data
+
+            self.moduleParameters = parameters.filter(param => param.modifiable)
+            self.loadingModuleParams = true
+            await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
+        },
     },
 }
 </script>

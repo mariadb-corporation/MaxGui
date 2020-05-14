@@ -20,12 +20,12 @@
                         :loading="loading"
                         keepPrimitiveValue
                     >
-                        <template v-if="editableCell" v-slot:value="props">
-                            <!-- rendered if usePortOrSocket -->
-                            <fragment v-if="handleShowSpecialInputs(props.data.item.id)">
+                        <template v-if="editableCell" v-slot:value="{ data: { item } }">
+                            <!-- render if usePortOrSocket  -->
+                            <fragment v-if="handleShowSpecialInputs(item.id)">
                                 <parameter-input
                                     :parentForm="$refs.form"
-                                    :item="props.data.item"
+                                    :item="item"
                                     :portValue="portValue"
                                     :socketValue="socketValue"
                                     :addressValue="addressValue"
@@ -33,23 +33,22 @@
                                 />
                             </fragment>
 
-                            <fragment v-else-if="requiredParams.includes(props.data.item.id)">
+                            <fragment v-else-if="requiredParams.includes(item.id)">
                                 <parameter-input
-                                    :item="props.data.item"
+                                    :item="item"
                                     required
                                     @on-input-change="handleItemChange"
                                 />
                             </fragment>
                             <fragment v-else>
-                                <parameter-input
-                                    :item="props.data.item"
-                                    @on-input-change="handleItemChange"
-                                />
+                                <parameter-input :item="item" @on-input-change="handleItemChange" />
                             </fragment>
                         </template>
-                        <template v-if="editableCell" v-slot:id="props">
-                            <b>{{ props.data.item.type }}</b>
-                            : {{ props.data.item.id }}
+                        <template v-if="editableCell" v-slot:id="{ data: { item } }">
+                            <span>
+                                <b v-if="item.type">{{ item.type }}: </b>
+                                {{ item.id }}
+                            </span>
                         </template>
                     </data-table>
                 </v-form>
@@ -77,13 +76,23 @@
                     }}
                 </span>
 
-                <p
-                    v-for="item in changedParametersArr"
-                    :key="item.id"
-                    class="d-block mb-1 font-weight-bold"
+                <div
+                    v-for="(item, i) in changedParametersArr"
+                    :key="i"
+                    class="d-block"
+                    :class="[item.nodeParent !== null && changedParamsInfo(i, item) && 'mt-2']"
                 >
-                    {{ item.id }}
-                </p>
+                    <div v-if="item.nodeParent !== null">
+                        <div class="font-weight-bold">
+                            {{ changedParamsInfo(i, item) }}
+                        </div>
+                        <p class="d-block mb-1">{{ item.id }}: {{ item.value }}</p>
+                    </div>
+                    <p v-else class="d-block mt-2 ">
+                        <span class="font-weight-bold">{{ item.id }}:</span
+                        ><span> {{ item.value }}</span>
+                    </p>
+                </div>
             </template>
         </base-dialog>
     </fragment>
@@ -153,9 +162,76 @@ export default {
     computed: {
         parametersTableRow: function() {
             const parameters = this.$help.cloneDeep(this.parameters)
+            // const parameters = {
+            //     log_throttling: {
+            //         count: 0,
+            //         window: 1,
+            //         suppress: 2,
+            //     },
+            //     log_throttling_1: {
+            //         count: 3,
+            //         window: 4,
+            //         log_throttling_1_nested: {
+            //             count: 5,
+            //             window: 6,
+            //             suppress: 7,
+            //         },
+            //     },
+            //     log_warn_super_user: true,
+            //     log_throttling_2: {
+            //         count: 8,
+            //         window: 9,
+            //         suppress: 10,
+            //     },
+            // }
+
             const keepPrimitiveValue = true
-            let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue)
+            let level = 0
+            let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue, level)
+
             let editableParams = this.$help.cloneDeep(this.moduleParameters)
+            // let editableParams = [
+            //     {
+            //         name: 'log_throttling',
+            //         type: 'throttling',
+            //         mandatory: false,
+            //         modifiable: true,
+            //         default_value: {
+            //             count: 0,
+            //             window: 0,
+            //             suppress: 0,
+            //         },
+            //     },
+            //     {
+            //         name: 'log_throttling_1',
+            //         type: 'throttling',
+            //         mandatory: false,
+            //         modifiable: true,
+            //         default_value: {
+            //             count: 0,
+            //             window: 0,
+            //             suppress: 0,
+            //         },
+            //     },
+            //     {
+            //         name: 'log_warn_super_user',
+            //         type: 'bool',
+            //         mandatory: false,
+            //         modifiable: false,
+            //         default_value: false,
+            //     },
+            //     {
+            //         name: 'log_throttling_2',
+            //         type: 'throttling',
+            //         mandatory: false,
+            //         modifiable: true,
+            //         default_value: {
+            //             count: 0,
+            //             window: 0,
+            //             suppress: 0,
+            //         },
+            //     },
+            // ]
             let arr = []
 
             for (let o = 0; o < tableRow.length; ++o) {
@@ -163,7 +239,6 @@ export default {
                 let readMode = !this.editableCell
                 this.assignParamsTypeInfo(arr, resourceParam, editableParams, readMode)
             }
-
             return arr
         },
         shouldDisableSaveBtn: function() {
@@ -178,6 +253,17 @@ export default {
     },
 
     methods: {
+        changedParamsInfo(i, item) {
+            const arr = this.changedParametersArr
+            const { nodeParent: { id = null } = null } = item
+            if (i > 0) {
+                const prevNodeParent = arr[i - 1].nodeParent || null
+                const prevNodeParentId = prevNodeParent && prevNodeParent.id
+                if (prevNodeParentId !== id) return id
+            } else if (i === 0) {
+                return id
+            } else return ''
+        },
         /**
          * @param {String} id id of parameter
          * @return {Boolean} true if usePortOrSocket is true and id matches requirements
@@ -225,7 +311,12 @@ export default {
         handleItemChange(newItem, changed) {
             let clone = this.$help.cloneDeep(this.changedParametersArr)
 
-            let targetIndex = clone.findIndex(o => o.id == newItem.id)
+            let targetIndex = clone.findIndex(o => {
+                return newItem.nodeId !== undefined
+                    ? o.nodeId == newItem.nodeId
+                    : o.id === newItem.id
+            })
+
             if (changed) {
                 // if item is not in the changedParametersArr list
                 if (targetIndex === -1) {

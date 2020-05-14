@@ -161,7 +161,9 @@ export default {
             if (!this.$help.isEmpty(currentServer)) {
                 // Set fallback null value if properties doesnt exist
                 const { attributes: { statistics = null } = {} } = currentServer
-                return this.$help.objToArrOfObj(statistics)
+                const keepPrimitiveValue = false
+                let level = 0
+                return this.$help.objToArrOfObj(statistics, keepPrimitiveValue, level)
             }
             return []
         },

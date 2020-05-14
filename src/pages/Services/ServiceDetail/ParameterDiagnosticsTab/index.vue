@@ -3,6 +3,7 @@
         <!-- PARAMETERS TABLE -->
         <v-col class="py-0 my-0" cols="6">
             <details-parameters-collapse
+                v-if="currentService.attributes.parameters && moduleParameters.length"
                 :searchKeyWord="searchKeyWord"
                 :resourceId="currentService.id"
                 :parameters="currentService.attributes.parameters"
@@ -21,10 +22,13 @@
                 :title="`${$t('routerDiagnostics')}`"
             >
                 <template v-slot:content>
-                    <tree-data
+                    <data-table
+                        :search="searchKeyWord"
                         :headers="variableValueTableHeaders"
                         :data="routerDiagnosticsTableRow"
-                        :search="searchKeyWord"
+                        :loading="loading"
+                        tdBorderLeft
+                        showAll
                     />
                 </template>
             </collapse>
@@ -76,9 +80,15 @@ export default {
             let currentService = this.currentService
             if (!this.$help.isEmpty(currentService)) {
                 const { attributes: { router_diagnostics = {} } = {} } = currentService
+
+                const keepPrimitiveValue = true
                 let level = 0
-                const keepPrimitiveValue = false
-                return this.$help.objToArrOfObj(router_diagnostics, keepPrimitiveValue, level)
+                let tableRow = this.$help.objToArrOfObj(
+                    router_diagnostics,
+                    keepPrimitiveValue,
+                    level
+                )
+                return tableRow
             }
             return []
         },

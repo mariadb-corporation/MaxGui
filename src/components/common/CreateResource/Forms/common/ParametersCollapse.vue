@@ -80,7 +80,7 @@ handling special input field when editting server or listener. If editing listen
 _isListener: accepts boolean , if true, address won't be required
 */
 export default {
-    name: 'editable-parameters-collapse',
+    name: 'parameters-collapse',
     props: {
         parameters: { type: Array, required: true },
         // specical props to manipulate required or dependent input attribute
@@ -165,6 +165,7 @@ export default {
             } else {
                 targetIndex > -1 && this.changedParametersArr.splice(targetIndex, 1)
             }
+
             this.assignPortSocketDependencyValues(newItem.id, newItem.value)
         },
 
@@ -190,7 +191,6 @@ export default {
         },
 
         getParameterObj() {
-            console.log(this.$help.arrOfObjToObj(this.changedParametersArr))
             return this.$help.arrOfObjToObj(this.changedParametersArr)
         },
     },

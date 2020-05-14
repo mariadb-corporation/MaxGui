@@ -378,7 +378,7 @@ export default {
         validateResourceId(val) {
             if (!val) {
                 return 'id is required'
-            } else if (this.validateInfo.idArr.includes(val)) {
+            } else if (this.validateInfo.idArr.length && this.validateInfo.idArr.includes(val)) {
                 return 'id is already registered'
             }
             return true

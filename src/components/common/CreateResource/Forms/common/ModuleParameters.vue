@@ -19,7 +19,7 @@
             required
         />
 
-        <editable-parameters-collapse
+        <parameters-collapse
             v-if="selectedModule"
             :key="selectedModule.id"
             ref="parametersTable"
@@ -54,12 +54,12 @@ _usePortOrSocket: accepts boolean , if true, get portValue, addressValue, and so
 handling special input field when editting server or listener. If editing listener, 
 _isListener:accepts boolean , if true, address won't be required
 */
-import EditableParametersCollapse from './EditableParametersCollapse'
+import ParametersCollapse from './ParametersCollapse'
 
 export default {
     name: 'module-parameters',
     components: {
-        EditableParametersCollapse,
+        ParametersCollapse,
     },
     props: {
         moduleName: { type: String, required: true },
@@ -95,7 +95,6 @@ export default {
             When using module parameters, only parameters that have changed by the user
             will be sent in the post request, omitted parameters will be assigned default_value by MaxScale
             */
-
             const moduleInputs = {
                 moduleId: this.selectedModule.id,
                 parameters: this.$refs.parametersTable.getParameterObj(),

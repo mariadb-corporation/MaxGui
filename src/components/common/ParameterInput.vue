@@ -1,8 +1,27 @@
 <template>
-    <fragment>
-        <fragment v-if="!isListener && objectItem.id === 'address'">
+    <span>
+        <fragment v-if="objectItem.expanded !== undefined"> </fragment>
+        <fragment
+            v-else-if="objectItem.nodeParent && objectItem.nodeParent.id === 'log_throttling'"
+        >
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+                v-model.trim.number="objectItem.value"
+                type="number"
+                min="0"
+                :name="objectItem.id"
+                class="std error--text__bottom error--text__bottom--no-margin"
+                single-line
+                outlined
+                dense
+                :rules="rules.naturalNumber"
+                :disabled="objectItem.disabled"
+                @input="handleChange"
+            />
+        </fragment>
+        <fragment v-else-if="!isListener && objectItem.id === 'address'">
+            <v-text-field
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
@@ -17,7 +36,7 @@
         </fragment>
         <fragment v-else-if="objectItem.id === 'socket'">
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
@@ -32,7 +51,7 @@
         </fragment>
         <fragment v-else-if="objectItem.id === 'port'">
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim.number="objectItem.value"
                 type="number"
                 min="0"
@@ -49,7 +68,7 @@
         <fragment v-else-if="objectItem.type === 'bool'">
             <!-- No need rules for v-select as it always has predefined value-->
             <v-select
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
                 class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
@@ -64,7 +83,7 @@
             <!-- No need rules for v-select as it always has predefined value-->
 
             <v-select
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
                 class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
@@ -91,7 +110,7 @@
         <fragment v-else-if="objectItem.type === 'enum'">
             <!-- No need rules for v-select as it always has predefined value-->
             <v-select
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"
                 :name="objectItem.id"
                 class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
@@ -104,7 +123,7 @@
         </fragment>
         <fragment v-else-if="objectItem.type === 'count'">
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim.number="objectItem.value"
                 type="number"
                 min="0"
@@ -120,7 +139,7 @@
         </fragment>
         <fragment v-else-if="objectItem.type === 'int'">
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim.number="objectItem.value"
                 type="number"
                 :name="objectItem.id"
@@ -135,7 +154,7 @@
         </fragment>
         <fragment v-else-if="objectItem.type === 'password string'">
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
@@ -150,7 +169,7 @@
         </fragment>
         <fragment v-else>
             <v-text-field
-                :id="objectItem.id"
+                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim="objectItem.value"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
@@ -163,7 +182,7 @@
                 @input="handleChange"
             />
         </fragment>
-    </fragment>
+    </span>
 </template>
 <script>
 /*
@@ -209,6 +228,7 @@ export default {
                 requiredFieldEither: [val => this.handleRequiredFieldEither(val)],
             },
             count: 0,
+            uniqueKey: 'input-',
         }
     },
     watch: {
@@ -224,9 +244,15 @@ export default {
                 }
             })
         },
+        item: {
+            deep: true,
+            handler(val) {
+                this.objectItem = this.convertEnumMaskStringtoArray(val)
+            },
+        },
     },
     async created() {
-        this.objectItem = this.convertEnumMaskStringtoArray()
+        this.objectItem = this.convertEnumMaskStringtoArray(this.item)
     },
     methods: {
         /*
@@ -235,9 +261,9 @@ export default {
         But when sending the values back to parent component, it will be converted
         to a string.
         */
-        convertEnumMaskStringtoArray() {
-            let cloned = this.$help.cloneDeep(this.item)
-            if (this.item.type === 'enum_mask') {
+        convertEnumMaskStringtoArray(obj) {
+            let cloned = this.$help.cloneDeep(obj)
+            if (obj.type === 'enum_mask') {
                 cloned.value = cloned.value.split(',') // convert string to array
             }
             return cloned
@@ -245,9 +271,11 @@ export default {
 
         handleChange() {
             let self = this
-            let item = self.convertEnumMaskStringtoArray()
+            let item = self.convertEnumMaskStringtoArray(this.item)
             let newObj = self.objectItem
+
             let changed = !self.$help.isEqual(newObj, item)
+            let inputObj = self.$help.cloneDeep(newObj)
 
             /*
                 Handling edge case, either socket or port needs to be defined,
@@ -255,15 +283,15 @@ export default {
                 This converts it to null
 
             */
-            if ((newObj.id === 'port' || newObj.id === 'socket') && newObj.value === '') {
-                newObj.value = null
-            }
-            let cloned = self.$help.cloneDeep(newObj)
-            if (this.item.type === 'enum_mask') {
-                cloned.value = cloned.value.toString()
+            if ((inputObj.id === 'port' || inputObj.id === 'socket') && inputObj.value === '') {
+                inputObj.value = null
             }
 
-            this.$emit('on-input-change', cloned, changed)
+            if (this.item.type === 'enum_mask') {
+                inputObj.value = inputObj.value.toString()
+            }
+
+            this.$emit('on-input-change', inputObj, changed)
         },
         // ---------------------------------------------------- input validation ---------------------------------------
         // port or socket

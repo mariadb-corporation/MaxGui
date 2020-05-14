@@ -1,6 +1,6 @@
 <template>
     <div class="mb-2">
-        <editable-parameters-collapse
+        <parameters-collapse
             ref="parametersTable"
             :parameters="parameters"
             usePortOrSocket
@@ -34,13 +34,13 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import EditableParametersCollapse from './common/EditableParametersCollapse'
+import ParametersCollapse from './common/ParametersCollapse'
 import ResourceRelationships from './common/ResourceRelationships'
 
 export default {
     name: 'server-form-input',
     components: {
-        EditableParametersCollapse,
+        ParametersCollapse,
         ResourceRelationships,
     },
     props: {

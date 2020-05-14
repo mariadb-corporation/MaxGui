@@ -12,8 +12,7 @@ html {
     margin: 0;
     padding: 0;
     //dashboard "responsive". preserve ratio
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow: auto;
     min-width: 1366px !important;
 }
 
@@ -195,7 +194,7 @@ html {
                 }
 
                 td {
-                    padding: 0px 25px;
+                    padding: 0px 24px;
                     pointer-events: all !important;
                     border-bottom: thin solid $table-border !important;
                     height: 45px;

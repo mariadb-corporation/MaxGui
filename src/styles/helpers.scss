@@ -12,7 +12,9 @@ tbody tr.stripe {
 .hide {
     display: none !important;
 }
-
+.visibility--off {
+    visibility: hidden;
+}
 .no-underline {
     text-decoration: none !important;
 }

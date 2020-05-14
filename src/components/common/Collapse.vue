@@ -109,7 +109,7 @@ export default {
     },
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .arrow-toggle {
     .arrow-up {
         transform: rotate(-180deg);

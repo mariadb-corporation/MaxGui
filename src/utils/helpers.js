@@ -26,6 +26,7 @@ export const isEqual = require('lodash/isEqual')
 export const xorWith = require('lodash/xorWith')
 export const uniqueId = require('lodash/uniqueId')
 export const orderBy = require('lodash/orderBy')
+export const flattenDeep = require('lodash/flattenDeep')
 
 export function getCookie(name) {
     let value = '; ' + document.cookie
@@ -166,12 +167,22 @@ export function formatValue(value, formatType) {
 
 /**
  * @param {Object} obj Object to be converted to array
+ * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
+ * @param {Number} level depth level for nested object
+ * @param {Object} nodeParent parent node , usually it's null
  * @param {String} keyName keyName
  * @param {String} keyValue keyValue
- * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
  */
-export function objToArrOfObj(obj, keepPrimitiveValue, level, keyName = 'id', keyValue = 'value') {
+let id = 0
+export function objToArrOfObj(
+    obj,
+    keepPrimitiveValue,
+    level,
+    nodeParent = null,
+    keyName = 'id',
+    keyValue = 'value'
+) {
     const isValidObj = obj !== null && typeof obj === 'object'
     if (isValidObj) {
         let data = []
@@ -184,31 +195,29 @@ export function objToArrOfObj(obj, keepPrimitiveValue, level, keyName = 'id', ke
                 let newObj = {
                     [keyName]: key,
                     [keyValue]: value,
+                    level: level,
+                    nodeId: ++id,
+                    nodeParent: nodeParent,
+                    originalValue: value,
                 }
 
-                if (level !== undefined) {
-                    newObj.level = level
-                    /* width of one v-treeview-node__level is 24, by default
-                     */
-                    newObj.colNameWidth = `calc(65% - 11px -  ${(level + 1) * 8.5}px)`
-                    newObj.colValueWidth = `calc(35% - 11px - ${(level + 1) * 8.5}px)`
-                }
                 const hasChild =
                     (value !== null && typeof value === 'object') || Array.isArray(value)
                 let children = []
 
                 if (hasChild) {
-                    // assigning original value to originalValue in order let arrOfObjToObj reverse back to obj
-                    newObj.originalValue = value
-                    newObj[keyValue] = null
-                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1)
+                    // only object has child value will have expanded property
+                    newObj.expanded = false
+                    //hard coding value when the value is an object.
+                    newObj[keyValue] = handleValue('hasChild')
+                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1, newObj)
                 }
                 if (Array.isArray(value)) {
                     // convert to object
-                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1)
+                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, newObj)
                 }
                 newObj.children = children
-                newObj.isLeaf = !hasChild
+                newObj.leaf = !hasChild
                 data.push(newObj)
             })
             return data
@@ -225,23 +234,86 @@ export function objToArrOfObj(obj, keepPrimitiveValue, level, keyName = 'id', ke
  */
 export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
     if (Array.isArray(a)) {
+        console.log(a)
         let array = cloneDeep(a)
-        let o = {}
+
+        let resultObj = {}
+
+        let objValue = {} // if value of keyName is an object
+        let ObjKeyName = null // if value of keyName is an object
         for (let i = 0; i < array.length; ++i) {
-            let innerObj = array[i]
-            if (!isEmpty(innerObj)) {
+            let o = array[i]
+            if (!isEmpty(o)) {
+                if (o.nodeParent !== null) {
+                    const originalObjValue = o.nodeParent.originalValue
+                    const originalObjId = o.nodeParent.id
+                    const objValueKeys = cloneDeep(Object.keys(objValue)).sort()
+                    const originalObjValueKeys = cloneDeep(Object.keys(originalObjValue)).sort()
+
+                    if (
+                        !isEqual(objValueKeys, originalObjValueKeys) &&
+                        ObjKeyName !== originalObjId
+                    ) {
+                        objValue = originalObjValue
+                        ObjKeyName = originalObjId
+                    }
+
+                    objValue[o[keyName]] = o[keyValue] //set new value to key
+
+                    resultObj[o.nodeParent.id] = objValue
+                }
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
-                if (!innerObj.isLeaf) {
-                    o[innerObj[keyName]] = innerObj.originalValue
-                } else o[innerObj[keyName]] = innerObj[keyValue]
+                // leaf is undefined when the array wasn't created by objToArrOfObj
+                else if (o.leaf || o.leaf === undefined) {
+                    resultObj[o[keyName]] = o[keyValue]
+                } else {
+                    let objValue = arrOfObjToObj(o.children)
+                    resultObj[o[keyName]] = objValue
+                }
             }
         }
-        return o
+
+        return resultObj
     }
     return {}
 }
+/**
+ * @private
+ * Flatten a node to a single array
+ * @param {Object} node Node being flattened
+ * @param {Array} [children] Children of node
+ * @return {Array} Array of flatten nodes
+ */
+function flattenNode(node, children) {
+    children = children || []
 
+    if (node.children) {
+        children = children.concat(node.children)
+        node.children.forEach(child => {
+            child.parentNode = node
+            children.splice(children.indexOf(child) + 1, 0, flattenNode(child))
+        })
+    }
+
+    return flattenDeep(children)
+}
+/**
+ * Flatten an array nested nodes
+ * @param {Array} nodes Nodes to flatten
+ * @return {Array} Array of flatten nodes
+ */
+function flattenNodes(nodes) {
+    let flattenNodes = []
+
+    nodes.forEach(node => {
+        flattenNodes.push(node)
+
+        flattenNodes.push(flattenNode(node))
+    })
+
+    return flattenDeep(flattenNodes)
+}
 /**
  * @param {Any} value Object to be converted to array
  * @return {Any} return valid value, null becomes 'null', '' becomes "''", otherwise return 'undefined'
@@ -263,7 +335,8 @@ export function handleValue(value) {
     }
     // handle typeof null object and empty string
     if (value === null) newVal = 'null'
-
+    // special reserve word value when the value is an object. for handling display nested object in data-table
+    if (value === 'hasChild') newVal = ''
     return newVal
 }
 
@@ -288,6 +361,7 @@ Object.defineProperties(Vue.prototype, {
                 arrOfObjToObj,
                 handleValue,
                 pluralToSingularStr,
+                flattenNodes,
                 // arrayObjDeepCompare,
                 // lodash
                 isNaN,
