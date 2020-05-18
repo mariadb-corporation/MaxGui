@@ -112,12 +112,7 @@
                     style="position:relative;"
                     :style="setCellPadding(item, cellIndex)"
                     @click="cellClick(item, headers, visibleHeaders)"
-                    @mouseenter="
-                        e =>
-                            item.level > 0 || header.cellTruncated
-                                ? handleShowTruncatedText(e, cellIndex)
-                                : null
-                    "
+                    @mouseenter="e => handleShowTruncatedText(e, item, header, cellIndex)"
                 >
                     <v-icon
                         v-show="
@@ -159,7 +154,7 @@
                                 $expand
                             </v-icon>
                         </v-btn>
-                        <slot :name="header.value" :data="{ item, header, cellIndex, treeData }">
+                        <slot :name="header.value" :data="{ item, header, cellIndex, rowIndex }">
                             <!-- no content for the corresponding header, usually this is an error -->
                             <span v-if="$help.isUndefined(item[header.value])"></span>
                             <v-menu
@@ -171,7 +166,7 @@
                                 open-on-hover
                                 :nudge-left="truncatedMenuPos.x"
                                 :nudge-top="truncatedMenuPos.y"
-                                content-class="shadow-drop"
+                                content-class="shadow-drop color text-navigation"
                             >
                                 <template v-slot:activator="{ on }">
                                     <!-- regular cell -->
@@ -452,29 +447,34 @@ export default {
             }
         },
         //------------------------------------------------------------ For displaying truncated text in a v-menu
-        handleShowTruncatedText(e, cellIndex) {
-            const { children } = e.target
-            let truncatedEleWidth = 0
-            let wrapperOffsetwidth = 0
-            for (let i = 0; i < children.length; ++i) {
-                if (children[i].className.includes('text-truncate')) {
-                    wrapperOffsetwidth = children[i].offsetWidth
-                    let childNodes = children[i].childNodes
-                    for (let n = 0; n < childNodes.length; ++n) {
-                        let childNodesClass = childNodes[n].className
-                        if (childNodesClass && childNodesClass.includes('text-truncate__value')) {
-                            truncatedEleWidth = childNodes[n].offsetWidth
-                            break
+        handleShowTruncatedText(e, item, header, cellIndex) {
+            if (item.level > 0 || header.cellTruncated) {
+                const { children } = e.target
+                let truncatedEleWidth = 0
+                let wrapperOffsetwidth = 0
+                for (let i = 0; i < children.length; ++i) {
+                    if (children[i].className.includes('text-truncate')) {
+                        wrapperOffsetwidth = children[i].offsetWidth
+                        let childNodes = children[i].childNodes
+                        for (let n = 0; n < childNodes.length; ++n) {
+                            let childNodesClass = childNodes[n].className
+                            if (
+                                childNodesClass &&
+                                childNodesClass.includes('text-truncate__value')
+                            ) {
+                                truncatedEleWidth = childNodes[n].offsetWidth
+                                break
+                            }
                         }
+                        break
                     }
-                    break
                 }
-            }
-            if (wrapperOffsetwidth < truncatedEleWidth) {
-                this.showTruncatedTextAt = cellIndex
+                if (wrapperOffsetwidth < truncatedEleWidth) {
+                    this.showTruncatedTextAt = cellIndex
 
-                this.truncatedMenuPos.x = truncatedEleWidth - wrapperOffsetwidth
-            } else this.showTruncatedTextAt = null
+                    this.truncatedMenuPos.x = truncatedEleWidth - wrapperOffsetwidth
+                } else this.showTruncatedTextAt = null
+            }
         },
         //------------------------------------------------------------ For nested data, auto display dropdown table row
 

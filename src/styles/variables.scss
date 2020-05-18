@@ -123,3 +123,7 @@ $snackbar-multi-line-content-min-height: 50px;
 
 // override v-text-field
 $text-field-filled-full-width-outlined-single-line-slot-min-height: 36px;
+// override v-tooltip
+$tooltip-border-radius: 10px;
+$tooltip-padding: 0px;
+$tooltip-background-color: $background;

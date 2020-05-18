@@ -6,11 +6,11 @@
                 :searchKeyWord="searchKeyWord"
                 :resourceId="currentServer.id"
                 :parameters="currentServer.attributes.parameters"
-                :moduleParameters="editableParams"
+                :moduleParameters="parameters"
                 usePortOrSocket
                 :updateResourceParameters="updateServerParameters"
                 :onEditSucceeded="onEditSucceeded"
-                :loading="loading"
+                :loading="loadingModuleParams ? true : loading"
             />
         </v-col>
         <v-col class="py-0 my-0" cols="6">
@@ -20,9 +20,13 @@
                 :title="`${$t('monitorDiagnostics')}`"
             >
                 <template v-slot:content>
-                    <tree-data
+                    <data-table
+                        :search="searchKeyWord"
                         :headers="variableValueTableHeaders"
                         :data="monitorDiagnosticsTableRow"
+                        :loading="loading"
+                        tdBorderLeft
+                        showAll
                     />
                 </template>
             </collapse>
@@ -59,28 +63,8 @@ export default {
             // parameters
             isValid: false,
             showMonitorDiagnostics: true,
-            editableParams: [
-                {
-                    name: 'address',
-                    type: 'string',
-                },
-                {
-                    name: 'port',
-                    type: 'count',
-                },
-                {
-                    name: 'socket',
-                    type: 'string',
-                },
-                {
-                    name: 'monitoruser',
-                    type: 'string',
-                },
-                {
-                    name: 'monitorpw',
-                    type: 'string',
-                },
-            ],
+            parameters: [],
+            loadingModuleParams: true,
             //MONITOR
             monitorDiagnosticsTableRow: [],
             // COMMOn
@@ -92,9 +76,17 @@ export default {
     },
 
     async created() {
-        this.fetchMonitorDiagnostics()
+        await Promise.all([this.fetchMonitorDiagnostics(), this.fetchServerParams()])
     },
     methods: {
+        async fetchServerParams() {
+            let self = this
+            let res = await self.axios.get(`/maxscale/modules/servers?fields[module]=parameters`)
+            const { attributes: { parameters = [] } = {} } = res.data.data
+            self.parameters = parameters
+            self.loadingModuleParams = true
+            await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
+        },
         async fetchMonitorDiagnostics() {
             let self = this
             if (!self.$help.isEmpty(self.currentServer.relationships.monitors)) {

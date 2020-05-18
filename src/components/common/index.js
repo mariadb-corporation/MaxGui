@@ -15,7 +15,6 @@ import BaseDialog from './BaseDialog'
 import DataTable from './DataTable'
 import IconSpriteSheet from './IconSpriteSheet'
 import OutlinedOverviewCard from './OutlinedOverviewCard'
-import TreeData from './TreeData'
 import Collapse from './Collapse'
 import ConfirmDialog from './ConfirmDialog'
 import SelectDialog from './SelectDialog'
@@ -38,7 +37,7 @@ export default {
     'data-table': DataTable,
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
-    'tree-data': TreeData,
+
     collapse: Collapse,
 
     'confirm-dialog': ConfirmDialog,

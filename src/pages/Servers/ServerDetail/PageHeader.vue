@@ -4,7 +4,11 @@
             <template v-slot:setting-menu>
                 <details-icon-group-wrapper multiIcons>
                     <template v-slot:body>
-                        <v-tooltip bottom>
+                        <v-tooltip
+                            bottom
+                            transition="slide-y-transition"
+                            content-class="shadow-drop color text-navigation py-1 px-4"
+                        >
                             <template v-slot:activator="{ on }">
                                 <v-btn text v-on="on">
                                     <v-icon size="22" color="primary">
@@ -14,7 +18,11 @@
                             </template>
                             <span></span>
                         </v-tooltip>
-                        <v-tooltip bottom>
+                        <v-tooltip
+                            bottom
+                            transition="slide-y-transition"
+                            content-class="shadow-drop color text-navigation py-1 px-4"
+                        >
                             <template v-slot:activator="{ on }">
                                 <v-btn text v-on="on">
                                     <v-icon size="22" color="primary">
@@ -28,7 +36,11 @@
                 </details-icon-group-wrapper>
                 <details-icon-group-wrapper>
                     <template v-slot:body>
-                        <v-tooltip bottom>
+                        <v-tooltip
+                            bottom
+                            transition="slide-y-transition"
+                            content-class="shadow-drop color text-navigation py-1 px-4"
+                        >
                             <template v-slot:activator="{ on }">
                                 <v-btn text v-on="on">
                                     <v-icon size="22" color="primary">
@@ -42,7 +54,11 @@
                 </details-icon-group-wrapper>
                 <details-icon-group-wrapper>
                     <template v-slot:body>
-                        <v-tooltip bottom>
+                        <v-tooltip
+                            bottom
+                            transition="slide-y-transition"
+                            content-class="shadow-drop color text-navigation py-1 px-4"
+                        >
                             <template v-slot:activator="{ on }">
                                 <v-btn text v-on="on" @click="handleDelete">
                                     <v-icon size="22" color="error">

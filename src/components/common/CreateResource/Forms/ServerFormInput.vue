@@ -2,7 +2,7 @@
     <div class="mb-2">
         <parameters-collapse
             ref="parametersTable"
-            :parameters="parameters"
+            :parameters="getServerParameters"
             usePortOrSocket
             :parentForm="parentForm"
         />
@@ -46,6 +46,7 @@ export default {
     },
     props: {
         parentForm: { type: Object, required: true },
+        resourceModules: { type: Array, required: true },
         allServices: { type: Array, required: true },
         allMonitors: { type: Array, required: true },
     },
@@ -99,6 +100,16 @@ export default {
     },
 
     computed: {
+        getServerParameters: function() {
+            const self = this
+            if (self.resourceModules.length) {
+                const {
+                    attributes: { parameters = [] },
+                } = self.$help.cloneDeep(self.resourceModules[0]) // always 0
+                return parameters
+            }
+            return []
+        },
         servicesList: function() {
             let cloneArr = this.$help.cloneDeep(this.allServices)
             for (let i = 0; i < cloneArr.length; ++i) {

@@ -16,7 +16,11 @@
                 <span>No service</span>
             </fragment>
 
-            <fragment v-else-if="servicesIdArr.length < 2">
+            <!--
+                https://github.com/mariadb-corporation/MaxScale/blob/develop/Documentation/REST-API/Resources-Session.md
+                Each session is created on a service, so even servicesIdArr is an array, it always has one element
+            -->
+            <fragment v-else>
                 <template v-for="serviceId in servicesIdArr">
                     <router-link
                         :key="serviceId"
@@ -27,26 +31,39 @@
                     </router-link>
                 </template>
             </fragment>
-
-            <template v-else>
-                <v-tooltip top transition="fade-transition">
+            <!-- 
+            <fragment v-else>
+                <v-menu
+                    :key="i"
+                    offset-x
+                    transition="slide-x-transition"
+                    :close-on-content-click="false"
+                    open-on-hover
+                    nudge-right="20"
+                    nudge-top="12.5"
+                    content-class="shadow-drop"
+                >
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
                             {{ servicesIdArr.length }}
                             {{ $tc('services', 2).toLowerCase() }}
                         </span>
                     </template>
-                    <template v-for="serviceId in servicesIdArr">
-                        <router-link
-                            :key="serviceId"
-                            :to="`/dashboard/services/${serviceId}`"
-                            class="no-underline"
-                        >
-                            <span>{{ serviceId }} </span>
-                        </router-link>
-                    </template>
-                </v-tooltip>
-            </template>
+
+                    <v-sheet style="border-radius: 10px;" class="pa-4">
+                        <template v-for="serviceId in servicesIdArr">
+                            <router-link
+                                :key="serviceId"
+                                :to="`/dashboard/services/${serviceId}`"
+                                class="no-underline"
+                            >
+                                <span>{{ serviceId }} </span>
+                            </router-link>
+                        </template>
+                    </v-sheet>
+                </v-menu>
+            </fragment>
+             -->
         </template>
         <template v-slot:connected="{ data: { item: { connected } } }">
             <span> {{ $help.formatValue(connected) }} </span>

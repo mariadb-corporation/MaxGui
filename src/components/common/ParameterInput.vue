@@ -76,6 +76,7 @@
                 :items="[true, false]"
                 outlined
                 dense
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             />
         </fragment>
@@ -92,6 +93,7 @@
                 outlined
                 dense
                 multiple
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             >
                 <template v-slot:selection="{ item, index }">
@@ -118,6 +120,7 @@
                 :items="objectItem.enum_values"
                 outlined
                 dense
+                :disabled="objectItem.disabled"
                 @change="handleChange"
             />
         </fragment>

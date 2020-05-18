@@ -49,6 +49,7 @@ export default {
             })
             commit('setCurrentServer', res.data.data)
         },
+
         //-----------------------------------------------Server Create/Update/Delete----------------------------------
 
         /**

@@ -54,7 +54,13 @@
                                     <span class="text-capitalize" style="width:35%">
                                         {{ name.split('_').join(' ') }}
                                     </span>
-                                    <v-tooltip v-if="name === 'commit'" :key="copyState" top>
+                                    <v-tooltip
+                                        v-if="name === 'commit'"
+                                        :key="copyState"
+                                        transition="slide-y-reverse-transition"
+                                        top
+                                        content-class="shadow-drop color text-navigation py-1 px-4"
+                                    >
                                         <template v-slot:activator="{ on }">
                                             <div
                                                 style="width:65%;"

@@ -97,18 +97,6 @@ html {
             transform: rotate(45deg);
         }
     }
-    &--center-left {
-        &:after {
-            transform: rotate(180deg);
-            bottom: 100%;
-            right: 21px;
-        }
-        &::before {
-            top: -4px;
-            right: 20px;
-            transform: rotate(45deg);
-        }
-    }
 }
 
 // --------------------------------- Vuetify custom v-tabs ----------------------------------------------------------------------
@@ -266,6 +254,10 @@ input:-webkit-autofill:active {
     & input {
         font-size: 0.875rem;
     }
+}
+.std.v-input--is-disabled {
+    color: $navigation !important;
+    opacity: 0.5;
 }
 .std.v-text-field--outlined:not(.v-input--is-disabled) > .v-input__control {
     & input {

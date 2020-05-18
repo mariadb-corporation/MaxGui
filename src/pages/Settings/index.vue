@@ -85,7 +85,7 @@ export default {
             let res = await self.axios.get(`/maxscale/modules/maxscale?fields[module]=parameters`)
             const { attributes: { parameters = [] } = {} } = res.data.data
 
-            self.moduleParameters = parameters.filter(param => param.modifiable)
+            self.moduleParameters = parameters
             self.loadingModuleParams = true
             await self.$help.delay(150).then(() => (self.loadingModuleParams = false))
         },

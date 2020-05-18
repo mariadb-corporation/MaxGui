@@ -14,12 +14,17 @@
                 editableCell
                 keepPrimitiveValue
             >
-                <template v-slot:value="props">
+                <template v-slot:append-id>
+                    <span class="ml-1 color text-field-text">
+                        ({{ parametersTableRow.length }})
+                    </span>
+                </template>
+                <template v-slot:value="{ data: { item } }">
                     <!-- rendered if usePortOrSocket is true-->
-                    <fragment v-if="handleShowSpecialInputs(props.data.item.id)">
+                    <fragment v-if="handleShowSpecialInputs(item.id)">
                         <parameter-input
                             :parentForm="parentForm"
-                            :item="props.data.item"
+                            :item="item"
                             :portValue="portValue"
                             :socketValue="socketValue"
                             :addressValue="addressValue"
@@ -29,9 +34,9 @@
                         />
                     </fragment>
 
-                    <fragment v-else-if="requiredParams.includes(props.data.item.id)">
+                    <fragment v-else-if="requiredParams.includes(item.id)">
                         <parameter-input
-                            :item="props.data.item"
+                            :item="item"
                             required
                             createMode
                             @on-input-change="handleItemChange"
@@ -39,15 +44,53 @@
                     </fragment>
                     <fragment v-else>
                         <parameter-input
-                            :item="props.data.item"
+                            :item="item"
                             createMode
                             @on-input-change="handleItemChange"
                         />
                     </fragment>
                 </template>
-                <template v-slot:id="props">
-                    <b>{{ props.data.item.type }}</b>
-                    : {{ props.data.item.id }}
+                <template v-slot:id="{ data: { item } }">
+                    <v-menu
+                        offset-x
+                        transition="slide-x-transition"
+                        :close-on-content-click="false"
+                        open-on-hover
+                        nudge-right="20"
+                        nudge-top="20"
+                        content-class="shadow-drop"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <span
+                                :class="{
+                                    pointer: item.type || item.description || item.unit,
+                                }"
+                                v-on="on"
+                            >
+                                {{ item.id }}
+                            </span>
+                        </template>
+
+                        <v-sheet
+                            v-if="item.type || item.description || item.unit"
+                            style="border-radius: 10px;"
+                            class="pa-4"
+                            max-width="300"
+                        >
+                            <span v-if="item.type" class="d-block body-2">
+                                <span class="mr-1 font-weight-medium">Type: </span>
+                                <span> {{ item.type }}</span>
+                            </span>
+                            <span v-if="item.unit" class="d-block body-2">
+                                <span class="mr-1 font-weight-medium">Unit:</span>
+                                {{ item.unit }}
+                            </span>
+                            <span v-if="item.description" class="d-block body-2">
+                                <span class="mr-1 font-weight-medium">Description:</span>
+                                {{ item.description }}
+                            </span>
+                        </v-sheet>
+                    </v-menu>
                 </template>
             </data-table>
         </template>

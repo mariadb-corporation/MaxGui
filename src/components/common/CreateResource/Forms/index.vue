@@ -77,6 +77,7 @@
                         ref="serverForm"
                         :allServices="allServices"
                         :allMonitors="allMonitors"
+                        :resourceModules="resourceModules"
                         :parentForm="$refs.baseDialog.$refs.form || {}"
                     />
                 </div>
@@ -215,6 +216,7 @@ export default {
                     }
                     break
                 case 'Server':
+                    this.resourceModules = this.getModuleType('servers')
                     await this.fetchAllServers()
                     this.validateInfo = this.allServersInfo
                     await this.fetchAllServices()

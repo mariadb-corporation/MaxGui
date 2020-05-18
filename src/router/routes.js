@@ -12,7 +12,6 @@
  */
 import Login from 'pages/Login'
 import sideBarRoutes from './sideBarRoutes'
-import MaxScale from 'pages/MaxScale'
 import ServiceDetail from 'pages/Services/ServiceDetail'
 import ServerDetail from 'pages/Servers/ServerDetail'
 import MonitorDetail from 'pages/Monitors/MonitorDetail'
@@ -40,15 +39,7 @@ export const routes = [
     },
     ...sideBarRoutes,
     // route but doesn't include in tabRoutes or sideBarRoutes
-    {
-        path: '/dashboard/maxscale',
-        component: MaxScale,
-        meta: {
-            requiresAuth: true,
-            layout: 'app-layout',
-        },
-        name: 'maxscale',
-    },
+
     {
         path: '/dashboard/services/:id',
         component: ServiceDetail,

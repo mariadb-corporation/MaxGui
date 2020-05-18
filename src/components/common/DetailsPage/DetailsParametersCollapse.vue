@@ -20,6 +20,12 @@
                         :loading="loading"
                         keepPrimitiveValue
                     >
+                        <template v-slot:append-id>
+                            <span class="ml-1 color text-field-text">
+                                ({{ parametersTableRow.length }})
+                            </span>
+                        </template>
+
                         <template v-if="editableCell" v-slot:value="{ data: { item } }">
                             <!-- render if usePortOrSocket  -->
                             <fragment v-if="handleShowSpecialInputs(item.id)">
@@ -44,11 +50,83 @@
                                 <parameter-input :item="item" @on-input-change="handleItemChange" />
                             </fragment>
                         </template>
-                        <template v-if="editableCell" v-slot:id="{ data: { item } }">
-                            <span>
-                                <b v-if="item.type">{{ item.type }}: </b>
-                                {{ item.id }}
-                            </span>
+
+                        <template v-slot:id="{ data: { item } }">
+                            <v-tooltip
+                                right
+                                transition="slide-x-transition"
+                                content-class="shadow-drop color text-navigation"
+                            >
+                                <template v-slot:activator="{ on }">
+                                    <span
+                                        :class="{
+                                            pointer: item.type || item.description || item.unit,
+                                        }"
+                                        v-on="on"
+                                    >
+                                        {{ item.id }}
+                                    </span>
+                                </template>
+                                <v-sheet
+                                    v-if="item.type || item.description || item.unit"
+                                    style="border-radius: 10px;"
+                                    class="pa-4"
+                                    max-width="300"
+                                >
+                                    <span v-if="item.type" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Type: </span>
+                                        <span> {{ item.type }}</span>
+                                    </span>
+                                    <span v-if="item.unit" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Unit:</span>
+                                        {{ item.unit }}
+                                    </span>
+                                    <span v-if="item.description" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Description:</span>
+                                        {{ item.description }}
+                                    </span>
+                                </v-sheet>
+                            </v-tooltip>
+                            <!-- <v-menu
+                                offset-x
+                                transition="slide-x-transition"
+                                :close-on-content-click="false"
+                                open-on-hover
+                                nudge-right="20"
+                                nudge-top="20"
+                                content-class="shadow-drop"
+                            >
+                                <template v-slot:activator="{ on }">
+                                    <span
+                                        :class="{
+                                            pointer: item.type || item.description || item.unit,
+                                        }"
+                                        v-on="on"
+                                    >
+                                        {{ item.id }}
+                                    </span>
+                                </template>
+
+                                <v-sheet
+                                    v-if="item.type || item.description || item.unit"
+                                    style="border-radius: 10px;"
+                                    class="pa-4"
+                                    max-width="300"
+                                >
+                                    <span v-if="item.type" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Type: </span>
+                                        <span> {{ item.type }}</span>
+                                    </span>
+                                    <span v-if="item.unit" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Unit:</span>
+                                        {{ item.unit }}
+                                    </span>
+                                    <span v-if="item.description" class="d-block body-2">
+                                        <span class="mr-1 font-weight-medium">Description:</span>
+                                        {{ item.description }}
+                                    </span>
+                                </v-sheet>
+                            </v-menu> -->
                         </template>
                     </data-table>
                 </v-form>
@@ -140,13 +218,14 @@ export default {
             isValid: false,
             showParameters: true,
             variableValueTableHeaders: [
-                { text: 'Variable', value: 'id', width: '55%' },
+                { text: 'Variable', value: 'id', width: '55%', sortable: false },
                 {
                     text: 'Value',
                     value: 'value',
                     width: '45%',
                     editableCol: true,
                     cellTruncated: true,
+                    sortable: false,
                 },
             ],
             loadingEditableParams: false,
@@ -162,82 +241,17 @@ export default {
     computed: {
         parametersTableRow: function() {
             const parameters = this.$help.cloneDeep(this.parameters)
-            // const parameters = {
-            //     log_throttling: {
-            //         count: 0,
-            //         window: 1,
-            //         suppress: 2,
-            //     },
-            //     log_throttling_1: {
-            //         count: 3,
-            //         window: 4,
-            //         log_throttling_1_nested: {
-            //             count: 5,
-            //             window: 6,
-            //             suppresssssssssssssssssssssssssssssssssssssssssssss: 7,
-            //         },
-            //     },
-            //     log_warn_super_user: true,
-            //     log_throttling_2: {
-            //         count: 8,
-            //         window: 9,
-            //         suppress: 10,
-            //     },
-            // }
-
             const keepPrimitiveValue = true
             let level = 0
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue, level)
 
-            let editableParams = this.$help.cloneDeep(this.moduleParameters)
-            // let editableParams = [
-            //     {
-            //         name: 'log_throttling',
-            //         type: 'throttling',
-            //         mandatory: false,
-            //         modifiable: true,
-            //         default_value: {
-            //             count: 0,
-            //             window: 0,
-            //             suppress: 0,
-            //         },
-            //     },
-            //     {
-            //         name: 'log_throttling_1',
-            //         type: 'throttling',
-            //         mandatory: false,
-            //         modifiable: true,
-            //         default_value: {
-            //             count: 0,
-            //             window: 0,
-            //             suppress: 0,
-            //         },
-            //     },
-            //     {
-            //         name: 'log_warn_super_user',
-            //         type: 'bool',
-            //         mandatory: false,
-            //         modifiable: false,
-            //         default_value: false,
-            //     },
-            //     {
-            //         name: 'log_throttling_2',
-            //         type: 'throttling',
-            //         mandatory: false,
-            //         modifiable: true,
-            //         default_value: {
-            //             count: 0,
-            //             window: 0,
-            //             suppress: 0,
-            //         },
-            //     },
-            // ]
+            let moduleParameters = this.$help.cloneDeep(this.moduleParameters)
+
             let arr = []
 
             for (let o = 0; o < tableRow.length; ++o) {
                 const resourceParam = tableRow[o]
-                let readMode = !this.editableCell
-                this.assignParamsTypeInfo(arr, resourceParam, editableParams, readMode)
+                this.assignParamsTypeInfo(arr, resourceParam, moduleParameters)
             }
             return arr
         },
@@ -275,28 +289,34 @@ export default {
         /**
          * @param {Array} arr Array to be pushed to.
          * @param {Object} resourceParam table object {id:'', value:''}
-         * @param {Array} editableParams Module/editable parameters object {id:'', value:'', type:'', unit:'',...}
-         * @param {Boolean} readMode Detect when to push uneditable parameters
+         * @param {Array} moduleParameters Module parameters object {id:'', value:'', type:'', unit:'',...}
          */
-        assignParamsTypeInfo(arr, resourceParam, editableParams, readMode) {
+        assignParamsTypeInfo(arr, resourceParam, moduleParameters) {
             const { id: resourceParamId, value: resourceParamValue } = resourceParam
-            const moduleParam = editableParams.find(param => param.name === resourceParamId)
+            const moduleParam = moduleParameters.find(param => param.name === resourceParamId)
+
             const newParam = this.$help.cloneDeep(resourceParam)
 
             if (moduleParam) {
-                const { type, unit, enum_values } = moduleParam
+                const { type, description, unit, enum_values } = moduleParam
                 // assign
                 newParam['type'] = type
+                newParam['description'] = description
+                newParam['unit'] = unit
+                const hasModifiable = 'modifiable' in moduleParam
+                if (hasModifiable && !moduleParam.modifiable) {
+                    newParam['disabled'] = true
+                } else if (!hasModifiable) newParam['disabled'] = false
+
                 if (newParam.type === 'duration' && unit) {
                     newParam.value = `${newParam.value}${unit}`
                 } else if (newParam.type === 'enum' || newParam.type === 'enum_mask') {
                     newParam['enum_values'] = enum_values
                 }
-                arr.push(newParam)
             } else {
-                // if readMode is true, push uneditable params as well
-                readMode && arr.push(newParam)
+                newParam['disabled'] = true
             }
+            arr.push(newParam)
 
             this.assignPortSocketDependencyValues(resourceParamId, resourceParamValue)
         },
