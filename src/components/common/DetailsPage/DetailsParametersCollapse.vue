@@ -174,7 +174,7 @@ export default {
             //         log_throttling_1_nested: {
             //             count: 5,
             //             window: 6,
-            //             suppress: 7,
+            //             suppresssssssssssssssssssssssssssssssssssssssssssss: 7,
             //         },
             //     },
             //     log_warn_super_user: true,

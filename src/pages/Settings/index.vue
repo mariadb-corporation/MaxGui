@@ -82,7 +82,7 @@ export default {
 
         async fetchModuleParameters() {
             const self = this
-            let res = await self.axios.get(`/maxscale/modules/core?fields[module]=parameters`)
+            let res = await self.axios.get(`/maxscale/modules/maxscale?fields[module]=parameters`)
             const { attributes: { parameters = [] } = {} } = res.data.data
 
             self.moduleParameters = parameters.filter(param => param.modifiable)

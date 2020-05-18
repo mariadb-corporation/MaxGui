@@ -169,10 +169,10 @@ export function formatValue(value, formatType) {
  * @param {Object} obj Object to be converted to array
  * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @param {Number} level depth level for nested object
- * @param {Object} nodeParent parent node , usually it's null
+ * @param {Object} nodeParent parent node, usually it's null in the first level
  * @param {String} keyName keyName
  * @param {String} keyValue keyValue
- * @return {Array}  an array of objects with format like this {id: key, value: obj[key]}
+ * @return {Array}  an array of objects with format like this [{keyName: key, keyValue: obj[key]}]
  */
 let id = 0
 export function objToArrOfObj(
@@ -192,7 +192,7 @@ export function objToArrOfObj(
             Object.keys(targetObj).map(key => {
                 let value = keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key])
 
-                let newObj = {
+                let o = {
                     [keyName]: key,
                     [keyValue]: value,
                     level: level,
@@ -206,19 +206,22 @@ export function objToArrOfObj(
                 let children = []
 
                 if (hasChild) {
-                    // only object has child value will have expanded property
-                    newObj.expanded = false
-                    //hard coding value when the value is an object.
-                    newObj[keyValue] = handleValue('hasChild')
-                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1, newObj)
+                    //  only object has child value will have expanded property
+                    o.expanded = false
+                    /*  hard coding value when the value is an object. This is done to ensure when rendering the value,
+                        some tables have intentions to render null or undefined as string, 'hasChild' will be ignored
+                        by handleValue() function, it will return empty string.
+                    */
+                    o[keyValue] = handleValue('hasChild')
+                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1, o)
                 }
                 if (Array.isArray(value)) {
-                    // convert to object
-                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, newObj)
+                    // convert value to object to run recursive convert
+                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, o)
                 }
-                newObj.children = children
-                newObj.leaf = !hasChild
-                data.push(newObj)
+                o.children = children
+                o.leaf = !hasChild
+                data.push(o)
             })
             return data
         }
@@ -228,23 +231,20 @@ export function objToArrOfObj(
 
 /**
  * @param {Array} a Array of object to be converted to object
- * @param {String} keyName keyName
- * @param {String} keyValue keyValue
- * @return {Object}  return original object of the objToArrOfObj function
+ * @param {String} keyName keyName of the object in the array
+ * @param {String} keyValue keyValue of the object in the array
+ * @return {Object}  return object
  */
 export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
     if (Array.isArray(a)) {
-        console.log(a)
         let array = cloneDeep(a)
-
         let resultObj = {}
-
-        let objValue = {} // if value of keyName is an object
-        let ObjKeyName = null // if value of keyName is an object
+        let objValue = {} // if value of keyValue is an object
+        let ObjKeyName = null
         for (let i = 0; i < array.length; ++i) {
             let o = array[i]
             if (!isEmpty(o)) {
-                if (o.nodeParent !== null) {
+                if ('nodeParent' in o && o.nodeParent !== null) {
                     const originalObjValue = o.nodeParent.originalValue
                     const originalObjId = o.nodeParent.id
                     const objValueKeys = cloneDeep(Object.keys(objValue)).sort()
@@ -273,7 +273,6 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
                 }
             }
         }
-
         return resultObj
     }
     return {}
@@ -315,8 +314,8 @@ function flattenNodes(nodes) {
     return flattenDeep(flattenNodes)
 }
 /**
- * @param {Any} value Object to be converted to array
- * @return {Any} return valid value, null becomes 'null', '' becomes "''", otherwise return 'undefined'
+ * @param {Any} value Any types that needs to be handled
+ * @return {Any} return valid value for rendering, null becomes 'null', otherwise return 'undefined'
  */
 export function handleValue(value) {
     let typeOfValue = typeof value
@@ -362,7 +361,7 @@ Object.defineProperties(Vue.prototype, {
                 handleValue,
                 pluralToSingularStr,
                 flattenNodes,
-                // arrayObjDeepCompare,
+
                 // lodash
                 isNaN,
                 isObject,

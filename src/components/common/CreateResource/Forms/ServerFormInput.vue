@@ -17,6 +17,7 @@
             relationshipsType="monitors"
             :items="monitorsList"
             :multiple="false"
+            required
         />
     </div>
 </template>
