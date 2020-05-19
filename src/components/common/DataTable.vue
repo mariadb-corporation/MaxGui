@@ -154,6 +154,7 @@
                                 $expand
                             </v-icon>
                         </v-btn>
+
                         <slot :name="header.value" :data="{ item, header, cellIndex, rowIndex }">
                             <!-- no content for the corresponding header, usually this is an error -->
                             <span v-if="$help.isUndefined(item[header.value])"></span>
@@ -311,7 +312,6 @@ export default {
         getDataLength: function() {
             const self = this
             const flattenedNodes = self.$help.flattenNodes(self.$help.cloneDeep(self.treeData))
-            this.$emit('total-rows-number', flattenedNodes.length)
             return flattenedNodes.length
         },
     },

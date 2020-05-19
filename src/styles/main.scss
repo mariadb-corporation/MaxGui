@@ -123,12 +123,7 @@ html {
 }
 
 // --------------------------------- Vuetify custom restyle ----------------------------------------------------------------------
-// reset hover effect
-.theme--light.v-data-table
-    tbody
-    tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-    background: unset;
-}
+
 .data-table-full {
     a:hover {
         text-decoration: underline;
@@ -168,8 +163,8 @@ html {
         }
 
         tbody {
-            tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper):not(.v-data-table__editable-cell-mode) {
-                background: #fafcfc;
+            tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+                background: #fafcfc !important;
             }
             tr:active:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper):not(.v-data-table__editable-cell-mode) {
                 background: #f2fcff !important;

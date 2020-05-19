@@ -19,11 +19,10 @@
                         :search="searchKeyWord"
                         :loading="loading"
                         keepPrimitiveValue
-                        @total-rows-number="totalRowsNumber = $event"
                     >
                         <template v-slot:append-id>
                             <span class="ml-1 color text-field-text">
-                                ({{ totalRowsNumber }})
+                                ({{ parametersTableRow.length }})
                             </span>
                         </template>
 
@@ -196,7 +195,6 @@ export default {
             addressValue: null,
             portValue: null,
             socketValue: null,
-            totalRowsNumber: 0,
         }
     },
     computed: {
