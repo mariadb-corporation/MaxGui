@@ -10,13 +10,13 @@
                             content-class="shadow-drop color text-navigation py-1 px-4"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on">
+                                <v-btn text v-on="on" @click="handleClick('maintenance')">
                                     <v-icon size="22" color="primary">
                                         $vuetify.icons.paused
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <span></span>
+                            <span>{{ $t('maintain') }} {{ $tc('servers', 1) }} </span>
                         </v-tooltip>
                         <v-tooltip
                             bottom
@@ -24,13 +24,20 @@
                             content-class="shadow-drop color text-navigation py-1 px-4"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on">
+                                <v-btn
+                                    text
+                                    :disabled="
+                                        serverState !== 'maintenance' && serverState !== 'drained'
+                                    "
+                                    v-on="on"
+                                    @click="handleClick('clear')"
+                                >
                                     <v-icon size="22" color="primary">
                                         $vuetify.icons.restart
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <span></span>
+                            <span>{{ $t('clear') }} {{ $t('currentServerState') }} </span>
                         </v-tooltip>
                     </template>
                 </details-icon-group-wrapper>
@@ -42,13 +49,13 @@
                             content-class="shadow-drop color text-navigation py-1 px-4"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on">
+                                <v-btn text v-on="on" @click="handleClick('drain')">
                                     <v-icon size="22" color="primary">
                                         $vuetify.icons.drain
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <span></span>
+                            <span>{{ $t('drain') }} {{ $tc('servers', 1) }}</span>
                         </v-tooltip>
                     </template>
                 </details-icon-group-wrapper>
@@ -60,7 +67,7 @@
                             content-class="shadow-drop color text-navigation py-1 px-4"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on" @click="handleDelete">
+                                <v-btn text v-on="on" @click="handleClick('delete')">
                                     <v-icon size="22" color="error">
                                         $vuetify.icons.unlink
                                     </v-icon>
@@ -120,6 +127,7 @@ export default {
     name: 'page-header',
     props: {
         currentServer: { type: Object, required: true },
+        onEditSucceeded: { type: Function, required: true },
     },
     data() {
         return {
@@ -127,47 +135,100 @@ export default {
             dialogTitle: '',
             dialogType: 'unlink',
             smallInfo: 'serviceDelete',
+            mode: 'set', //set or clear
+            state: '',
         }
     },
     computed: {
         // TODO: Determine server healthy
         serverHealthy: function() {
-            if (
-                this.currentServer.attributes.state === 'Master, Running' ||
-                this.currentServer.attributes.state === 'Slave, Running'
-            ) {
-                return 'Healthy'
-            } else if (this.currentServer.attributes.state === 'Maintenance, Running') {
-                return 'Maintenance'
-            } else return 'Unhealthy'
+            switch (this.$help.serverStateIcon(this.currentServer.attributes.state)) {
+                case 0:
+                    return 'Unhealthy'
+                case 2:
+                    return 'Healthy'
+                default:
+                    return 'Warning'
+            }
+        },
+        serverState: function() {
+            let currentState = this.currentServer.attributes.state.toLowerCase()
+            if (currentState.indexOf(',') > 0) {
+                currentState = currentState.slice(0, currentState.indexOf(','))
+            }
+            console.log(currentState)
+            return currentState
         },
     },
     methods: {
-        ...mapActions('server', ['destroyServer']),
-        handleDelete() {
-            this.dialogType = 'unlink'
-            this.dialogTitle = `${this.$t('unlink')} ${this.$tc('servers', 1)}`
-            this.smallInfo = 'serverUnlink'
+        ...mapActions('server', ['destroyServer', 'setOrClearServerState']),
+        handleClick(mode) {
+            switch (mode) {
+                case 'delete':
+                    {
+                        this.mode = 'delete'
+                        this.dialogType = 'unlink'
+                        this.dialogTitle = `${this.$t('unlink')} ${this.$tc('servers', 1)}`
+                        this.smallInfo = 'serverUnlink'
+                    }
+                    break
+                case 'drain':
+                    {
+                        this.mode = 'set'
+                        this.dialogType = 'drain'
+                        this.state = 'drain'
+                        this.dialogTitle = `${this.$t('drain')} ${this.$tc('servers', 1)}`
+                        this.smallInfo = 'serverDrain'
+                    }
+                    break
+                case 'clear':
+                    {
+                        this.mode = 'clear'
+                        let currentState = this.serverState
+
+                        this.state = currentState === 'drained' ? 'drain' : currentState
+                        this.dialogType = 'clear'
+                        this.dialogTitle = `${this.$t('clear')} ${this.$tc('servers', 1)}`
+                        this.smallInfo = 'serverClear'
+                    }
+                    break
+                case 'maintenance':
+                    {
+                        this.mode = 'set'
+                        this.state = 'maintenance'
+                        this.dialogType = 'maintain'
+                        this.dialogTitle = `${this.$t('maintain')} ${this.$tc('servers', 1)}`
+                        this.smallInfo = 'serverMaintenance'
+                    }
+                    break
+            }
+
             this.showConfirmDialog = true
         },
 
         async confirmSave() {
-            await this.performAsyncLoadingAction(this.dialogType)
+            switch (this.mode) {
+                case 'delete':
+                    await self.destroyServer(self.currentServer.id)
+                    self.showConfirmDialog = false
+                    self.$router.go(-1)
+                    break
+                case 'set':
+                case 'clear':
+                    await this.performAsyncLoadingAction()
+                    break
+            }
         },
-        async performAsyncLoadingAction(type) {
+        async performAsyncLoadingAction() {
             let self = this
-            if (type === 'unlink') {
-                await self.destroyServer(self.currentServer.id)
-                self.showConfirmDialog = false
-                self.$router.go(-1)
-            } /* else {
-                await self.stopOrStartService({
-                    id: self.currentService.id,
-                    mode: type,
-                    callback: self.onEditSucceeded,
-                })
-                self.showConfirmDialog = false
-            }*/
+
+            await self.setOrClearServerState({
+                id: self.currentServer.id,
+                state: self.state,
+                mode: self.mode,
+                callback: self.onEditSucceeded,
+            })
+            self.showConfirmDialog = false
         },
     },
 }

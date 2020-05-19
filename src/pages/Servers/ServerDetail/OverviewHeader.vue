@@ -40,15 +40,15 @@
                     class="detail-overview__card__value text-no-wrap body-2"
                 >
                     <fragment v-if="value.indexOf(',') > 0">
-                        <span class="color text-success font-weight-bold">
+                        <span class="color font-weight-bold" :class="[serverStateClass]">
                             {{ value.slice(0, value.indexOf(',')) }}
                         </span>
                         /
-                        <span class="color text-success font-weight-bold">
+                        <span class="color font-weight-bold" :class="[serverStateClass]">
                             {{ value.slice(value.indexOf(',') + 1) }}
                         </span>
                     </fragment>
-                    <span v-else class="color text-success font-weight-bold">
+                    <span v-else class="color font-weight-bold" :class="[serverStateClass]">
                         {{ value }}
                     </span>
                 </span>
@@ -113,6 +113,16 @@ export default {
         }
     },
     computed: {
+        serverStateClass: function() {
+            switch (this.$help.serverStateIcon(this.currentServer.attributes.state)) {
+                case 0:
+                    return 'text-error'
+                case 2:
+                    return 'text-success'
+                default:
+                    return 'text-warning'
+            }
+        },
         getTopOverviewInfo: function() {
             let self = this
             let currentServer = self.$help.cloneDeep(self.currentServer)

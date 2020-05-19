@@ -52,12 +52,16 @@ export function serviceStateIcon(serviceState) {
     } else return ''
 }
 export function serverStateIcon(serverStatus) {
+    let result = 1 // warning icon
     if (serverStatus) {
-        if (serverStatus === 'Master, Running' || serverStatus === 'Slave, Running') return 2
-        if (serverStatus === 'Running' || serverStatus.includes('Maintenance')) return 1
-        if (serverStatus === 'Down') return 0
-        else return ''
-    } else return ''
+        // error icon, unhealthy text
+        if (serverStatus === 'Running' || serverStatus.includes('Down')) result = 0
+        // healthy icon, healthy text
+        else if (serverStatus.includes('Running')) result = 2
+        // warning icon
+        if (serverStatus.includes('Maintenance')) result = 1
+    }
+    return result
 }
 export function monitorStateIcon(monitorState) {
     if (monitorState) {

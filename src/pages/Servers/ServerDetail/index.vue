@@ -1,7 +1,7 @@
 <template>
     <page-wrapper>
         <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
-            <page-header :currentServer="currentServer" />
+            <page-header :currentServer="currentServer" :onEditSucceeded="fetchServer" />
             <overview-header
                 :currentServer="currentServer"
                 :updateServerRelationship="updateServerRelationship"

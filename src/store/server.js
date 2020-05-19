@@ -171,7 +171,7 @@ export default {
          * @param {String} state state of the server (master, slave, maintenance, running, synced or stale)
          * @param {String} mode mode set or clear
          */
-        async setOrClearServerState({ dispatch, commit }, { id, state, mode }) {
+        async setOrClearServerState({ commit }, { id, state, mode, callback }) {
             let res, message
             switch (mode) {
                 case 'set':
@@ -184,8 +184,8 @@ export default {
                     break
             }
             // response ok
+
             if (res.status === 204) {
-                await dispatch('fetchAllServers')
                 await commit(
                     'showMessage',
                     {
@@ -194,6 +194,7 @@ export default {
                     },
                     { root: true }
                 )
+                if (isFunction(callback)) await callback()
             }
         },
 

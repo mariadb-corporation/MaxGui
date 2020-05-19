@@ -40,6 +40,9 @@
     "actions": "Actions",
     "delete": "Delete",
     "unlink": "Unlink",
+    "drain": "Drain",
+    "clear": "Clear",
+    "maintain": "Maintain",
     "destroy": "Destroy",
     "stop": "Stop",
     "start": "Start",
@@ -62,6 +65,7 @@
     "noEntity": "No {entityName}",
 
     "servers": "server | servers",
+    "currentServerState": "current server state",
 
     "services": "service | services",
     "router": "router | routers",
@@ -83,6 +87,9 @@
         "refreshLater": "Please refresh in a few moments."
     },
     "confirmations": {
+        "maintain": "Are you sure you want to put {targetId} into maintenance mode?",
+        "clear": "Are you sure you want to clear current state of {targetId}?",
+        "drain": "Are you sure you want to drain {targetId}?",
         "unlink": "Are you sure you want to unlink {targetId}?",
         "delete": "Are you sure you want to delete {targetId}?",
         "destroy": "Are you sure you want to destroy {targetId}?",
@@ -98,6 +105,9 @@
 
         "monitorDelete": "The monitor must not have relationships to any servers in order to be destroyed.",
         "serverUnlink": "Make sure it is not used by any services or monitors.",
+        "serverDrain": "Server is drained of connections",
+        "serverClear": "",
+        "serverMaintenance": "",
         "serviceDelete": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
 

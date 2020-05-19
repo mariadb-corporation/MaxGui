@@ -212,7 +212,7 @@ export default {
          * @param {String} id id of the service
          * @param {String} mode Mode to start or stop service
          */
-        async stopOrStartService({ dispatch, commit }, { id, mode, callback }) {
+        async stopOrStartService({ commit }, { id, mode, callback }) {
             let res = await Vue.axios.put(`/services/${id}/${mode}`)
             let message
             switch (mode) {
@@ -225,7 +225,6 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await dispatch('fetchAllServices')
                 await commit(
                     'showMessage',
                     {
