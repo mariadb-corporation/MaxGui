@@ -1,6 +1,9 @@
 <template>
     <span>
-        <fragment v-if="objectItem.expanded !== undefined"> </fragment>
+        <!-- if objectItem has expanded property, meaning it has child object, so no need to render input -->
+        <fragment v-if="'expanded' in objectItem" />
+        <!-- Hanlde edge case with log_throttling parameter in maxscale, 
+        the value is an object but doesn't contain type information-->
         <fragment
             v-else-if="objectItem.nodeParent && objectItem.nodeParent.id === 'log_throttling'"
         >
@@ -19,6 +22,7 @@
                 @input="handleChange"
             />
         </fragment>
+        <!-- Hanlde edge case with port, address, socket custom rules-->
         <fragment v-else-if="!isListener && objectItem.id === 'address'">
             <v-text-field
                 :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
@@ -65,8 +69,8 @@
                 @input="handleChange"
             />
         </fragment>
+        <!---------------------------------------------others parameter types ----------------------------------------->
         <fragment v-else-if="objectItem.type === 'bool'">
-            <!-- No need rules for v-select as it always has predefined value-->
             <v-select
                 :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"
@@ -81,8 +85,6 @@
             />
         </fragment>
         <fragment v-else-if="objectItem.type === 'enum_mask'">
-            <!-- No need rules for v-select as it always has predefined value-->
-
             <v-select
                 :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"
@@ -110,7 +112,6 @@
             </v-select>
         </fragment>
         <fragment v-else-if="objectItem.type === 'enum'">
-            <!-- No need rules for v-select as it always has predefined value-->
             <v-select
                 :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model="objectItem.value"

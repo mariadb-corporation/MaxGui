@@ -38,7 +38,7 @@
                 >
                     status
                 </icon-sprite-sheet>
-                <span>{{ $help.sliceStrAtChar(monitorState, '|', true) }} </span>
+                <span>{{ monitorState }} </span>
             </div>
             <span v-else />
         </template>
@@ -195,12 +195,7 @@ export default {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
                         row.id = monitorLinked.id // aka monitorId
-                        /*  associate with monitorID will make this column sortable
-                            This is because, when two rowspan td have the same value the default sort won't recognize
-                            which td belongs to which row. The rendered result just needs to display the first part,
-                            separate by the |
-                        */
-                        row.monitorState = `${monitorLinked.id}|${monitorLinked.attributes.state}`
+                        row.monitorState = `${monitorLinked.attributes.state}`
                     } else {
                         row.id = 'Not monitored'
                         row.monitorState = undefined

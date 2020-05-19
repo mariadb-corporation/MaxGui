@@ -225,8 +225,7 @@ export default {
     /* SLOTS available for data-table */
     // :name="header.value" // slot aka item
     // name="actions" :data="{ item }"
-    // name="expandable"   :data="{ item }"
-    // name="expandIndicator" :expanded Boolean
+
     directives: {
         sortableTable: {
             bind(el, binding, vnode) {
@@ -311,8 +310,9 @@ export default {
         },
         getDataLength: function() {
             const self = this
-            const flattenedNode = self.$help.flattenNodes(self.$help.cloneDeep(self.treeData))
-            return flattenedNode.length
+            const flattenedNodes = self.$help.flattenNodes(self.$help.cloneDeep(self.treeData))
+            this.$emit('total-rows-number', flattenedNodes.length)
+            return flattenedNodes.length
         },
     },
 
@@ -332,11 +332,12 @@ export default {
                 this.showEntityAt = null
             }
         },
-        editableCell: function(val) {
-            if (val) {
-                this.toggleAllNodeChildren()
-            }
-        },
+
+        // editableCell: function(val) {
+        //     if (val) {
+        //         this.toggleAllNodesChildren()
+        //     }
+        // },
     },
 
     created() {
@@ -375,17 +376,50 @@ export default {
                 marginRight: `${marginRight}px`,
             }
         },
-        customSort(items, sortBy, isDesc) {
-            items.sort((a, b) => {
-                if (!isDesc[0]) {
-                    return a[sortBy] < b[sortBy] ? -1 : 1
-                } else {
-                    return b[sortBy] < a[sortBy] ? -1 : 1
-                }
-            })
-
-            return items
+        columnToggle() {
+            this.isColumnToggleVisible = !this.isColumnToggleVisible
         },
+
+        //------------------------------------------------------------ Sorting
+        // Currently support sorting one column at a time
+        customSort(items, sortBy, isDesc) {
+            let result = items
+            let hashArr = {} // O(n log n)
+            const self = this
+            for (let i = 0; i < items.length; ++i) {
+                if (hashArr[items[i].parentId] == undefined) hashArr[items[i].parentId] = []
+                hashArr[items[i].parentId].push(items[i])
+            }
+
+            if (sortBy.length) {
+                result = this.hierarchySort(hashArr, 0, sortBy, isDesc, [])
+                if (!result.length)
+                    result = items.sort((a, b) => self.sortOrder(a, b, isDesc, sortBy))
+            }
+
+            return result
+        },
+
+        hierarchySort(hashArr, key, sortBy, isDesc, result) {
+            if (hashArr[key] === undefined) return result
+            const self = this
+            let arr = hashArr[key].sort((a, b) => self.sortOrder(a, b, isDesc, sortBy))
+            for (let i = 0; i < arr.length; ++i) {
+                result.push(arr[i])
+                const key = arr[i].nodeId || arr[i].id
+                self.hierarchySort(hashArr, key, sortBy, isDesc, result)
+            }
+            return result
+        },
+
+        sortOrder(a, b, isDesc, sortBy) {
+            if (!isDesc[0]) {
+                return a[sortBy] < b[sortBy] ? -1 : 1
+            } else {
+                return b[sortBy] < a[sortBy] ? -1 : 1
+            }
+        },
+
         changeSort(column) {
             // TODO: support multiple column sorting
             if (this.pagination.sortBy[0] === column) {
@@ -395,9 +429,13 @@ export default {
                 this.pagination.sortDesc = [false]
             }
         },
+
+        //------------------------------------------------------------ Props callback
+
         rowClick(item, headers) {
             this.onRowClick && this.onRowClick(item, headers)
         },
+
         cellClick(item, header) {
             this.onCellClick && this.onCellClick(item, header)
         },
@@ -407,9 +445,6 @@ export default {
             // use helper function to handle value before passing the data to table
             let value = item[header.value]
             return this.$help.isFunction(header.format) ? header.format(value) : `${value}`
-        },
-        columnToggle() {
-            this.isColumnToggleVisible = !this.isColumnToggleVisible
         },
 
         //------------------------------------------------------------ For displaying actions btn/icon on table row
@@ -513,9 +548,10 @@ export default {
             }
         },
 
-        toggleAllNodeChildren() {
-            for (let i = 0; i < this.treeData.length; ++i) {
-                let node = this.treeData[i]
+        toggleAllNodesChildren(nodes) {
+            let treeNodes = nodes || this.treeData
+            for (let i = 0; i < treeNodes.length; ++i) {
+                let node = treeNodes[i]
                 this.toggleNodeChildren(node)
             }
         },
@@ -531,6 +567,12 @@ export default {
             }
         },
 
+        collapseAllNodesChildren() {
+            for (let i = 0; i < this.treeData.length; ++i) {
+                let node = this.treeData[i]
+                this.collapseNodeChildren(node)
+            }
+        },
         collapseNodeChildren(node) {
             const self = this
             if (node.expanded === true && node.children.length > 0) {

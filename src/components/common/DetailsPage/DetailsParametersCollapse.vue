@@ -19,10 +19,11 @@
                         :search="searchKeyWord"
                         :loading="loading"
                         keepPrimitiveValue
+                        @total-rows-number="totalRowsNumber = $event"
                     >
                         <template v-slot:append-id>
                             <span class="ml-1 color text-field-text">
-                                ({{ parametersTableRow.length }})
+                                ({{ totalRowsNumber }})
                             </span>
                         </template>
 
@@ -87,46 +88,6 @@
                                     </span>
                                 </v-sheet>
                             </v-tooltip>
-                            <!-- <v-menu
-                                offset-x
-                                transition="slide-x-transition"
-                                :close-on-content-click="false"
-                                open-on-hover
-                                nudge-right="20"
-                                nudge-top="20"
-                                content-class="shadow-drop"
-                            >
-                                <template v-slot:activator="{ on }">
-                                    <span
-                                        :class="{
-                                            pointer: item.type || item.description || item.unit,
-                                        }"
-                                        v-on="on"
-                                    >
-                                        {{ item.id }}
-                                    </span>
-                                </template>
-
-                                <v-sheet
-                                    v-if="item.type || item.description || item.unit"
-                                    style="border-radius: 10px;"
-                                    class="pa-4"
-                                    max-width="300"
-                                >
-                                    <span v-if="item.type" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Type: </span>
-                                        <span> {{ item.type }}</span>
-                                    </span>
-                                    <span v-if="item.unit" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Unit:</span>
-                                        {{ item.unit }}
-                                    </span>
-                                    <span v-if="item.description" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Description:</span>
-                                        {{ item.description }}
-                                    </span>
-                                </v-sheet>
-                            </v-menu> -->
                         </template>
                     </data-table>
                 </v-form>
@@ -218,14 +179,13 @@ export default {
             isValid: false,
             showParameters: true,
             variableValueTableHeaders: [
-                { text: 'Variable', value: 'id', width: '55%', sortable: false },
+                { text: 'Variable', value: 'id', width: '55%' },
                 {
                     text: 'Value',
                     value: 'value',
                     width: '45%',
                     editableCol: true,
                     cellTruncated: true,
-                    sortable: false,
                 },
             ],
             loadingEditableParams: false,
@@ -236,11 +196,13 @@ export default {
             addressValue: null,
             portValue: null,
             socketValue: null,
+            totalRowsNumber: 0,
         }
     },
     computed: {
         parametersTableRow: function() {
             const parameters = this.$help.cloneDeep(this.parameters)
+
             const keepPrimitiveValue = true
             let level = 0
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue, level)
@@ -255,6 +217,7 @@ export default {
             }
             return arr
         },
+
         shouldDisableSaveBtn: function() {
             if (this.changedParametersArr.length > 0 && this.isValid) return false
             else return true

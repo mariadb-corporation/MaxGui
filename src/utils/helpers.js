@@ -126,25 +126,7 @@ export function groupBy(array, property) {
 }
 
 /**
- * @param {String} str String to be sliced
- * @param {String} char find the indexOf provided char
- * @param {Boolean} returnLastPart if true, slice the last part
- * @return {String} new String
- */
-export function sliceStrAtChar(str, char, returnLastPart) {
-    return returnLastPart
-        ? str.slice(str.indexOf(char) + 1, str.indexOf(str.slice(-1)) + 1)
-        : str.slice(0, str.indexOf(char))
-}
-
-/**
- * @param {String} str String to be sliced, use for resource name
- * @return {String} new return singular string
- */
-export function pluralToSingularStr(str) {
-    return str.slice(0, str.lastIndexOf('s'))
-}
-/**
+ * Handle format date value
  * @param {String} value String date to be formatted
  * @param {String} formatType format type
  * @return {String} new String with HH:mm:ss MM/DD/YYYY format
@@ -166,87 +148,108 @@ export function formatValue(value, formatType) {
 }
 
 /**
+ * Convert an object to array of object with format like this 
+        [
+            {
+                nodeId: Number,
+                parentId: Number,
+                level: Number,
+                nodeParent: Object,
+                keyName: String,
+                keyValue: targetObj[key],
+                originalValue: targetObj[key],
+            },
+        ]
  * @param {Object} obj Object to be converted to array
  * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @param {Number} level depth level for nested object
- * @param {Object} nodeParent parent node, usually it's null in the first level
+ * @param {Object} nodeParent parent node, usually it's null in the first level (0)
+ * @param {Number} parentId nodeId of parentNode
  * @param {String} keyName keyName
  * @param {String} keyValue keyValue
- * @return {Array}  an array of objects with format like this [{keyName: key, keyValue: obj[key]}]
+ * @return {Array} an array of objects
  */
-let id = 0
+let nodeId = 0
 export function objToArrOfObj(
     obj,
     keepPrimitiveValue,
     level,
     nodeParent = null,
+    parentId = 0,
     keyName = 'id',
     keyValue = 'value'
 ) {
-    const isValidObj = obj !== null && typeof obj === 'object'
+    const isValidObj = obj !== null && typeof obj === 'object' && !isEmpty(obj)
     if (isValidObj) {
-        let data = []
+        let result = []
         let targetObj = cloneDeep(obj)
 
-        if (!isEmpty(targetObj)) {
-            Object.keys(targetObj).map(key => {
-                let value = keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key])
+        Object.keys(targetObj).map(key => {
+            let value = keepPrimitiveValue ? targetObj[key] : handleValue(targetObj[key])
 
-                let o = {
-                    [keyName]: key,
-                    [keyValue]: value,
-                    level: level,
-                    nodeId: ++id,
-                    nodeParent: nodeParent,
-                    originalValue: value,
-                }
+            let node = {
+                nodeId: ++nodeId,
+                parentId: parentId,
+                level: level,
+                nodeParent: nodeParent,
+                [keyName]: key,
+                [keyValue]: value,
+                originalValue: value,
+            }
 
-                const hasChild =
-                    (value !== null && typeof value === 'object') || Array.isArray(value)
-                let children = []
+            const hasChild = (value !== null && typeof value === 'object') || Array.isArray(value)
+            let children = []
 
-                if (hasChild) {
-                    //  only object has child value will have expanded property
-                    o.expanded = false
-                    /*  hard coding value when the value is an object. This is done to ensure when rendering the value,
-                        some tables have intentions to render null or undefined as string, 'hasChild' will be ignored
+            if (hasChild) {
+                //  only object has child value will have expanded property
+                node.expanded = false
+                /*  hard coding value when the value is an object. This is done to ensure when rendering the value,
+                        some tables have intentions to render null or undefined as string, '' will be ignored
                         by handleValue() function, it will return empty string.
                     */
-                    o[keyValue] = handleValue('hasChild')
-                    children = objToArrOfObj(value, keepPrimitiveValue, level + 1, o)
-                }
-                if (Array.isArray(value)) {
-                    // convert value to object to run recursive convert
-                    children = objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, o)
-                }
-                o.children = children
-                o.leaf = !hasChild
-                data.push(o)
-            })
-            return data
-        }
+                node[keyValue] = handleValue('')
+                children = objToArrOfObj(value, keepPrimitiveValue, level + 1, node, node.nodeId)
+            }
+
+            if (Array.isArray(value)) {
+                // convert value to valid object
+                children = objToArrOfObj(
+                    { ...value },
+                    keepPrimitiveValue,
+                    level + 1,
+                    node,
+                    node.nodeId
+                )
+            }
+            node.children = children
+            node.leaf = !hasChild
+            result.push(node)
+        })
+        return result
     }
     return []
 }
 
 /**
+ * Convert an array of objects to an object has property name as the value of keyName, key value as
+ * the value of keyValue
  * @param {Array} a Array of object to be converted to object
  * @param {String} keyName keyName of the object in the array
  * @param {String} keyValue keyValue of the object in the array
- * @return {Object}  return object
+ * @return {Object} return an object
  */
 export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
     if (Array.isArray(a)) {
-        let array = cloneDeep(a)
+        let targetArr = cloneDeep(a)
         let resultObj = {}
         let objValue = {} // if value of keyValue is an object
         let ObjKeyName = null
-        for (let i = 0; i < array.length; ++i) {
-            let o = array[i]
-            if (!isEmpty(o)) {
-                if ('nodeParent' in o && o.nodeParent !== null) {
-                    const originalObjValue = o.nodeParent.originalValue
-                    const originalObjId = o.nodeParent.id
+        for (let i = 0; i < targetArr.length; ++i) {
+            let node = targetArr[i]
+            if (!isEmpty(node)) {
+                if ('nodeParent' in node && node.nodeParent !== null) {
+                    const originalObjValue = node.nodeParent.originalValue
+                    const originalObjId = node.nodeParent.id
                     const objValueKeys = cloneDeep(Object.keys(objValue)).sort()
                     const originalObjValueKeys = cloneDeep(Object.keys(originalObjValue)).sort()
 
@@ -258,18 +261,18 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
                         ObjKeyName = originalObjId
                     }
 
-                    objValue[o[keyName]] = o[keyValue] //set new value to key
+                    objValue[node[keyName]] = node[keyValue] //set new value to key
 
-                    resultObj[o.nodeParent.id] = objValue
+                    resultObj[node.nodeParent.id] = objValue
                 }
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
                 // leaf is undefined when the array wasn't created by objToArrOfObj
-                else if (o.leaf || o.leaf === undefined) {
-                    resultObj[o[keyName]] = o[keyValue]
+                else if (node.leaf || node.leaf === undefined) {
+                    resultObj[node[keyName]] = node[keyValue]
                 } else {
-                    let objValue = arrOfObjToObj(o.children)
-                    resultObj[o[keyName]] = objValue
+                    let objValue = arrOfObjToObj(node.children)
+                    resultObj[node[keyName]] = objValue
                 }
             }
         }
@@ -277,6 +280,7 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
     }
     return {}
 }
+
 /**
  * @private
  * Flatten a node to a single array
@@ -297,6 +301,7 @@ function flattenNode(node, children) {
 
     return flattenDeep(children)
 }
+
 /**
  * Flatten an array nested nodes
  * @param {Array} nodes Nodes to flatten
@@ -307,18 +312,19 @@ function flattenNodes(nodes) {
 
     nodes.forEach(node => {
         flattenNodes.push(node)
-
         flattenNodes.push(flattenNode(node))
     })
 
     return flattenDeep(flattenNodes)
 }
+
 /**
+ * Handle displaying undefined and null as 'undefined' and 'null' string respectively
  * @param {Any} value Any types that needs to be handled
  * @return {Any} return valid value for rendering, null becomes 'null', otherwise return 'undefined'
  */
 export function handleValue(value) {
-    let typeOfValue = typeof value
+    const typeOfValue = typeof value
     let newVal
 
     if (
@@ -334,8 +340,7 @@ export function handleValue(value) {
     }
     // handle typeof null object and empty string
     if (value === null) newVal = 'null'
-    // special reserve word value when the value is an object. for handling display nested object in data-table
-    if (value === 'hasChild') newVal = ''
+
     return newVal
 }
 
@@ -354,12 +359,10 @@ Object.defineProperties(Vue.prototype, {
                 strReplaceAt,
                 getErrorsArr,
                 groupBy,
-                sliceStrAtChar,
                 formatValue,
                 objToArrOfObj,
                 arrOfObjToObj,
                 handleValue,
-                pluralToSingularStr,
                 flattenNodes,
 
                 // lodash

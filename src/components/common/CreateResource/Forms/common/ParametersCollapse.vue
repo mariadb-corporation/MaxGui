@@ -13,11 +13,10 @@
                 showAll
                 editableCell
                 keepPrimitiveValue
+                @total-rows-number="totalRowsNumber = $event"
             >
                 <template v-slot:append-id>
-                    <span class="ml-1 color text-field-text">
-                        ({{ parametersTableRow.length }})
-                    </span>
+                    <span class="ml-1 color text-field-text"> ({{ totalRowsNumber }}) </span>
                 </template>
                 <template v-slot:value="{ data: { item } }">
                     <!-- rendered if usePortOrSocket is true-->
@@ -147,6 +146,7 @@ export default {
             //
             portValue: null,
             socketValue: null,
+            totalRowsNumber: 0,
         }
     },
     computed: {
