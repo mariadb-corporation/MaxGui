@@ -1,6 +1,6 @@
 <template>
     <collapse
-        wrapperClass="mt-4"
+        wrapperClass="mt-4 d-inline-flex flex-column"
         titleWrapperClass="mx-n9"
         :toggleOnClick="() => (showParameters = !showParameters)"
         :toggleVal="showParameters"
