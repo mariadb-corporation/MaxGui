@@ -29,6 +29,7 @@
                             :socketValue="socketValue"
                             :addressValue="addressValue"
                             :isListener="isListener"
+                            isFixedWidth
                             createMode
                             @on-input-change="handleItemChange"
                         />
@@ -39,6 +40,7 @@
                             :item="item"
                             required
                             createMode
+                            isFixedWidth
                             @on-input-change="handleItemChange"
                         />
                     </fragment>
@@ -46,6 +48,7 @@
                         <parameter-input
                             :item="item"
                             createMode
+                            isFixedWidth
                             @on-input-change="handleItemChange"
                         />
                     </fragment>

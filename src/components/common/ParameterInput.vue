@@ -1,5 +1,11 @@
 <template>
-    <span>
+    <span
+        :class="[isFixedWidth && 'd-inline-block']"
+        :style="{
+            minWidth: '160px',
+            maxWidth: '180px',
+        }"
+    >
         <!-- if objectItem has expanded property, meaning it has child object, so no need to render input -->
         <fragment v-if="'expanded' in objectItem" />
         <!-- Hanlde edge case with log_throttling parameter in maxscale, 
@@ -220,6 +226,7 @@ export default {
         addressValue: { type: String },
         parentForm: { type: Object },
         isListener: { type: Boolean, default: false },
+        isFixedWidth: { type: Boolean, default: false },
     },
     data() {
         return {
