@@ -184,7 +184,6 @@ export default {
                     break
             }
             // response ok
-
             if (res.status === 204) {
                 await commit(
                     'showMessage',

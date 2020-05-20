@@ -100,8 +100,11 @@
         <span class="color text-navigation body-2">
             {{ serverHealthy }}
         </span>
-        <span class="color text-field-text body-2">
-            {{ !$help.isEmpty(currentServer.attributes.version_string) ? '|' : '' }}
+        <span
+            v-if="!$help.isEmpty(currentServer.attributes.version_string)"
+            class="color text-field-text body-2"
+        >
+            |
             <span>{{ $t('version') }} {{ currentServer.attributes.version_string }}</span>
         </span>
     </fragment>
@@ -156,7 +159,6 @@ export default {
             if (currentState.indexOf(',') > 0) {
                 currentState = currentState.slice(0, currentState.indexOf(','))
             }
-            console.log(currentState)
             return currentState
         },
     },
