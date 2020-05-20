@@ -147,7 +147,6 @@
                             @click="toggleChild(item, rowIndex)"
                         >
                             <v-icon
-                                type="button"
                                 :class="[item.expanded === true ? 'arrow-down' : 'arrow-up']"
                                 size="24"
                             >
