@@ -168,7 +168,7 @@ export default {
         },
         /**
          * @param {String} id id of the server
-         * @param {String} state state of the server (master, slave, maintenance, running, synced or stale)
+         * @param {String} state state of the server maintenance or drain)
          * @param {String} mode mode set or clear
          */
         async setOrClearServerState({ commit }, { id, state, mode, callback }) {
@@ -185,14 +185,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit(
-                    'showMessage',
-                    {
-                        text: message,
-                        type: 'success',
-                    },
-                    { root: true }
-                )
+                await commit('showMessage', { text: message, type: 'success' }, { root: true })
                 if (isFunction(callback)) await callback()
             }
         },

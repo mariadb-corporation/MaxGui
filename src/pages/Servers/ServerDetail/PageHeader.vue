@@ -10,7 +10,12 @@
                             content-class="shadow-drop color text-navigation py-1 px-4"
                         >
                             <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on" @click="handleClick('maintenance')">
+                                <v-btn
+                                    text
+                                    :disabled="serverState === 'maintenance'"
+                                    v-on="on"
+                                    @click="handleClick('maintenance')"
+                                >
                                     <v-icon size="22" color="primary">
                                         $vuetify.icons.paused
                                     </v-icon>
@@ -211,9 +216,9 @@ export default {
         async confirmSave() {
             switch (this.mode) {
                 case 'delete':
-                    await self.destroyServer(self.currentServer.id)
-                    self.showConfirmDialog = false
-                    self.$router.go(-1)
+                    await this.destroyServer(this.currentServer.id)
+                    this.showConfirmDialog = false
+                    this.$router.go(-1)
                     break
                 case 'set':
                 case 'clear':
@@ -222,15 +227,14 @@ export default {
             }
         },
         async performAsyncLoadingAction() {
-            let self = this
-
+            const self = this
+            self.showConfirmDialog = false
             await self.setOrClearServerState({
                 id: self.currentServer.id,
                 state: self.state,
                 mode: self.mode,
                 callback: self.onEditSucceeded,
             })
-            self.showConfirmDialog = false
         },
     },
 }

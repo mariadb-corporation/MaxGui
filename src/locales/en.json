@@ -87,7 +87,7 @@
         "refreshLater": "Please refresh in a few moments."
     },
     "confirmations": {
-        "maintain": "Are you sure you want to put {targetId} into maintenance mode?",
+        "maintain": "Are you sure you want to set {targetId} into maintenance mode?",
         "clear": "Are you sure you want to clear current state of {targetId}?",
         "drain": "Are you sure you want to drain {targetId}?",
         "unlink": "Are you sure you want to unlink {targetId}?",
