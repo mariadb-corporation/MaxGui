@@ -325,7 +325,7 @@ export default {
 
         loading: function(newVal) {
             if (newVal) {
-                // when table is reload, dont show the entity
+                // when table is , dont show the entity
                 this.draggable && (this.showDragEntity = false)
                 this.showActionsOnHover && (this.showActionsEntity = false)
                 this.showEntityAt = null

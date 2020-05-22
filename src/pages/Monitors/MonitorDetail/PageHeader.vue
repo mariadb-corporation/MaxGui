@@ -35,8 +35,8 @@
                                     v-on="on"
                                     @click="handleStart"
                                 >
-                                    <v-icon size="24" color="primary">
-                                        $vuetify.icons.start
+                                    <v-icon size="22" color="primary">
+                                        $vuetify.icons.running
                                     </v-icon>
                                 </v-btn>
                             </template>

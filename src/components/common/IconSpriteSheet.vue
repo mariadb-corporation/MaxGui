@@ -1,5 +1,5 @@
 <template>
-    <v-icon :style="{ width: `${size}px` }" :class="iconClass" :size="size" :color="color">
+    <v-icon :class="iconClass" :size="size" :color="color">
         {{ icon }}
     </v-icon>
 </template>
@@ -41,27 +41,6 @@ export default {
                         '$vuetify.icons.statusInfo',
                     ],
                     colorClasses: ['text-error', 'text-warning', 'text-success', 'text-info'],
-                },
-                health: {
-                    frames: {
-                        CRITICAL: '$vuetify.icons.healthBad',
-                        WARNING: '$vuetify.icons.healthAlert',
-                        OK: '$vuetify.icons.healthOk',
-                    },
-                },
-                connectivity: {
-                    frames: {
-                        CRITICAL: '$vuetify.icons.connectivityBad',
-                        WARNING: '$vuetify.icons.connectivityAlert',
-                        OK: '$vuetify.icons.connectivityOk',
-                    },
-                },
-                delete: {
-                    frames: ['$vuetify.icons.restore', '$vuetify.icons.delete'],
-                },
-                toggle: {
-                    colorClasses: ['text-success', 'text-error'],
-                    frames: ['add', 'remove'],
                 },
             },
         }
