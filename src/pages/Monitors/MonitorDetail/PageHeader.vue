@@ -17,7 +17,7 @@
                                     @click="handleStop"
                                 >
                                     <v-icon size="22" color="primary">
-                                        $vuetify.icons.paused
+                                        $vuetify.icons.stopped
                                     </v-icon>
                                 </v-btn>
                             </template>
@@ -31,12 +31,12 @@
                             <template v-slot:activator="{ on }">
                                 <v-btn
                                     text
-                                    :disabled="currentMonitor.attributes.state === 'Started'"
+                                    :disabled="currentMonitor.attributes.state === 'Running'"
                                     v-on="on"
                                     @click="handleStart"
                                 >
-                                    <v-icon size="22" color="primary">
-                                        $vuetify.icons.restart
+                                    <v-icon size="24" color="primary">
+                                        $vuetify.icons.start
                                     </v-icon>
                                 </v-btn>
                             </template>

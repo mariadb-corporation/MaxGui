@@ -3,7 +3,7 @@
         :class="[isFixedWidth && 'd-inline-block']"
         :style="{
             minWidth: '160px',
-            maxWidth: '180px',
+            maxWidth: '200px',
         }"
     >
         <!-- if objectItem has expanded property, meaning it has child object, so no need to render input -->
