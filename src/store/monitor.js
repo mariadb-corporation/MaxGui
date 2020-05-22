@@ -158,7 +158,7 @@ export default {
             res = await Vue.axios.patch(`/monitors/${payload.id}/relationships/servers`, {
                 data: payload.servers,
             })
-            message = [`The servers relationships in ${payload.id} is updated`]
+            message = [`Servers relationships of ${payload.id} is updated`]
 
             // response ok
             if (res.status === 204) {

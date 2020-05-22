@@ -11,7 +11,13 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, orderBy, isFunction } from 'utils/helpers'
+import {
+    dynamicColors,
+    strReplaceAt,
+    orderBy,
+    isFunction,
+    capitalizeFirstLetter,
+} from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -108,7 +114,7 @@ export default {
                 await commit(
                     'showMessage',
                     {
-                        text: [`Server ${payload.id} is updated`],
+                        text: [`Parameters of ${payload.id} is updated`],
                         type: 'success',
                     },
                     { root: true }
@@ -132,7 +138,10 @@ export default {
             res = await Vue.axios.patch(`/servers/${payload.id}/relationships/${payload.type}`, {
                 data: payload.type === 'services' ? payload.services : payload.monitors,
             })
-            message = [`The ${payload.type} relationships in ${payload.id} is updated`]
+
+            message = [
+                `${capitalizeFirstLetter(payload.type)} relationships of ${payload.id} is updated`,
+            ]
 
             // response ok
             if (res.status === 204) {

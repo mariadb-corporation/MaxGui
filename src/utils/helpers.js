@@ -347,7 +347,9 @@ export function handleValue(value) {
 
     return newVal
 }
-
+export function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -368,7 +370,7 @@ Object.defineProperties(Vue.prototype, {
                 arrOfObjToObj,
                 handleValue,
                 flattenNodes,
-
+                capitalizeFirstLetter,
                 // lodash
                 isNaN,
                 isObject,

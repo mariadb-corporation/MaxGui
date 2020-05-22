@@ -11,7 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import { dynamicColors, strReplaceAt, isFunction } from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isFunction, capitalizeFirstLetter } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -116,13 +116,13 @@ export default {
                 },
             }
             let res = await Vue.axios.post(`/services/`, body)
-            let message = [`Service ${payload.id} is created`]
+
             // response ok
             if (res.status === 204) {
                 await commit(
                     'showMessage',
                     {
-                        text: message,
+                        text: [`Service ${payload.id} is created`],
                         type: 'success',
                     },
                     { root: true }
@@ -151,7 +151,7 @@ export default {
                 await commit(
                     'showMessage',
                     {
-                        text: [`Service ${payload.id} is updated`],
+                        text: [`Parameters of ${payload.id} is updated`],
                         type: 'success',
                     },
                     { root: true }
@@ -175,7 +175,9 @@ export default {
             res = await Vue.axios.patch(`/services/${payload.id}/relationships/${payload.type}`, {
                 data: payload.type === 'servers' ? payload.servers : payload.filters,
             })
-            message = [`The ${payload.type} relationships in ${payload.id} is updated`]
+            message = [
+                `${capitalizeFirstLetter(payload.type)} relationships of ${payload.id} is updated`,
+            ]
 
             // response ok
             if (res.status === 204) {
