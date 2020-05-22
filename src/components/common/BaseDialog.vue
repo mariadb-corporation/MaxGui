@@ -80,7 +80,7 @@ export default {
     props: {
         minBodyWidth: { type: String, default: '466px' },
         dynamicWidth: { type: Boolean, default: false },
-        scrollable: { type: Boolean, default: false },
+        scrollable: { type: Boolean, default: true },
         title: { type: String, required: true },
         value: { type: Boolean, required: true },
         /* These functions are requires since the computeShowDialog depends on the value props.

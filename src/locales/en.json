@@ -78,7 +78,7 @@
 
     "protocol": "protocol | protocols",
     "module": "module | modules",
-
+    "forceClosing": "Force closing",
     "errors": {
         "usernameRequired": "Username is required.",
         "passwordRequired": "Password is required.",
@@ -107,7 +107,7 @@
         "serverUnlink": "Make sure it is not used by any services or monitors.",
         "serverDrain": "Server is drained of connections",
         "serverClear": "",
-        "serverMaintenance": "",
+        "serverMaintenance": "By default setting a server into maintenance mode will cause connections to be closed only after the next request is sent. Check the box below to force all connections to the server to be closed immediately",
         "serviceDelete": "A service can only be destroyed if the service uses no servers or filters and all the listeners pointing to the service have been destroyed."
     },
 

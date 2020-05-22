@@ -8,7 +8,6 @@
         :onSave="handleSave"
         :title="`${$t('createANew')}...`"
         dynamicWidth
-        scrollable
     >
         <template v-slot:body>
             <fragment v-if="selectedResource">

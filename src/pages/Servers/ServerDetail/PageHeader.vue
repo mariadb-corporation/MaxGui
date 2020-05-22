@@ -93,7 +93,17 @@
             :onSave="confirmSave"
             :onClose="() => (showConfirmDialog = false)"
             :onCancel="() => (showConfirmDialog = false)"
-        />
+        >
+            <template v-if="state === 'maintenance' && mode === 'set'" v-slot:body-append>
+                <v-checkbox
+                    v-model="forceClosing"
+                    class="small mt-2 mb-4"
+                    :label="$t('forceClosing')"
+                    color="primary"
+                    hide-details
+                />
+            </template>
+        </confirm-dialog>
 
         <icon-sprite-sheet
             size="13"
@@ -145,6 +155,7 @@ export default {
             smallInfo: 'serviceDelete',
             mode: 'set', //set or clear
             state: '',
+            forceClosing: false,
         }
     },
     computed: {
@@ -229,12 +240,16 @@ export default {
         async performAsyncLoadingAction() {
             const self = this
             self.showConfirmDialog = false
-            await self.setOrClearServerState({
+            let payload = {
                 id: self.currentServer.id,
                 state: self.state,
                 mode: self.mode,
                 callback: self.onEditSucceeded,
-            })
+            }
+            if (this.forceClosing) {
+                payload.forceClosing = true
+            }
+            await self.setOrClearServerState(payload)
         },
     },
 }

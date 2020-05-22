@@ -18,6 +18,7 @@
                     <small>
                         {{ smallInfo }}
                     </small>
+                    <slot name="body-append"></slot>
                 </fragment>
             </template>
         </base-dialog>

@@ -179,13 +179,20 @@ export default {
          * @param {String} id id of the server
          * @param {String} state state of the server maintenance or drain)
          * @param {String} mode mode set or clear
+         * @param {Boolean} forceClosing force all connections to the server to be closed immediately. Only works
+         * for maintenance mode
          */
-        async setOrClearServerState({ commit }, { id, state, mode, callback }) {
+        async setOrClearServerState({ commit }, { id, state, mode, callback, forceClosing }) {
             let res, message
+
             switch (mode) {
                 case 'set':
-                    res = await Vue.axios.put(`/servers/${id}/set?state=${state}`)
-                    message = [`Server ${id} is set to ${state}`]
+                    {
+                        let url = `/servers/${id}/set?state=${state}`
+                        if (state === 'maintenance' && forceClosing) url = url.concat('&force=yes')
+                        res = await Vue.axios.put(url)
+                        message = [`Server ${id} is set to ${state}`]
+                    }
                     break
                 case 'clear':
                     res = await Vue.axios.put(`/servers/${id}/clear?state=${state}`)
