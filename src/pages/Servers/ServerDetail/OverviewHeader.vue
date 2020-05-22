@@ -63,7 +63,9 @@
                 </span>
             </template>
         </outlined-overview-card>
+
         <select-dialog
+            v-if="!$help.isEmpty(getTopOverviewInfo)"
             v-model="showSelectDialog"
             :title="dialogTitle"
             mode="change"
@@ -72,6 +74,7 @@
             :onCancel="() => (showSelectDialog = false)"
             :handleSave="confirmChange"
             :itemsList="itemsList"
+            :defaultItems="defaultItems"
             @get-selected-entities="targetItem = $event"
             @get-all-entities="getAllEntities"
         />
@@ -110,6 +113,7 @@ export default {
             showSelectDialog: false,
             targetSelectItemType: 'monitors',
             itemsList: [],
+            defaultItems: null,
         }
     },
     computed: {
@@ -141,7 +145,7 @@ export default {
                             port = undefined,
                         } = {},
                     } = {},
-                    relationships: { monitors = undefined } = {},
+                    relationships: { monitors } = {},
                 } = currentServer
 
                 overviewInfo = {
@@ -158,6 +162,7 @@ export default {
                     delete overviewInfo.address
                     delete overviewInfo.port
                 } else delete overviewInfo.socket
+
                 Object.keys(overviewInfo).forEach(
                     key => (overviewInfo[key] = self.$help.handleValue(overviewInfo[key]))
                 )
@@ -192,19 +197,24 @@ export default {
                             type: monitor.type,
                         }))
 
-                        let currentMonitor = [
-                            { id: self.getTopOverviewInfo.monitor, type: 'monitors' },
-                        ]
-                        // filter out currentMonitor from availableEntities
-                        let availableEntities = all
-                        if (currentMonitor[0].id !== 'undefined') {
-                            availableEntities = self.$help.xorWith(
-                                all,
-                                currentMonitor,
-                                self.$help.isEqual
-                            )
+                        // let currentMonitor = [
+                        //     { id: self.getTopOverviewInfo.monitor, type: 'monitors' },
+                        // ]
+                        this.defaultItems = {
+                            id: self.getTopOverviewInfo.monitor,
+                            type: 'monitors',
                         }
-                        this.itemsList = availableEntities
+
+                        // // filter out currentMonitor from availableEntities
+                        // let availableEntities = all
+                        // if (currentMonitor[0].id !== 'undefined') {
+                        //     availableEntities = self.$help.xorWith(
+                        //         all,
+                        //         currentMonitor,
+                        //         self.$help.isEqual
+                        //     )
+                        // }
+                        this.itemsList = all
                     }
                     break
             }

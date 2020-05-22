@@ -129,7 +129,8 @@ export default {
             if (serverId) {
                 res = await this.axios.get(`/servers/${serverId}?fields[servers]=state`)
             } else {
-                // this fetch all servers, if res have monitor, prevent user from adding server to the current monitor
+                /* this fetch all servers, if res.data.data have relationship,
+                 prevent user from adding server to the current monitor*/
                 res = await this.axios.get(`/servers?fields[servers]=state,monitors`)
             }
 

@@ -7,7 +7,7 @@
             :onClose="onClose"
             :title="title"
             :saveText="mode"
-            :disabledSaveBtn="$help.isEmpty(selectEntities)"
+            :disabledSaveBtn="disabledSaveBtn"
         >
             <template v-slot:body>
                 <fragment>
@@ -22,6 +22,7 @@
                         item-text="id"
                         return-object
                         outlined
+                        clearable
                         dense
                         class="std mariadb-select-input"
                         :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
@@ -33,6 +34,7 @@
                         "
                         :multiple="multiple"
                         required
+                        @change="onChange"
                     />
                 </fragment>
             </template>
@@ -66,6 +68,7 @@ export default {
         onCancel: { type: Function, required: true },
         multiple: { type: Boolean, default: false },
         itemsList: { type: Array }, // for add mode
+        defaultItems: { type: [Array, Object] },
     },
     data() {
         return {
@@ -74,6 +77,17 @@ export default {
         }
     },
     computed: {
+        disabledSaveBtn: function() {
+            let isEqual = false
+
+            if (this.multiple) {
+                isEqual = this.$help.isArrayEqual(this.selectEntities, this.defaultItems)
+            } else {
+                isEqual = this.$help.isEqual(this.selectEntities, this.defaultItems)
+            }
+
+            return isEqual
+        },
         computeShowDialog: {
             // get value from props
             get() {
@@ -93,19 +107,30 @@ export default {
                 this.selectEntities = []
             }
         },
-        // always return array
-        selectEntities: function(val) {
-            if (val) {
-                if (this.multiple) return this.$emit('get-selected-entities', val)
-                else return this.$emit('get-selected-entities', [val])
-            }
+        // // always return array
+        // selectEntities: function(val) {
+        //     if (val) {
+        //         if (this.multiple) return this.$emit('get-selected-entities', val)
+        //         else return this.$emit('get-selected-entities', [val])
+        //     }
+        // },
+        defaultItems: function(val) {
+            this.selectEntities = val
         },
     },
 
     methods: {
         async onSave() {
             await this.handleSave()
+            this.selectEntities = []
             this.onCancel()
+        },
+        //always return array
+        onChange(val) {
+            let value = val
+            if (val && !this.multiple) value = [val]
+            else if (val === undefined) value = []
+            return this.$emit('get-selected-entities', value)
         },
     },
 }

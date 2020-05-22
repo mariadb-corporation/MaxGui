@@ -347,9 +347,15 @@ export function handleValue(value) {
 
     return newVal
 }
+
 export function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
+export function isArrayEqual(x, y) {
+    return isEmpty(xorWith(x, y, isEqual))
+}
+
 Object.defineProperties(Vue.prototype, {
     $help: {
         get() {
@@ -371,6 +377,7 @@ Object.defineProperties(Vue.prototype, {
                 handleValue,
                 flattenNodes,
                 capitalizeFirstLetter,
+                isArrayEqual,
                 // lodash
                 isNaN,
                 isObject,

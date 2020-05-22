@@ -153,22 +153,18 @@ export default {
         async getAllEntities() {
             let self = this
             let data = await this.getServers()
-            let all = []
-            for (let i = 0; i < data.length; ++i) {
-                let server = data[i]
-                // only allow to add unmonitored servers
-                self.$help.isEmpty(server.relationships) &&
-                    all.push({
-                        id: server.id,
-                        type: server.type,
-                        state: server.attributes.state,
-                    })
-            }
+            let all = data.map(server => ({
+                id: server.id,
+                type: server.type,
+                state: server.attributes.state,
+            }))
+            // only allow to add unmonitored servers
             let availableEntities = self.$help.xorWith(
                 all,
                 self.serverStateTableRow,
                 self.$help.isEqual
             )
+
             self.itemsList = availableEntities
         },
 
