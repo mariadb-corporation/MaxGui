@@ -117,7 +117,7 @@ export default {
             switch (this.$help.serverStateIcon(this.currentServer.attributes.state)) {
                 case 0:
                     return 'text-error'
-                case 2:
+                case 1:
                     return 'text-success'
                 default:
                     return 'text-warning'

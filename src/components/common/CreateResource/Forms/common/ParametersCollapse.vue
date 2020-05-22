@@ -54,14 +54,10 @@
                     </fragment>
                 </template>
                 <template v-slot:id="{ data: { item } }">
-                    <v-menu
-                        offset-x
+                    <v-tooltip
+                        right
                         transition="slide-x-transition"
-                        :close-on-content-click="false"
-                        open-on-hover
-                        nudge-right="20"
-                        nudge-top="20"
-                        content-class="shadow-drop"
+                        content-class="shadow-drop color text-navigation"
                     >
                         <template v-slot:activator="{ on }">
                             <span
@@ -73,7 +69,6 @@
                                 {{ item.id }}
                             </span>
                         </template>
-
                         <v-sheet
                             v-if="item.type || item.description || item.unit"
                             style="border-radius: 10px;"
@@ -93,7 +88,7 @@
                                 {{ item.description }}
                             </span>
                         </v-sheet>
-                    </v-menu>
+                    </v-tooltip>
                 </template>
             </data-table>
         </template>

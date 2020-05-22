@@ -294,7 +294,10 @@ export default {
                 This converts it to null
 
             */
-            if ((inputObj.id === 'port' || inputObj.id === 'socket') && inputObj.value === '') {
+            if (
+                (inputObj.id === 'port' || inputObj.id === 'socket' || inputObj.type === 'count') &&
+                inputObj.value === ''
+            ) {
                 inputObj.value = null
             }
 

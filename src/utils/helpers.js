@@ -46,27 +46,27 @@ export function range(start, end) {
 //------------------------- Helper functions to display icon -------------------------------
 export function serviceStateIcon(serviceState) {
     if (serviceState) {
-        if (serviceState.includes('Started')) return 2
+        if (serviceState.includes('Started')) return 1
         if (serviceState.includes('Stopped') || serviceState.includes('Allocated')) return 0
         else return ''
     } else return ''
 }
-export function serverStateIcon(serverStatus) {
-    let result = 1 // warning icon
-    if (serverStatus) {
+export function serverStateIcon(serverState) {
+    let result = 2 // warning icon, warning text
+    if (serverState) {
         // error icon, unhealthy text
-        if (serverStatus === 'Running' || serverStatus.includes('Down')) result = 0
+        if (serverState === 'Running' || serverState.includes('Down')) result = 0
         // healthy icon, healthy text
-        else if (serverStatus.includes('Running')) result = 2
+        else if (serverState.includes('Running')) result = 1
         // warning icon
-        if (serverStatus.includes('Maintenance')) result = 1
+        if (serverState.includes('Maintenance')) result = 2
     }
     return result
 }
 export function monitorStateIcon(monitorState) {
     if (monitorState) {
-        if (monitorState.includes('Running')) return 2
-        if (monitorState.includes('Stopped')) return 1
+        if (monitorState.includes('Running')) return 1
+        if (monitorState.includes('Stopped')) return 2
         else return ''
     } else return ''
 }

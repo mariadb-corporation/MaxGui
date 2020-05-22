@@ -164,7 +164,7 @@ export default {
             switch (this.$help.serverStateIcon(this.currentServer.attributes.state)) {
                 case 0:
                     return 'Unhealthy'
-                case 2:
+                case 1:
                     return 'Healthy'
                 default:
                     return 'Warning'

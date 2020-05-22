@@ -81,7 +81,6 @@
         >
             status
         </icon-sprite-sheet>
-        <!-- TODO: Determine service healthy -->
         <span class="color text-navigation body-2">
             {{ currentService.attributes.state }}
         </span>

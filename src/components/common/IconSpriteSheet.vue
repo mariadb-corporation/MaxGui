@@ -36,11 +36,11 @@ export default {
                 status: {
                     frames: [
                         '$vuetify.icons.statusError',
-                        '$vuetify.icons.statusWarning',
                         '$vuetify.icons.statusOk',
+                        '$vuetify.icons.statusWarning',
                         '$vuetify.icons.statusInfo',
                     ],
-                    colorClasses: ['text-error', 'text-warning', 'text-success', 'text-info'],
+                    colorClasses: ['text-error', 'text-success', 'text-warning', 'text-info'],
                 },
             },
         }
