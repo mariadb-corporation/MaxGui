@@ -17,7 +17,6 @@
             relationshipsType="monitors"
             :items="monitorsList"
             :multiple="false"
-            required
         />
     </div>
 </template>
@@ -137,13 +136,21 @@ export default {
 
     methods: {
         getValues() {
-            return {
+            const obj = {
                 parameters: this.$refs.parametersTable.getParameterObj(),
-                relationships: {
-                    services: { data: this.$refs.servicesRelationship.getSelectedItems() },
-                    monitors: { data: this.$refs.monitorsRelationship.getSelectedItems() },
-                },
+                relationships: {},
             }
+            const monitors = this.$refs.monitorsRelationship.getSelectedItems()
+            const services = this.$refs.servicesRelationship.getSelectedItems()
+
+            if (!this.$help.isEmpty(monitors)) {
+                obj.relationships.monitors = { data: monitors }
+            }
+            if (!this.$help.isEmpty(services)) {
+                obj.relationships.services = { data: services }
+            }
+
+            return obj
         },
     },
 }

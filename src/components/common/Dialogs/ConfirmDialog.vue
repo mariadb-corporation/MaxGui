@@ -1,28 +1,26 @@
 <template>
-    <span>
-        <base-dialog
-            v-model="computeShowDialog"
-            :onCancel="onCancel"
-            :onSave="handleSave"
-            :onClose="onClose"
-            :title="title"
-            :saveText="type"
-        >
-            <template v-slot:body>
-                <fragment>
-                    <p v-if="!$help.isNull(item)">
-                        <span>
-                            {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
-                        </span>
-                    </p>
-                    <small>
-                        {{ smallInfo }}
-                    </small>
-                    <slot name="body-append"></slot>
-                </fragment>
-            </template>
-        </base-dialog>
-    </span>
+    <base-dialog
+        v-model="computeShowDialog"
+        :onCancel="onCancel"
+        :onSave="handleSave"
+        :onClose="onClose"
+        :title="title"
+        :saveText="type"
+    >
+        <template v-slot:body>
+            <fragment>
+                <p v-if="!$help.isNull(item)">
+                    <span>
+                        {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
+                    </span>
+                </p>
+                <small>
+                    {{ smallInfo }}
+                </small>
+                <slot name="body-append"></slot>
+            </fragment>
+        </template>
+    </base-dialog>
 </template>
 
 <script>

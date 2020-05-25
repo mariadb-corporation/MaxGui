@@ -75,8 +75,8 @@
             :handleSave="confirmChange"
             :itemsList="itemsList"
             :defaultItems="defaultItems"
-            @get-selected-entities="targetItem = $event"
-            @get-all-entities="getAllEntities"
+            @selected-items="targetItem = $event"
+            @onOpen="getAllEntities"
         />
     </v-sheet>
 </template>
@@ -113,7 +113,7 @@ export default {
             showSelectDialog: false,
             targetSelectItemType: 'monitors',
             itemsList: [],
-            defaultItems: null,
+            defaultItems: undefined,
         }
     },
     computed: {
@@ -185,35 +185,28 @@ export default {
 
             this.showSelectDialog = true
         },
-        // -------------- Change handle
+        // -------------------------------------------- Changes handle
+        // get available entities and set default item when select-dialog is opened
         async getAllEntities() {
             switch (this.targetSelectItemType) {
                 case 'monitors':
                     {
-                        let self = this
+                        const self = this
                         let res = await self.axios.get(`/monitors?fields[monitors]=state`)
                         let all = res.data.data.map(monitor => ({
                             id: monitor.id,
                             type: monitor.type,
                         }))
 
-                        // let currentMonitor = [
-                        //     { id: self.getTopOverviewInfo.monitor, type: 'monitors' },
-                        // ]
-                        this.defaultItems = {
-                            id: self.getTopOverviewInfo.monitor,
-                            type: 'monitors',
+                        if (self.getTopOverviewInfo.monitor !== 'undefined') {
+                            self.defaultItems = {
+                                id: self.getTopOverviewInfo.monitor,
+                                type: 'monitors',
+                            }
+                        } else {
+                            self.defaultItems = undefined
                         }
 
-                        // // filter out currentMonitor from availableEntities
-                        // let availableEntities = all
-                        // if (currentMonitor[0].id !== 'undefined') {
-                        //     availableEntities = self.$help.xorWith(
-                        //         all,
-                        //         currentMonitor,
-                        //         self.$help.isEqual
-                        //     )
-                        // }
                         this.itemsList = all
                     }
                     break

@@ -14,7 +14,7 @@
             :max-width="dynamicWidth ? 'unset' : minBodyWidth"
         >
             <v-card-title class="v-card-title_padding">
-                <h3 class="font-weight-light color text-navigation ">
+                <h3 class="font-weight-light color text-deep-ocean">
                     {{ title }}
                 </h3>
                 <v-btn class="close" icon @click="close">

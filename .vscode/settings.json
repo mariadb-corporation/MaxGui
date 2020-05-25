@@ -3,7 +3,7 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
     "explorer.confirmDragAndDrop": false,
     "explorer.confirmDelete": false,
-    "window.zoomLevel": 0,
+    "window.zoomLevel": -1,
     "eslint.validate": ["javascript", "javascriptreact", "vue", "vue-html"],
     "eslint.alwaysShowStatus": true,
     "vetur.completion.tagCasing": "initial",

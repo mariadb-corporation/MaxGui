@@ -70,8 +70,8 @@
             :onCancel="() => (showSelectDialog = false)"
             :handleSave="confirmAdd"
             :itemsList="itemsList"
-            @get-selected-entities="targetItem = $event"
-            @get-all-entities="getAllEntities"
+            @selected-items="targetItem = $event"
+            @onOpen="getAllEntities"
         />
     </fragment>
 </template>
@@ -153,18 +153,19 @@ export default {
         async getAllEntities() {
             let self = this
             let data = await this.getServers()
-            let all = data.map(server => ({
-                id: server.id,
-                type: server.type,
-                state: server.attributes.state,
-            }))
-            // only allow to add unmonitored servers
-            let availableEntities = self.$help.xorWith(
-                all,
-                self.serverStateTableRow,
-                self.$help.isEqual
-            )
 
+            // only allow to add unmonitored servers
+            let availableEntities = []
+            for (let i = 0; i < data.length; ++i) {
+                let server = data[i]
+                // only allow to add unmonitored servers
+                self.$help.isEmpty(server.relationships) &&
+                    availableEntities.push({
+                        id: server.id,
+                        type: server.type,
+                        state: server.attributes.state,
+                    })
+            }
             self.itemsList = availableEntities
         },
 

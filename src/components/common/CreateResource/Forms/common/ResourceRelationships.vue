@@ -2,32 +2,17 @@
     <collapse
         wrapperClass="mt-4"
         titleWrapperClass="mx-n9"
-        :toggleOnClick="() => (showSelect = !showSelect)"
-        :toggleVal="showSelect"
+        :toggleOnClick="() => (showContent = !showContent)"
+        :toggleVal="showContent"
         :title="`${$tc(relationshipsType, multiple ? 2 : 1)}`"
     >
         <template v-slot:content>
-            <v-select
-                v-model="selectedItems"
+            <select-dropdown
+                :entityName="relationshipsType"
                 :items="items"
-                item-text="id"
-                return-object
                 :multiple="multiple"
-                :name="relationshipsType"
-                outlined
-                dense
-                class="std mariadb-select-input"
-                :class="[required && 'error--text__bottom']"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                :placeholder="
-                    $tc('select', multiple ? 2 : 1, {
-                        entityName: $tc(relationshipsType, multiple ? 2 : 1),
-                    })
-                "
-                :no-data-text="$t('noEntityAvailable', { entityName: $tc(relationshipsType, 2) })"
-                :rules="rules.requiredField"
                 :required="required"
-                :hide-details="!required"
+                @get-selected-items="selectedItems = $event"
             />
         </template>
     </collapse>
@@ -64,26 +49,13 @@ export default {
 
     data: function() {
         return {
-            showSelect: true,
+            showContent: true,
             selectedItems: [],
-            rules: {
-                requiredField: [val => this.handleRequiredField(val)],
-            },
         }
     },
     methods: {
-        // always return array
         getSelectedItems() {
-            if (this.multiple) return this.selectedItems
-            else return [this.selectedItems]
-        },
-        handleRequiredField(val) {
-            if (val.length === 0) {
-                return this.required
-                    ? `${this.$tc(this.relationshipsType, this.multiple ? 2 : 1)} is required`
-                    : true
-            }
-            return true
+            return this.selectedItems
         },
     },
 }

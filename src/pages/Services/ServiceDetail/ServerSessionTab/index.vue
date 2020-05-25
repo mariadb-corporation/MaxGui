@@ -114,8 +114,8 @@
                     :onCancel="() => (showSelectDialog = false)"
                     :handleSave="confirmAdd"
                     :itemsList="itemsList"
-                    @get-selected-entities="targetItem = $event"
-                    @get-all-entities="getAllEntities"
+                    @selected-items="targetItem = $event"
+                    @onOpen="getAllEntities"
                 />
             </v-row>
         </v-col>

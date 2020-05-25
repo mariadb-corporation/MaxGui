@@ -11,13 +11,14 @@
  * Public License.
  */
 import PageWrapper from './PageWrapper'
+import SelectDropdown from './SelectDropdown'
 import BaseDialog from './BaseDialog'
 import DataTable from './DataTable'
+import Dialogs from './Dialogs'
 import IconSpriteSheet from './IconSpriteSheet'
 import OutlinedOverviewCard from './OutlinedOverviewCard'
 import Collapse from './Collapse'
-import ConfirmDialog from './ConfirmDialog'
-import SelectDialog from './SelectDialog'
+
 import ParameterInput from './ParameterInput'
 import LineChart from './LineChart.vue'
 import GlobalSearch from './GlobalSearch'
@@ -29,19 +30,17 @@ import DetailsIconGroupWrapper from './DetailsPage/DetailsIconGroupWrapper'
 
 export default {
     'page-wrapper': PageWrapper,
-
     'global-search': GlobalSearch,
     'create-resource': CreateResource,
-
     'base-dialog': BaseDialog,
+    ...Dialogs,
+    'select-dropdown': SelectDropdown,
     'data-table': DataTable,
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
 
     collapse: Collapse,
 
-    'confirm-dialog': ConfirmDialog,
-    'select-dialog': SelectDialog,
     'parameter-input': ParameterInput,
     'line-chart': LineChart,
 
