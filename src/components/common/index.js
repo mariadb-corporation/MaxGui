@@ -38,12 +38,9 @@ export default {
     'data-table': DataTable,
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
-
     collapse: Collapse,
-
     'parameter-input': ParameterInput,
     'line-chart': LineChart,
-
     'details-parameters-collapse': DetailsParametersCollapse,
     'details-page-title': DetailsPageTitle,
     'details-icon-group-wrapper': DetailsIconGroupWrapper,

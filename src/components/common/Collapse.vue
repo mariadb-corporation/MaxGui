@@ -7,7 +7,11 @@
         <div class="mb-1 d-flex align-center">
             <div class="d-flex align-center" :class="titleWrapperClass">
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
-                    <v-icon :class="[!toggleVal ? 'arrow-down' : 'arrow-up']" size="32">
+                    <v-icon
+                        :class="[!toggleVal ? 'arrow-down' : 'arrow-up']"
+                        size="32"
+                        color="#013646"
+                    >
                         $expand
                     </v-icon>
                 </v-btn>

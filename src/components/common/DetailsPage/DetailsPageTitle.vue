@@ -3,8 +3,8 @@
         <portal to="page-header">
             <div class="d-flex align-center">
                 <v-btn class="ml-n4" icon @click="$router.go(-1)">
-                    <v-icon class="mr-1" color="#013646">
-                        $vuetify.icons.arrowLeft
+                    <v-icon class="mr-1" style="transform:rotate(90deg)" size="28" color="#013646">
+                        $vuetify.icons.arrowDown
                     </v-icon>
                 </v-btn>
                 <div class="d-inline-flex align-center">

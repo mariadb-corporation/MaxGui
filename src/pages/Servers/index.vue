@@ -1,37 +1,35 @@
 <template>
-    <rowspan-data-table
+    <data-table
         :headers="tableHeaders"
         :data="dataProcessing"
-        :sortDesc="true"
-        :singleExpand="false"
-        :showExpand="false"
-        :numOfColsHasRowSpan="2"
+        :colsHasRowSpan="2"
         :search="searchKeyWord"
-        sortBy="id"
+        sortBy="groupId"
     >
-        <template v-slot:append-id>
+        <template v-slot:append-groupId>
             <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
         </template>
-        <template v-slot:append-serverId>
+        <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allServers.length }}) </span>
         </template>
         <template v-slot:append-servicesIdArr>
             <span class="ml-1 color text-field-text"> ({{ allLinkedServices }}) </span>
         </template>
-        <template v-slot:id="{ data: { item: { id } } }">
+        <template v-slot:groupId="{ data: { item: { groupId } } }">
             <router-link
-                v-if="id !== 'Not monitored'"
-                :to="`/dashboard/monitors/${id}`"
+                v-if="groupId !== 'Not monitored'"
+                :to="`/dashboard/monitors/${groupId}`"
                 class="no-underline"
             >
-                <span class="font-weight-bold">{{ id }} </span>
+                <span class="font-weight-bold">{{ groupId }} </span>
             </router-link>
-            <span v-else>{{ id }} </span>
+            <span v-else>{{ groupId }} </span>
         </template>
 
         <template v-slot:monitorState="{ data: { item: { monitorState } } }">
-            <div v-if="monitorState !== 'undefined'" class="d-flex align-center">
+            <div class="d-flex align-center">
                 <icon-sprite-sheet
+                    v-if="monitorState"
                     size="13"
                     class="status-icon mr-1"
                     :frame="$help.monitorStateIcon(monitorState)"
@@ -40,12 +38,11 @@
                 </icon-sprite-sheet>
                 <span>{{ monitorState }} </span>
             </div>
-            <span v-else />
         </template>
 
-        <template v-slot:serverId="{ data: { item: { serverId } } }">
-            <router-link :to="`/dashboard/servers/${serverId}`" class="no-underline">
-                <span>{{ serverId }} </span>
+        <template v-slot:id="{ data: { item: { id } } }">
+            <router-link :to="`/dashboard/servers/${id}`" class="no-underline">
+                <span>{{ id }} </span>
             </router-link>
         </template>
 
@@ -111,7 +108,7 @@
                 </v-menu>
             </fragment>
         </template>
-    </rowspan-data-table>
+    </data-table>
 </template>
 
 <script>
@@ -128,24 +125,20 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
-import RowspanDataTable from 'components/RowspanDataTable'
 
 export default {
-    components: {
-        RowspanDataTable,
-    },
     data() {
         return {
             tableHeaders: [
-                { text: `Monitor`, value: 'id' },
+                { text: `Monitor`, value: 'groupId' },
                 { text: 'State', value: 'monitorState' },
-                { text: 'Servers', sortable: false, value: 'serverId' },
-                { text: 'Address', sortable: false, value: 'serverAddress' },
-                { text: 'Port', sortable: false, value: 'serverPort' },
-                { text: 'Connections', sortable: false, value: 'serverConnections' },
-                { text: 'State', sortable: false, value: 'serverState' },
-                { text: 'GTID', sortable: false, value: 'gtid' },
-                { text: 'Services', sortable: false, value: 'servicesIdArr' },
+                { text: 'Servers', value: 'id' },
+                { text: 'Address', value: 'serverAddress' },
+                { text: 'Port', value: 'serverPort' },
+                { text: 'Connections', value: 'serverConnections' },
+                { text: 'State', value: 'serverState' },
+                { text: 'GTID', value: 'gtid' },
+                { text: 'Services', value: 'servicesIdArr' },
             ],
             allLinkedServices: 0,
         }
@@ -164,7 +157,7 @@ export default {
                 let totalServices = []
                 for (let index = 0; index < allServers.length; ++index) {
                     const {
-                        id: serverId,
+                        id,
                         attributes: {
                             state: serverState,
                             parameters,
@@ -176,14 +169,15 @@ export default {
                             monitors: { data: linkedMonitors = [] } = {},
                         },
                     } = allServers[index]
+
                     let servicesIdArr = allServices ? allServices.map(item => `${item.id}`) : []
+                    // get total number of unique services
                     totalServices = [...totalServices, ...servicesIdArr]
                     let uniqueSet = new Set(totalServices)
                     this.setTotalNumOfLinkedServices([...uniqueSet].length)
+
                     let row = {
-                        originalHidden: false,
-                        hidden: false,
-                        serverId: serverId,
+                        id: id,
                         serverAddress: parameters.address,
                         serverPort: parameters.port,
                         serverConnections: statistics.connections,
@@ -194,32 +188,14 @@ export default {
                     if (linkedMonitors.length) {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
-                        row.id = monitorLinked.id // aka monitorId
+                        row.groupId = monitorLinked.id // aka monitorId
                         row.monitorState = `${monitorLinked.attributes.state}`
                     } else {
-                        row.id = 'Not monitored'
-                        row.monitorState = undefined
+                        row.groupId = 'Not monitored'
+                        row.monitorState = ''
                     }
                     tableRows.push(row)
                 }
-                // get all unique monitorId
-
-                let uniqueSet = new Set(tableRows.map(item => item.id))
-                let monitorIds = [...uniqueSet]
-                let groupByMonitors = this.$help.groupBy(tableRows, 'id')
-                for (let i = 0; i < monitorIds.length; ++i) {
-                    let group = groupByMonitors[`${monitorIds[i]}`]
-
-                    for (let n = 0; n < group.length; ++n) {
-                        group[n].alterableRowspan = group.length
-                        group[n].originalRowSpan = group.length
-                        if (n !== 0) {
-                            group[n].originalHidden = true
-                            group[n].hidden = true
-                        }
-                    }
-                }
-
                 return tableRows
             }
 

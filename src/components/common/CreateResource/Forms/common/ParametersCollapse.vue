@@ -170,7 +170,6 @@ export default {
                 arr.push(paramObj)
                 this.assignPortSocketDependencyValues(paramObj.id, paramObj.value)
             }
-
             return arr
         },
     },

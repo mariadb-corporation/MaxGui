@@ -14,7 +14,6 @@ import AlertWarning from 'icons/AlertWarning'
 import AlertSuccess from 'icons/AlertSuccess'
 import AlertError from 'icons/AlertError'
 import ArrowDown from 'icons/ArrowDown'
-import ArrowLeft from 'icons/ArrowLeft'
 import Close from 'icons/Close'
 import Delete from 'icons/Delete'
 import Drain from 'icons/Drain'
@@ -23,17 +22,14 @@ import NotFound from 'icons/NotFound'
 import Paused from 'icons/Paused'
 import Reports from 'icons/Reports'
 import Restart from 'icons/Restart'
-
 import Running from 'icons/Running'
 import Search from 'icons/Search'
-
 import Settings from 'icons/Settings'
 import StatusError from 'icons/StatusError'
 import StatusInfo from 'icons/StatusInfo'
 import StatusOk from 'icons/StatusOk'
 import StatusWarning from 'icons/StatusWarning'
 import Stopped from 'icons/Stopped'
-
 import Tachometer from 'icons/Tachometer'
 import Unlink from 'icons/Unlink'
 import User from 'icons/User'
@@ -50,9 +46,6 @@ export default {
     },
     arrowDown: {
         component: ArrowDown,
-    },
-    arrowLeft: {
-        component: ArrowLeft,
     },
     close: {
         component: Close,

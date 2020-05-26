@@ -2,7 +2,7 @@
     <v-data-table
         v-sortable-table
         :headers="visibleHeaders"
-        :items="!loading ? treeData : []"
+        :items="!loading ? tableRows : []"
         :hide-default-header="true"
         :hide-default-footer="showAll ? true : getDataLength <= 10"
         :items-per-page="showAll ? getDataLength : itemsPerPage"
@@ -17,30 +17,22 @@
         :dense="dense"
         :no-data-text="noDataText"
         :custom-sort="customSort"
+        @current-items="getCurrentItems"
         @drag-reorder="dragReorder"
     >
-        <!--  -->
         <!----------------------------------------------------TABLE HEAD--------------------------------------------->
         <template v-slot:header="{ props: { headers } }">
             <thead class="v-data-table-header">
                 <tr>
-                    <!-- Only render this extra th if data length >0 and has props hasOrderNumber enabled 
+                    <!-- Only render this extra th if data length > 0 and has props hasOrderNumber enabled 
                     By doing this, it won't break the no-data view when data length = 0
                     -->
                     <th v-if="data.length && hasOrderNumber && !loading" width="1px" class="pa-0" />
                     <th
                         v-for="(header, i) in headers"
-                        :key="header.value"
+                        :key="i"
                         :width="header.width"
-                        :class="[
-                            header.align && `text-${header.align}`,
-                            header.sortable !== false && 'pointer sortable',
-                            pagination.sortDesc[0] ? 'desc' : 'asc',
-                            (header.value === pagination.sortBy[0]) & 'active',
-                            header.text === 'Action' && 'px-0',
-                        ]"
-                        style="position:relative"
-                        :style="setTableHeadPadding()"
+                        :class="thClasses(header)"
                         @click="header.sortable !== false ? changeSort(header.value) : null"
                     >
                         <div class="d-inline-flex justify-center align-center">
@@ -50,8 +42,9 @@
                                 v-if="header.sortable !== false"
                                 size="14"
                                 class="ml-3 v-data-table-header__icon"
-                                >$vuetify.icons.arrowDown</v-icon
                             >
+                                $vuetify.icons.arrowDown
+                            </v-icon>
                         </div>
                         <!--column toggle icon-->
                         <fragment v-if="hasColumnToggle && i === headers.length - 1">
@@ -88,10 +81,11 @@
 
         <!----------------------------------------------------TABLE ROW--------------------------------------------->
         <template v-slot:item="{ item, index: rowIndex }">
+            <!-- A key need to be set when table row is draggable -->
             <tr
                 :key="item.nodeId || item.id"
                 ref="tableRow"
-                :class="tableRowClass(rowIndex)"
+                :class="trClasses(rowIndex)"
                 @click="rowClick(item, headers, visibleHeaders)"
                 @mouseover="e => onRowHover(e, rowIndex)"
                 @mouseleave="e => onRowHover(e, rowIndex)"
@@ -101,25 +95,24 @@
                     -->
                 <td
                     v-if="data.length && hasOrderNumber && !loading"
-                    class="overline px-2 color border-right-table-border  text-field-text"
+                    class="overline px-2 color border-right-table-border text-field-text"
                 >
                     {{ rowIndex }}
                 </td>
                 <td
                     v-for="(header, cellIndex) in visibleHeaders"
                     :key="cellIndex"
-                    :class="cellClass(header, item)"
-                    style="position:relative;"
-                    :style="setCellPadding(item, cellIndex)"
+                    :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
+                    :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
+                    :class="tdClasses(header, item, cellIndex)"
+                    :style="isTree && setCellPadding(item, cellIndex)"
                     @click="cellClick(item, headers, visibleHeaders)"
+                    @mouseover="e => cellHover(e, item, cellIndex)"
+                    @mouseout="e => cellHover(e, item, cellIndex)"
                     @mouseenter="e => handleShowTruncatedText(e, item, header, cellIndex)"
                 >
                     <v-icon
-                        v-show="
-                            showDragEntity &&
-                                showEntityAt === rowIndex &&
-                                cellIndex === visibleHeaders.length - 1
-                        "
+                        v-show="showDragIcon(rowIndex, cellIndex)"
                         :class="{ 'drag-handle move': draggable }"
                         class="color text-field-text"
                         size="16"
@@ -127,14 +120,8 @@
                         drag_handle
                     </v-icon>
                     <div
-                        :style="cellAlignHandle(header)"
-                        style="position:relative"
-                        :class="[
-                            item.level > 0 || header.cellTruncated ? 'text-truncate' : '',
-                            (item.level > 0 || header.cellTruncated) &&
-                                showTruncatedTextAt === cellIndex &&
-                                'pointer',
-                        ]"
+                        :style="itemWrapperAlign(header)"
+                        :class="itemWrapperClasses(header, item, cellIndex)"
                     >
                         <!-- Display toggle button at the first column-->
                         <v-btn
@@ -143,12 +130,13 @@
                             height="32"
                             class="arrow-toggle mr-1"
                             icon
-                            :class="[hasChild(item) ? '' : 'hide']"
+                            :class="[item.children && item.children.length ? '' : 'hide']"
                             @click="toggleChild(item, rowIndex)"
                         >
                             <v-icon
                                 :class="[item.expanded === true ? 'arrow-down' : 'arrow-up']"
                                 size="24"
+                                color="#013646"
                             >
                                 $expand
                             </v-icon>
@@ -178,7 +166,7 @@
                                 <v-sheet
                                     v-if="
                                         (item.level > 0 || header.cellTruncated) &&
-                                            showTruncatedTextAt === cellIndex
+                                            indexOfTruncatedHoveredRow === cellIndex
                                     "
                                     style="border-radius: 10px;"
                                     class="pa-4"
@@ -190,11 +178,7 @@
 
                         <!-- Actions slot -->
                         <div
-                            v-if="
-                                showActionsEntity &&
-                                    showEntityAt === rowIndex &&
-                                    cellIndex === visibleHeaders.length - 1
-                            "
+                            v-if="renderActionsSlot(rowIndex, cellIndex)"
                             class="action-slot-wrapper"
                         >
                             <slot :data="{ item }" name="actions" />
@@ -220,12 +204,21 @@ import Sortable from 'sortablejs'
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+
+/* 
+This component accepts
+_headers props as array of objects, each object must has text:String, value:Any and 
+may has sortable:Boolean, editableCol:Boolean, align: String, cellTruncated: Boolean
+
+_data props as array of objects, each object must has either item.nodeId:Number || item.id:Any or both
+
+SLOTS available for this component:
+_slot :name="header.value" // slot aka item
+_slot  name="actions" :data="{ item }"
+_slot :name="`append-${header.value}`"  
+*/
 export default {
     name: 'data-table',
-    /* SLOTS available for data-table */
-    // :name="header.value" // slot aka item
-    // name="actions" :data="{ item }"
-
     directives: {
         sortableTable: {
             bind(el, binding, vnode) {
@@ -242,8 +235,8 @@ export default {
         },
     },
     props: {
-        headers: { type: Array },
-        data: { type: Array },
+        headers: { type: Array, required: true },
+        data: { type: Array, required: true },
         sortBy: { type: String },
         search: { type: String, default: '' },
         sortDesc: { type: Boolean },
@@ -261,56 +254,69 @@ export default {
         tdBorderLeft: { type: Boolean, default: false },
         // For editable feature
         editableCell: { type: Boolean, default: false },
-        // For table wants to keep primitive value, eg: null/undefined won't be displayed
+        // For table wants to keep primitive value, eg:if it is false, null/undefined won't be displayed
         keepPrimitiveValue: { type: Boolean, default: false },
         // For draggable feature
         draggable: { type: Boolean, default: false },
         dragReorder: { type: Function, default: () => null },
         hasOrderNumber: { type: Boolean, default: false },
-
         showActionsOnHover: { type: Boolean, default: false },
+        // rowspan feature, data array must contains objects having groupId property.
+        colsHasRowSpan: { type: Number },
     },
     data() {
         return {
+            //style
+            tableHeadPadding: 'py-0 px-6',
+            //common
             pagination: {},
             visible: [],
             isColumnToggleVisible: false,
+            // use when draggable or showActionsOnHover is enabled
+            indexOfHoveredRow: null,
             //draggable
             showDragEntity: false,
-            showActionsEntity: false,
-            showEntityAt: null,
             //For displaying truncated text in a v-menu
-            showTruncatedTextAt: null,
+            indexOfTruncatedHoveredRow: null,
             truncatedMenuPos: { x: 0, y: 16.5 },
             //For nested data, auto display dropdown table row
-            isExpanded: true,
             nodeActiveIds: [],
-            dataHasNestedChild: false,
+            isTree: false,
+            //rowspan feature
+            currentPageItems: null,
         }
     },
     computed: {
         visibleHeaders() {
             return this.headers.filter(header => this.visible.includes(header))
         },
+
+        // first processing data from data props
         processingData: function() {
-            let self = this
-            let oriData = self.$help.cloneDeep(self.data)
-            if (!self.keepPrimitiveValue)
-                for (let i = 0; i < oriData.length; ++i) {
-                    let obj = oriData[i]
+            const self = this
+            let result = self.data
+            if (!self.keepPrimitiveValue) {
+                result = self.$help.cloneDeep(self.data)
+                for (let i = 0; i < result.length; ++i) {
+                    let obj = result[i]
                     Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
                 }
-            return oriData
+            }
+            return result
         },
-        treeData: function() {
+
+        tableRows: function() {
             const self = this
             let newArr = []
-            self.levelRecursive(self.processingData, newArr, self.nodeActiveIds, self.isExpanded)
+            self.levelRecursive(self.processingData, newArr, self.nodeActiveIds)
             return newArr
         },
+
         getDataLength: function() {
             const self = this
-            const flattenedNodes = self.$help.flattenNodes(self.$help.cloneDeep(self.treeData))
+            const flattenedNodes = self.$help.flattenNodes(
+                self.$help.cloneDeep(self.processingData)
+            )
             return flattenedNodes.length
         },
     },
@@ -325,18 +331,21 @@ export default {
 
         loading: function(newVal) {
             if (newVal) {
-                // when table is , dont show the entity
+                // when table is loading , dont show drag icon or actions slot
                 this.draggable && (this.showDragEntity = false)
-                this.showActionsOnHover && (this.showActionsEntity = false)
-                this.showEntityAt = null
+                this.indexOfHoveredRow = null
             }
         },
 
-        // editableCell: function(val) {
-        //     if (val) {
-        //         this.toggleAllNodesChildren()
-        //     }
-        // },
+        editableCell: function(val) {
+            if (val) {
+                this.toggleAllNodesChildren()
+            }
+        },
+        isTree: function(val) {
+            if (val) this.tableHeadPadding = 'py-0 px-12'
+            else this.tableHeadPadding = 'py-0 px-6'
+        },
     },
 
     created() {
@@ -344,28 +353,65 @@ export default {
     },
 
     methods: {
-        tableRowClass(rowIndex) {
+        //---------------------------------Internal styles and class bindings-------------------------------------------
+        thClasses(header) {
+            return [
+                header.align && `text-${header.align}`,
+                header.sortable !== false && 'pointer sortable',
+                this.pagination.sortDesc[0] ? 'desc' : 'asc',
+                (header.value === this.pagination.sortBy[0]) & 'active',
+                header.text === 'Action' && 'px-0',
+                this.tableHeadPadding,
+            ]
+        },
+
+        trClasses(rowIndex) {
             return {
+                // for styling and common class
                 pointer: this.onRowClick,
-                'last-row': rowIndex === this.getDataLength - 1,
+                'last-row': rowIndex === this.currentPageItems.length - 1,
+                // for editable feature
                 'v-data-table__editable-cell-mode': this.editableCell,
+                // for row draggble feature
                 'draggable-row': this.draggable,
             }
         },
 
-        cellClass(header, item) {
+        tdClasses(header, item, cellIndex) {
             return [
+                // for rowspan feature
+                item.hidden && cellIndex < this.colsHasRowSpan && 'hide',
+                cellIndex < this.colsHasRowSpan
+                    ? `${item.groupId}-rowspan`
+                    : `${item.groupId}-cell`,
+                // for editable feature
+                this.editableCell && header.editableCol && 'v-data-table__editable-cell',
+                // for action slots
+                header.value === 'action' && 'pr-3',
+                // for tree view feature
+                item.expanded && 'font-weight-bold',
+                // for styling and common class
                 header.value,
                 header.align && `text-${header.align}`,
-                header.tdClass || header.class,
-                this.tdBorderLeft && 'color border-left-table-border',
-                this.editableCell && header.editableCol && 'v-data-table__editable-cell',
-                header.value === 'action' && 'pr-3',
+                this.tdBorderLeft || cellIndex === this.colsHasRowSpan
+                    ? 'color border-left-table-border'
+                    : '',
                 item.level > 0 || header.cellTruncated ? 'text-truncate cell-truncate' : '',
-                item.expanded && 'font-weight-bold',
+                this.draggable && 'relative',
             ]
         },
-        cellAlignHandle(header) {
+
+        itemWrapperClasses(header, item, cellIndex) {
+            return [
+                item.level > 0 || header.cellTruncated ? 'text-truncate' : '',
+                (item.level > 0 || header.cellTruncated) &&
+                    this.indexOfTruncatedHoveredRow === cellIndex &&
+                    'pointer',
+                'relative',
+            ]
+        },
+
+        itemWrapperAlign(header) {
             // make centering cell more accurate that ommit the width of the sort arrow from the header
             let marginRight = header.align && header.sortable !== false ? 26 : ''
             if (this.hasColumnToggle && header.sortable !== false) {
@@ -375,11 +421,20 @@ export default {
                 marginRight: `${marginRight}px`,
             }
         },
+
+        //---------------------------------Table helper functions and features------------------------------------------
+        getValue(item, header) {
+            // data type shouldn't be handled here as it will break the filter result
+            // use helper function to handle value before passing the data to table
+            let value = item[header.value]
+            return this.$help.isFunction(header.format) ? header.format(value) : `${value}`
+        },
+
         columnToggle() {
             this.isColumnToggleVisible = !this.isColumnToggleVisible
         },
 
-        //------------------------------------------------------------ Sorting
+        //---------------------------------Table sorting ---------------------------------------------------------------
         // Currently support sorting one column at a time
         customSort(items, sortBy, isDesc) {
             let result = items
@@ -394,6 +449,11 @@ export default {
                 result = this.hierarchySort(hashArr, 0, sortBy, isDesc, [])
                 if (!result.length)
                     result = items.sort((a, b) => self.sortOrder(a, b, isDesc, sortBy))
+            }
+
+            if (this.colsHasRowSpan) {
+                const newArr = this.processingRowspanTable(result)
+                result = newArr
             }
 
             return result
@@ -412,10 +472,10 @@ export default {
         },
 
         sortOrder(a, b, isDesc, sortBy) {
-            if (!isDesc[0]) {
-                return a[sortBy] < b[sortBy] ? -1 : 1
-            } else {
+            if (isDesc[0]) {
                 return b[sortBy] < a[sortBy] ? -1 : 1
+            } else {
+                return a[sortBy] < b[sortBy] ? -1 : 1
             }
         },
 
@@ -429,8 +489,75 @@ export default {
             }
         },
 
-        //------------------------------------------------------------ Props callback
+        //---------------------------------methods for Rowspan feature--------------------------------------------------
+        getCurrentItems(items) {
+            this.colsHasRowSpan && this.processingRowspanTable(items, 'mutate')
+            this.currentPageItems = items
+        },
 
+        /**
+         * @param {Array} data Array of objects
+         * @param {String} mode mutate or undefined
+         * @return {Array} Return new array if mode!=='mutate'
+         * if mode ==='mutate', changes will be mutated, otherwise it returns a new array
+         */
+        processingRowspanTable(data, mode) {
+            if (mode === 'mutate') this.handleDisplayRowspan(data)
+            else return this.handleDisplayRowspan(this.$help.cloneDeep(data))
+        },
+
+        /**
+         * @param {Array} target Array of objects
+         * @return {Array} Always return new array
+         * This function group all items have same groupdID and assign correct value for hidden and rowspan properties.
+         */
+        handleDisplayRowspan(target) {
+            let uniqueSet = new Set(target.map(item => item.groupId))
+            let itemsId = [...uniqueSet]
+            let groupedId = this.$help.groupBy(target, 'groupId')
+            let result = []
+            for (let i = 0; i < itemsId.length; ++i) {
+                let group = groupedId[`${itemsId[i]}`]
+
+                for (let n = 0; n < group.length; ++n) {
+                    group[n].rowspan = group.length
+                    if (n === 0) group[n].hidden = false
+                    else group[n].hidden = true
+                    result.push(group[n])
+                }
+            }
+            return result
+        },
+
+        /**
+         * @param {Object} e event object
+         * @param {Object} item object
+         * This function group all items have same groupdID and assign correct value for hidden and rowspan properties.
+         */
+        cellHover(e, item, cellIndex) {
+            // rowspan feature
+            if (this.colsHasRowSpan) {
+                const target = cellIndex < this.colsHasRowSpan ? 'rowgroup' : 'cell'
+                const { groupId } = item
+                // Make associated td elements to have the same hover effect
+                let bg = e.type === 'mouseover' ? '#fafcfc' : ''
+                if (target === 'cell') {
+                    let elements = this.$refs.rowGroup.filter(ele =>
+                        ele.attributes.class.value.includes(`${groupId}-rowspan`)
+                    )
+
+                    elements.forEach(ele => (ele.style.backgroundColor = bg))
+                } else if (target === 'rowgroup') {
+                    let elements = this.$refs.cell.filter(ele =>
+                        ele.attributes.class.value.includes(`${groupId}-cell`)
+                    )
+
+                    elements.forEach(ele => (ele.style.backgroundColor = bg))
+                }
+            }
+        },
+
+        //---------------------------------callback function Props------------------------------------------------------
         rowClick(item, headers) {
             this.onRowClick && this.onRowClick(item, headers)
         },
@@ -439,14 +566,11 @@ export default {
             this.onCellClick && this.onCellClick(item, header)
         },
 
-        getValue(item, header) {
-            // data type shouldn't be handled here as it will break the filter result
-            // use helper function to handle value before passing the data to table
-            let value = item[header.value]
-            return this.$help.isFunction(header.format) ? header.format(value) : `${value}`
-        },
-
-        //------------------------------------------------------------ For displaying actions btn/icon on table row
+        //---------------------------------For displaying actions btn/icon on table row---------------------------------
+        /**
+         * @param {Number} index index of current hovered row
+         * This function helps to display either drag icon or actions slot at index of hovered row.
+         */
         onRowHover(e, index) {
             if (this.draggable || this.showActionsOnHover) {
                 const { type } = e
@@ -457,7 +581,6 @@ export default {
                             // positioning the drag handle to the center of the table row
                             if (self.draggable) {
                                 let tableRowWidth = self.$refs.tableRow.clientWidth
-
                                 let dragHandle = document.getElementsByClassName('drag-handle')
                                 let center = `calc(100% - ${tableRowWidth / 2}px)`
                                 if (dragHandle.length && dragHandle[0].style.left !== center) {
@@ -467,20 +590,39 @@ export default {
                                 }
                                 self.showDragEntity = true
                             }
-
-                            self.showActionsOnHover && (self.showActionsEntity = true)
-                            self.showEntityAt = index
+                            self.indexOfHoveredRow = index
                         }
                         break
                     case 'mouseleave':
                         self.draggable && (self.showDragEntity = false)
-                        self.showActionsOnHover && (self.showActionsEntity = false)
-                        self.showEntityAt = null
+                        self.indexOfHoveredRow = null
                         break
                 }
             }
         },
-        //------------------------------------------------------------ For displaying truncated text in a v-menu
+
+        // render actions slot at indexOfHoveredRow
+        renderActionsSlot(rowIndex, cellIndex) {
+            return (
+                this.indexOfHoveredRow === rowIndex &&
+                // show at last columns
+                cellIndex === this.visibleHeaders.length - 1
+            )
+        },
+
+        // show drag handle icon at indexOfHoveredRow
+        showDragIcon(rowIndex, cellIndex) {
+            return (
+                this.showDragEntity &&
+                this.indexOfHoveredRow === rowIndex &&
+                cellIndex === this.visibleHeaders.length - 1
+            )
+        },
+
+        //---------------------------------For displaying truncated text in a v-menu------------------------------------
+        /**
+         * This function helps to show cell value as a menu when text is truncated
+         */
         handleShowTruncatedText(e, item, header, cellIndex) {
             if (item.level > 0 || header.cellTruncated) {
                 const { children } = e.target
@@ -504,39 +646,43 @@ export default {
                     }
                 }
                 if (wrapperOffsetwidth < truncatedEleWidth) {
-                    this.showTruncatedTextAt = cellIndex
+                    this.indexOfTruncatedHoveredRow = cellIndex
 
                     this.truncatedMenuPos.x = truncatedEleWidth - wrapperOffsetwidth
-                } else this.showTruncatedTextAt = null
+                } else this.indexOfTruncatedHoveredRow = null
             }
         },
-        //------------------------------------------------------------ For nested data, auto display dropdown table row
 
-        levelRecursive(arr, newArr, nodeActiveIds, isExpanded) {
+        //---------------------------------For nested data, displaying dropdown table row-------------------------------
+        /**
+         * @param {Array} arr root array
+         * @param {Array} newArr result array
+         * @param {Array} nodeActiveIds array of active node ( node has been opened)
+         * @return {Array} newArr new array that has element of root array and its children
+         */
+        levelRecursive(arr, newArr, nodeActiveIds) {
             let self = this
-
             arr.forEach(function(o) {
                 if (o.children && o.children.length !== 0) {
-                    !self.dataHasNestedChild && (self.dataHasNestedChild = true)
+                    !self.isTree && (self.isTree = true)
 
                     newArr.push(o)
                     for (let i = 0; i < nodeActiveIds.length; ++i) {
                         if (o.nodeId === nodeActiveIds[i]) {
-                            o.expanded = isExpanded
+                            o.expanded = true
                         }
                     }
                     if (o.expanded === true) {
-                        self.levelRecursive(o.children, newArr, nodeActiveIds, isExpanded)
+                        self.levelRecursive(o.children, newArr, nodeActiveIds)
                     }
                 } else {
                     newArr.push(o)
-                    return false
                 }
             })
         },
+
         toggleChild(node) {
             const self = this
-
             // show node's children
             if (node.leaf === false && node.expanded === false && node.children.length > 0) {
                 self.nodeActiveIds.push(node.nodeId)
@@ -548,7 +694,7 @@ export default {
         },
 
         toggleAllNodesChildren(nodes) {
-            let treeNodes = nodes || this.treeData
+            let treeNodes = nodes || this.tableRows
             for (let i = 0; i < treeNodes.length; ++i) {
                 let node = treeNodes[i]
                 this.toggleNodeChildren(node)
@@ -567,11 +713,12 @@ export default {
         },
 
         collapseAllNodesChildren() {
-            for (let i = 0; i < this.treeData.length; ++i) {
-                let node = this.treeData[i]
+            for (let i = 0; i < this.tableRows.length; ++i) {
+                let node = this.tableRows[i]
                 this.collapseNodeChildren(node)
             }
         },
+
         collapseNodeChildren(node) {
             const self = this
             if (node.expanded === true && node.children.length > 0) {
@@ -583,33 +730,24 @@ export default {
             }
         },
 
-        hasChild(item) {
-            return item.children && item.children.length
-        },
-
-        setTableHeadPadding() {
-            return this.dataHasNestedChild ? 'padding: 0 48px;' : 'padding: 0 24px;'
-        },
         setCellPadding(item, cellIndex) {
-            if (this.dataHasNestedChild) {
-                if (cellIndex === 0) {
-                    let offset = 36 * item.level
-                    if (item.level === 0 && !item.leaf) {
-                        // already have btn 32px plus mr=4px
-                        offset += 8
-                    } else if (item.level === 0 && item.leaf) {
-                        offset += 48
-                    }
-                    // For level above 0, when there is no button rendered, plus offsetwidth of btn
-                    if (item.level > 0 && item.leaf) {
-                        offset += 36
-                    }
+            if (cellIndex === 0) {
+                let offset = 36 * item.level
+                if (item.level === 0 && !item.leaf) {
+                    // already have btn 32px plus mr=4px
+                    offset += 8
+                } else if (item.level === 0 && item.leaf) {
+                    offset += 48
+                }
+                // For level above 0, when there is no button rendered, plus offsetwidth of btn
+                if (item.level > 0 && item.leaf) {
+                    offset += 36
+                }
 
-                    let padding = `padding: 0px 48px 0px ${offset}px;`
+                let padding = `padding: 0px 48px 0px ${offset}px;`
 
-                    return padding
-                } else return `padding: 0px 48px 0px 48px;`
-            }
+                return padding
+            } else return `padding: 0px 48px 0px 48px;`
         },
     },
 }
