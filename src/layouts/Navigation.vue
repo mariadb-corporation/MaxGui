@@ -3,7 +3,7 @@
         :mini-variant.sync="isMini"
         color="#424F62"
         class="main-nav"
-        width="200"
+        width="251"
         mini-variant-width="50"
         fixed
         left
@@ -17,7 +17,10 @@
             <template v-for="item in items">
                 <v-list-item
                     :key="item.name"
-                    :class="{ navitem: true, active: currentPath.includes(item.name) }"
+                    :class="{
+                        navitem: true,
+                        active: currentPath.includes(item.path),
+                    }"
                     @click="navigate(item)"
                 >
                     <v-list-item-icon class="mx-0">
@@ -26,9 +29,9 @@
                     <v-list-item-content>
                         <v-list-item-title class="text-capitalize">
                             {{
-                                item.path === '/settings'
-                                    ? $tc(`${item.name}`, 2)
-                                    : $tc(`${item.name}`, 1)
+                                item.name === 'dashboards'
+                                    ? $tc(`${item.name}`, 1)
+                                    : $tc(`${item.name}`, 2)
                             }}
                         </v-list-item-title>
                     </v-list-item-content>
@@ -83,52 +86,26 @@ export default {
     },
 }
 </script>
-<style lang="scss">
-.main-nav {
-    .v-navigation-drawer__border {
-        background-color: transparent !important;
-    }
-
-    .navitem {
-        // transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; // same easing as the nav drawer open/close animation
-
-        height: 52px;
-        &:hover {
-            background: rgba(0, 0, 0, 0.14) !important;
-        }
-        .v-list-item__icon {
-            min-width: 50px;
-            height: 100%;
-            margin: 0;
-            align-items: center;
-            justify-content: center;
-        }
-        .v-list-item__title {
-            color: white;
-            font-size: 0.875rem;
-        }
-    }
-}
-
-.v-navigation-drawer--mini-variant .navitem .v-list-item__content {
-    display: flex;
-    opacity: 0;
-}
-</style>
 
 <style lang="scss" scoped>
-@import 'styles/constants';
-
 .main-nav {
     z-index: 7;
     background: $navigation;
-
+    padding-top: 23px;
+    .v-navigation-drawer__border {
+        background-color: transparent !important;
+    }
     .v-list {
         padding: 0;
         background: transparent;
 
         .navitem {
+            height: 52px;
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; // same easing as the nav drawer open/close animation
             position: relative;
+            &:hover {
+                background: rgba(0, 0, 0, 0.14) !important;
+            }
             &::before {
                 content: '';
                 position: absolute;
@@ -143,13 +120,20 @@ export default {
                 background-color: #2c9cdb;
             }
         }
+        .v-list-item__icon {
+            min-width: 50px;
+            height: 100%;
+            margin: 0;
+            align-items: center;
+            justify-content: center;
+        }
+        .v-list-item__title {
+            color: white;
+            font-size: 0.875rem;
+        }
     }
-}
-
-.main-nav {
     hr.v-divider {
         border-color: #556072;
-        display: block !important;
     }
     .version {
         position: absolute;

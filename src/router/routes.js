@@ -23,6 +23,10 @@ export const routes = [
         redirect: '/dashboard/servers/',
     },
     {
+        path: '/dashboard',
+        redirect: '/dashboard/servers/',
+    },
+    {
         path: '*',
         redirect: '/404',
     },

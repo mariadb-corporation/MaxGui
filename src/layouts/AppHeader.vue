@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar height="52px" class="header pl-12 pr-2" fixed clipped-left app flat color="#003545">
+    <v-app-bar height="50px" class="header pl-12 pr-2" fixed clipped-left app flat color="#003545">
         <v-toolbar-title class="headline">
             <router-link to="/dashboard/servers">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
@@ -84,6 +84,9 @@ export default {
 <style lang="scss" scoped>
 .header {
     background: linear-gradient(to right, #013545 0%, #064251 100%);
+    ::v-deep .v-toolbar__content {
+        padding: 4px 12px;
+    }
 }
 
 .headline {
@@ -93,6 +96,8 @@ export default {
 
     img {
         vertical-align: middle;
+        width: 155px;
+        height: 38px;
     }
 
     .product-name {
@@ -103,6 +108,7 @@ export default {
 }
 .user-name {
     font-size: 1rem;
+    font-family: 'adrianna', sans-serif;
 }
 .arrow-up {
     transform: rotate(-180deg);

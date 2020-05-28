@@ -20,10 +20,12 @@
     "routerDiagnostics": "Router Diagnostics",
 
     "dashboards": "dashboard | dashboards",
+    "reports": "report | reports",
     "statistics": "statistic | statistics",
+    "settings": "setting | settings",
+
     "users": "Users",
     "connections": "Connection | connections",
-    "settings": "setting | settings",
     "version": "Version",
     "404Error": "404 Error",
     "404ErrorMessage": "Sorry, that page doesn't exist",

@@ -12,14 +12,14 @@
  */
 // Sidebar components
 import Dashboard from 'pages/Dashboard'
-import Statistics from 'pages/Statistics'
+import Reports from 'pages/Reports'
 import Settings from 'pages/Settings'
 import tabRoutes from './tabRoutes'
 
 export default [
     // Sidebar Routes
     {
-        path: '/dashboard/servers',
+        path: '/dashboard/',
         component: Dashboard,
         meta: {
             requiresAuth: true,
@@ -33,15 +33,15 @@ export default [
     },
 
     {
-        path: '/statistics',
-        component: Statistics,
+        path: '/reports',
+        component: Reports,
         meta: {
             requiresAuth: true,
             layout: 'app-layout',
             size: 22,
             icon: '$vuetify.icons.reports',
         },
-        name: 'statistics',
+        name: 'reports',
     },
 
     {
