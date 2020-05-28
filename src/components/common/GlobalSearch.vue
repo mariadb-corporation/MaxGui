@@ -7,8 +7,7 @@
         height="39"
         outlined
         required
-        placeholder="Search"
-        label="Search"
+        :placeholder="$t('search')"
         single-line
         hide-details
         rounded

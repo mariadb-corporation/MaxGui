@@ -15,7 +15,7 @@
             class="std mariadb-select-input error--text__bottom"
             :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
             :placeholder="$tc('select', 1, { entityName: $tc(moduleName, 1) })"
-            :rules="[v => !!v || `${$tc(moduleName, 1)} is required`]"
+            :rules="[v => !!v || $t('errors.requiredInput', { inputName: $tc(moduleName, 1) })]"
             required
         />
 

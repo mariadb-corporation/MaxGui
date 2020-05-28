@@ -21,14 +21,14 @@
                     class="std mariadb-select-input error--text__bottom"
                     :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
                     hide-details
-                    :rules="[v => !!v || 'This field is required']"
+                    :rules="[v => !!v || $t('errors.requiredInput', { inputName: 'This field' })]"
                     required
                     @input="handleResourceSelected"
                 />
                 <v-divider class="divider" />
                 <div class="mb-0">
                     <label class="label color text-small-text d-block">
-                        {{ `${selectedResource} name` }}
+                        {{ $t('resourceLabelName', { resourceName: selectedResource }) }}
                     </label>
                     <v-text-field
                         id="id"
@@ -378,9 +378,9 @@ export default {
 
         validateResourceId(val) {
             if (!val) {
-                return 'id is required'
+                return this.$t('errors.requiredInput', { inputName: 'id' })
             } else if (this.validateInfo.idArr.length && this.validateInfo.idArr.includes(val)) {
-                return 'id is already registered'
+                return this.$t('errors.duplicatedValue', { inputValue: val })
             }
             return true
         },

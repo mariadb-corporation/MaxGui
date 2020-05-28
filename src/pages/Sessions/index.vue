@@ -11,17 +11,17 @@
                 <span> {{ user }} </span>
             </router-link>
         </template>
-        <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr } } }">
-            <fragment v-if="servicesIdArr.length === 0">
-                <span>No service</span>
+        <template v-slot:serviceIds="{ data: { item: { serviceIds } } }">
+            <fragment v-if="typeof serviceIds === 'string'">
+                <span>{{ serviceIds }}</span>
             </fragment>
 
             <!--
                 https://github.com/mariadb-corporation/MaxScale/blob/develop/Documentation/REST-API/Resources-Session.md
-                Each session is created on a service, so even servicesIdArr is an array, it always has one element
+                Each session is created on a service, so even serviceIds is an array, it always has one element
             -->
             <fragment v-else>
-                <template v-for="serviceId in servicesIdArr">
+                <template v-for="serviceId in serviceIds">
                     <router-link
                         :key="serviceId"
                         :to="`/dashboard/services/${serviceId}`"
@@ -31,39 +31,6 @@
                     </router-link>
                 </template>
             </fragment>
-            <!-- 
-            <fragment v-else>
-                <v-menu
-                    :key="i"
-                    offset-x
-                    transition="slide-x-transition"
-                    :close-on-content-click="false"
-                    open-on-hover
-                    nudge-right="20"
-                    nudge-top="12.5"
-                    content-class="shadow-drop"
-                >
-                    <template v-slot:activator="{ on }">
-                        <span class="pointer color text-links" v-on="on">
-                            {{ servicesIdArr.length }}
-                            {{ $tc('services', 2).toLowerCase() }}
-                        </span>
-                    </template>
-
-                    <v-sheet style="border-radius: 10px;" class="pa-4">
-                        <template v-for="serviceId in servicesIdArr">
-                            <router-link
-                                :key="serviceId"
-                                :to="`/dashboard/services/${serviceId}`"
-                                class="no-underline"
-                            >
-                                <span>{{ serviceId }} </span>
-                            </router-link>
-                        </template>
-                    </v-sheet>
-                </v-menu>
-            </fragment>
-             -->
         </template>
         <template v-slot:connected="{ data: { item: { connected } } }">
             <span> {{ $help.formatValue(connected) }} </span>
@@ -96,7 +63,7 @@ export default {
                 { text: 'Client', value: 'user' },
                 { text: 'Connected', value: 'connected' },
                 { text: 'IDLE (s)', value: 'idle' },
-                { text: 'Service', value: 'servicesIdArr' },
+                { text: 'Service', value: 'serviceIds' },
             ],
         }
     },
@@ -119,7 +86,7 @@ export default {
                      * @property {String} row.user - sessions's user
                      * @property {String} row.connected - sessions's sessions
                      * @property {Number} row.idle - idle (seconds)
-                     * @property {Array} row.servicesIdArr - Sessions's services relationships
+                     * @property {Array} row.serviceIds - Sessions's services relationships
                      */
                     const {
                         id,
@@ -127,14 +94,16 @@ export default {
                         relationships: { services: { data: allServices = [] } = {} },
                     } = allSessions[n] || {}
 
-                    let serversList = allServices ? allServices.map(item => `${item.id}`) : []
+                    let serviceIds = allServices.length
+                        ? allServices.map(item => `${item.id}`)
+                        : this.$t('noEntity', { entityName: 'services' })
 
                     let row = {
                         id: id,
                         user: `${user}@${remote}`,
                         connected: connected,
                         idle: idle,
-                        servicesIdArr: serversList,
+                        serviceIds: serviceIds,
                     }
                     itemsArr.push(row)
                 }

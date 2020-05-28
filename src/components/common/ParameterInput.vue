@@ -72,6 +72,7 @@
                 dense
                 :rules="rules.requiredFieldEither"
                 :disabled="objectItem.disabled"
+                @keypress="preventNonNumerical($event)"
                 @input="handleChange"
             />
         </fragment>
@@ -131,34 +132,18 @@
                 @change="handleChange"
             />
         </fragment>
-        <fragment v-else-if="objectItem.type === 'count'">
+        <fragment v-else-if="objectItem.type === 'count' || objectItem.type === 'int'">
             <v-text-field
                 :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
                 v-model.trim.number="objectItem.value"
-                type="number"
-                min="0"
                 :name="objectItem.id"
                 class="std error--text__bottom error--text__bottom--no-margin"
                 single-line
                 outlined
                 dense
-                :rules="rules.naturalNumber"
+                :rules="rules.number"
                 :disabled="objectItem.disabled"
-                @input="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'int'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim.number="objectItem.value"
-                type="number"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.int"
-                :disabled="objectItem.disabled"
+                @keypress="preventNonNumerical($event)"
                 @input="handleChange"
             />
         </fragment>
@@ -172,7 +157,7 @@
                 dense
                 autocomplete="new-password"
                 type="password"
-                :rules="rules.requiredField"
+                :rules="rules.requiredString"
                 :disabled="objectItem.disabled"
                 @input="handleChange"
             />
@@ -186,7 +171,7 @@
                 single-line
                 outlined
                 dense
-                :rules="rules.requiredField"
+                :rules="rules.requiredString"
                 :disabled="objectItem.disabled"
                 autocomplete="off"
                 @input="handleChange"
@@ -208,11 +193,11 @@
  * Public License.
  */
 
-/* 
-_createMode: In creation mode, the value for parameter are received from maxscale modules but the value for 
+/*
+_createMode: In creation mode, the value for parameter are received from maxscale modules but the value for
 count and int returned as string. So, objectItem.value will be converted to number if createMode is true
-_portValue,_socketValue,_addressValue and _parentForm is passed if target resource is being 
-created or updated. If target resource is listener, _addressValue will be null. 
+_portValue,_socketValue,_addressValue and _parentForm is passed if target resource is being
+created or updated. If target resource is listener, _addressValue will be null.
 _isListener: accepts boolean , if true, address won't be required
 */
 export default {
@@ -232,14 +217,12 @@ export default {
         return {
             objectItem: {},
             rules: {
-                naturalNumber: [val => this.validateNaturalNumber(val)],
-                int: [val => this.validateInteger(val)],
-                requiredField: [val => this.handleRequiredField(val)],
+                number: [val => this.validateNumber(val)],
+                requiredString: [val => this.handleRequiredString(val)],
                 requiredAddress: [val => this.handleRequiredAddress(val)],
                 requiredFieldEither: [val => this.handleRequiredFieldEither(val)],
             },
             count: 0,
-            uniqueKey: 'input-',
         }
     },
     watch: {
@@ -320,7 +303,7 @@ export default {
             let bothValueExist = portExist && socketExist
 
             if (bothEmpty || bothValueExist) {
-                return `Either port or socket need to be defined`
+                return this.$t('errors.portSocket')
             } else return true
         },
 
@@ -329,44 +312,40 @@ export default {
             let portExist = this.portValue !== '' && this.portValue !== null
             let socketExist = !!this.socketValue
             let bothExist = socketExist && portExist
+
             if (!val && portExist) {
-                return `${this.objectItem.id} is required when using port`
+                return this.$t('errors.addressRequired')
             } else if (val && socketExist && !bothExist) {
-                return `${this.objectItem.id} should be defined only when using port`
+                return this.$t('errors.addressRequiredEmpty')
             }
             return true
         },
 
-        validateNaturalNumber(val) {
-            if (this.required && !val) {
-                return `${this.objectItem.id} is required`
-            } else if (typeof value === 'string') {
-                return `${this.objectItem.id} does not accept non numeric values`
-            } else if (val < 0) {
-                return `${this.objectItem.id} does not accept negative values`
+        validateNumber(val) {
+            let isEmptyVal = val === '' || val === null
+            let num = val
+            this.createMode && (num = parseInt(val, 10))
+
+            if (this.required && isEmptyVal) {
+                return this.$t('errors.requiredInput', { inputName: this.objectItem.id })
+            } else if (this.objectItem.type === 'int' && !Number.isInteger(num) && !isEmptyVal) {
+                return this.$t('errors.nonInteger')
+            } else if (this.objectItem.type === 'count' && num < 0 && !isEmptyVal) {
+                return this.$t('errors.negativeNum')
             }
             return true
         },
 
-        validateInteger(val) {
-            let value = val
-            this.createMode && (value = parseInt(val, 10))
-            if (this.required && !val) {
-                return `${this.objectItem.id} is required`
-            } else if (typeof value === 'string') {
-                return `${this.objectItem.id} does not accept non numeric values`
-            } else if (!Number.isInteger(value)) {
-                return `${this.objectItem.id} accepts only integer`
+        handleRequiredString(val) {
+            if (val !== '' && this.required) {
+                return this.$t('errors.requiredInput', { inputName: this.objectItem.id })
             }
-
             return true
         },
-
-        handleRequiredField(val) {
-            if (!val) {
-                return this.required ? `${this.objectItem.id} is required` : true
-            }
-            return true
+        // allow to enter minus or hyphen minus and numbers
+        preventNonNumerical(e) {
+            const key = e.key
+            if (key !== '-') !key.match(/^[0-9]+$/g) && e.preventDefault()
         },
     },
 }
@@ -383,5 +362,8 @@ export default {
     .v-input__slot {
         margin: 0;
     }
+}
+.std ::v-deep .v-messages__message {
+    white-space: normal;
 }
 </style>

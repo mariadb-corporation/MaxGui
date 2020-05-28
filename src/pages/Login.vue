@@ -138,8 +138,12 @@ export default {
             errorMessage: '',
             showEmptyMessage: false, // errors receives from api
             rules: {
-                username: [val => !!val || this.$t('errors.usernameRequired')],
-                password: [val => !!val || this.$t('errors.passwordRequired')],
+                username: [
+                    val => !!val || this.$t('errors.requiredInput', { inputName: 'Username' }),
+                ],
+                password: [
+                    val => !!val || this.$t('errors.requiredInput', { inputName: 'Password' }),
+                ],
             },
             circles: [],
             scratch: document.createElement('canvas'),

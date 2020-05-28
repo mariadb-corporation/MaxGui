@@ -24,6 +24,7 @@ export default [
             layout: 'app-layout',
         },
         name: 'servers',
+        text: 'servers',
         isTabRoute: true,
     },
     {
@@ -34,6 +35,7 @@ export default [
             layout: 'app-layout',
         },
         name: 'sessions',
+        text: 'current sessions',
         isTabRoute: true,
     },
     {
@@ -44,6 +46,7 @@ export default [
             layout: 'app-layout',
         },
         name: 'services',
+        text: 'services',
         isTabRoute: true,
     },
 ]

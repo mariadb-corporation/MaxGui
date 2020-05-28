@@ -12,9 +12,9 @@
 
                     <span
                         style="position:relative;top:-15px"
-                        class="field-text-info color text-field-text "
+                        class="field-text-info color text-field-text text-capitalize"
                     >
-                        Uptime
+                        {{ $t('uptime') }}
                         {{ [uptime, 'seconds'] | duration('format') }}
                     </span>
 
@@ -39,9 +39,9 @@
                         </template>
 
                         <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
-                            <span class="d-block mb-1 body-2 font-weight-bold">
-                                About MaxScale</span
-                            >
+                            <span class="d-block mb-1 body-2 font-weight-bold text-capitalize">
+                                {{ $t('aboutMaxScale') }}
+                            </span>
                             <div
                                 v-for="(value, name) in $help.pick(maxScaleOverviewInfo, [
                                     'commit',

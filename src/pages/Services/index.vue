@@ -16,19 +16,19 @@
                 status
             </icon-sprite-sheet>
         </template>
-        <template v-slot:servers="{ data: { item: { servers }, i } }">
-            <fragment v-if="servers === 'undefined'">
-                <span>{{ servers }}</span>
+        <template v-slot:serverIds="{ data: { item: { serverIds }, i } }">
+            <fragment v-if="typeof serverIds === 'string'">
+                <span>{{ serverIds }} </span>
             </fragment>
 
-            <fragment v-else-if="servers.length < 3">
-                <template v-for="(serverId, i) in servers">
+            <fragment v-else-if="serverIds.length < 3">
+                <template v-for="(serverId, i) in serverIds">
                     <router-link
                         :key="serverId"
                         :to="`/dashboard/servers/${serverId}`"
                         class="no-underline"
                     >
-                        <span> {{ serverId }}{{ i !== servers.length - 1 ? ', ' : '' }} </span>
+                        <span> {{ serverId }}{{ i !== serverIds.length - 1 ? ', ' : '' }} </span>
                     </router-link>
                 </template>
             </fragment>
@@ -45,13 +45,13 @@
                 >
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
-                            {{ servers.length }}
+                            {{ serverIds.length }}
                             {{ $tc('servers', 2).toLowerCase() }}
                         </span>
                     </template>
 
                     <v-sheet style="border-radius: 10px;" class="pa-4">
-                        <template v-for="serverId in servers">
+                        <template v-for="serverId in serverIds">
                             <router-link
                                 :key="serverId"
                                 :to="`/dashboard/servers/${serverId}`"
@@ -93,7 +93,7 @@ export default {
                 { text: 'Router', value: 'router' },
                 { text: 'Current Sessions', value: 'connections' },
                 { text: 'Total Sessions', value: 'total_connections' },
-                { text: 'Servers', value: 'servers' },
+                { text: 'Servers', value: 'serverIds' },
             ],
         }
     },
@@ -119,26 +119,28 @@ export default {
                     /**
                      * @typedef {Object} row
                      * @property {String} row.id - Service's name
-                     * @property {String} row.router - Server's address
-                     * @property {Number} row.total_connections - Server's address
-                     * @property {Number} row.connections - Number of connections to the server
-                     * @property {Array} row,servers - Server's state
+                     * @property {Array} row.state - Server's state
+                     * @property {String} row.router - Server's router
+                     * @property {Number} row.connections - Number of connections to the service
+                     * @property {Number} row.total_connections - Total number of connections to the service
+                     * @property {Array} row.serverIds - List of servers use this service
                      */
                     const {
                         id,
                         attributes: { state, router, connections, total_connections },
-                        relationships: { servers: { data: allServers = undefined } = {} },
+                        relationships: { servers: { data: allServers = [] } = {} },
                     } = allServices[n] || {}
 
-                    let serversList =
-                        allServers !== undefined ? allServers.map(item => `${item.id}`) : allServers
+                    let serverIds = allServers.length
+                        ? allServers.map(item => `${item.id}`)
+                        : this.$t('noEntity', { entityName: 'servers' })
                     let row = {
                         id: id,
                         state: state,
                         router: router,
                         connections: connections,
                         total_connections: total_connections,
-                        servers: serversList,
+                        serverIds: serverIds,
                     }
                     itemsArr.push(row)
                 }

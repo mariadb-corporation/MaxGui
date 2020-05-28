@@ -62,7 +62,10 @@ export default {
         return {
             OVERLAY_TRANSPARENT_LOADING: OVERLAY_TRANSPARENT_LOADING,
             currentActiveTab: null,
-            tabs: [{ name: 'MaxScale Parameters' }, { name: 'Users & Permissions' }],
+            tabs: [
+                { name: this.$t('maxScaleParameters') },
+                { name: this.$t('usersAndPermissions') },
+            ],
             moduleParameters: [],
             loadingModuleParams: true,
         }

@@ -73,7 +73,11 @@ export default {
         return {
             OVERLAY_TRANSPARENT_LOADING: OVERLAY_TRANSPARENT_LOADING,
             currentActiveTab: null,
-            tabs: [{ name: 'Statistics & Sessions' }, { name: 'Parameters & Diagnostics' }],
+
+            tabs: [
+                { name: `${this.$tc('statistics', 2)} & ${this.$tc('sessions', 2)}` },
+                { name: `${this.$tc('parameters', 2)} & ${this.$tc('diagnostics', 2)}` },
+            ],
             serviceTableRow: [],
         }
     },

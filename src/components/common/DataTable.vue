@@ -381,9 +381,10 @@ export default {
             return [
                 // for rowspan feature
                 item.hidden && cellIndex < this.colsHasRowSpan && 'hide',
-                cellIndex < this.colsHasRowSpan
-                    ? `${item.groupId}-rowspan`
-                    : `${item.groupId}-cell`,
+                this.colsHasRowSpan &&
+                    (cellIndex < this.colsHasRowSpan
+                        ? `${item.groupId}-rowspan`
+                        : `${item.groupId}-cell`),
                 // for editable feature
                 this.editableCell && header.editableCol && 'v-data-table__editable-cell',
                 // for action slots

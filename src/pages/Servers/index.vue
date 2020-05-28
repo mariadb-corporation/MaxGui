@@ -12,7 +12,7 @@
         <template v-slot:append-id>
             <span class="ml-1 color text-field-text"> ({{ allServers.length }}) </span>
         </template>
-        <template v-slot:append-servicesIdArr>
+        <template v-slot:append-serviceIds>
             <span class="ml-1 color text-field-text"> ({{ allLinkedServices }}) </span>
         </template>
         <template v-slot:groupId="{ data: { item: { groupId } } }">
@@ -59,13 +59,13 @@
             </div>
         </template>
 
-        <template v-slot:servicesIdArr="{ data: { item: { servicesIdArr }, i } }">
-            <fragment v-if="servicesIdArr.length === 0">
-                <span>No service</span>
+        <template v-slot:serviceIds="{ data: { item: { serviceIds } } }">
+            <fragment v-if="typeof serviceIds === 'string'">
+                <span>{{ serviceIds }} </span>
             </fragment>
 
-            <fragment v-else-if="servicesIdArr.length < 2">
-                <template v-for="serviceId in servicesIdArr">
+            <fragment v-else-if="serviceIds.length < 2">
+                <template v-for="serviceId in serviceIds">
                     <router-link
                         :key="serviceId"
                         :to="`/dashboard/services/${serviceId}`"
@@ -78,7 +78,6 @@
 
             <fragment v-else>
                 <v-menu
-                    :key="i"
                     offset-x
                     transition="slide-x-transition"
                     :close-on-content-click="false"
@@ -89,13 +88,13 @@
                 >
                     <template v-slot:activator="{ on }">
                         <span class="pointer color text-links" v-on="on">
-                            {{ servicesIdArr.length }}
+                            {{ serviceIds.length }}
                             {{ $tc('services', 2).toLowerCase() }}
                         </span>
                     </template>
 
                     <v-sheet style="border-radius: 10px;" class="pa-4">
-                        <template v-for="serviceId in servicesIdArr">
+                        <template v-for="serviceId in serviceIds">
                             <router-link
                                 :key="serviceId"
                                 :to="`/dashboard/services/${serviceId}`"
@@ -138,7 +137,7 @@ export default {
                 { text: 'Connections', value: 'serverConnections' },
                 { text: 'State', value: 'serverState' },
                 { text: 'GTID', value: 'gtid' },
-                { text: 'Services', value: 'servicesIdArr' },
+                { text: 'Services', value: 'serviceIds' },
             ],
             allLinkedServices: 0,
         }
@@ -170,9 +169,11 @@ export default {
                         },
                     } = allServers[index]
 
-                    let servicesIdArr = allServices ? allServices.map(item => `${item.id}`) : []
+                    let serviceIds = allServices.length
+                        ? allServices.map(item => `${item.id}`)
+                        : this.$t('noEntity', { entityName: 'services' })
                     // get total number of unique services
-                    totalServices = [...totalServices, ...servicesIdArr]
+                    totalServices = [...totalServices, ...serviceIds]
                     let uniqueSet = new Set(totalServices)
                     this.setTotalNumOfLinkedServices([...uniqueSet].length)
 
@@ -182,7 +183,7 @@ export default {
                         serverPort: parameters.port,
                         serverConnections: statistics.connections,
                         serverState: serverState,
-                        servicesIdArr: servicesIdArr,
+                        serviceIds: serviceIds,
                         gtid: gtid_current_pos,
                     }
                     if (linkedMonitors.length) {

@@ -55,40 +55,35 @@
                 </template>
                 <template v-slot:id="{ data: { item } }">
                     <v-tooltip
+                        v-if="
+                            'type' in item ||
+                                'description' in item ||
+                                'unit' in item ||
+                                'default_value' in item
+                        "
                         right
                         transition="slide-x-transition"
                         content-class="shadow-drop color text-navigation"
                     >
                         <template v-slot:activator="{ on }">
-                            <span
-                                :class="{
-                                    pointer: item.type || item.description || item.unit,
-                                }"
-                                v-on="on"
-                            >
+                            <span class="pointer" v-on="on">
                                 {{ item.id }}
                             </span>
                         </template>
-                        <v-sheet
-                            v-if="item.type || item.description || item.unit"
-                            style="border-radius: 10px;"
-                            class="pa-4"
-                            max-width="300"
-                        >
-                            <span v-if="item.type" class="d-block body-2">
-                                <span class="mr-1 font-weight-medium">Type: </span>
-                                <span> {{ item.type }}</span>
-                            </span>
-                            <span v-if="item.unit" class="d-block body-2">
-                                <span class="mr-1 font-weight-medium">Unit:</span>
-                                {{ item.unit }}
-                            </span>
-                            <span v-if="item.description" class="d-block body-2">
-                                <span class="mr-1 font-weight-medium">Description:</span>
-                                {{ item.description }}
-                            </span>
+                        <v-sheet style="border-radius: 10px;" class="pa-4" max-width="300">
+                            <fragment v-for="(value, name) in item" :key="name">
+                                <span v-if="parameterInfo.includes(name)" class="d-block body-2">
+                                    <span class="mr-1 font-weight-medium text-capitalize">
+                                        {{ $t(name) }}:
+                                    </span>
+                                    <span> {{ value }}</span>
+                                </span>
+                            </fragment>
                         </v-sheet>
                     </v-tooltip>
+                    <span v-else>
+                        {{ item.id }}
+                    </span>
                 </template>
             </data-table>
         </template>
@@ -145,6 +140,8 @@ export default {
             //
             portValue: null,
             socketValue: null,
+            // info will be shown in tooltip
+            parameterInfo: ['type', 'description', 'unit', 'default_value'],
         }
     },
     computed: {
@@ -164,7 +161,6 @@ export default {
                 }
 
                 paramObj['value'] = defaultValue
-                delete paramObj.default_value
                 paramObj['id'] = paramObj.name
                 delete paramObj.name
                 arr.push(paramObj)

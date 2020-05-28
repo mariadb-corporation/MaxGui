@@ -37,7 +37,7 @@
                 v-if="index === 1"
                 class="v-select__selection v-select__selection--comma color caption text-field-text "
             >
-                (+{{ selectedItems.length - 1 }} others)
+                (+{{ selectedItems.length - 1 }} {{ $t('others') }})
             </span>
         </template>
     </v-select>

@@ -53,40 +53,38 @@
 
                         <template v-slot:id="{ data: { item } }">
                             <v-tooltip
+                                v-if="
+                                    'type' in item ||
+                                        'description' in item ||
+                                        'unit' in item ||
+                                        'default_value' in item
+                                "
                                 right
                                 transition="slide-x-transition"
                                 content-class="shadow-drop color text-navigation"
                             >
                                 <template v-slot:activator="{ on }">
-                                    <span
-                                        :class="{
-                                            pointer: item.type || item.description || item.unit,
-                                        }"
-                                        v-on="on"
-                                    >
+                                    <span class="pointer" v-on="on">
                                         {{ item.id }}
                                     </span>
                                 </template>
-                                <v-sheet
-                                    v-if="item.type || item.description || item.unit"
-                                    style="border-radius: 10px;"
-                                    class="pa-4"
-                                    max-width="300"
-                                >
-                                    <span v-if="item.type" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Type: </span>
-                                        <span> {{ item.type }}</span>
-                                    </span>
-                                    <span v-if="item.unit" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Unit:</span>
-                                        {{ item.unit }}
-                                    </span>
-                                    <span v-if="item.description" class="d-block body-2">
-                                        <span class="mr-1 font-weight-medium">Description:</span>
-                                        {{ item.description }}
-                                    </span>
+                                <v-sheet style="border-radius: 10px;" class="pa-4" max-width="300">
+                                    <fragment v-for="(value, name) in item" :key="name">
+                                        <span
+                                            v-if="parameterInfo.includes(name)"
+                                            class="d-block body-2"
+                                        >
+                                            <span class="mr-1 font-weight-medium text-capitalize">
+                                                {{ $t(name) }}:
+                                            </span>
+                                            <span> {{ value }}</span>
+                                        </span>
+                                    </fragment>
                                 </v-sheet>
                             </v-tooltip>
+                            <span v-else>
+                                {{ item.id }}
+                            </span>
                         </template>
                     </data-table>
                 </v-form>
@@ -195,6 +193,9 @@ export default {
             addressValue: null,
             portValue: null,
             socketValue: null,
+
+            // info will be shown in tooltip
+            parameterInfo: ['type', 'description', 'unit', 'default_value'],
         }
     },
     computed: {
@@ -259,11 +260,14 @@ export default {
             const newParam = this.$help.cloneDeep(resourceParam)
 
             if (moduleParam) {
-                const { type, description, unit, enum_values } = moduleParam
+                const { type, description, default_value, unit, enum_values } = moduleParam
+
                 // assign
-                newParam['type'] = type
-                newParam['description'] = description
-                newParam['unit'] = unit
+                type !== undefined && (newParam.type = type)
+                description !== undefined && (newParam.description = description)
+                unit !== undefined && (newParam.unit = unit)
+                default_value !== undefined && (newParam.default_value = default_value)
+
                 const hasModifiable = 'modifiable' in moduleParam
                 if (hasModifiable && !moduleParam.modifiable) {
                     newParam['disabled'] = true
@@ -277,6 +281,7 @@ export default {
             } else {
                 newParam['disabled'] = true
             }
+
             arr.push(newParam)
 
             this.assignPortSocketDependencyValues(resourceParamId, resourceParamValue)

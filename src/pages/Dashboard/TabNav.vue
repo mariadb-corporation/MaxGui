@@ -1,7 +1,7 @@
 <template>
     <v-tabs v-model="activeTab" class="tab-navigation-wrapper">
         <v-tab v-for="route in tabRoutes" :key="route.path" :to="route.path">
-            {{ route.name === 'sessions' ? 'Current Sessions' : route.name }}
+            {{ $tc(route.text, 2) }}
             <span class="field-text-info color text-field-text">
                 ({{ getTotal(route.name) }})
             </span>
