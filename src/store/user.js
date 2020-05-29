@@ -53,7 +53,7 @@ export default {
         },
     },
     actions: {
-        async logout({ commit }) {
+        async logout({ commit, rootState }) {
             commit('logout')
             await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
             const user = JSON.parse(localStorage.getItem('user'))
@@ -61,6 +61,19 @@ export default {
                 localStorage.removeItem('user')
             }
             commit('setUser', {})
+            // hide snackbar message if it is on
+            if (rootState.message.status) {
+                await commit(
+                    'showMessage',
+                    {
+                        text: rootState.message.text,
+                        type: rootState.message.type,
+                        status: false,
+                    },
+                    { root: true }
+                )
+            }
+
             await delay(1500).then(() => {
                 return commit('hideOverlay', null, { root: true }), router.push('/login')
             })

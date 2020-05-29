@@ -33,7 +33,13 @@ apiClient.interceptors.response.use(
         return response
     },
     error => {
-        if (error.response.status === 401) {
+        if (error.response === undefined) {
+            store.commit('showMessage', {
+                text: ['Network Error, MaxScale is down'],
+                type: 'error',
+            })
+            return Promise.reject(error)
+        } else if (error.response.status === 401) {
             store.dispatch('user/logout')
             return Promise.reject(error)
         } else {

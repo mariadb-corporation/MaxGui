@@ -10,6 +10,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+import Vue from 'vue'
 import Vuex from 'vuex'
 import user from 'store/user'
 import maxscale from './maxscale'
@@ -20,6 +21,8 @@ import filter from './filter'
 import session from './session'
 import listener from './listener'
 import { APP_CONFIG } from 'utils/constants'
+import Logger from 'utils/logging'
+const logger = new Logger('main')
 
 export default new Vuex.Store({
     state: {
@@ -31,6 +34,7 @@ export default new Vuex.Store({
         },
         searchKeyWord: '',
         overlay: false,
+        isUpdateAvailable: false,
     },
     mutations: {
         showOverlay(state, type) {
@@ -45,8 +49,8 @@ export default new Vuex.Store({
          * @param {String} obj.type Type of response
          */
         showMessage(state, obj) {
-            const { text, type } = obj
-            state.message.status = true
+            const { text, type, status = true } = obj
+            state.message.status = status
             state.message.text = text
             state.message.type = type
         },
@@ -56,13 +60,27 @@ export default new Vuex.Store({
         setSearchKeyWord(state, keyword) {
             state.searchKeyWord = keyword
         },
+        setUpdateAvailable(state, val) {
+            state.isUpdateAvailable = val
+        },
     },
-    // actions: {
-    //     async filterFetch({ commit }) {
-    //         let res = await Vue.axios.get(`/filters`)
-    //         await commit('setFilters', res.data.data)
-    //     },
-    // },
+    actions: {
+        async checkingForUpdate({ commit }) {
+            const res = await Vue.axios.get(`/`)
+            logger.info('Checking for update')
+            const resDoc = new DOMParser().parseFromString(res.data, 'text/html')
+            const newCommitId = resDoc.getElementsByName('commitId')[0].content
+            const currentAppCommitId = document
+                .getElementsByName('commitId')[0]
+                .getAttribute('content')
+            logger.info('MaxGUI commit id:', currentAppCommitId)
+            logger.info('MaxGUI new commit id:', newCommitId)
+            if (currentAppCommitId !== newCommitId) {
+                commit('setUpdateAvailable', true)
+                logger.info('New version is available')
+            }
+        },
+    },
     getters: {
         searchKeyWord: state => state.searchKeyWord,
         overlay: state => state.overlay,

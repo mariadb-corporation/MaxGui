@@ -17,7 +17,7 @@
                 <h3 class="font-weight-light color text-deep-ocean">
                     {{ title }}
                 </h3>
-                <v-btn class="close" icon @click="close">
+                <v-btn v-if="!forceAccept" class="close" icon @click="close">
                     <v-icon size="20" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
@@ -30,6 +30,7 @@
                 <v-spacer></v-spacer>
                 <slot :cancel="cancel" :save="save" name="actions">
                     <v-btn
+                        v-if="!forceAccept"
                         small
                         height="36"
                         color="primary"
@@ -94,6 +95,7 @@ export default {
         saveText: { type: String, default: 'save' },
         // manually control btn disabled
         disabledSaveBtn: { type: Boolean, default: false },
+        forceAccept: { type: Boolean, default: false },
     },
     data() {
         return {

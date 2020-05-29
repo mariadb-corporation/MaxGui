@@ -13,8 +13,11 @@
 
 const path = require('path')
 const fs = require('fs')
+const { gitDescribeSync } = require('git-describe')
 
 process.env.VUE_APP_VERSION = require('./package.json').version
+process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
+
 let devServer = {
     https: {
         key: fs.readFileSync('./.certs/localhost+1-key.pem'),

@@ -40,6 +40,10 @@ router.beforeEach(async (to, from, next) => {
                 await delay(1500).then(() => {
                     return store.commit('hideOverlay'), next()
                 })
+                /* user will be logged out if maxscale is restarted or maxgui is updated as jwt token will be expired
+                This action checking for available update after user is successfully authenticated
+                */
+                store.dispatch('checkingForUpdate')
             } else {
                 next()
             }
