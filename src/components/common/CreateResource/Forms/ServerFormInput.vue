@@ -50,54 +50,6 @@ export default {
         allMonitors: { type: Array, required: true },
     },
 
-    data() {
-        return {
-            // same format with module parameters, all default_value are returned as string
-            parameters: [
-                {
-                    name: 'address',
-                    type: 'string',
-                },
-                {
-                    name: 'port',
-                    type: 'count',
-                },
-                {
-                    name: 'socket',
-                    type: 'string',
-                },
-                {
-                    name: 'monitoruser',
-                    type: 'string',
-                },
-                {
-                    name: 'monitorpw',
-                    type: 'string',
-                },
-                {
-                    name: 'extra_port',
-                    type: 'count',
-                },
-                {
-                    name: 'persistpoolmax',
-                    type: 'int',
-                    default_value: '0',
-                },
-                {
-                    name: 'persistmaxtime',
-                    type: 'duration',
-                    default_value: '0s',
-                },
-                {
-                    name: 'rank',
-                    type: 'enum',
-                    default_value: 'primary',
-                    enum_values: ['primary', 'secondary'],
-                },
-            ],
-        }
-    },
-
     computed: {
         getServerParameters: function() {
             const self = this
@@ -105,7 +57,8 @@ export default {
                 const {
                     attributes: { parameters = [] },
                 } = self.$help.cloneDeep(self.resourceModules[0]) // always 0
-                return parameters
+
+                return parameters.filter(item => item.name !== 'type')
             }
             return []
         },
