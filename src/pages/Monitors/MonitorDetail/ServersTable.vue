@@ -13,10 +13,10 @@
                     <data-table
                         :headers="serversTableHeader"
                         :data="serverStateTableRow"
-                        :sortDesc="false"
                         :noDataText="$t('noEntity', { entityName: $tc('servers', 2) })"
                         sortBy="id"
                         :loading="loading"
+                        :search="searchKeyWord"
                         showActionsOnHover
                     >
                         <template v-slot:id="{ data: { item: { id } } }">
@@ -92,8 +92,8 @@
 
 export default {
     name: 'servers-table',
-
     props: {
+        searchKeyWord: { type: String, required: true },
         currentMonitor: { type: Object, required: true },
         getServers: { type: Function, required: true },
         loading: { type: Boolean, required: true },

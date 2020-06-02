@@ -23,6 +23,7 @@
                                         ? true
                                         : overlay === OVERLAY_TRANSPARENT_LOADING
                                 "
+                                isTree
                             />
                         </v-col>
                     </v-tab-item>

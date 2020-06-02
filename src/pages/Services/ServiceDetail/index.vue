@@ -16,6 +16,7 @@
                 <v-tabs-items v-model="currentActiveTab">
                     <v-tab-item class="pt-5">
                         <ServerSessionTab
+                            :searchKeyWord="searchKeyWord"
                             :currentService="currentService"
                             :serverStateTableRow="serverStateTableRow"
                             :dispatchRelationshipUpdate="dispatchRelationshipUpdate"

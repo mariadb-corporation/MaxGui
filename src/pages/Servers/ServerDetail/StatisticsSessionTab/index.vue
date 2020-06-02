@@ -11,6 +11,7 @@
                     >
                         <template v-slot:content>
                             <data-table
+                                :search="searchKeyWord"
                                 :headers="variableValueTableHeaders"
                                 :data="statisticsTableRow"
                                 tdBorderLeft
@@ -30,6 +31,7 @@
                     >
                         <template v-slot:content>
                             <data-table
+                                :search="searchKeyWord"
                                 :headers="servicesTableHeader"
                                 :data="serviceTableRow"
                                 :sortDesc="false"
@@ -93,7 +95,11 @@
             @onOpen="getAllEntities"
         />
 
-        <sessions-table :currentServer="currentServer" :loading="loading" />
+        <sessions-table
+            :currentServer="currentServer"
+            :loading="loading"
+            :searchKeyWord="searchKeyWord"
+        />
     </v-row>
 </template>
 
@@ -119,6 +125,7 @@ export default {
         SessionsTable,
     },
     props: {
+        searchKeyWord: { type: String, required: true },
         currentServer: { type: Object, required: true },
         serviceTableRow: { type: Array, required: true },
         updateServerRelationship: { type: Function, required: true },

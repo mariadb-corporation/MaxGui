@@ -19,6 +19,7 @@
                         :search="searchKeyWord"
                         :loading="loading"
                         keepPrimitiveValue
+                        :isTree="isTree"
                     >
                         <template v-slot:append-id>
                             <span class="ml-1 color text-field-text">
@@ -28,27 +29,26 @@
 
                         <template v-if="editableCell" v-slot:value="{ data: { item } }">
                             <!-- render if usePortOrSocket  -->
-                            <fragment v-if="handleShowSpecialInputs(item.id)">
-                                <parameter-input
-                                    :parentForm="$refs.form"
-                                    :item="item"
-                                    :portValue="portValue"
-                                    :socketValue="socketValue"
-                                    :addressValue="addressValue"
-                                    @on-input-change="handleItemChange"
-                                />
-                            </fragment>
-
-                            <fragment v-else-if="requiredParams.includes(item.id)">
-                                <parameter-input
-                                    :item="item"
-                                    required
-                                    @on-input-change="handleItemChange"
-                                />
-                            </fragment>
-                            <fragment v-else>
-                                <parameter-input :item="item" @on-input-change="handleItemChange" />
-                            </fragment>
+                            <parameter-input
+                                v-if="handleShowSpecialInputs(item.id)"
+                                :parentForm="$refs.form"
+                                :item="item"
+                                :portValue="portValue"
+                                :socketValue="socketValue"
+                                :addressValue="addressValue"
+                                @on-input-change="handleItemChange"
+                            />
+                            <parameter-input
+                                v-else-if="requiredParams.includes(item.id)"
+                                :item="item"
+                                required
+                                @on-input-change="handleItemChange"
+                            />
+                            <parameter-input
+                                v-else
+                                :item="item"
+                                @on-input-change="handleItemChange"
+                            />
                         </template>
 
                         <template v-slot:id="{ data: { item } }">
@@ -169,6 +169,7 @@ export default {
         // specical props to manipulate required or dependent input attribute
         usePortOrSocket: { type: Boolean, default: false },
         requiredParams: { type: Array, default: () => [] },
+        isTree: { type: Boolean, default: false },
     },
     data() {
         return {

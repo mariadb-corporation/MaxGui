@@ -6,11 +6,11 @@
         :sortDesc="false"
         sortBy="id"
     >
-        <template v-slot:user="{ data: { item: { user } } }">
+        <!-- <template v-slot:user="{ data: { item: { user } } }">
             <router-link :key="user" :to="`/users/${user}`" class="no-underline">
                 <span> {{ user }} </span>
             </router-link>
-        </template>
+        </template> -->
         <template v-slot:serviceIds="{ data: { item: { serviceIds } } }">
             <fragment v-if="typeof serviceIds === 'string'">
                 <span>{{ serviceIds }}</span>

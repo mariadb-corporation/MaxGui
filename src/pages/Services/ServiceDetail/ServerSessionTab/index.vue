@@ -14,6 +14,7 @@
                     >
                         <template v-slot:content>
                             <data-table
+                                :search="searchKeyWord"
                                 :headers="serversTableHeader"
                                 :data="serverStateTableRow"
                                 :sortDesc="false"
@@ -71,9 +72,10 @@
                                 :dragReorder="filterDragReorder"
                                 :loading="loading"
                                 showActionsOnHover
+                                :search="searchKeyWord"
                                 hasOrderNumber
                             >
-                                <template v-slot:id="{ data: { item: { id } } }">
+                                <!-- <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link
                                         :key="id"
                                         :to="`/dashboard/filters/${id}`"
@@ -81,7 +83,7 @@
                                     >
                                         <span> {{ id }} </span>
                                     </router-link>
-                                </template>
+                                </template> -->
                                 <template v-slot:actions="{ data: { item } }">
                                     <v-btn icon @click="onDelete('filters', item)">
                                         <v-icon size="14" color="error">
@@ -119,7 +121,11 @@
                 />
             </v-row>
         </v-col>
-        <sessions-table :loading="loading" :sessionsByService="sessionsByService" />
+        <sessions-table
+            :loading="loading"
+            :sessionsByService="sessionsByService"
+            :searchKeyWord="searchKeyWord"
+        />
     </v-row>
 </template>
 
@@ -146,6 +152,7 @@ export default {
         SessionsTable,
     },
     props: {
+        searchKeyWord: { type: String, required: true },
         currentService: { type: Object, required: true },
         getServerState: { type: Function, required: true },
         loading: { type: Boolean, required: true },
@@ -165,6 +172,13 @@ export default {
             // filters
             showFilter: true,
             filterTableHeader: [
+                {
+                    text: '',
+                    value: 'index',
+                    width: '1px',
+                    padding: '0px!important',
+                    sortable: false,
+                },
                 { text: 'Filter', value: 'id', sortable: false },
                 { text: '', value: 'action', sortable: false },
             ],
@@ -191,7 +205,7 @@ export default {
                 filters: { data: filtersLinkedData = [] } = {},
             } = this.currentService.relationships
             return filtersLinkedData
-                ? filtersLinkedData.map(item => ({ id: item.id, type: item.type }))
+                ? filtersLinkedData.map((item, i) => ({ id: item.id, type: item.type, index: i }))
                 : []
         },
     },

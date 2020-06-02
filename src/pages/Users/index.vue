@@ -2,9 +2,9 @@
     <data-table
         :headers="tableHeaders"
         :data="generateTableRows"
-        :sortDesc="false"
         :loading="!generateTableRows.length"
         sortBy="id"
+        :search="searchKeyWord"
     >
         <template v-slot:id="{ data }">
             <span :class="boldCurrentUser(data)">
@@ -50,7 +50,13 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('user', ['currentNetworkUser', 'allUsers']),
+        computed: {
+            ...mapGetters({
+                currentNetworkUser: 'user/currentNetworkUser',
+                allUsers: 'user/allUsers',
+                searchKeyWord: 'searchKeyWord',
+            }),
+        },
         /**
          * @return {Array} An array of objects
          */

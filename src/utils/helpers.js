@@ -26,7 +26,6 @@ export const isEqual = require('lodash/isEqual')
 export const xorWith = require('lodash/xorWith')
 export const uniqueId = require('lodash/uniqueId')
 export const orderBy = require('lodash/orderBy')
-export const flattenDeep = require('lodash/flattenDeep')
 
 export function getCookie(name) {
     let value = '; ' + document.cookie
@@ -201,31 +200,18 @@ export function objToArrOfObj(
                 originalValue: value,
             }
 
-            const hasChild = (value !== null && typeof value === 'object') || Array.isArray(value)
-            let children = []
-
+            const isValidArray = value !== null && Array.isArray(value) && value.length > 0
+            const isValidObj = value !== null && typeof value === 'object' && !Array.isArray(value)
+            const hasChild = isValidArray || isValidObj
             if (hasChild) {
+                node[keyValue] = ''
                 //  only object has child value will have expanded property
                 node.expanded = false
-                /*  hard coding value when the value is an object. This is done to ensure when rendering the value,
-                        some tables have intentions to render null or undefined as string, '' will be ignored
-                        by handleValue() function, it will return empty string.
-                    */
-                node[keyValue] = handleValue('')
-                children = objToArrOfObj(value, keepPrimitiveValue, level + 1, node, node.nodeId)
+                node.children = isValidObj
+                    ? objToArrOfObj(value, keepPrimitiveValue, level + 1, node, node.nodeId)
+                    : objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, node, node.nodeId)
             }
 
-            if (Array.isArray(value)) {
-                // convert value to valid object
-                children = objToArrOfObj(
-                    { ...value },
-                    keepPrimitiveValue,
-                    level + 1,
-                    node,
-                    node.nodeId
-                )
-            }
-            node.children = children
             node.leaf = !hasChild
             result.push(node)
         })
@@ -286,43 +272,6 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
 }
 
 /**
- * @private
- * Flatten a node to a single array
- * @param {Object} node Node being flattened
- * @param {Array} [children] Children of node
- * @return {Array} Array of flatten nodes
- */
-function flattenNode(node, children) {
-    children = children || []
-
-    if (node.children) {
-        children = children.concat(node.children)
-        node.children.forEach(child => {
-            child.parentNode = node
-            children.splice(children.indexOf(child) + 1, 0, flattenNode(child))
-        })
-    }
-
-    return flattenDeep(children)
-}
-
-/**
- * Flatten an array nested nodes
- * @param {Array} nodes Nodes to flatten
- * @return {Array} Array of flatten nodes
- */
-function flattenNodes(nodes) {
-    let flattenNodes = []
-
-    nodes.forEach(node => {
-        flattenNodes.push(node)
-        flattenNodes.push(flattenNode(node))
-    })
-
-    return flattenDeep(flattenNodes)
-}
-
-/**
  * Handle displaying undefined and null as 'undefined' and 'null' string respectively
  * @param {Any} value Any types that needs to be handled
  * @return {Any} return valid value for rendering, null becomes 'null', otherwise return 'undefined'
@@ -375,7 +324,6 @@ Object.defineProperties(Vue.prototype, {
                 objToArrOfObj,
                 arrOfObjToObj,
                 handleValue,
-                flattenNodes,
                 capitalizeFirstLetter,
                 isArrayEqual,
                 // lodash

@@ -26,6 +26,7 @@
             :parameters="getModuleParameters"
             :requiredParams="requiredParams"
             :usePortOrSocket="usePortOrSocket"
+            :isTree="isTree"
             :parentForm="parentForm"
         />
     </fragment>
@@ -69,6 +70,7 @@ export default {
         requiredParams: { type: Array, default: () => [] },
         parentForm: { type: Object },
         isListener: { type: Boolean, default: false },
+        isTree: { type: Boolean, default: false },
     },
     data: function() {
         return {

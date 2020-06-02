@@ -8,6 +8,7 @@
         >
             <template v-slot:content>
                 <data-table
+                    :search="searchKeyWord"
                     tableClass="data-table-full--max-width-columns"
                     :headers="sessionsTableHeader"
                     :data="sessionsTableRow"
@@ -46,6 +47,7 @@
 export default {
     name: 'sessions-table',
     props: {
+        searchKeyWord: { type: String, required: true },
         loading: { type: Boolean, required: true },
         sessionsByService: { type: Array, required: true },
     },

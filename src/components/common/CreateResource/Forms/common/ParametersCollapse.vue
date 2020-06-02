@@ -13,6 +13,7 @@
                 showAll
                 editableCell
                 keepPrimitiveValue
+                :isTree="isTree"
             >
                 <template v-slot:append-id>
                     <span class="ml-1 color text-field-text">
@@ -21,37 +22,33 @@
                 </template>
                 <template v-slot:value="{ data: { item } }">
                     <!-- rendered if usePortOrSocket is true-->
-                    <fragment v-if="handleShowSpecialInputs(item.id)">
-                        <parameter-input
-                            :parentForm="parentForm"
-                            :item="item"
-                            :portValue="portValue"
-                            :socketValue="socketValue"
-                            :addressValue="addressValue"
-                            :isListener="isListener"
-                            isFixedWidth
-                            createMode
-                            @on-input-change="handleItemChange"
-                        />
-                    </fragment>
-
-                    <fragment v-else-if="requiredParams.includes(item.id)">
-                        <parameter-input
-                            :item="item"
-                            required
-                            createMode
-                            isFixedWidth
-                            @on-input-change="handleItemChange"
-                        />
-                    </fragment>
-                    <fragment v-else>
-                        <parameter-input
-                            :item="item"
-                            createMode
-                            isFixedWidth
-                            @on-input-change="handleItemChange"
-                        />
-                    </fragment>
+                    <parameter-input
+                        v-if="handleShowSpecialInputs(item.id)"
+                        :parentForm="parentForm"
+                        :item="item"
+                        :portValue="portValue"
+                        :socketValue="socketValue"
+                        :addressValue="addressValue"
+                        :isListener="isListener"
+                        isFixedWidth
+                        createMode
+                        @on-input-change="handleItemChange"
+                    />
+                    <parameter-input
+                        v-else-if="requiredParams.includes(item.id)"
+                        :item="item"
+                        required
+                        createMode
+                        isFixedWidth
+                        @on-input-change="handleItemChange"
+                    />
+                    <parameter-input
+                        v-else
+                        :item="item"
+                        createMode
+                        isFixedWidth
+                        @on-input-change="handleItemChange"
+                    />
                 </template>
                 <template v-slot:id="{ data: { item } }">
                     <v-tooltip
@@ -124,6 +121,7 @@ export default {
         requiredParams: { type: Array, default: () => [] },
         parentForm: { type: Object },
         isListener: { type: Boolean, default: false },
+        isTree: { type: Boolean, default: false },
     },
     data: function() {
         return {

@@ -27,6 +27,7 @@
                         :loading="loading"
                         tdBorderLeft
                         showAll
+                        isTree
                     />
                 </template>
             </collapse>

@@ -9,6 +9,7 @@
             <template v-slot:content>
                 <data-table
                     tableClass="data-table-full--max-width-columns"
+                    :search="searchKeyWord"
                     :headers="sessionsTableHeader"
                     :data="sessionsTableRow"
                     :sortDesc="false"
@@ -47,6 +48,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
     name: 'session-table',
     props: {
+        searchKeyWord: { type: String, required: true },
         loading: { type: Boolean, required: true },
         currentServer: { type: Object, required: true },
     },

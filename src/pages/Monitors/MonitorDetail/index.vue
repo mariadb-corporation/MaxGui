@@ -20,6 +20,7 @@
                     />
                 </v-col>
                 <servers-table
+                    :searchKeyWord="searchKeyWord"
                     :currentMonitor="currentMonitor"
                     :getServers="getServers"
                     :loading="overlay === OVERLAY_TRANSPARENT_LOADING"

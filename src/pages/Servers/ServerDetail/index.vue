@@ -15,6 +15,7 @@
                 <v-tabs-items v-model="currentActiveTab">
                     <v-tab-item class="pt-5">
                         <statistics-session-tab
+                            :searchKeyWord="searchKeyWord"
                             :currentServer="currentServer"
                             :serviceTableRow="serviceTableRow"
                             :updateServerRelationship="updateServerRelationship"
@@ -64,9 +65,6 @@ export default {
         OverviewHeader,
         StatisticsSessionTab,
         ParameterDiagnosticsTab,
-    },
-    props: {
-        id: String,
     },
 
     data() {
