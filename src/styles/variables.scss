@@ -1,7 +1,9 @@
 @import 'constants';
 @import '~vuetify/src/styles/settings/_variables';
 
-$body-font-family: 'azo-sans-web', adrianna, sans-serif;
+// $body-font-family: 'azo-sans-web', adrianna, sans-serif;
+$body-font-family: 'Azo Sans', sans-serif;
+
 $font-weights: map-merge(
     $font-weights,
     (
@@ -18,37 +20,37 @@ $headings: (
         'size': 3.125rem,
         'weight': 350,
         'line-height': 3.8125rem,
-        'font-family': 'azo-sans-web',
+        'font-family': 'Azo Sans',
     ),
     'h2': (
         'size': 2.125rem,
         'weight': 700,
         'line-height': 2.9375rem,
-        'font-family': 'adrianna',
+        'font-family': 'Adrianna',
     ),
     'h3': (
         'size': 1.875rem,
         'weight': 400,
         'line-height': 3.1875rem,
-        'font-family': 'azo-sans-web',
+        'font-family': 'Azo Sans',
     ),
     'h4': (
         'size': 1.875rem,
         'weight': 300,
         'line-height': 3.1875rem,
-        'font-family': 'azo-sans-web',
+        'font-family': 'Azo Sans',
     ),
     'h5': (
         'size': 1.5rem,
         'weight': 700,
         'line-height': 1.4375rem,
-        'font-family': 'adrianna',
+        'font-family': 'Adrianna',
     ),
     'h6': (
         'size': 1rem,
         'weight': 700,
         'line-height': 3.1875rem,
-        'font-family': 'adrianna',
+        'font-family': 'Adrianna',
     ),
     'subtitle-1': (
         'size': 1rem,

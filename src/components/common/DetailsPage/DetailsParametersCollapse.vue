@@ -20,6 +20,7 @@
                         :loading="loading"
                         keepPrimitiveValue
                         :isTree="isTree"
+                        @cell-mouseenter="showCellTooltip"
                     >
                         <template v-slot:append-id>
                             <span class="ml-1 color text-field-text">
@@ -50,38 +51,19 @@
                                 @on-input-change="handleItemChange"
                             />
                         </template>
-
                         <template v-slot:id="{ data: { item } }">
-                            <v-tooltip
+                            <span
                                 v-if="
                                     'type' in item ||
                                         'description' in item ||
                                         'unit' in item ||
                                         'default_value' in item
                                 "
-                                right
-                                transition="slide-x-transition"
-                                content-class="shadow-drop color text-navigation"
+                                :id="`param-${item.id}`"
+                                class="pointer"
                             >
-                                <template v-slot:activator="{ on }">
-                                    <span class="pointer" v-on="on">
-                                        {{ item.id }}
-                                    </span>
-                                </template>
-                                <v-sheet style="border-radius: 10px;" class="pa-4" max-width="300">
-                                    <fragment v-for="(value, name) in item" :key="name">
-                                        <span
-                                            v-if="parameterInfo.includes(name)"
-                                            class="d-block body-2"
-                                        >
-                                            <span class="mr-1 font-weight-medium text-capitalize">
-                                                {{ $t(name) }}:
-                                            </span>
-                                            <span> {{ value }}</span>
-                                        </span>
-                                    </fragment>
-                                </v-sheet>
-                            </v-tooltip>
+                                {{ item.id }}
+                            </span>
                             <span v-else>
                                 {{ item.id }}
                             </span>
@@ -90,6 +72,25 @@
                 </v-form>
             </template>
         </collapse>
+        <v-tooltip
+            v-if="parameterTooltip.item"
+            right
+            transition="slide-x-transition"
+            content-class="shadow-drop color text-navigation"
+            :activator="`#param-${parameterTooltip.item.id}`"
+            max-width="300"
+        >
+            <v-sheet style="border-radius: 10px;overflow:auto;" class="pa-4" max-width="300">
+                <fragment v-for="(value, name) in parameterTooltip.item" :key="name">
+                    <span v-if="parameterInfo.includes(name)" class="d-block body-2">
+                        <span class="mr-1 font-weight-medium text-capitalize">
+                            {{ $t(name) }}:
+                        </span>
+                        <span> {{ value }}</span>
+                    </span>
+                </fragment>
+            </v-sheet>
+        </v-tooltip>
         <base-dialog
             v-model="showConfirmDialog"
             :onCancel="cancelEdit"
@@ -197,12 +198,14 @@ export default {
 
             // info will be shown in tooltip
             parameterInfo: ['type', 'description', 'unit', 'default_value'],
+            parameterTooltip: {
+                item: null,
+            },
         }
     },
     computed: {
         parametersTableRow: function() {
             const parameters = this.$help.cloneDeep(this.parameters)
-
             const keepPrimitiveValue = true
             let level = 0
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue, level)
@@ -230,6 +233,21 @@ export default {
     },
 
     methods: {
+        /**
+         * This function assign item info to parameterTooltip which will be read
+         * by v-tooltip component to show parameter info
+         */
+        showCellTooltip({ e, item }) {
+            if (e.type === 'mouseenter')
+                this.parameterTooltip = {
+                    item: item,
+                }
+            else
+                this.parameterTooltip = {
+                    item: null,
+                }
+        },
+
         changedParamsInfo(i, item) {
             const arr = this.changedParametersArr
             const { nodeParent: { id = null } = null } = item

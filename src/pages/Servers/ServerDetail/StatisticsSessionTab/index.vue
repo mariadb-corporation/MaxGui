@@ -216,20 +216,14 @@ export default {
             switch (this.targetSelectItemType) {
                 case 'services':
                     {
-                        let data = await this.getServiceState()
-                        let all = data.map(service => ({
-                            id: service.id,
-                            type: service.type,
-                            state: service.attributes.state,
-                        }))
-
-                        let self = this
+                        const self = this
+                        const allServices = await self.getServiceState()
                         let availableEntities = self.$help.xorWith(
-                            all,
+                            allServices,
                             self.serviceTableRow,
-                            self.$help.isEqual
+                            (a, b) => a.id === b.id
                         )
-                        this.itemsList = availableEntities
+                        self.itemsList = availableEntities
                     }
                     break
             }

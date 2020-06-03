@@ -1,90 +1,98 @@
 <template>
-    <collapse
-        wrapperClass="mt-4 d-inline-flex flex-column"
-        titleWrapperClass="mx-n9"
-        :toggleOnClick="() => (showParameters = !showParameters)"
-        :toggleVal="showParameters"
-        :title="`${$tc('parameters', 2)}`"
-    >
-        <template v-slot:content>
-            <data-table
-                :headers="variableValueTableHeaders"
-                :data="parametersTableRow"
-                showAll
-                editableCell
-                keepPrimitiveValue
-                :isTree="isTree"
-            >
-                <template v-slot:append-id>
-                    <span class="ml-1 color text-field-text">
-                        ({{ parametersTableRow.length }})
+    <fragment>
+        <collapse
+            wrapperClass="mt-4 d-inline-flex flex-column"
+            titleWrapperClass="mx-n9"
+            :toggleOnClick="() => (showParameters = !showParameters)"
+            :toggleVal="showParameters"
+            :title="`${$tc('parameters', 2)}`"
+        >
+            <template v-slot:content>
+                <data-table
+                    :headers="variableValueTableHeaders"
+                    :data="parametersTableRow"
+                    showAll
+                    editableCell
+                    keepPrimitiveValue
+                    :isTree="isTree"
+                    @cell-mouseenter="showCellTooltip"
+                >
+                    <template v-slot:append-id>
+                        <span class="ml-1 color text-field-text">
+                            ({{ parametersTableRow.length }})
+                        </span>
+                    </template>
+                    <template v-slot:value="{ data: { item } }">
+                        <!-- rendered if usePortOrSocket is true-->
+                        <parameter-input
+                            v-if="handleShowSpecialInputs(item.id)"
+                            :parentForm="parentForm"
+                            :item="item"
+                            :portValue="portValue"
+                            :socketValue="socketValue"
+                            :addressValue="addressValue"
+                            :isListener="isListener"
+                            isFixedWidth
+                            createMode
+                            @on-input-change="handleItemChange"
+                        />
+                        <parameter-input
+                            v-else-if="requiredParams.includes(item.id)"
+                            :item="item"
+                            required
+                            createMode
+                            isFixedWidth
+                            @on-input-change="handleItemChange"
+                        />
+                        <parameter-input
+                            v-else
+                            :item="item"
+                            createMode
+                            isFixedWidth
+                            @on-input-change="handleItemChange"
+                        />
+                    </template>
+                    <template v-slot:id="{ data: { item } }">
+                        <span
+                            v-if="
+                                'type' in item ||
+                                    'description' in item ||
+                                    'unit' in item ||
+                                    'default_value' in item
+                            "
+                            :id="`param-${item.id}`"
+                            class="pointer"
+                        >
+                            {{ item.id }}
+                        </span>
+                        <span v-else>
+                            {{ item.id }}
+                        </span>
+                    </template>
+                </data-table>
+            </template>
+        </collapse>
+
+        <v-tooltip
+            v-if="parameterTooltip.item"
+            right
+            transition="slide-x-transition"
+            content-class="shadow-drop color text-navigation"
+            :activator="`#param-${parameterTooltip.item.id}`"
+            max-width="300"
+        >
+            <v-sheet style="border-radius: 10px;overflow:auto;" class="pa-4" max-width="300">
+                <fragment v-for="(value, name) in parameterTooltip.item" :key="name">
+                    <span v-if="parameterInfo.includes(name)" class="d-block body-2">
+                        <span class="mr-1 font-weight-medium text-capitalize">
+                            {{ $t(name) }}:
+                        </span>
+                        <span> {{ value }}</span>
                     </span>
-                </template>
-                <template v-slot:value="{ data: { item } }">
-                    <!-- rendered if usePortOrSocket is true-->
-                    <parameter-input
-                        v-if="handleShowSpecialInputs(item.id)"
-                        :parentForm="parentForm"
-                        :item="item"
-                        :portValue="portValue"
-                        :socketValue="socketValue"
-                        :addressValue="addressValue"
-                        :isListener="isListener"
-                        isFixedWidth
-                        createMode
-                        @on-input-change="handleItemChange"
-                    />
-                    <parameter-input
-                        v-else-if="requiredParams.includes(item.id)"
-                        :item="item"
-                        required
-                        createMode
-                        isFixedWidth
-                        @on-input-change="handleItemChange"
-                    />
-                    <parameter-input
-                        v-else
-                        :item="item"
-                        createMode
-                        isFixedWidth
-                        @on-input-change="handleItemChange"
-                    />
-                </template>
-                <template v-slot:id="{ data: { item } }">
-                    <v-tooltip
-                        v-if="
-                            'type' in item ||
-                                'description' in item ||
-                                'unit' in item ||
-                                'default_value' in item
-                        "
-                        right
-                        transition="slide-x-transition"
-                        content-class="shadow-drop color text-navigation"
-                    >
-                        <template v-slot:activator="{ on }">
-                            <span class="pointer" v-on="on">
-                                {{ item.id }}
-                            </span>
-                        </template>
-                        <v-sheet style="border-radius: 10px;" class="pa-4" max-width="300">
-                            <fragment v-for="(value, name) in item" :key="name">
-                                <span v-if="parameterInfo.includes(name)" class="d-block body-2">
-                                    <span class="mr-1 font-weight-medium text-capitalize">
-                                        {{ $t(name) }}:
-                                    </span>
-                                    <span> {{ value }}</span>
-                                </span>
-                            </fragment>
-                        </v-sheet>
-                    </v-tooltip>
-                    <span v-else>
-                        {{ item.id }}
-                    </span>
-                </template>
-            </data-table>
-        </template>
-    </collapse>
+                </fragment>
+            </v-sheet>
+        </v-tooltip>
+    </fragment>
 </template>
 
 <script>
@@ -140,6 +148,9 @@ export default {
             socketValue: null,
             // info will be shown in tooltip
             parameterInfo: ['type', 'description', 'unit', 'default_value'],
+            parameterTooltip: {
+                item: null,
+            },
         }
     },
     computed: {
@@ -169,6 +180,21 @@ export default {
     },
 
     methods: {
+        /**
+         * This function assign item info to parameterTooltip which will be read
+         * by v-tooltip component to show parameter info
+         */
+        showCellTooltip({ e, item }) {
+            if (e.type === 'mouseenter')
+                this.parameterTooltip = {
+                    item: item,
+                }
+            else
+                this.parameterTooltip = {
+                    item: null,
+                }
+        },
+
         /**
          * @param {String} id id of parameter
          * @return {Boolean} true if usePortOrSocket is true and id matches requirements

@@ -1,179 +1,164 @@
 <template>
-    <v-data-table
-        v-sortable-table
-        :headers="headers"
-        :items="!loading ? tableRows : []"
-        :hide-default-header="true"
-        :hide-default-footer="showAll ? true : tableRows.length <= 10"
-        :items-per-page="showAll ? -1 : itemsPerPage"
-        :class="['data-table-full', tableClass]"
-        :loading="loading"
-        :options.sync="pagination"
-        :page="page"
-        :sort-by="sortBy"
-        :sort-desc="sortDesc"
-        :search="search"
-        item-key="id"
-        :dense="dense"
-        :no-data-text="noDataText"
-        :custom-sort="customSort"
-        @current-items="getCurrentItems"
-        @drag-reorder="dragReorder"
-    >
-        <!----------------------------------------------------TABLE HEAD--------------------------------------------->
-        <template v-slot:header="{ props: { headers } }">
-            <thead class="v-data-table-header">
-                <tr>
-                    <th
-                        v-for="(header, i) in headers"
-                        :key="i"
-                        :width="header.width"
-                        :style="{ padding: header.padding }"
-                        :class="thClasses(header)"
-                        @click="header.sortable !== false ? changeSort(header.value) : null"
-                    >
-                        <div class="d-inline-flex justify-center align-center">
-                            <span v-if="header.text !== 'Action'">{{ header.text }}</span>
-                            <slot :name="`append-${header.value}`"> </slot>
-                            <v-icon
-                                v-if="header.sortable !== false"
-                                size="14"
-                                class="ml-3 v-data-table-header__icon"
-                            >
-                                $vuetify.icons.arrowDown
-                            </v-icon>
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-        </template>
+    <fragment>
+        <v-data-table
+            v-sortable-table
+            :headers="headers"
+            :items="!loading ? tableRows : []"
+            :hide-default-header="true"
+            :hide-default-footer="showAll ? true : tableRows.length <= 10"
+            :items-per-page="showAll ? -1 : itemsPerPage"
+            :class="['data-table-full', tableClass]"
+            :loading="loading"
+            :options.sync="pagination"
+            :page="page"
+            :sort-by="sortBy"
+            :sort-desc="sortDesc"
+            :search="search"
+            item-key="id"
+            :dense="dense"
+            :no-data-text="noDataText"
+            :custom-sort="customSort"
+            @current-items="getCurrentItems"
+            @drag-reorder="dragReorder"
+        >
+            <!----------------------------------------------------TABLE HEAD------------------------------------------>
+            <template v-slot:header="{ props: { headers } }">
+                <thead class="v-data-table-header">
+                    <tr>
+                        <th
+                            v-for="(header, i) in headers"
+                            :key="i"
+                            :width="header.width"
+                            :style="{ padding: header.padding }"
+                            :class="thClasses(header)"
+                            @click="header.sortable !== false ? changeSort(header.value) : null"
+                        >
+                            <div class="d-inline-flex justify-center align-center">
+                                <span v-if="header.text !== 'Action'">{{ header.text }}</span>
+                                <slot :name="`append-${header.value}`"> </slot>
+                                <v-icon
+                                    v-if="header.sortable !== false"
+                                    size="14"
+                                    class="ml-3 v-data-table-header__icon"
+                                >
+                                    $vuetify.icons.arrowDown
+                                </v-icon>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+            </template>
 
-        <!----------------------------------------------------TABLE ROW--------------------------------------------->
-        <template v-slot:item="{ item, index: rowIndex }">
-            <!-- A key need to be set when table row is draggable -->
-            <tr
-                :key="item.nodeId || item.id"
-                ref="tableRow"
-                :class="trClasses(rowIndex)"
-                v-on="
-                    draggable || showActionsOnHover
-                        ? {
-                              mouseover: e => onRowHover(e, rowIndex),
-                              mouseleave: e => onRowHover(e, rowIndex),
-                          }
-                        : null
-                "
-            >
-                <td
-                    v-for="(header, cellIndex) in headers"
-                    :key="cellIndex"
-                    :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
-                    :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
-                    :class="tdClasses(header, item, cellIndex)"
-                    :style="isTree && hasValidChild && cellLevelPadding(item, cellIndex)"
-                    @mouseenter="
-                        e =>
-                            item.level > 0 || header.cellTruncated
-                                ? handleShowTruncatedText(e, item, header, cellIndex)
-                                : null
-                    "
+            <!----------------------------------------------------TABLE ROW------------------------------------------->
+            <template v-slot:item="{ item, index: rowIndex }">
+                <!-- A key need to be set when table row is draggable -->
+                <tr
+                    :key="item.nodeId || item.id"
+                    ref="tableRow"
+                    :class="trClasses(rowIndex)"
                     v-on="
-                        colsHasRowSpan
+                        draggable || showActionsOnHover
                             ? {
-                                  mouseover: e => cellHover(e, item, cellIndex),
-                                  mouseout: e => cellHover(e, item, cellIndex),
+                                  mouseenter: e => onRowHover(e, rowIndex),
+                                  mouseleave: e => onRowHover(e, rowIndex),
                               }
                             : null
                     "
                 >
-                    <fragment v-if="draggable">
-                        <v-icon
-                            v-show="showDragIcon(rowIndex, cellIndex)"
-                            :class="{ 'drag-handle move': draggable }"
-                            class="color text-field-text"
-                            size="16"
-                        >
-                            drag_handle
-                        </v-icon>
-                    </fragment>
-                    <div
-                        :style="itemWrapperAlign(header)"
-                        :class="itemWrapperClasses(header, item, cellIndex)"
+                    <td
+                        v-for="(header, cellIndex) in headers"
+                        :key="cellIndex"
+                        :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
+                        :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
+                        :class="tdClasses(header, item, cellIndex)"
+                        :style="isTree && hasValidChild && cellLevelPadding(item, cellIndex)"
+                        @mouseleave="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
+                        @mouseenter="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
                     >
-                        <!-- Display toggle button at the first column-->
-                        <v-btn
-                            v-if="cellIndex === 0 && item.children && item.children.length"
-                            width="32"
-                            height="32"
-                            class="arrow-toggle mr-1"
-                            icon
-                            @click="toggleChild(item, rowIndex)"
-                        >
+                        <fragment v-if="draggable">
                             <v-icon
-                                :class="[item.expanded === true ? 'arrow-down' : 'arrow-up']"
-                                size="24"
-                                color="#013646"
+                                v-show="showDragIcon(rowIndex, cellIndex)"
+                                :class="{ 'drag-handle move': draggable }"
+                                class="color text-field-text"
+                                size="16"
                             >
-                                $expand
+                                drag_handle
                             </v-icon>
-                        </v-btn>
+                        </fragment>
 
-                        <!-- no content for the corresponding header, usually this is an error -->
-                        <slot
-                            v-if="$help.isUndefined(item[header.value])"
-                            :name="header.value"
-                            :data="{ item, header, cellIndex, rowIndex }"
-                        >
-                            <span></span>
-                        </slot>
-                        <v-menu
-                            v-else
-                            :key="cellIndex"
-                            max-width="420"
-                            offset-x
-                            transition="slide-x-transition"
-                            :close-on-content-click="false"
-                            open-on-hover
-                            :nudge-left="truncatedMenuPos.x"
-                            :nudge-top="truncatedMenuPos.y"
-                            content-class="shadow-drop color text-navigation"
-                        >
-                            <template v-slot:activator="{ on }">
-                                <!-- regular cell -->
-                                <span class="text-truncate__value" v-on="on">
-                                    <slot
-                                        :name="header.value"
-                                        :data="{ item, header, cellIndex, rowIndex }"
-                                    >
-                                        {{ getValue(item, header) }}
-                                    </slot>
-                                </span>
-                            </template>
-
-                            <v-sheet
-                                v-if="
-                                    (item.level > 0 || header.cellTruncated) &&
-                                        indexOfTruncatedHoveredRow === cellIndex
-                                "
-                                style="border-radius: 10px;word-wrap: break-word;"
-                                class="pa-4"
-                            >
-                                <span class="body-2"> {{ getValue(item, header) }}</span>
-                            </v-sheet>
-                        </v-menu>
-
-                        <!-- Actions slot -->
                         <div
-                            v-if="renderActionsSlot(rowIndex, cellIndex)"
-                            class="action-slot-wrapper"
+                            :ref="`itemWrapperAtRow${rowIndex}Cell${cellIndex}`"
+                            :style="itemWrapperAlign(header)"
+                            :class="itemWrapperClasses(header, item, cellIndex)"
                         >
-                            <slot :data="{ item }" name="actions" />
+                            <!-- Display toggle button at the first column-->
+                            <v-btn
+                                v-if="cellIndex === 0 && item.children && item.children.length"
+                                width="32"
+                                height="32"
+                                class="arrow-toggle mr-1"
+                                icon
+                                @click="toggleChild(item, rowIndex)"
+                            >
+                                <v-icon
+                                    :class="[item.expanded === true ? 'arrow-down' : 'arrow-up']"
+                                    size="24"
+                                    color="#013646"
+                                >
+                                    $expand
+                                </v-icon>
+                            </v-btn>
+
+                            <!-- no content for the corresponding header, usually this is an error -->
+                            <span v-if="$help.isUndefined(item[header.value])"></span>
+                            <span
+                                v-else
+                                :id="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
+                                :ref="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
+                            >
+                                <slot
+                                    :name="header.value"
+                                    :data="{ item, header, cellIndex, rowIndex }"
+                                >
+                                    {{ getValue(item, header) }}
+                                </slot>
+                            </span>
+
+                            <!-- Actions slot -->
+                            <div
+                                v-if="renderActionsSlot(rowIndex, cellIndex)"
+                                class="action-slot-wrapper"
+                            >
+                                <slot :data="{ item }" name="actions" />
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
-        </template>
-    </v-data-table>
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
+        <v-menu
+            offset-x
+            transition="slide-x-transition"
+            :close-on-content-click="false"
+            open-on-hover
+            :nudge-left="truncatedMenu.x"
+            :nudge-top="truncatedMenu.y"
+            content-class="shadow-drop color text-navigation"
+            :activator="
+                `#truncatedTextAtRow${truncatedMenu.rowIndex}Cell${truncatedMenu.cellIndex}`
+            "
+        >
+            <v-sheet
+                v-if="truncatedMenu.item && truncatedMenu.index === truncatedMenu.cellIndex"
+                style="border-radius: 10px;overflow:auto"
+                class="pa-4"
+            >
+                <span class="body-2">
+                    {{ getValue(truncatedMenu.item, truncatedMenu.header) }}
+                </span>
+            </v-sheet>
+        </v-menu>
+    </fragment>
 </template>
 
 <script>
@@ -242,7 +227,7 @@ export default {
         // For draggable feature
         draggable: { type: Boolean, default: false },
         dragReorder: { type: Function, default: () => null },
-        /* 
+        /*
         enable hasOrderNumber to display item index column, however,
         item needs to have its own index property because using table row index will not work properly
         when table items is being searched
@@ -262,9 +247,8 @@ export default {
             indexOfHoveredRow: null,
             //draggable
             showDragEntity: false,
-            //For displaying truncated text in a v-menu
-            indexOfTruncatedHoveredRow: null,
-            truncatedMenuPos: { x: 0, y: 16.5 },
+            //For truncated cell
+            truncatedMenu: { index: null, x: 0, y: 16.5 },
             //For nested data, display dropdown table row
             hasValidChild: false,
             nodeActiveIds: [],
@@ -374,10 +358,10 @@ export default {
         itemWrapperClasses(header, item, cellIndex) {
             return [
                 item.level > 0 || header.cellTruncated ? 'text-truncate' : '',
-                (item.level > 0 || header.cellTruncated) &&
-                    this.indexOfTruncatedHoveredRow === cellIndex &&
-                    'pointer',
                 'relative',
+                (item.level > 0 || header.cellTruncated) &&
+                    this.truncatedMenu.index === cellIndex &&
+                    'pointer',
             ]
         },
 
@@ -386,6 +370,22 @@ export default {
             let marginRight = header.align && header.sortable !== false ? 26 : ''
             return {
                 marginRight: `${marginRight}px`,
+            }
+        },
+        //---------------------------------Table events----------------------------------------------------------------
+        cellMouseEnter(e, item, rowIndex, cellIndex, header) {
+            this.$emit('cell-mouseenter', {
+                e,
+                item,
+                rowIndex,
+                cellIndex,
+                header,
+            })
+            if (item.level > 0 || header.cellTruncated) {
+                this.showTruncatedMenu(item, rowIndex, cellIndex, header)
+            }
+            if (this.colsHasRowSpan) {
+                this.setRowspanBg(e, item, rowIndex, cellIndex)
             }
         },
 
@@ -499,30 +499,56 @@ export default {
         /**
          * @param {Object} e event object
          * @param {Object} item object
-         * This function group all items have same groupdID and assign correct value for hidden and rowspan properties.
+         * This function group all items have same groupdID and assign
+         * correct value for hidden and rowspan properties.
+         * If truncated text is activated, this function shows truncated text in v-menu
          */
-        cellHover(e, item, cellIndex) {
-            // rowspan feature
-
+        setRowspanBg(e, item, rowIndex, cellIndex) {
             const target = cellIndex < this.colsHasRowSpan ? 'rowgroup' : 'cell'
             const { groupId } = item
             // Make associated td elements to have the same hover effect
-            let bg = e.type === 'mouseover' ? '#fafcfc' : ''
-            if (target === 'cell') {
-                let elements = this.$refs.rowGroup.filter(ele =>
-                    ele.attributes.class.value.includes(`${groupId}-rowspan`)
-                )
-
-                elements.forEach(ele => (ele.style.backgroundColor = bg))
-            } else if (target === 'rowgroup') {
-                let elements = this.$refs.cell.filter(ele =>
-                    ele.attributes.class.value.includes(`${groupId}-cell`)
-                )
-
-                elements.forEach(ele => (ele.style.backgroundColor = bg))
+            let bg = e.type === 'mouseenter' ? '#fafcfc' : ''
+            switch (target) {
+                case 'cell':
+                    {
+                        let elements = this.$refs.rowGroup.filter(ele =>
+                            ele.attributes.class.value.includes(`${groupId}-rowspan`)
+                        )
+                        elements.forEach(ele => (ele.style.backgroundColor = bg))
+                    }
+                    break
+                case 'rowgroup':
+                    {
+                        let elements = this.$refs.cell.filter(ele =>
+                            ele.attributes.class.value.includes(`${groupId}-cell`)
+                        )
+                        elements.forEach(ele => (ele.style.backgroundColor = bg))
+                    }
+                    break
             }
         },
 
+        /**
+         * @param {Object} item object
+         * This function shows truncated text in v-menu
+         */
+        showTruncatedMenu(item, rowIndex, cellIndex, header) {
+            // auto truncated text feature
+            const wrapper = this.$refs[`itemWrapperAtRow${rowIndex}Cell${cellIndex}`][0]
+            const text = this.$refs[`truncatedTextAtRow${rowIndex}Cell${cellIndex}`][0]
+
+            if (wrapper && text && wrapper.offsetWidth < text.offsetWidth) {
+                // const wrapperClientRect = wrapper.getBoundingClientRect()
+                this.truncatedMenu.index = cellIndex
+                this.truncatedMenu.x = text.offsetWidth - wrapper.offsetWidth
+                this.truncatedMenu.rowIndex = rowIndex
+                this.truncatedMenu.cellIndex = cellIndex
+                this.truncatedMenu.item = item
+                this.truncatedMenu.header = header
+            } else {
+                this.truncatedMenu.index = null
+            }
+        },
         //---------------------------------For displaying actions btn/icon on table row---------------------------------
         /**
          * @param {Number} index index of current hovered row
@@ -532,7 +558,7 @@ export default {
             const { type } = e
             let self = this
             switch (type) {
-                case 'mouseover':
+                case 'mouseenter':
                     {
                         // positioning the drag handle to the center of the table row
                         if (self.draggable) {
@@ -572,35 +598,6 @@ export default {
                 this.indexOfHoveredRow === rowIndex &&
                 cellIndex === this.headers.length - 1
             )
-        },
-
-        //---------------------------------For displaying truncated text in a v-menu------------------------------------
-        /**
-         * This function helps to show cell value as a menu when text is truncated
-         */
-        handleShowTruncatedText(e, item, header, cellIndex) {
-            const { children } = e.target
-
-            let truncatedEleWidth = 0
-            let wrapperOffsetwidth = 0
-            for (let i = 0; i < children.length; ++i) {
-                if (children[i].className.includes('text-truncate')) {
-                    wrapperOffsetwidth = children[i].offsetWidth
-                    let childNodes = children[i].childNodes
-                    for (let n = 0; n < childNodes.length; ++n) {
-                        let childNodesClass = childNodes[n].className
-                        if (childNodesClass && childNodesClass.includes('text-truncate__value')) {
-                            truncatedEleWidth = childNodes[n].offsetWidth
-                            break
-                        }
-                    }
-                    break
-                }
-            }
-            if (wrapperOffsetwidth < truncatedEleWidth) {
-                this.indexOfTruncatedHoveredRow = cellIndex
-                this.truncatedMenuPos.x = truncatedEleWidth - wrapperOffsetwidth
-            } else this.indexOfTruncatedHoveredRow = null
         },
 
         //---------------------------------For nested data, displaying dropdown table row-------------------------------

@@ -278,37 +278,26 @@ export default {
             switch (this.targetSelectItemType) {
                 case 'servers':
                     {
-                        let data = await this.getServerState()
-                        let all = data.map(server => ({
-                            id: server.id,
-                            type: server.type,
-                            state: server.attributes.state,
-                        }))
-
-                        let self = this
+                        const self = this
+                        const allServers = await self.getServerState()
                         let availableEntities = self.$help.xorWith(
-                            all,
+                            allServers,
                             self.serverStateTableRow,
-                            self.$help.isEqual
+                            (a, b) => a.id === b.id
                         )
-                        this.itemsList = availableEntities
+                        self.itemsList = availableEntities
                     }
                     break
                 case 'filters':
                     {
-                        await this.fetchAllFilters()
-                        let all = this.$help.cloneDeep(this.allFilters).map(filter => ({
-                            id: filter.id,
-                            type: filter.type,
-                        }))
-
-                        let self = this
+                        const self = this
+                        await self.fetchAllFilters()
                         let availableEntities = self.$help.xorWith(
-                            all,
+                            self.allFilters,
                             self.filtersLinked,
-                            self.$help.isEqual
+                            (a, b) => a.id === b.id
                         )
-                        this.itemsList = availableEntities
+                        self.itemsList = availableEntities
                     }
                     break
             }

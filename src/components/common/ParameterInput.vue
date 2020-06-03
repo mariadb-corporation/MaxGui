@@ -365,5 +365,6 @@ export default {
 }
 .std ::v-deep .v-messages__message {
     white-space: normal;
+    line-height: 16px;
 }
 </style>
