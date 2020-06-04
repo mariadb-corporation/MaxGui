@@ -1,183 +1,176 @@
 <template>
-    <span
-        :class="[isFixedWidth && 'd-inline-block']"
-        :style="{
-            minWidth: '160px',
-            maxWidth: '200px',
-        }"
-    >
+    <fragment>
         <!-- if objectItem has expanded property, meaning it has child object, so no need to render input -->
         <fragment v-if="'expanded' in objectItem" />
         <!-- Hanlde edge case with log_throttling parameter in maxscale, 
         the value is an object but doesn't contain type information-->
-        <fragment
+
+        <v-text-field
             v-else-if="objectItem.nodeParent && objectItem.nodeParent.id === 'log_throttling'"
-        >
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim.number="objectItem.value"
-                type="number"
-                min="0"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.naturalNumber"
-                :disabled="objectItem.disabled"
-                @input="handleChange"
-            />
-        </fragment>
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim.number="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.number"
+            :disabled="objectItem.disabled"
+            @keypress="preventNonNumerical($event)"
+            @input="handleChange"
+        />
+
         <!-- Hanlde edge case with port, address, socket custom rules-->
-        <fragment v-else-if="!isListener && objectItem.id === 'address'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.requiredAddress"
-                :disabled="objectItem.disabled"
-                autocomplete="off"
-                @input="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.id === 'socket'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.requiredFieldEither"
-                :disabled="objectItem.disabled"
-                autocomplete="off"
-                @input="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.id === 'port'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim.number="objectItem.value"
-                type="number"
-                min="0"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.requiredFieldEither"
-                :disabled="objectItem.disabled"
-                @keypress="preventNonNumerical($event)"
-                @input="handleChange"
-            />
-        </fragment>
+
+        <v-text-field
+            v-else-if="!isListener && objectItem.id === 'address'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.requiredAddress"
+            :disabled="objectItem.disabled"
+            autocomplete="off"
+            @input="handleChange"
+        />
+
+        <v-text-field
+            v-else-if="objectItem.id === 'socket'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.requiredFieldEither"
+            :disabled="objectItem.disabled"
+            autocomplete="off"
+            @input="handleChange"
+        />
+
+        <v-text-field
+            v-else-if="objectItem.id === 'port'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim.number="objectItem.value"
+            type="number"
+            min="0"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.requiredFieldEither"
+            :disabled="objectItem.disabled"
+            @keypress="preventNonNumerical($event)"
+            @input="handleChange"
+        />
+
         <!---------------------------------------------others parameter types ----------------------------------------->
-        <fragment v-else-if="objectItem.type === 'bool'">
-            <v-select
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model="objectItem.value"
-                :name="objectItem.id"
-                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                :items="[true, false]"
-                outlined
-                dense
-                :disabled="objectItem.disabled"
-                @change="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'enum_mask'">
-            <v-select
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model="objectItem.value"
-                :name="objectItem.id"
-                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                :items="objectItem.enum_values"
-                outlined
-                dense
-                multiple
-                :disabled="objectItem.disabled"
-                @change="handleChange"
-            >
-                <template v-slot:selection="{ item, index }">
-                    <span v-if="index === 0" class="v-select__selection v-select__selection--comma">
-                        {{ item }}
-                    </span>
-                    <span
-                        v-if="index === 1"
-                        class="v-select__selection v-select__selection--comma color caption text-field-text "
-                    >
-                        (+{{ objectItem.value.length - 1 }} others)
-                    </span>
-                </template>
-            </v-select>
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'enum'">
-            <v-select
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model="objectItem.value"
-                :name="objectItem.id"
-                class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-                :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
-                :items="objectItem.enum_values"
-                outlined
-                dense
-                :disabled="objectItem.disabled"
-                @change="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'count' || objectItem.type === 'int'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim.number="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.number"
-                :disabled="objectItem.disabled"
-                @keypress="preventNonNumerical($event)"
-                @input="handleChange"
-            />
-        </fragment>
-        <fragment v-else-if="objectItem.type === 'password string'">
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                outlined
-                dense
-                autocomplete="new-password"
-                type="password"
-                :rules="rules.requiredString"
-                :disabled="objectItem.disabled"
-                @input="handleChange"
-            />
-        </fragment>
-        <fragment v-else>
-            <v-text-field
-                :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-                v-model.trim="objectItem.value"
-                :name="objectItem.id"
-                class="std error--text__bottom error--text__bottom--no-margin"
-                single-line
-                outlined
-                dense
-                :rules="rules.requiredString"
-                :disabled="objectItem.disabled"
-                autocomplete="off"
-                @input="handleChange"
-            />
-        </fragment>
-    </span>
+
+        <v-select
+            v-else-if="objectItem.type === 'bool'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model="objectItem.value"
+            :name="objectItem.id"
+            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :items="[true, false]"
+            outlined
+            dense
+            :disabled="objectItem.disabled"
+            @change="handleChange"
+        />
+
+        <v-select
+            v-else-if="objectItem.type === 'enum_mask'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model="objectItem.value"
+            :name="objectItem.id"
+            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :items="objectItem.enum_values"
+            outlined
+            dense
+            multiple
+            :disabled="objectItem.disabled"
+            @change="handleChange"
+        >
+            <template v-slot:selection="{ item, index }">
+                <span v-if="index === 0" class="v-select__selection v-select__selection--comma">
+                    {{ item }}
+                </span>
+                <span
+                    v-if="index === 1"
+                    class="v-select__selection v-select__selection--comma color caption text-field-text "
+                >
+                    (+{{ objectItem.value.length - 1 }} others)
+                </span>
+            </template>
+        </v-select>
+
+        <v-select
+            v-else-if="objectItem.type === 'enum'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model="objectItem.value"
+            :name="objectItem.id"
+            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :items="objectItem.enum_values"
+            outlined
+            dense
+            :disabled="objectItem.disabled"
+            @change="handleChange"
+        />
+
+        <v-text-field
+            v-else-if="objectItem.type === 'count' || objectItem.type === 'int'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim.number="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.number"
+            :disabled="objectItem.disabled"
+            @keypress="preventNonNumerical($event)"
+            @input="handleChange"
+        />
+
+        <v-text-field
+            v-else-if="objectItem.type === 'password string'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            outlined
+            dense
+            autocomplete="new-password"
+            type="password"
+            :rules="rules.requiredString"
+            :disabled="objectItem.disabled"
+            @input="handleChange"
+        />
+
+        <v-text-field
+            v-else
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.requiredString"
+            :disabled="objectItem.disabled"
+            autocomplete="off"
+            @input="handleChange"
+        />
+    </fragment>
 </template>
 <script>
 /*
@@ -359,6 +352,7 @@ export default {
     }
 }
 .std ::v-deep .v-input__control {
+    min-width: 160px;
     .v-input__slot {
         margin: 0;
     }
@@ -366,5 +360,8 @@ export default {
 .std ::v-deep .v-messages__message {
     white-space: normal;
     line-height: 16px;
+}
+.std ::v-deep .v-select__selections input {
+    display: none;
 }
 </style>

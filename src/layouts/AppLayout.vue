@@ -16,6 +16,7 @@
             padless
             app
             height="40"
+            absolute
             inset
         >
             <span class=" footer-text color text-code-color align-center text-truncate">
