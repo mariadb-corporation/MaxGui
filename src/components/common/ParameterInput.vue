@@ -155,7 +155,32 @@
             :disabled="objectItem.disabled"
             @input="handleChange"
         />
-
+        <v-text-field
+            v-else-if="objectItem.type === 'duration'"
+            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
+            v-model.trim="objectItem.value"
+            :name="objectItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            single-line
+            outlined
+            dense
+            :rules="rules.requiredString"
+            :disabled="objectItem.disabled"
+            autocomplete="off"
+            @input="handleChange"
+        >
+            <template v-slot:append>
+                <v-select
+                    v-model="chosenDurationSuffix"
+                    :name="objectItem.id"
+                    class="suffix-select mariadb-select-input"
+                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                    :items="durationSuffixes"
+                    outlined
+                    dense
+                />
+            </template>
+        </v-text-field>
         <v-text-field
             v-else
             :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
@@ -216,6 +241,8 @@ export default {
                 requiredFieldEither: [val => this.handleRequiredFieldEither(val)],
             },
             count: 0,
+            durationSuffixes: ['ms', 's', 'm', 'h'],
+            chosenDurationSuffix: 'ms',
         }
     },
     watch: {
@@ -361,7 +388,24 @@ export default {
     white-space: normal;
     line-height: 16px;
 }
+.suffix-select ::v-deep .v-select__selections input,
 .std ::v-deep .v-select__selections input {
     display: none;
+}
+.suffix-select {
+    border-radius: 0px;
+    ::v-deep .v-input__control {
+        min-width: 60px;
+        margin-top: -8px;
+        margin-right: -10px;
+        .v-input__slot {
+            padding: 0 0px 0 12px !important;
+        }
+        fieldset {
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+        }
+    }
 }
 </style>
