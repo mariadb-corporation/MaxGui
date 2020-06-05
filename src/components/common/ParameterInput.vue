@@ -1,102 +1,102 @@
 <template>
     <fragment>
-        <!-- if objectItem has expanded property, meaning it has child object, so no need to render input -->
-        <fragment v-if="'expanded' in objectItem" />
+        <!-- if targetItem has expanded property, meaning it has child object, so no need to render input -->
+        <fragment v-if="'expanded' in targetItem" />
         <!-- Hanlde edge case with log_throttling parameter in maxscale, 
         the value is an object but doesn't contain type information-->
 
         <v-text-field
-            v-else-if="objectItem.nodeParent && objectItem.nodeParent.id === 'log_throttling'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim.number="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="targetItem.nodeParent && targetItem.nodeParent.id === 'log_throttling'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim.number="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
             :rules="rules.number"
-            :disabled="objectItem.disabled"
-            @keypress="preventNonNumerical($event)"
+            :disabled="targetItem.disabled"
+            autocomplete="off"
+            @keypress="preventNonNumericalVal($event)"
             @input="handleChange"
         />
 
-        <!-- Hanlde edge case with port, address, socket custom rules-->
+        <!-- Handle edge case with port, address, socket custom rules-->
 
         <v-text-field
-            v-else-if="!isListener && objectItem.id === 'address'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="!isListener && targetItem.id === 'address'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
             :rules="rules.requiredAddress"
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             autocomplete="off"
             @input="handleChange"
         />
 
         <v-text-field
-            v-else-if="objectItem.id === 'socket'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="targetItem.id === 'socket'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
             :rules="rules.requiredFieldEither"
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             autocomplete="off"
             @input="handleChange"
         />
 
         <v-text-field
-            v-else-if="objectItem.id === 'port'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim.number="objectItem.value"
-            type="number"
-            min="0"
-            :name="objectItem.id"
+            v-else-if="targetItem.id === 'port'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim.number="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
             :rules="rules.requiredFieldEither"
-            :disabled="objectItem.disabled"
-            @keypress="preventNonNumerical($event)"
+            :disabled="targetItem.disabled"
+            autocomplete="off"
+            @keypress="preventNonNumericalVal($event)"
             @input="handleChange"
         />
 
-        <!---------------------------------------------others parameter types ----------------------------------------->
-
+        <!-- bool parameter type -->
         <v-select
-            v-else-if="objectItem.type === 'bool'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="targetItem.type === 'bool'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model="targetItem.value"
+            :name="targetItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
             :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
             :items="[true, false]"
             outlined
             dense
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             @change="handleChange"
         />
 
+        <!-- enum_mask parameter type -->
         <v-select
-            v-else-if="objectItem.type === 'enum_mask'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="targetItem.type === 'enum_mask'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model="targetItem.value"
+            :name="targetItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
             :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
-            :items="objectItem.enum_values"
+            :items="targetItem.enum_values"
             outlined
             dense
             multiple
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             @change="handleChange"
         >
             <template v-slot:selection="{ item, index }">
@@ -107,72 +107,55 @@
                     v-if="index === 1"
                     class="v-select__selection v-select__selection--comma color caption text-field-text "
                 >
-                    (+{{ objectItem.value.length - 1 }} others)
+                    (+{{ targetItem.value.length - 1 }} others)
                 </span>
             </template>
         </v-select>
 
+        <!-- enum parameter type -->
         <v-select
-            v-else-if="objectItem.type === 'enum'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="targetItem.type === 'enum'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model="targetItem.value"
+            :name="targetItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
             :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
-            :items="objectItem.enum_values"
+            :items="targetItem.enum_values"
             outlined
             dense
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             @change="handleChange"
         />
 
+        <!-- count or int parameter or duration type -->
         <v-text-field
-            v-else-if="objectItem.type === 'count' || objectItem.type === 'int'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim.number="objectItem.value"
-            :name="objectItem.id"
+            v-else-if="
+                targetItem.type === 'count' ||
+                    targetItem.type === 'int' ||
+                    targetItem.type === 'duration'
+            "
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim.number="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
             :rules="rules.number"
-            :disabled="objectItem.disabled"
-            @keypress="preventNonNumerical($event)"
-            @input="handleChange"
-        />
-
-        <v-text-field
-            v-else-if="objectItem.type === 'password string'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim="objectItem.value"
-            :name="objectItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            outlined
-            dense
-            autocomplete="new-password"
-            type="password"
-            :rules="rules.requiredString"
-            :disabled="objectItem.disabled"
-            @input="handleChange"
-        />
-        <v-text-field
-            v-else-if="objectItem.type === 'duration'"
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim="objectItem.value"
-            :name="objectItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.requiredString"
-            :disabled="objectItem.disabled"
+            :disabled="targetItem.disabled"
             autocomplete="off"
+            @keypress="
+                targetItem.type === 'int'
+                    ? preventNonInteger($event)
+                    : preventNonNumericalVal($event)
+            "
             @input="handleChange"
         >
-            <template v-slot:append>
+            <!-- duration parameter type -->
+            <template v-if="targetItem.type === 'duration'" v-slot:append>
                 <v-select
                     v-model="chosenDurationSuffix"
-                    :name="objectItem.id"
+                    :name="targetItem.id"
                     class="suffix-select mariadb-select-input"
                     :menu-props="{
                         contentClass: 'mariadb-select-v-menu',
@@ -185,17 +168,35 @@
                 />
             </template>
         </v-text-field>
+
+        <!-- password string parameter type -->
+        <v-text-field
+            v-else-if="targetItem.type === 'password string'"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim="targetItem.value"
+            :name="targetItem.id"
+            class="std error--text__bottom error--text__bottom--no-margin"
+            outlined
+            dense
+            type="password"
+            :rules="rules.required"
+            autocomplete="off"
+            :disabled="targetItem.disabled"
+            @input="handleChange"
+        />
+
+        <!--others parameter types -->
         <v-text-field
             v-else
-            :id="`${objectItem.id}-${objectItem.nodeId}` || objectItem.id"
-            v-model.trim="objectItem.value"
-            :name="objectItem.id"
+            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+            v-model.trim="targetItem.value"
+            :name="targetItem.id"
             class="std error--text__bottom error--text__bottom--no-margin"
             single-line
             outlined
             dense
-            :rules="rules.requiredString"
-            :disabled="objectItem.disabled"
+            :rules="rules.required"
+            :disabled="targetItem.disabled"
             autocomplete="off"
             @input="handleChange"
         />
@@ -216,8 +217,7 @@
  */
 
 /*
-_createMode: In creation mode, the value for parameter are received from maxscale modules but the value for
-count and int returned as string. So, objectItem.value will be converted to number if createMode is true
+_createMode: In creation mode, it will not trigger parent form validate on first render
 _portValue,_socketValue,_addressValue and _parentForm is passed if target resource is being
 created or updated. If target resource is listener, _addressValue will be null.
 _isListener: accepts boolean , if true, address won't be required
@@ -237,20 +237,20 @@ export default {
     },
     data() {
         return {
-            objectItem: {},
+            targetItem: {},
             rules: {
+                required: [val => this.handleRequired(val)],
                 number: [val => this.validateNumber(val)],
-                requiredString: [val => this.handleRequiredString(val)],
                 requiredAddress: [val => this.handleRequiredAddress(val)],
                 requiredFieldEither: [val => this.handleRequiredFieldEither(val)],
             },
             count: 0,
             durationSuffixes: ['ms', 's', 'm', 'h'],
-            chosenDurationSuffix: 'ms',
+            chosenDurationSuffix: null,
         }
     },
     watch: {
-        'objectItem.value'() {
+        'targetItem.value'() {
             this.$nextTick(() => {
                 // createMode should not trigger parent form validate on first render
                 if (this.createMode) {
@@ -262,69 +262,195 @@ export default {
                 }
             })
         },
-        item: {
-            deep: true,
-            handler(val) {
-                this.objectItem = this.convertEnumMaskStringtoArray(val)
-            },
+        chosenDurationSuffix: function(newSuffix, oldSuffix) {
+            if (oldSuffix) {
+                this.targetItem.value = this.suffixSwapper(
+                    newSuffix,
+                    oldSuffix,
+                    this.targetItem.value
+                )
+            }
         },
     },
+
     async created() {
-        this.objectItem = this.convertEnumMaskStringtoArray(this.item)
+        this.targetItem = this.processItem(this.$help.cloneDeep(this.item))
     },
+
     methods: {
-        /*
-        Workaround enum_mask type, when multiple props is enabled,
-        v-select component accepts array as value type for v-model
-        But when sending the values back to parent component, it will be converted
-        to a string.
-        */
-        convertEnumMaskStringtoArray(obj) {
-            let cloned = this.$help.cloneDeep(obj)
-            if (obj.type === 'enum_mask') {
-                cloned.value = cloned.value.split(',') // convert string to array
+        suffixSwapper(newSuffix, oldSuffix, val) {
+            switch (newSuffix) {
+                case 'ms':
+                    return this.toBaseMiliOrReverse(oldSuffix, val)
+                case 's':
+                case 'm':
+                case 'h': {
+                    const reverseBase = true
+                    // first convert to miliseconds from oldSuffix
+                    const baseMiliSec = this.toBaseMiliOrReverse(oldSuffix, val)
+                    // then reverse from baseMiliSec to newSuffix
+                    return this.toBaseMiliOrReverse(newSuffix, baseMiliSec, reverseBase)
+                }
             }
-            return cloned
         },
 
+        /**
+         * @param {String} suffix duration suffix: s,m,h,ms
+         * @param {Object} val mode be processed. Default is null
+         * @param {Boolean} reverse
+         * @return {Number} returns converted value
+         */
+        toBaseMiliOrReverse(suffix, val, reverse) {
+            let result
+            switch (suffix) {
+                case 's':
+                    result = reverse ? val / 1000 : val * 1000
+                    break
+                case 'm':
+                    result = reverse ? val / (60 * 1000) : val * 60 * 1000
+                    break
+                case 'h':
+                    result = reverse ? val / (60 * 60 * 1000) : val * 60 * 60 * 1000
+                    break
+                case 'ms':
+                default:
+                    result = val
+            }
+            return Math.ceil(result)
+        },
+
+        /**
+         * @param {Object} clonedItem cloned item that needs to be processed
+         * @param {String} mode mode be processed. Default is null
+         * @return {Object} new clonedItem or original clonedItem
+         */
+        processItem(clonedItem, mode) {
+            switch (clonedItem.type) {
+                case 'enum_mask':
+                    return this.processEnumMask(clonedItem, mode)
+                case 'duration': {
+                    if (clonedItem.value) {
+                        return this.processDuration(clonedItem, mode)
+                    } else {
+                        //if there is no value, find unit props
+                        this.chosenDurationSuffix = clonedItem.unit ? clonedItem.unit : 'ms'
+                        return clonedItem
+                    }
+                }
+                default:
+                    return clonedItem
+            }
+        },
+
+        /**
+         * @param {Object} item target item to be processed
+         * @param {String} mode mode be processed
+         * @return {Object} new processed item
+         * Processing enum_mask type for editing
+         * v-select component accepts array as value type for v-model when multiple props is enabled.
+         * But when sending the values back to parent component, it will be converted
+         * to a string.
+         */
+        processEnumMask(item, mode) {
+            let result = item
+            if (mode === 'reverse') {
+                result.value = result.value.toString()
+            } else result.value = result.value.split(',') // to array
+            return result
+        },
+
+        /**
+         * @param {Object} item target item to be processed
+         * @param {String} mode mode be processed
+         * @return {Object} new processed item
+         */
+        processDuration(item, mode) {
+            let result = item
+            if (mode === 'reverse') {
+                result.value = `${result.value}${this.chosenDurationSuffix}`
+            } else {
+                let suffix = null
+                let indexOfSuffix = null
+                // get suffix from result.value string
+                for (let i = 0; i < this.durationSuffixes.length; ++i) {
+                    if (result.value.includes(this.durationSuffixes[i])) {
+                        suffix = this.durationSuffixes[i]
+                        indexOfSuffix = result.value.indexOf(suffix)
+                        break
+                    }
+                }
+
+                if (suffix) {
+                    this.chosenDurationSuffix = suffix
+                    result.value = result.value.slice(0, indexOfSuffix)
+                }
+            }
+            return result
+        },
+
+        // ----------------------------------------------  Handle input change ---------------------------------------
         handleChange() {
-            let self = this
-            let item = self.convertEnumMaskStringtoArray(this.item)
-            let newObj = self.objectItem
-
-            let changed = !self.$help.isEqual(newObj, item)
-            let inputObj = self.$help.cloneDeep(newObj)
-
+            const self = this
+            /*reverse processing item to original type*/
+            let targetItemCloned = this.processItem(
+                this.$help.cloneDeep(self.targetItem),
+                'reverse'
+            )
+            const changed = !this.$help.isEqual(targetItemCloned, self.item)
             /*
-                Handling edge case, either socket or port needs to be defined,
-                that leads to the issue when empty port or empty socket will be treated as string
-                This converts it to null
-
+                _Handling edge case, either socket or port needs to be defined,
+                that leads to the issue when empty port or empty socket will be
+                treated as string. But maxscale wants it null if it is empty.
+                _Some parameter types such as count or int, when value is empty, it should be also converted to null.
             */
-            if (
-                (inputObj.id === 'port' || inputObj.id === 'socket' || inputObj.type === 'count') &&
-                inputObj.value === ''
-            ) {
-                inputObj.value = null
+            if (targetItemCloned.value === '') {
+                // socket is type string
+                const types = ['count', 'int']
+                targetItemCloned.id === 'socket' ||
+                    (types.includes(targetItemCloned.type) && (targetItemCloned.value = null))
             }
 
-            if (this.item.type === 'enum_mask') {
-                inputObj.value = inputObj.value.toString()
-            }
-
-            this.$emit('on-input-change', inputObj, changed)
+            this.$emit('on-input-change', targetItemCloned, changed)
         },
+
         // ---------------------------------------------------- input validation ---------------------------------------
+        validateNumber(val) {
+            const isEmptyVal = this.isEmpty(val)
+
+            const intType = this.targetItem.type === 'int'
+            const naturalType =
+                this.targetItem.type === 'count' || this.targetItem.type === 'duration'
+
+            const isValidInt = /^[-]?\d*$/g.test(val)
+            const isValidNaturalNum = /^\d*$/g.test(val)
+
+            if (this.required && isEmptyVal) {
+                return this.$t('errors.requiredInput', { inputName: this.targetItem.id })
+            } else if ((intType && !isValidInt) || val === '-') {
+                return this.$t('errors.nonInteger')
+            } else if (naturalType && !isValidNaturalNum) {
+                return this.$t('errors.negativeNum')
+            }
+            return true
+        },
+
+        handleRequired(val) {
+            if (this.isEmpty(val) && this.required) {
+                return this.$t('errors.requiredInput', { inputName: this.targetItem.id })
+            }
+            return true
+        },
+
         // port or socket
         handleRequiredFieldEither(val) {
-            let portExist = this.portValue !== '' && this.portValue !== null
-            let socketExist = !!this.socketValue
+            const portExist = !this.isEmpty(this.portValue)
+            const socketExist = !this.isEmpty(this.socketValue)
 
-            let bothEmpty =
-                (this.objectItem.id === 'port' && !val && !this.socketValue) ||
-                (this.objectItem.id === 'socket' && !val && !this.portValue)
+            const bothEmpty =
+                (this.targetItem.id === 'port' && !val && !this.socketValue) ||
+                (this.targetItem.id === 'socket' && !val && !this.portValue)
 
-            let bothValueExist = portExist && socketExist
+            const bothValueExist = portExist && socketExist
 
             if (bothEmpty || bothValueExist) {
                 return this.$t('errors.portSocket')
@@ -333,44 +459,32 @@ export default {
 
         // address rules if !isListener
         handleRequiredAddress(val) {
-            let portExist = this.portValue !== '' && this.portValue !== null
-            let socketExist = !!this.socketValue
-            let bothExist = socketExist && portExist
+            const portExist = !this.isEmpty(this.portValue)
+            const socketExist = !this.isEmpty(this.socketValue)
+            const bothExist = socketExist && portExist
 
-            if (!val && portExist) {
+            const isEmptyVal = this.isEmpty(val)
+
+            if (isEmptyVal && portExist) {
                 return this.$t('errors.addressRequired')
-            } else if (val && socketExist && !bothExist) {
+            } else if (!isEmptyVal && socketExist && !bothExist) {
                 return this.$t('errors.addressRequiredEmpty')
             }
             return true
         },
 
-        validateNumber(val) {
-            let isEmptyVal = val === '' || val === null
-            let num = val
-            this.createMode && (num = parseInt(val, 10))
-
-            if (this.required && isEmptyVal) {
-                return this.$t('errors.requiredInput', { inputName: this.objectItem.id })
-            } else if (this.objectItem.type === 'int' && !Number.isInteger(num) && !isEmptyVal) {
-                return this.$t('errors.nonInteger')
-            } else if (this.objectItem.type === 'count' && num < 0 && !isEmptyVal) {
-                return this.$t('errors.negativeNum')
-            }
-            return true
-        },
-
-        handleRequiredString(val) {
-            if (val !== '' && this.required) {
-                return this.$t('errors.requiredInput', { inputName: this.objectItem.id })
-            }
-            return true
-        },
+        // ---------------------------------------------------- helpers ---------------------------------------
         // allow to enter minus or hyphen minus and numbers
-        preventNonNumerical(e) {
+        preventNonInteger(e) {
             const key = e.key
-            if (key !== '-') !key.match(/^[0-9]+$/g) && e.preventDefault()
+            !key.match(/^[-]?\d*$/g) && e.preventDefault()
         },
+        // allow to enter only number
+        preventNonNumericalVal(e) {
+            const key = e.key
+            !key.match(/^\d*$/g) && e.preventDefault()
+        },
+        isEmpty: val => val === '' || val === null,
     },
 }
 </script>
@@ -403,7 +517,17 @@ export default {
         margin-top: -8px;
         margin-right: -10px;
         .v-input__slot {
-            padding: 0 0px 0 12px !important;
+            padding: 0 0px 0 9px !important;
+            .v-select__slot {
+                .v-select__selection.v-select__selection--comma {
+                    text-align: center;
+                    width: 100%;
+                }
+            }
+
+            .v-input__append-inner {
+                padding-left: 0px !important;
+            }
         }
         fieldset {
             border-right: none;

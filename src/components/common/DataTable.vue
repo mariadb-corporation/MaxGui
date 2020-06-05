@@ -113,7 +113,9 @@
                             <span v-if="$help.isUndefined(item[header.value])"></span>
                             <span
                                 v-else
-                                :id="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
+                                :id="
+                                    `truncatedText_atRow${rowIndex}_atCell${cellIndex}_${componentId}`
+                                "
                                 :ref="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
                             >
                                 <slot
@@ -145,7 +147,7 @@
             :nudge-top="truncatedMenu.y"
             content-class="shadow-drop color text-navigation"
             :activator="
-                `#truncatedTextAtRow${truncatedMenu.rowIndex}Cell${truncatedMenu.cellIndex}`
+                `#truncatedText_atRow${truncatedMenu.rowIndex}_atCell${truncatedMenu.cellIndex}_${componentId}`
             "
         >
             <v-sheet
@@ -254,6 +256,8 @@ export default {
             nodeActiveIds: [],
             //rowspan feature
             currentPageItems: null,
+            // this is needed when using custom activator in v-menu.
+            componentId: this.$help.uniqueId('component_v-menu_'),
         }
     },
     computed: {

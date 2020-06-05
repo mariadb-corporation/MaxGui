@@ -60,7 +60,7 @@
                                     'unit' in item ||
                                     'default_value' in item
                             "
-                            :id="`param-${item.id}`"
+                            :id="`param-${item.id}_${componentId}`"
                             class="pointer"
                         >
                             {{ item.id }}
@@ -78,7 +78,7 @@
             right
             transition="slide-x-transition"
             content-class="shadow-drop color text-navigation"
-            :activator="`#param-${parameterTooltip.item.id}`"
+            :activator="`#param-${parameterTooltip.item.id}_${componentId}`"
             max-width="300"
         >
             <v-sheet style="border-radius: 10px;overflow:auto;" class="pa-4" max-width="300">
@@ -151,6 +151,8 @@ export default {
             parameterTooltip: {
                 item: null,
             },
+            // this is needed when using custom activator in v-tooltip.
+            componentId: this.$help.uniqueId('component_tooltip_'),
         }
     },
     computed: {
