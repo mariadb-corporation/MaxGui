@@ -354,16 +354,6 @@ input:-webkit-autofill:active {
     }
 }
 
-// for create/update modal
-.input-div-wrapper {
-    padding: 10px 10px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    .delete {
-        left: 100%;
-        transform: translateX(-100%);
-    }
-}
-
 //-------------------------------------------------Typography
 h1 {
     font-size: map-deep-get($headings, 'h1', 'size');

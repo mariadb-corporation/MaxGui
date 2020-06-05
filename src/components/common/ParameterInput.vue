@@ -77,7 +77,7 @@
             v-model="objectItem.value"
             :name="objectItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
             :items="[true, false]"
             outlined
             dense
@@ -91,7 +91,7 @@
             v-model="objectItem.value"
             :name="objectItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
             :items="objectItem.enum_values"
             outlined
             dense
@@ -118,7 +118,7 @@
             v-model="objectItem.value"
             :name="objectItem.id"
             class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
             :items="objectItem.enum_values"
             outlined
             dense
@@ -174,7 +174,11 @@
                     v-model="chosenDurationSuffix"
                     :name="objectItem.id"
                     class="suffix-select mariadb-select-input"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                    :menu-props="{
+                        contentClass: 'mariadb-select-v-menu',
+                        bottom: true,
+                        offsetY: true,
+                    }"
                     :items="durationSuffixes"
                     outlined
                     dense

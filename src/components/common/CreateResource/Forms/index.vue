@@ -19,7 +19,11 @@
                     outlined
                     dense
                     class="std mariadb-select-input error--text__bottom"
-                    :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+                    :menu-props="{
+                        contentClass: 'mariadb-select-v-menu',
+                        bottom: true,
+                        offsetY: true,
+                    }"
                     hide-details
                     :rules="[v => !!v || $t('errors.requiredInput', { inputName: 'This field' })]"
                     required

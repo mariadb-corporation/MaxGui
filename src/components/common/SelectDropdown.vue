@@ -11,7 +11,7 @@
         dense
         class="std mariadb-select-input"
         :class="[required && 'error--text__bottom']"
-        :menu-props="{ contentClass: 'mariadb-select-v-menu' }"
+        :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
         :placeholder="
             showPlaceHolder
                 ? $tc('select', multiple ? 2 : 1, {
