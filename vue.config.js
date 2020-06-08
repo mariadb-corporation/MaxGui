@@ -18,25 +18,27 @@ const { gitDescribeSync } = require('git-describe')
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
 
-let devServer = {
-    https: {
-        key: fs.readFileSync('./.certs/localhost+1-key.pem'),
-        cert: fs.readFileSync('./.certs/localhost+1.pem'),
-    },
-    progress: false,
-    port: 8000,
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-    },
-    public: 'https://localhost:8000/',
-    proxy: {
-        '^/': {
-            changeOrigin: true,
-            target: process.env.VUE_APP_API,
+let devServer
+if (process.env.NODE_ENV === 'development') {
+    devServer = {
+        https: {
+            key: fs.readFileSync('./.certs/localhost+1-key.pem'),
+            cert: fs.readFileSync('./.certs/localhost+1.pem'),
         },
-    },
+        progress: false,
+        port: 8000,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        public: 'https://localhost:8000/',
+        proxy: {
+            '^/': {
+                changeOrigin: true,
+                target: process.env.VUE_APP_API,
+            },
+        },
+    }
 }
-process.env.NODE_ENV !== 'development' && (devServer = {})
 
 module.exports = {
     chainWebpack: config => {
@@ -68,7 +70,7 @@ module.exports = {
                 },
             ],
         },
-        devServer: devServer,
+        devServer: process.env.NODE_ENV === 'development' ? devServer : {},
         devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
     },
 
