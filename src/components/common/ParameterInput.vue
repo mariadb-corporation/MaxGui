@@ -475,15 +475,10 @@ export default {
 
         // ---------------------------------------------------- helpers ---------------------------------------
         // allow to enter minus or hyphen minus and numbers
-        preventNonInteger(e) {
-            const key = e.key
-            !key.match(/^[-]?\d*$/g) && e.preventDefault()
-        },
+        preventNonInteger: e => !e.key.match(/^[-]?\d*$/g) && e.preventDefault(),
         // allow to enter only number
-        preventNonNumericalVal(e) {
-            const key = e.key
-            !key.match(/^\d*$/g) && e.preventDefault()
-        },
+        preventNonNumericalVal: e => !e.key.match(/^\d*$/g) && e.preventDefault(),
+
         isEmpty: val => val === '' || val === null,
     },
 }
