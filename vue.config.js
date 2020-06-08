@@ -18,7 +18,7 @@ const { gitDescribeSync } = require('git-describe')
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
 
-let devServer
+let devServer = {}
 if (process.env.NODE_ENV === 'development') {
     devServer = {
         https: {
@@ -70,7 +70,7 @@ module.exports = {
                 },
             ],
         },
-        devServer: process.env.NODE_ENV === 'development' ? devServer : {},
+        devServer: devServer,
         devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
     },
 

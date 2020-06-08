@@ -132,7 +132,8 @@
             v-else-if="
                 targetItem.type === 'count' ||
                     targetItem.type === 'int' ||
-                    targetItem.type === 'duration'
+                    targetItem.type === 'duration' ||
+                    targetItem.type === 'size'
             "
             :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
             v-model.trim.number="targetItem.value"
@@ -152,9 +153,12 @@
             @input="handleChange"
         >
             <!-- duration parameter type -->
-            <template v-if="targetItem.type === 'duration'" v-slot:append>
+            <template
+                v-if="targetItem.type === 'duration' || targetItem.type === 'size'"
+                v-slot:append
+            >
                 <v-select
-                    v-model="chosenDurationSuffix"
+                    v-model="chosenSuffix"
                     :name="targetItem.id"
                     class="suffix-select mariadb-select-input"
                     :menu-props="{
@@ -162,7 +166,8 @@
                         bottom: true,
                         offsetY: true,
                     }"
-                    :items="durationSuffixes"
+                    :clearable="targetItem.type === 'size'"
+                    :items="targetItem.type === 'duration' ? durationSuffixes : sizeSuffixes"
                     outlined
                     dense
                 />
@@ -246,7 +251,8 @@ export default {
             },
             count: 0,
             durationSuffixes: ['ms', 's', 'm', 'h'],
-            chosenDurationSuffix: null,
+            chosenSuffix: null,
+            sizeSuffixes: ['Ki', 'Mi', 'Gi', 'Ti', 'k', 'M', 'G', 'T'],
         }
     },
     watch: {
@@ -262,13 +268,25 @@ export default {
                 }
             })
         },
-        chosenDurationSuffix: function(newSuffix, oldSuffix) {
+        chosenSuffix: function(newSuffix, oldSuffix) {
             if (oldSuffix && this.targetItem.value !== null) {
-                this.targetItem.value = this.suffixSwapper(
+                if (this.durationSuffixes.includes(newSuffix)) {
+                    this.targetItem.value = this.durationSuffixSwapper(
+                        newSuffix,
+                        oldSuffix,
+                        this.targetItem.value
+                    )
+                }
+            }
+            if (this.sizeSuffixes.includes(newSuffix)) {
+                let defaultSuffix = oldSuffix ? oldSuffix : undefined
+                this.targetItem.value = this.sizeSuffixSwapper(
                     newSuffix,
-                    oldSuffix,
+                    defaultSuffix,
                     this.targetItem.value
                 )
+            } else if (newSuffix === undefined) {
+                this.targetItem.value = this.item.value
             }
         },
     },
@@ -278,7 +296,74 @@ export default {
     },
 
     methods: {
-        suffixSwapper(newSuffix, oldSuffix, val) {
+        sizeSuffixSwapper(to, from, val) {
+            console.log(to, from, val)
+            let currentVal = val
+            switch (to) {
+                case undefined:
+                case 'Ki':
+                case 'k':
+                case 'Mi':
+                case 'M':
+                case 'Gi':
+                case 'G':
+                case 'Ti':
+                case 'T': {
+                    const IEC = ['Ki', 'Mi', 'Gi', 'Ti']
+                    const prevIsSuffixIEC = IEC.includes(from) || from === undefined
+                    const nextIsSuffixIEC = IEC.includes(to)
+                    // first convert from oldSuffix to bytes or bits
+                    let value
+                    const reverse = true
+                    let isIEC
+                    // from IEC to SI
+                    if (prevIsSuffixIEC && !nextIsSuffixIEC) {
+                        // to bytes
+                        isIEC = true
+                        currentVal = this.$help.toBitsOrBytes(isIEC, from, currentVal)
+                        // bytes to bits
+                        currentVal = currentVal * 8
+                        // reverse from bits to target suffix
+                        isIEC = false
+                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
+                    }
+
+                    // from SI to IEC
+                    else if (!prevIsSuffixIEC && nextIsSuffixIEC) {
+                        // to bits
+                        isIEC = false
+                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
+
+                        // bits to bytes
+                        currentVal = currentVal / 8
+
+                        // reverse from bytes to target suffix
+                        isIEC = true
+                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
+                    }
+                    // from IEC to IEC
+                    else if (prevIsSuffixIEC && nextIsSuffixIEC) {
+                        isIEC = true
+                        // to bytes
+                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
+
+                        // reverse from bytes to target suffix
+                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
+                    }
+                    // from SI to SI
+                    else if (!prevIsSuffixIEC && !nextIsSuffixIEC) {
+                        isIEC = false
+                        // to bits
+                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
+
+                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
+                    }
+                    return value
+                }
+            }
+        },
+
+        durationSuffixSwapper(newSuffix, oldSuffix, val) {
             switch (newSuffix) {
                 case 'ms':
                     return this.toBaseMiliOrReverse(oldSuffix, val)
@@ -316,7 +401,7 @@ export default {
                 default:
                     result = val
             }
-            return Math.ceil(result)
+            return Math.floor(result)
         },
 
         /**
@@ -333,7 +418,14 @@ export default {
                         return this.processDuration(clonedItem, mode)
                     } else {
                         //if there is no value, find unit props
-                        this.chosenDurationSuffix = clonedItem.unit ? clonedItem.unit : 'ms'
+                        this.chosenSuffix = clonedItem.unit ? clonedItem.unit : 'ms'
+                        return clonedItem
+                    }
+                }
+                case 'size': {
+                    if (clonedItem.value) {
+                        return this.processSuffix(clonedItem, mode)
+                    } else {
                         return clonedItem
                     }
                 }
@@ -367,25 +459,51 @@ export default {
         processDuration(item, mode) {
             let result = item
             if (mode === 'reverse') {
-                result.value = `${result.value}${this.chosenDurationSuffix}`
+                result.value = `${result.value}${this.chosenSuffix}`
             } else {
-                let suffix = null
-                let indexOfSuffix = null
-                // get suffix from result.value string
-                for (let i = 0; i < this.durationSuffixes.length; ++i) {
-                    if (result.value.includes(this.durationSuffixes[i])) {
-                        suffix = this.durationSuffixes[i]
-                        indexOfSuffix = result.value.indexOf(suffix)
-                        break
-                    }
-                }
+                let suffixInfo = this.getSuffixFromValue(item, this.durationSuffixes)
 
-                if (suffix) {
-                    this.chosenDurationSuffix = suffix
-                    result.value = result.value.slice(0, indexOfSuffix)
+                if (suffixInfo.suffix) {
+                    this.chosenSuffix = suffixInfo.suffix
+                    result.value = result.value.slice(0, suffixInfo.indexOfSuffix)
                 }
             }
             return result
+        },
+
+        /**
+         * @param {Object} item target item to be processed
+         * @param {String} mode mode be processed
+         * @return {Object} new processed item
+         */
+        processSuffix(item, mode) {
+            let result = item
+
+            if (mode === 'reverse' && this.chosenSuffix) {
+                result.value = `${result.value}${this.chosenSuffix}`
+            } else {
+                result.value = result.value.toString()
+                let suffixInfo = this.getSuffixFromValue(result, this.sizeSuffixes)
+                if (suffixInfo.suffix) {
+                    this.chosenSuffix = suffixInfo.suffix
+                    result.value = result.value.slice(0, suffixInfo.indexOfSuffix)
+                }
+            }
+            return result
+        },
+
+        getSuffixFromValue(param, suffixes) {
+            let suffix = null
+            let indexOfSuffix = null
+            // get suffix from param.value string
+            for (let i = 0; i < suffixes.length; ++i) {
+                if (param.value.includes(suffixes[i])) {
+                    suffix = suffixes[i]
+                    indexOfSuffix = param.value.indexOf(suffix)
+                    break
+                }
+            }
+            return { suffix: suffix, indexOfSuffix: indexOfSuffix }
         },
 
         // ----------------------------------------------  Handle input change ---------------------------------------
@@ -522,6 +640,13 @@ export default {
 
             .v-input__append-inner {
                 padding-left: 0px !important;
+                .v-input__icon--clear {
+                    margin: 0px 4px;
+                    .v-icon {
+                        font-size: 16px !important;
+                        color: $error !important;
+                    }
+                }
             }
         }
         fieldset {

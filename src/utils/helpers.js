@@ -304,6 +304,47 @@ export function capitalizeFirstLetter(string) {
 export function isArrayEqual(x, y) {
     return isEmpty(xorWith(x, y, isEqual))
 }
+/**
+ * @param {Object} bytes byte be processed
+ * @return {String} returns converted value
+ */
+export function byteConverter(bytes) {
+    let val
+    const base = 1024
+    const i = Math.floor(Math.log(bytes) / Math.log(base))
+
+    if (i === 0) return { value: bytes, suffix: '' }
+
+    val = bytes / Math.pow(base, i)
+    let result = { value: Math.floor(val), suffix: ['', 'Ki', 'Mi', 'Gi', 'Ti'][i] }
+    return result
+}
+
+export function toBitsOrBytes(isIEC, suffix, val, reverse = false) {
+    let result = val
+    let base
+    switch (suffix) {
+        case 'Ki':
+        case 'k':
+            base = isIEC ? Math.pow(1024, 1) : Math.pow(1000, 1)
+            break
+        case 'Mi':
+        case 'M':
+            base = isIEC ? Math.pow(1024, 2) : Math.pow(1000, 2)
+            break
+        case 'Gi':
+        case 'G':
+            base = isIEC ? Math.pow(1024, 3) : Math.pow(1000, 3)
+            break
+        case 'Ti':
+        case 'T':
+            base = isIEC ? Math.pow(1024, 4) : Math.pow(1000, 4)
+            break
+        default:
+            base = isIEC ? Math.pow(1024, 0) : Math.pow(1000, 0)
+    }
+    return reverse ? Math.floor(result / base) : result * base
+}
 
 Object.defineProperties(Vue.prototype, {
     $help: {
@@ -326,6 +367,8 @@ Object.defineProperties(Vue.prototype, {
                 handleValue,
                 capitalizeFirstLetter,
                 isArrayEqual,
+                byteConverter,
+                toBitsOrBytes,
                 // lodash
                 isNaN,
                 isObject,
