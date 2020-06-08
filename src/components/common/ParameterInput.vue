@@ -263,7 +263,7 @@ export default {
             })
         },
         chosenDurationSuffix: function(newSuffix, oldSuffix) {
-            if (oldSuffix) {
+            if (oldSuffix && this.targetItem.value !== null) {
                 this.targetItem.value = this.suffixSwapper(
                     newSuffix,
                     oldSuffix,
