@@ -180,7 +180,7 @@
             dense
             type="password"
             :rules="rules.required"
-            autocomplete="off"
+            autocomplete="new-password"
             :disabled="targetItem.disabled"
             @input="handleChange"
         />
@@ -426,9 +426,9 @@ export default {
 
             if (this.required && isEmptyVal) {
                 return this.$t('errors.requiredInput', { inputName: this.targetItem.id })
-            } else if ((intType && !isValidInt) || val === '-') {
+            } else if ((intType && !isValidInt && !isEmptyVal) || val === '-') {
                 return this.$t('errors.nonInteger')
-            } else if (naturalType && !isValidNaturalNum) {
+            } else if (naturalType && !isValidNaturalNum && !isEmptyVal) {
                 return this.$t('errors.negativeNum')
             }
             return true

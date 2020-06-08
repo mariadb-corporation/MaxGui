@@ -59,9 +59,8 @@ router.beforeEach(async (to, from, next) => {
         }
     } else {
         /* user will be logged out if maxscale is restarted or maxgui is updated as jwt token will be expired
-                This action checking for available update after user is successfully authenticated
-                */
-        console.log('checkingForUpdate')
+           This action checking for available update after user is successfully authenticated
+        */
         store.dispatch('checkingForUpdate')
         // Public route
         next()
