@@ -20,7 +20,7 @@
     "reports": "report | reports",
     "statistics": "statistic | statistics",
     "settings": "setting | settings",
-
+    "not": "Not {action}",
     "users": "Users",
     "connections": "Connection | connections",
     "version": "Version",

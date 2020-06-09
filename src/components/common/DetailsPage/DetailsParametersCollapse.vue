@@ -22,7 +22,7 @@
                         :isTree="isTree"
                         @cell-mouseenter="showCellTooltip"
                     >
-                        <template v-slot:append-id>
+                        <template v-slot:header-append-id>
                             <span class="ml-1 color text-field-text">
                                 ({{ parametersTableRow.length }})
                             </span>

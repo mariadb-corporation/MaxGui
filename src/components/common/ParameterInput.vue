@@ -107,7 +107,7 @@
                     v-if="index === 1"
                     class="v-select__selection v-select__selection--comma color caption text-field-text "
                 >
-                    (+{{ targetItem.value.length - 1 }} others)
+                    (+{{ targetItem.value.length - 1 }} {{ $t('others') }}))
                 </span>
             </template>
         </v-select>
@@ -251,8 +251,8 @@ export default {
             },
             count: 0,
             durationSuffixes: ['ms', 's', 'm', 'h'],
-            chosenSuffix: null,
             sizeSuffixes: ['Ki', 'Mi', 'Gi', 'Ti', 'k', 'M', 'G', 'T'],
+            chosenSuffix: null,
         }
     },
     watch: {
@@ -278,15 +278,14 @@ export default {
                     )
                 }
             }
-            if (this.sizeSuffixes.includes(newSuffix)) {
-                let defaultSuffix = oldSuffix ? oldSuffix : undefined
+            // newSuffix === undefined when chosenSuffix is cleared
+            if (this.sizeSuffixes.includes(newSuffix) || newSuffix === undefined) {
                 this.targetItem.value = this.sizeSuffixSwapper(
                     newSuffix,
-                    defaultSuffix,
+                    oldSuffix,
                     this.targetItem.value
                 )
-            } else if (newSuffix === undefined) {
-                this.targetItem.value = this.item.value
+                this.handleChange()
             }
         },
     },
@@ -296,114 +295,6 @@ export default {
     },
 
     methods: {
-        sizeSuffixSwapper(to, from, val) {
-            console.log(to, from, val)
-            let currentVal = val
-            switch (to) {
-                case undefined:
-                case 'Ki':
-                case 'k':
-                case 'Mi':
-                case 'M':
-                case 'Gi':
-                case 'G':
-                case 'Ti':
-                case 'T': {
-                    const IEC = ['Ki', 'Mi', 'Gi', 'Ti']
-                    const prevIsSuffixIEC = IEC.includes(from) || from === undefined
-                    const nextIsSuffixIEC = IEC.includes(to)
-                    // first convert from oldSuffix to bytes or bits
-                    let value
-                    const reverse = true
-                    let isIEC
-                    // from IEC to SI
-                    if (prevIsSuffixIEC && !nextIsSuffixIEC) {
-                        // to bytes
-                        isIEC = true
-                        currentVal = this.$help.toBitsOrBytes(isIEC, from, currentVal)
-                        // bytes to bits
-                        currentVal = currentVal * 8
-                        // reverse from bits to target suffix
-                        isIEC = false
-                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
-                    }
-
-                    // from SI to IEC
-                    else if (!prevIsSuffixIEC && nextIsSuffixIEC) {
-                        // to bits
-                        isIEC = false
-                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
-
-                        // bits to bytes
-                        currentVal = currentVal / 8
-
-                        // reverse from bytes to target suffix
-                        isIEC = true
-                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
-                    }
-                    // from IEC to IEC
-                    else if (prevIsSuffixIEC && nextIsSuffixIEC) {
-                        isIEC = true
-                        // to bytes
-                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
-
-                        // reverse from bytes to target suffix
-                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
-                    }
-                    // from SI to SI
-                    else if (!prevIsSuffixIEC && !nextIsSuffixIEC) {
-                        isIEC = false
-                        // to bits
-                        currentVal = this.$help.toBitsOrBytes(isIEC, from, val)
-
-                        value = this.$help.toBitsOrBytes(isIEC, to, currentVal, reverse)
-                    }
-                    return value
-                }
-            }
-        },
-
-        durationSuffixSwapper(newSuffix, oldSuffix, val) {
-            switch (newSuffix) {
-                case 'ms':
-                    return this.toBaseMiliOrReverse(oldSuffix, val)
-                case 's':
-                case 'm':
-                case 'h': {
-                    const reverseBase = true
-                    // first convert to miliseconds from oldSuffix
-                    const baseMiliSec = this.toBaseMiliOrReverse(oldSuffix, val)
-                    // then reverse from baseMiliSec to newSuffix
-                    return this.toBaseMiliOrReverse(newSuffix, baseMiliSec, reverseBase)
-                }
-            }
-        },
-
-        /**
-         * @param {String} suffix duration suffix: s,m,h,ms
-         * @param {Object} val mode be processed. Default is null
-         * @param {Boolean} reverse
-         * @return {Number} returns converted value
-         */
-        toBaseMiliOrReverse(suffix, val, reverse) {
-            let result
-            switch (suffix) {
-                case 's':
-                    result = reverse ? val / 1000 : val * 1000
-                    break
-                case 'm':
-                    result = reverse ? val / (60 * 1000) : val * 60 * 1000
-                    break
-                case 'h':
-                    result = reverse ? val / (60 * 60 * 1000) : val * 60 * 60 * 1000
-                    break
-                case 'ms':
-                default:
-                    result = val
-            }
-            return Math.floor(result)
-        },
-
         /**
          * @param {Object} clonedItem cloned item that needs to be processed
          * @param {String} mode mode be processed. Default is null
@@ -414,8 +305,8 @@ export default {
                 case 'enum_mask':
                     return this.processEnumMask(clonedItem, mode)
                 case 'duration': {
-                    if (clonedItem.value) {
-                        return this.processDuration(clonedItem, mode)
+                    if (clonedItem.value !== null) {
+                        return this.processParamHasSuffix(clonedItem, mode)
                     } else {
                         //if there is no value, find unit props
                         this.chosenSuffix = clonedItem.unit ? clonedItem.unit : 'ms'
@@ -423,8 +314,8 @@ export default {
                     }
                 }
                 case 'size': {
-                    if (clonedItem.value) {
-                        return this.processSuffix(clonedItem, mode)
+                    if (clonedItem.value !== null) {
+                        return this.processParamHasSuffix(clonedItem, mode)
                     } else {
                         return clonedItem
                     }
@@ -452,58 +343,87 @@ export default {
         },
 
         /**
-         * @param {Object} item target item to be processed
+         * @param {Object} param target parameter to be processed
          * @param {String} mode mode be processed
-         * @return {Object} new processed item
+         * @return {Object} new processed parameter
+         * If mode is reverse, return new param object with value property includes chosen suffix
          */
-        processDuration(item, mode) {
-            let result = item
+        processParamHasSuffix(param, mode) {
+            let result = param
             if (mode === 'reverse') {
                 result.value = `${result.value}${this.chosenSuffix}`
             } else {
-                let suffixInfo = this.getSuffixFromValue(item, this.durationSuffixes)
-
+                typeof result.value !== 'string' && (result.value = result.value.toString())
+                let suffixInfo = this.$help.getSuffixFromValue(param, this.durationSuffixes)
                 if (suffixInfo.suffix) {
                     this.chosenSuffix = suffixInfo.suffix
                     result.value = result.value.slice(0, suffixInfo.indexOfSuffix)
+                } else if (param.unit) {
+                    this.chosenSuffix = param.unit
                 }
             }
             return result
         },
 
-        /**
-         * @param {Object} item target item to be processed
-         * @param {String} mode mode be processed
-         * @return {Object} new processed item
-         */
-        processSuffix(item, mode) {
-            let result = item
-
-            if (mode === 'reverse' && this.chosenSuffix) {
-                result.value = `${result.value}${this.chosenSuffix}`
-            } else {
-                result.value = result.value.toString()
-                let suffixInfo = this.getSuffixFromValue(result, this.sizeSuffixes)
-                if (suffixInfo.suffix) {
-                    this.chosenSuffix = suffixInfo.suffix
-                    result.value = result.value.slice(0, suffixInfo.indexOfSuffix)
+        sizeSuffixSwapper(to, from, val) {
+            let currentVal = val
+            switch (to) {
+                case undefined:
+                case 'Ki':
+                case 'k':
+                case 'Mi':
+                case 'M':
+                case 'Gi':
+                case 'G':
+                case 'Ti':
+                case 'T': {
+                    const IEC = [undefined, 'Ki', 'Mi', 'Gi', 'Ti']
+                    // from === null when switching from default 'byte' suffix to new suffix
+                    const prevIsSuffixIEC = IEC.includes(from) || from === null
+                    const nextIsSuffixIEC = IEC.includes(to)
+                    // first convert from oldSuffix to bytes or bits
+                    let value
+                    const reverse = true
+                    const IECToSI = prevIsSuffixIEC && !nextIsSuffixIEC
+                    const SITOIEC = !prevIsSuffixIEC && nextIsSuffixIEC
+                    // from IEC to SI or from SI to IEC
+                    if (IECToSI || SITOIEC) {
+                        // convert val to bytes or bits
+                        currentVal = this.$help.toBitsOrBytes(from, currentVal)
+                        // convert currentVal bytes to bits or bits to bytes
+                        currentVal = IECToSI ? currentVal * 8 : currentVal / 8
+                        // reverse from bytes or bits to target suffix
+                        value = this.$help.toBitsOrBytes(to, currentVal, reverse)
+                    }
+                    // from IEC to IEC or from SI to SI
+                    else if (
+                        (prevIsSuffixIEC && nextIsSuffixIEC) ||
+                        (!prevIsSuffixIEC && !nextIsSuffixIEC)
+                    ) {
+                        // convert val to bytes or bits
+                        currentVal = this.$help.toBitsOrBytes(from, val)
+                        // reverse from bytes or bits to target suffix
+                        value = this.$help.toBitsOrBytes(to, currentVal, reverse)
+                    }
+                    return value
                 }
             }
-            return result
         },
 
-        getSuffixFromValue(param, suffixes) {
-            let suffix = null
-            let indexOfSuffix = null
-            // get suffix from param.value string
-            for (let i = 0; i < suffixes.length; ++i) {
-                if (param.value.includes(suffixes[i])) {
-                    suffix = suffixes[i]
-                    indexOfSuffix = param.value.indexOf(suffix)
-                    break
+        durationSuffixSwapper(newSuffix, oldSuffix, val) {
+            switch (newSuffix) {
+                case 'ms':
+                    return this.$help.toBaseMiliOrReverse(oldSuffix, val)
+                case 's':
+                case 'm':
+                case 'h': {
+                    const reverseBase = true
+                    // first convert to miliseconds from oldSuffix
+                    const baseMiliSec = this.$help.toBaseMiliOrReverse(oldSuffix, val)
+                    // then reverse from baseMiliSec to newSuffix
+                    return this.$help.toBaseMiliOrReverse(newSuffix, baseMiliSec, reverseBase)
                 }
             }
-            return { suffix: suffix, indexOfSuffix: indexOfSuffix }
         },
 
         // ----------------------------------------------  Handle input change ---------------------------------------
@@ -519,13 +439,10 @@ export default {
                 _Handling edge case, either socket or port needs to be defined,
                 that leads to the issue when empty port or empty socket will be
                 treated as string. But maxscale wants it null if it is empty.
-                _Some parameter types such as count or int, when value is empty, it should be also converted to null.
             */
             if (targetItemCloned.value === '') {
-                // socket is type string
-                const types = ['count', 'int']
                 targetItemCloned.id === 'socket' ||
-                    (types.includes(targetItemCloned.type) && (targetItemCloned.value = null))
+                    (targetItemCloned.id === 'port' && (targetItemCloned.value = null))
             }
 
             this.$emit('on-input-change', targetItemCloned, changed)
@@ -641,10 +558,17 @@ export default {
             .v-input__append-inner {
                 padding-left: 0px !important;
                 .v-input__icon--clear {
-                    margin: 0px 4px;
+                    margin: 0px 2px;
+                    &:hover {
+                        opacity: 1;
+                    }
                     .v-icon {
                         font-size: 16px !important;
                         color: $error !important;
+                        opacity: 0.7;
+                        &:hover {
+                            opacity: 1;
+                        }
                     }
                 }
             }

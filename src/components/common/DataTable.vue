@@ -35,7 +35,7 @@
                         >
                             <div class="d-inline-flex justify-center align-center">
                                 <span v-if="header.text !== 'Action'">{{ header.text }}</span>
-                                <slot :name="`append-${header.value}`"> </slot>
+                                <slot :name="`header-append-${header.value}`"> </slot>
                                 <v-icon
                                     v-if="header.sortable !== false"
                                     size="14"
@@ -188,7 +188,7 @@ _data props as array of objects, each object must has either item.nodeId:Number 
 SLOTS available for this component:
 _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
-_slot :name="`append-${header.value}`"
+_slot :name="`header-append-${header.value}`"
 */
 export default {
     name: 'data-table',

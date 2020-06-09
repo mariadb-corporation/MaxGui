@@ -304,6 +304,7 @@ export function capitalizeFirstLetter(string) {
 export function isArrayEqual(x, y) {
     return isEmpty(xorWith(x, y, isEqual))
 }
+
 /**
  * @param {Object} bytes byte be processed
  * @return {String} returns converted value
@@ -320,30 +321,75 @@ export function byteConverter(bytes) {
     return result
 }
 
-export function toBitsOrBytes(isIEC, suffix, val, reverse = false) {
+export function toBitsOrBytes(suffix, val, reverse = false) {
     let result = val
     let base
     switch (suffix) {
         case 'Ki':
         case 'k':
-            base = isIEC ? Math.pow(1024, 1) : Math.pow(1000, 1)
+            base = Math.pow(1024, 1)
             break
         case 'Mi':
         case 'M':
-            base = isIEC ? Math.pow(1024, 2) : Math.pow(1000, 2)
+            base = Math.pow(1024, 2)
             break
         case 'Gi':
         case 'G':
-            base = isIEC ? Math.pow(1024, 3) : Math.pow(1000, 3)
+            base = Math.pow(1024, 3)
             break
         case 'Ti':
         case 'T':
-            base = isIEC ? Math.pow(1024, 4) : Math.pow(1000, 4)
+            base = Math.pow(1024, 4)
             break
         default:
-            base = isIEC ? Math.pow(1024, 0) : Math.pow(1000, 0)
+            base = Math.pow(1024, 0)
     }
     return reverse ? Math.floor(result / base) : result * base
+}
+
+/**
+ * @param {String} suffix duration suffix: s,m,h,ms
+ * @param {Object} val mode be processed. Default is null
+ * @param {Boolean} reverse
+ * @return {Number} returns converted value
+ */
+export function toBaseMiliOrReverse(suffix, val, reverse) {
+    let result
+    switch (suffix) {
+        case 's':
+            result = reverse ? val / 1000 : val * 1000
+            break
+        case 'm':
+            result = reverse ? val / (60 * 1000) : val * 60 * 1000
+            break
+        case 'h':
+            result = reverse ? val / (60 * 60 * 1000) : val * 60 * 60 * 1000
+            break
+        case 'ms':
+        default:
+            result = val
+    }
+    return Math.floor(result)
+}
+
+/**
+ * @param {Object} param parameter object must contain string value property
+ * @param {Array} suffixes an array of suffixes name eg: ['ms', 's', 'm', 'h']
+ * @return {Object} returns object info {suffix:suffix, indexOfSuffix: indexOfSuffix}
+ * suffix as suffix name, indexOfSuffix as the begin index of that suffix in param.value
+ */
+export function getSuffixFromValue(param, suffixes) {
+    let suffix = null
+    let indexOfSuffix = null
+    // get suffix from param.value string
+    for (let i = 0; i < suffixes.length; ++i) {
+        if (param.value.includes(suffixes[i])) {
+            suffix = suffixes[i]
+            indexOfSuffix = param.value.indexOf(suffix)
+            break
+        }
+    }
+    return { suffix: suffix, indexOfSuffix: indexOfSuffix }
 }
 
 Object.defineProperties(Vue.prototype, {
@@ -367,8 +413,11 @@ Object.defineProperties(Vue.prototype, {
                 handleValue,
                 capitalizeFirstLetter,
                 isArrayEqual,
+                getSuffixFromValue,
                 byteConverter,
+                toBaseMiliOrReverse,
                 toBitsOrBytes,
+
                 // lodash
                 isNaN,
                 isObject,

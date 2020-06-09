@@ -6,18 +6,18 @@
         :search="searchKeyWord"
         sortBy="groupId"
     >
-        <template v-slot:append-groupId>
-            <span class="ml-1 color text-field-text"> ({{ allMonitors.length }}) </span>
+        <template v-slot:header-append-groupId>
+            <span class="ml-1 color text-field-text"> ({{ allLinkedMonitors }}) </span>
         </template>
-        <template v-slot:append-id>
+        <template v-slot:header-append-id>
             <span class="ml-1 color text-field-text"> ({{ allServers.length }}) </span>
         </template>
-        <template v-slot:append-serviceIds>
+        <template v-slot:header-append-serviceIds>
             <span class="ml-1 color text-field-text"> ({{ allLinkedServices }}) </span>
         </template>
         <template v-slot:groupId="{ data: { item: { groupId } } }">
             <router-link
-                v-if="groupId !== 'Not monitored'"
+                v-if="groupId !== $t('not', { action: 'monitored' })"
                 :to="`/dashboard/monitors/${groupId}`"
                 class="no-underline"
             >
@@ -140,6 +140,7 @@ export default {
                 { text: 'Services', value: 'serviceIds' },
             ],
             allLinkedServices: 0,
+            allLinkedMonitors: 0,
         }
     },
     computed: {
@@ -154,6 +155,7 @@ export default {
                 let tableRows = []
                 let allServers = this.$help.cloneDeep(this.allServers)
                 let totalServices = []
+                let totalMonitors = []
                 for (let index = 0; index < allServers.length; ++index) {
                     const {
                         id,
@@ -173,7 +175,9 @@ export default {
                         ? allServices.map(item => `${item.id}`)
                         : this.$t('noEntity', { entityName: 'services' })
                     // get total number of unique services
-                    totalServices = [...totalServices, ...serviceIds]
+                    if (typeof serviceIds !== 'string')
+                        totalServices = [...totalServices, ...serviceIds]
+
                     let uniqueSet = new Set(totalServices)
                     this.setTotalNumOfLinkedServices([...uniqueSet].length)
 
@@ -189,14 +193,21 @@ export default {
                     if (linkedMonitors.length) {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
+
+                        totalMonitors.push(monitorLinked)
+
                         row.groupId = monitorLinked.id // aka monitorId
                         row.monitorState = `${monitorLinked.attributes.state}`
                     } else {
-                        row.groupId = 'Not monitored'
+                        row.groupId = this.$t('not', { action: 'monitored' })
                         row.monitorState = ''
                     }
                     tableRows.push(row)
                 }
+                // set total number of monitors
+                let uniqueMonitorSet = new Set(totalMonitors)
+                this.setTotalNumOfLinkedMonitors([...uniqueMonitorSet].length)
+
                 return tableRows
             }
 
@@ -207,6 +218,9 @@ export default {
     methods: {
         setTotalNumOfLinkedServices(total) {
             this.allLinkedServices = total
+        },
+        setTotalNumOfLinkedMonitors(total) {
+            this.allLinkedMonitors = total
         },
     },
 }

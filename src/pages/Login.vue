@@ -42,7 +42,7 @@
                                 <v-text-field
                                     id="password"
                                     v-model="credential.password"
-                                    :append-icon="isPwdVisible ? 'visibility_off' : 'visibility'"
+                                    :icon="isPwdVisible ? 'visibility_off' : 'visibility'"
                                     :rules="rules.password"
                                     :error-messages="showEmptyMessage ? ' ' : errorMessage"
                                     :type="isPwdVisible ? 'text' : 'password'"

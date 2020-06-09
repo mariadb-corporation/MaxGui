@@ -16,6 +16,10 @@
                 status
             </icon-sprite-sheet>
         </template>
+
+        <template v-slot:header-append-serverIds>
+            <span class="ml-1 color text-field-text"> ({{ allLinkedServers }}) </span>
+        </template>
         <template v-slot:serverIds="{ data: { item: { serverIds }, i } }">
             <fragment v-if="typeof serverIds === 'string'">
                 <span>{{ serverIds }} </span>
@@ -95,6 +99,7 @@ export default {
                 { text: 'Total Sessions', value: 'total_connections' },
                 { text: 'Servers', value: 'serverIds' },
             ],
+            allLinkedServers: 0,
         }
     },
 
@@ -115,6 +120,7 @@ export default {
             if (this.allServices) {
                 let itemsArr = []
                 const { allServices } = this
+                let totalUniqueServers = []
                 for (let n = allServices.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row
@@ -134,6 +140,14 @@ export default {
                     let serverIds = allServers.length
                         ? allServers.map(item => `${item.id}`)
                         : this.$t('noEntity', { entityName: 'servers' })
+
+                    // get total number of unique servers
+                    if (typeof serverIds !== 'string')
+                        totalUniqueServers = [...totalUniqueServers, ...serverIds]
+
+                    let uniqueServerSet = new Set(totalUniqueServers)
+                    this.setTotalNumOfLinkedServers([...uniqueServerSet].length)
+
                     let row = {
                         id: id,
                         state: state,
@@ -147,6 +161,11 @@ export default {
                 return itemsArr
             }
             return []
+        },
+    },
+    methods: {
+        setTotalNumOfLinkedServers(total) {
+            this.allLinkedServers = total
         },
     },
 }
