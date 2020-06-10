@@ -54,6 +54,7 @@ module.exports = {
                 maxSize: 250000,
             },
         },
+
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },
@@ -71,7 +72,7 @@ module.exports = {
             ],
         },
         devServer: devServer,
-        devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
+        devtool: process.env.NODE_ENV === 'development' ? 'source-map' : 'none',
     },
 
     // css: {

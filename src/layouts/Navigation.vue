@@ -39,9 +39,9 @@
                 <v-divider :key="`divider-${item.name}`"></v-divider>
             </template>
         </v-list>
-        <div class="version caption text-center font-weight-bold white--text">
+        <!-- <div class="version caption text-center font-weight-bold white--text">
             {{ version }}
-        </div>
+        </div> -->
     </v-navigation-drawer>
 </template>
 

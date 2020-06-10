@@ -12,8 +12,6 @@
  */
 import Vue from 'vue'
 
-export const isNaN = require('lodash/isNaN')
-export const isObject = require('lodash/isObject')
 export const isEmpty = require('lodash/isEmpty')
 export const isNull = require('lodash/isNull')
 export const isFunction = require('lodash/isFunction')
@@ -419,8 +417,6 @@ Object.defineProperties(Vue.prototype, {
                 toBitsOrBytes,
 
                 // lodash
-                isNaN,
-                isObject,
                 isEmpty,
                 isNull,
                 isFunction,
