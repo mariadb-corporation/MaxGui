@@ -1,7 +1,8 @@
 {
     "name": "maxgui",
-    "version": "0.1.0",
-    "private": true,
+    "version": "1.0.0",
+    "description": "The graphical user interface for MaxScale's admin tool ",
+    "author": "MariaDB Corporation Ab",
     "scripts": {
         "serve": "vue-cli-service serve --mode development",
         "build": "vue-cli-service build",
