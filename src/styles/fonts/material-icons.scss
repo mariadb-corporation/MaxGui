@@ -1,40 +1,53 @@
+/*
+ * Copyright (c) 2020 MariaDB Corporation Ab
+ *
+ * Use of this software is governed by the Business Source License included
+ * in the LICENSE.TXT file and at www.mariadb.com/bsl11.
+ *
+ * Change Date: 2024-07-01
+ *
+ * On the date above, in accordance with the Business Source License, use
+ * of this software will be governed by version 2 or later of the General
+ * Public License.
+ */
+
 /* fallback */
 @font-face {
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url("assets/fonts/material-icons/materialicons.woff2") format('woff2');
-  }
-  /* fallback */
-  @font-face {
+    src: url('assets/fonts/material-icons/materialicons.woff2') format('woff2');
+}
+/* fallback */
+@font-face {
     font-family: 'Material Icons Outlined';
     font-style: normal;
     font-weight: 400;
-    src: url("assets/fonts/material-icons/materialiconsoutlined.woff2") format('woff2');
-  }
-  /* fallback */
-  @font-face {
+    src: url('assets/fonts/material-icons/materialiconsoutlined.woff2') format('woff2');
+}
+/* fallback */
+@font-face {
     font-family: 'Material Icons Round';
     font-style: normal;
     font-weight: 400;
-    src: url("assets/fonts/material-icons/materialiconsround.woff2") format('woff2');
-  }
-  /* fallback */
-  @font-face {
+    src: url('assets/fonts/material-icons/materialiconsround.woff2') format('woff2');
+}
+/* fallback */
+@font-face {
     font-family: 'Material Icons Sharp';
     font-style: normal;
     font-weight: 400;
-    src: url("assets/fonts/material-icons/materialiconssharp.woff2") format('woff2');
-  }
-  /* fallback */
-  @font-face {
+    src: url('assets/fonts/material-icons/materialiconssharp.woff2') format('woff2');
+}
+/* fallback */
+@font-face {
     font-family: 'Material Icons Two Tone';
     font-style: normal;
     font-weight: 400;
-    src: url("assets/fonts/material-icons/materialiconstwotone.woff2") format('woff2');
-  }
-  
-  .material-icons {
+    src: url('assets/fonts/material-icons/materialiconstwotone.woff2') format('woff2');
+}
+
+.material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
@@ -48,9 +61,9 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
-  
-  .material-icons-outlined {
+}
+
+.material-icons-outlined {
     font-family: 'Material Icons Outlined';
     font-weight: normal;
     font-style: normal;
@@ -64,9 +77,9 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
-  
-  .material-icons-round {
+}
+
+.material-icons-round {
     font-family: 'Material Icons Round';
     font-weight: normal;
     font-style: normal;
@@ -80,9 +93,9 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
-  
-  .material-icons-sharp {
+}
+
+.material-icons-sharp {
     font-family: 'Material Icons Sharp';
     font-weight: normal;
     font-style: normal;
@@ -96,9 +109,9 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
-  
-  .material-icons-two-tone {
+}
+
+.material-icons-two-tone {
     font-family: 'Material Icons Two Tone';
     font-weight: normal;
     font-style: normal;
@@ -112,4 +125,4 @@
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
-  }
+}

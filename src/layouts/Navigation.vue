@@ -3,7 +3,7 @@
         :mini-variant.sync="isMini"
         color="#424F62"
         class="main-nav"
-        width="251"
+        width="200"
         mini-variant-width="50"
         fixed
         left

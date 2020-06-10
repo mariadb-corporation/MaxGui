@@ -12,8 +12,14 @@
             :class="[hover && 'pointer detail-overview__card--hover', ...cardClass]"
             height="75"
             outlined
-            @mouseover="e => hoverHandle(e)"
-            @mouseleave="e => hoverHandle(e)"
+            v-on="
+                hoverableCard
+                    ? {
+                          mouseenter: e => hoverHandle(e),
+                          mouseleave: e => hoverHandle(e),
+                      }
+                    : null
+            "
         >
             <slot name="card-body"></slot>
         </v-card>
@@ -48,12 +54,8 @@ export default {
     },
     methods: {
         hoverHandle(e) {
-            let self = this
-            if (self.hoverableCard) {
-                if (e.type === 'mouseover') self.hover = true
-                else self.hover = false
-                self.$emit('card-hover', self.hover)
-            }
+            this.hover = e.type === 'mouseenter'
+            this.$emit('card-hover', this.hover)
         },
     },
 }

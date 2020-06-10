@@ -92,12 +92,12 @@
                                     $t('signIn')
                                 }}</span>
                             </v-btn>
-                            <a
+                            <!-- <a
                                 href
                                 style="font-size:0.75rem;text-decoration: none;"
                                 class="d-block mx-auto "
                                 >{{ $t('forgotPassword') }}
-                            </a>
+                            </a> -->
                         </div>
                     </v-card-actions>
                 </v-card>

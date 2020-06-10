@@ -28,9 +28,9 @@
                         </v-col>
                     </v-tab-item>
 
-                    <v-tab-item class="pt-5">
+                    <!-- <v-tab-item class="pt-5">
                         Empty
-                    </v-tab-item>
+                    </v-tab-item> -->
                 </v-tabs-items>
             </v-tabs>
         </v-sheet>
@@ -65,7 +65,7 @@ export default {
             currentActiveTab: null,
             tabs: [
                 { name: this.$t('maxScaleParameters') },
-                { name: this.$t('usersAndPermissions') },
+                // { name: this.$t('usersAndPermissions') },
             ],
             moduleParameters: [],
             loadingModuleParams: true,

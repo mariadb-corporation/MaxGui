@@ -1,8 +1,14 @@
 <template>
     <div
         :class="wrapperClass"
-        @mouseover="() => $help.isFunction(onEdit) && (showEditBtn = true)"
-        @mouseleave="() => $help.isFunction(onEdit) && (showEditBtn = false)"
+        v-on="
+            $help.isFunction(onEdit)
+                ? {
+                      mouseenter: e => (showEditBtn = true),
+                      mouseleave: e => (showEditBtn = false),
+                  }
+                : null
+        "
     >
         <div class="mb-1 d-flex align-center">
             <div class="d-flex align-center" :class="titleWrapperClass">

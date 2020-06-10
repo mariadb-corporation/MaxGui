@@ -12,7 +12,7 @@
  */
 // Sidebar components
 import Dashboard from 'pages/Dashboard'
-import Reports from 'pages/Reports'
+// import Reports from 'pages/Reports'
 import Settings from 'pages/Settings'
 import tabRoutes from './tabRoutes'
 
@@ -32,17 +32,17 @@ export default [
         children: tabRoutes,
     },
 
-    {
-        path: '/reports',
-        component: Reports,
-        meta: {
-            requiresAuth: true,
-            layout: 'app-layout',
-            size: 22,
-            icon: '$vuetify.icons.reports',
-        },
-        name: 'reports',
-    },
+    // {
+    //     path: '/reports',
+    //     component: Reports,
+    //     meta: {
+    //         requiresAuth: true,
+    //         layout: 'app-layout',
+    //         size: 22,
+    //         icon: '$vuetify.icons.reports',
+    //     },
+    //     name: 'reports',
+    // },
 
     {
         path: '/settings',

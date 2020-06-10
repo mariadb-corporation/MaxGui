@@ -19,18 +19,21 @@
             absolute
             inset
         >
-            <span class=" footer-text color text-code-color align-center text-truncate">
-                MariaDB Corporation | Copyright © 2020 MariaDB ab. All rights reserved. |
+            <span class="footer-text color text-code-color align-center text-truncate">
+                MariaDB Corporation <span class="footer__separator" />
+                Copyright © 2020 MariaDB ab. All rights reserved.
+                <span class="footer__separator" />
                 <a target="_blank" rel="noopener" href="https://mariadb.com/privacy-policy/">
                     Privacy Policy</a
                 >
-                |
+                <span class="footer__separator" />
                 <a
                     target="_blank"
                     rel="noopener"
                     href="https://mariadb.com/product-terms-condition/"
-                    >Terms of Use</a
                 >
+                    Terms of Use
+                </a>
             </span>
         </v-footer>
     </fragment>
@@ -83,5 +86,9 @@ export default {
 .fade-enter,
 .fade-leave-active {
     opacity: 0;
+}
+.footer__separator::after {
+    content: '|';
+    margin: 0 10px;
 }
 </style>

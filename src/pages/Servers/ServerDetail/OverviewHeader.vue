@@ -34,7 +34,6 @@
                         </v-btn>
                     </div>
                 </fragment>
-                <!--  TODO: Determine server healthy to display correct text color -->
                 <span
                     v-else-if="name === 'state'"
                     class="detail-overview__card__value text-no-wrap body-2"

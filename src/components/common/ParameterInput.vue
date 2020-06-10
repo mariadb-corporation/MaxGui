@@ -559,9 +559,6 @@ export default {
                 padding-left: 0px !important;
                 .v-input__icon--clear {
                     margin: 0px 2px;
-                    &:hover {
-                        opacity: 1;
-                    }
                     .v-icon {
                         font-size: 16px !important;
                         color: $error !important;

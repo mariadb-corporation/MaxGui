@@ -1,5 +1,4 @@
 <template>
-    <!-- TODO: animation for dynamicWidth feature -->
     <base-dialog
         ref="baseDialog"
         v-model="computeShowDialog"

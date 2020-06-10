@@ -3,7 +3,7 @@
         <v-toolbar-title class="headline">
             <router-link to="/dashboard/servers">
                 <img src="@/assets/logo.svg" alt="MariaDB Logo" />
-                <span class="product-name font-weight-medium  white--text">
+                <span class="product-name ft-azo-sans font-weight-medium  white--text">
                     {{ $t('productName') }}
                 </span>
             </router-link>
@@ -23,7 +23,7 @@
                     <v-icon class="mr-1 " size="30">
                         $vuetify.icons.user
                     </v-icon>
-                    <span class="user-name text-capitalize font-weight-regular">
+                    <span class="user-name ft-adrianna text-capitalize font-weight-regular">
                         {{ user ? user.name : '' }}
                     </span>
 
@@ -85,7 +85,7 @@ export default {
 .header {
     background: linear-gradient(to right, #013545 0%, #064251 100%);
     ::v-deep .v-toolbar__content {
-        padding: 4px 12px;
+        padding: 4px 10px;
     }
 }
 
@@ -108,7 +108,6 @@ export default {
 }
 .user-name {
     font-size: 1rem;
-    font-family: 'adrianna', sans-serif;
 }
 .arrow-up {
     transform: rotate(-180deg);

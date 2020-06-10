@@ -159,7 +159,6 @@ export default {
         }
     },
     computed: {
-        // TODO: Determine server healthy
         serverHealthy: function() {
             switch (this.$help.serverStateIcon(this.currentServer.attributes.state)) {
                 case 0:
