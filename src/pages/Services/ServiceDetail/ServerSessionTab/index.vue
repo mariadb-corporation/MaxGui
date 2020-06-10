@@ -262,7 +262,7 @@ export default {
                         let serversRelationship = []
                         for (let i = 0; i < ori.length; ++i) {
                             if (ori[i].id !== self.targetItem.id) {
-                                let cloneO = self.$help.cloneDeep(ori[i])
+                                let cloneO = self.$help.lodash.cloneDeep(ori[i])
                                 delete cloneO.state
                                 serversRelationship.push(cloneO)
                             }
@@ -280,7 +280,7 @@ export default {
                     {
                         const self = this
                         const allServers = await self.getServerState()
-                        let availableEntities = self.$help.xorWith(
+                        let availableEntities = self.$help.lodash.xorWith(
                             allServers,
                             self.serverStateTableRow,
                             (a, b) => a.id === b.id
@@ -292,7 +292,7 @@ export default {
                     {
                         const self = this
                         await self.fetchAllFilters()
-                        let availableEntities = self.$help.xorWith(
+                        let availableEntities = self.$help.lodash.xorWith(
                             self.allFilters,
                             self.filtersLinked,
                             (a, b) => a.id === b.id
@@ -325,7 +325,7 @@ export default {
             switch (self.targetSelectItemType) {
                 case 'filters':
                     {
-                        let clone = self.$help.cloneDeep(self.filtersLinked)
+                        let clone = self.$help.lodash.cloneDeep(self.filtersLinked)
                         await self.dispatchRelationshipUpdate('filters', [
                             ...clone,
                             ...self.targetItem,
@@ -339,7 +339,7 @@ export default {
                         let merge = [...ori, ...self.targetItem]
                         let serversRelationship = []
                         for (let i = 0; i < merge.length; ++i) {
-                            let cloneO = self.$help.cloneDeep(merge[i])
+                            let cloneO = self.$help.lodash.cloneDeep(merge[i])
                             delete cloneO.state
                             serversRelationship.push(cloneO)
                         }

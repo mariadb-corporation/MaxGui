@@ -85,7 +85,7 @@ export default {
             let isEqual = false
             if (this.multiple)
                 isEqual = this.$help.isArrayEqual(this.selectedItems, this.defaultItems)
-            else isEqual = this.$help.isEqual(this.selectedItems, this.defaultItems)
+            else isEqual = this.$help.lodash.isEqual(this.selectedItems, this.defaultItems)
             return isEqual
         },
     },

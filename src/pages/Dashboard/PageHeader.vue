@@ -15,7 +15,10 @@
                         class="field-text-info color text-field-text text-capitalize"
                     >
                         {{ $t('uptime') }}
-                        {{ [uptime, 'seconds'] | duration('format') }}
+                        {{
+                            [uptime, 'seconds']
+                                | duration('format', 'Y [years] M [months] D [days] hh:mm:ss')
+                        }}
                     </span>
 
                     <v-menu
@@ -42,14 +45,7 @@
                             <span class="d-block mb-1 body-2 font-weight-bold text-capitalize">
                                 {{ $t('aboutMaxScale') }}
                             </span>
-                            <div
-                                v-for="(value, name) in $help.pick(maxScaleOverviewInfo, [
-                                    'commit',
-                                    'started_at',
-                                    'activated_at',
-                                ])"
-                                :key="name"
-                            >
+                            <div v-for="(value, name) in getMaxScaleInfo" :key="name">
                                 <span class="d-flex body-2">
                                     <span class="text-capitalize" style="width:35%">
                                         {{ name.split('_').join(' ') }}
@@ -76,11 +72,14 @@
                                         </span>
                                     </v-tooltip>
                                     <div
-                                        v-else-if="name === 'started_at' || name === 'activated_at'"
+                                        v-else-if="
+                                            value &&
+                                                (name === 'started_at' || name === 'activated_at')
+                                        "
                                         style="width:65%;"
                                         class="d-inline-block "
                                     >
-                                        {{ value | moment('MM.DD.YYYY HH:mm:ss') }}
+                                        {{ $help.formatValue(value, 'MM.DD.YYYY HH:mm:ss') }}
                                     </div>
                                     <div v-else style="width:65%;" class="d-inline-block ">
                                         {{ value }}
@@ -138,6 +137,14 @@ export default {
                     : ''
             return `MariaDB ${this.$t('productName')} ${version}`
         },
+        getMaxScaleInfo: function() {
+            const { commit, started_at, activated_at } = this.maxScaleOverviewInfo
+            return {
+                commit,
+                started_at,
+                activated_at,
+            }
+        },
     },
     watch: {
         isCopied: function(newVal) {
@@ -155,7 +162,7 @@ export default {
         },
         'maxScaleOverviewInfo.uptime': function(val) {
             let self = this
-            self.uptime = val
+            self.uptime = val //548888888
             self.workerInit()
         },
     },
@@ -173,6 +180,7 @@ export default {
         updateUpTime() {
             this.uptime = this.uptime + 1
         },
+
         workerInit() {
             let self = this
             self.worker = new Worker()

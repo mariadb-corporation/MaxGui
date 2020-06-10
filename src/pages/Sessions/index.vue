@@ -78,7 +78,7 @@ export default {
             if (this.allSessions && this.allServices) {
                 let itemsArr = []
 
-                let allSessions = this.$help.cloneDeep(this.allSessions)
+                let allSessions = this.$help.lodash.cloneDeep(this.allSessions)
                 for (let n = allSessions.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row

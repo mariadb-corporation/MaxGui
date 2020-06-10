@@ -11,13 +11,7 @@
  * Public License.
  */
 import Vue from 'vue'
-import {
-    dynamicColors,
-    strReplaceAt,
-    orderBy,
-    isFunction,
-    capitalizeFirstLetter,
-} from 'utils/helpers'
+import { dynamicColors, strReplaceAt, isFunction, capitalizeFirstLetter } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -45,8 +39,8 @@ export default {
     actions: {
         async fetchAllServers({ commit }) {
             let res = await Vue.axios.get(`/servers`)
-            let newArr = res.data.data.map((server, i) => ({ ...server, idNum: i }))
-            let sorted = orderBy(newArr, 'idNum', 'desc')
+            // reverse array, latest will be last
+            let sorted = res.data.data.reverse()
             await commit('setServers', sorted)
         },
         async fetchServerById({ commit, state }, id) {

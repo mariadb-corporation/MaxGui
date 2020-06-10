@@ -90,7 +90,7 @@ export default {
         },
         async fetchMonitorDiagnostics() {
             let self = this
-            if (!self.$help.isEmpty(self.currentServer.relationships.monitors)) {
+            if (!self.$help.lodash.isEmpty(self.currentServer.relationships.monitors)) {
                 const { relationships: { monitors = {} } = {} } = self.currentServer
 
                 let res = await this.axios.get(

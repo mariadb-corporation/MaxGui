@@ -13,7 +13,7 @@
 // Sidebar components
 import Dashboard from 'pages/Dashboard'
 // import Reports from 'pages/Reports'
-import Settings from 'pages/Settings'
+const Settings = () => import(/* webpackChunkName: "sidebar-routes-settings" */ 'pages/Settings')
 import tabRoutes from './tabRoutes'
 
 export default [

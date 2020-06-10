@@ -257,7 +257,7 @@ export default {
             //rowspan feature
             currentPageItems: null,
             // this is needed when using custom activator in v-menu.
-            componentId: this.$help.uniqueId('component_v-menu_'),
+            componentId: this.$help.lodash.uniqueId('component_v-menu_'),
         }
     },
     computed: {
@@ -266,7 +266,7 @@ export default {
             const self = this
             let result = self.data
             if (!self.keepPrimitiveValue) {
-                result = self.$help.cloneDeep(self.data)
+                result = self.$help.lodash.cloneDeep(self.data)
                 for (let i = 0; i < result.length; ++i) {
                     let obj = result[i]
                     Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
@@ -474,7 +474,7 @@ export default {
          */
         processingRowspanTable(data, mode) {
             if (mode === 'mutate') this.handleDisplayRowspan(data)
-            else return this.handleDisplayRowspan(this.$help.cloneDeep(data))
+            else return this.handleDisplayRowspan(this.$help.lodash.cloneDeep(data))
         },
 
         /**

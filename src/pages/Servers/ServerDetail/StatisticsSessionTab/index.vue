@@ -163,9 +163,9 @@ export default {
 
     computed: {
         statisticsTableRow: function() {
-            let currentServer = this.$help.cloneDeep(this.currentServer)
+            let currentServer = this.$help.lodash.cloneDeep(this.currentServer)
 
-            if (!this.$help.isEmpty(currentServer)) {
+            if (!this.$help.lodash.isEmpty(currentServer)) {
                 // Set fallback null value if properties doesnt exist
                 const { attributes: { statistics = null } = {} } = currentServer
                 const keepPrimitiveValue = false
@@ -199,7 +199,7 @@ export default {
                         let servicesRelationship = []
                         for (let i = 0; i < ori.length; ++i) {
                             if (ori[i].id !== self.targetItem.id) {
-                                let cloneO = self.$help.cloneDeep(ori[i])
+                                let cloneO = self.$help.lodash.cloneDeep(ori[i])
                                 delete cloneO.state
                                 servicesRelationship.push(cloneO)
                             }
@@ -218,7 +218,7 @@ export default {
                     {
                         const self = this
                         const allServices = await self.getServiceState()
-                        let availableEntities = self.$help.xorWith(
+                        let availableEntities = self.$help.lodash.xorWith(
                             allServices,
                             self.serviceTableRow,
                             (a, b) => a.id === b.id
@@ -254,7 +254,7 @@ export default {
                         let merge = [...ori, ...self.targetItem]
                         let servicesRelationship = []
                         for (let i = 0; i < merge.length; ++i) {
-                            let cloneO = self.$help.cloneDeep(merge[i])
+                            let cloneO = self.$help.lodash.cloneDeep(merge[i])
                             delete cloneO.state
                             servicesRelationship.push(cloneO)
                         }

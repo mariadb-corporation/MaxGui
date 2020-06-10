@@ -276,6 +276,7 @@ export default {
                         oldSuffix,
                         this.targetItem.value
                     )
+                    this.handleChange()
                 }
             }
             // newSuffix === undefined when chosenSuffix is cleared
@@ -291,7 +292,7 @@ export default {
     },
 
     async created() {
-        this.targetItem = this.processItem(this.$help.cloneDeep(this.item))
+        this.targetItem = this.processItem(this.$help.lodash.cloneDeep(this.item))
     },
 
     methods: {
@@ -351,7 +352,9 @@ export default {
         processParamHasSuffix(param, mode) {
             let result = param
             if (mode === 'reverse') {
-                result.value = `${result.value}${this.chosenSuffix}`
+                result.value = this.chosenSuffix
+                    ? `${result.value}${this.chosenSuffix}`
+                    : parseInt(result.value)
             } else {
                 typeof result.value !== 'string' && (result.value = result.value.toString())
                 let suffixInfo = this.$help.getSuffixFromValue(param, this.durationSuffixes)
@@ -431,10 +434,10 @@ export default {
             const self = this
             /*reverse processing item to original type*/
             let targetItemCloned = this.processItem(
-                this.$help.cloneDeep(self.targetItem),
+                this.$help.lodash.cloneDeep(self.targetItem),
                 'reverse'
             )
-            const changed = !this.$help.isEqual(targetItemCloned, self.item)
+            const changed = !this.$help.lodash.isEqual(targetItemCloned, self.item)
             /*
                 _Handling edge case, either socket or port needs to be defined,
                 that leads to the issue when empty port or empty socket will be

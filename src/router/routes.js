@@ -10,13 +10,16 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Login from 'pages/Login'
 import sideBarRoutes from './sideBarRoutes'
-import ServiceDetail from 'pages/Services/ServiceDetail'
-import ServerDetail from 'pages/Servers/ServerDetail'
-import MonitorDetail from 'pages/Monitors/MonitorDetail'
-import NotFound404 from 'pages/NotFound404'
+import Login from 'pages/Login'
 
+const ServerDetail = () =>
+    import(/* webpackChunkName: "service-details-page" */ 'pages/Servers/ServerDetail')
+const ServiceDetail = () =>
+    import(/* webpackChunkName: "service-details-page" */ 'pages/Services/ServiceDetail')
+const MonitorDetail = () =>
+    import(/* webpackChunkName: "service-details-page" */ 'pages/Monitors/MonitorDetail')
+const NotFound404 = () => import(/* webpackChunkName: "not-found-page" */ 'pages/NotFound404')
 export const routes = [
     {
         path: '/',

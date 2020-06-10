@@ -107,7 +107,7 @@ export default {
                     bottom: 0,
                 },
             },
-            uniqueTooltipId: this.$help.uniqueId('tooltip_'),
+            uniqueTooltipId: this.$help.lodash.uniqueId('tooltip_'),
         }
     },
     watch: {

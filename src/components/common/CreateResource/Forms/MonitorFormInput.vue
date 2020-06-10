@@ -44,7 +44,7 @@ export default {
     computed: {
         // get only server that are not monitored
         serversList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allServers)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allServers)
             let result = []
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]

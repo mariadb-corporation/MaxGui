@@ -39,9 +39,6 @@
                 <v-divider :key="`divider-${item.name}`"></v-divider>
             </template>
         </v-list>
-        <!-- <div class="version caption text-center font-weight-bold white--text">
-            {{ version }}
-        </div> -->
     </v-navigation-drawer>
 </template>
 
@@ -65,7 +62,6 @@ export default {
         return {
             isMini: true,
             items: sideBarRoutes,
-            version: process.env.VUE_APP_VERSION || '',
         }
     },
     computed: {
@@ -134,11 +130,6 @@ export default {
     }
     hr.v-divider {
         border-color: #556072;
-    }
-    .version {
-        position: absolute;
-        bottom: 10px;
-        width: 100%;
     }
 }
 </style>

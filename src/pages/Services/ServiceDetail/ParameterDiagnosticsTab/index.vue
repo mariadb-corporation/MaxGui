@@ -79,7 +79,7 @@ export default {
     computed: {
         routerDiagnosticsTableRow: function() {
             let currentService = this.currentService
-            if (!this.$help.isEmpty(currentService)) {
+            if (!this.$help.lodash.isEmpty(currentService)) {
                 const { attributes: { router_diagnostics = {} } = {} } = currentService
 
                 const keepPrimitiveValue = true

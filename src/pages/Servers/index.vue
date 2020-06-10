@@ -153,7 +153,7 @@ export default {
         dataProcessing: function() {
             if (this.allServers.length && this.allMonitorsMap.size) {
                 let tableRows = []
-                let allServers = this.$help.cloneDeep(this.allServers)
+                let allServers = this.$help.lodash.cloneDeep(this.allServers)
                 let totalServices = []
                 let totalMonitors = []
                 for (let index = 0; index < allServers.length; ++index) {

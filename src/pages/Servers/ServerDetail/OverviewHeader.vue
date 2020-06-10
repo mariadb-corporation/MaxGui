@@ -64,7 +64,7 @@
         </outlined-overview-card>
 
         <select-dialog
-            v-if="!$help.isEmpty(getTopOverviewInfo)"
+            v-if="!$help.lodash.isEmpty(getTopOverviewInfo)"
             v-model="showSelectDialog"
             :title="dialogTitle"
             mode="change"
@@ -128,9 +128,9 @@ export default {
         },
         getTopOverviewInfo: function() {
             let self = this
-            let currentServer = self.$help.cloneDeep(self.currentServer)
+            let currentServer = self.$help.lodash.cloneDeep(self.currentServer)
             let overviewInfo = {}
-            if (!self.$help.isEmpty(currentServer)) {
+            if (!self.$help.lodash.isEmpty(currentServer)) {
                 // Set fallback undefined value if properties doesnt exist
                 const {
                     attributes: {

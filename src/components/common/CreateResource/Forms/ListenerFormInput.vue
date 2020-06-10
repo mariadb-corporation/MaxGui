@@ -55,7 +55,7 @@ export default {
     computed: {
         //  several listeners may be associated with the same service, so list all current services
         serviceList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allServices)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allServices)
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
                 delete obj.attributes

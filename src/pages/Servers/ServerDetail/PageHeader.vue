@@ -116,7 +116,7 @@
             {{ serverHealthy }}
         </span>
         <span
-            v-if="!$help.isEmpty(currentServer.attributes.version_string)"
+            v-if="!$help.lodash.isEmpty(currentServer.attributes.version_string)"
             class="color text-field-text body-2"
         >
             |

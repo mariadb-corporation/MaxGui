@@ -1,6 +1,6 @@
 <template>
     <page-wrapper>
-        <v-sheet v-if="!$help.isEmpty(currentServer)" class="px-6">
+        <v-sheet v-if="!$help.lodash.isEmpty(currentServer)" class="px-6">
             <page-header :currentServer="currentServer" :onEditSucceeded="fetchServer" />
             <overview-header
                 :currentServer="currentServer"
@@ -108,7 +108,7 @@ export default {
         },
 
         async serviceTableRowProcessing() {
-            if (!this.$help.isEmpty(this.currentServer.relationships.services)) {
+            if (!this.$help.lodash.isEmpty(this.currentServer.relationships.services)) {
                 let services = this.currentServer.relationships.services.data
                 let servicesIdArr = services ? services.map(item => `${item.id}`) : []
 

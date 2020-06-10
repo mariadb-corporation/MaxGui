@@ -68,7 +68,7 @@ export default {
         sessionsTableRow: function() {
             if (this.sessionsByService.length) {
                 let itemsArr = []
-                let allSessions = this.$help.cloneDeep(this.sessionsByService)
+                let allSessions = this.$help.lodash.cloneDeep(this.sessionsByService)
                 for (let n = allSessions.length - 1; n >= 0; --n) {
                     /**
                      * @typedef {Object} row

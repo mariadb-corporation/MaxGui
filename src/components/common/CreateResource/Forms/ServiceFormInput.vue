@@ -50,7 +50,7 @@ export default {
 
     computed: {
         serversList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allServers)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allServers)
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
                 delete obj.attributes
@@ -61,7 +61,7 @@ export default {
             return cloneArr
         },
         filtersList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allFilters)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allFilters)
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
                 delete obj.attributes

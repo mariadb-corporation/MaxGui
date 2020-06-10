@@ -43,9 +43,9 @@ export default {
          */
         getTopOverviewInfo: function() {
             let self = this
-            let currentMonitor = self.$help.cloneDeep(self.currentMonitor)
+            let currentMonitor = self.$help.lodash.cloneDeep(self.currentMonitor)
             let overviewInfo = {}
-            if (!self.$help.isEmpty(currentMonitor)) {
+            if (!self.$help.lodash.isEmpty(currentMonitor)) {
                 // Set fallback undefined value if properties doesnt exist
                 const {
                     attributes: {

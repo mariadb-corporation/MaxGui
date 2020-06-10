@@ -1,6 +1,6 @@
 <template>
     <page-wrapper>
-        <v-sheet v-if="!$help.isEmpty(currentMonitor)" class="px-6">
+        <v-sheet v-if="!$help.lodash.isEmpty(currentMonitor)" class="px-6">
             <page-header :currentMonitor="currentMonitor" :onEditSucceeded="fetchMonitor" />
             <overview-header :currentMonitor="currentMonitor" />
             <v-row>
@@ -104,7 +104,7 @@ export default {
         },
 
         async fetchServerStateLoop() {
-            if (!this.$help.isEmpty(this.currentMonitor.relationships.servers)) {
+            if (!this.$help.lodash.isEmpty(this.currentMonitor.relationships.servers)) {
                 let servers = this.currentMonitor.relationships.servers.data
                 let serversIdArr = servers ? servers.map(item => `${item.id}`) : []
 

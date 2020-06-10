@@ -13,17 +13,30 @@
 import Vue from 'vue'
 
 export const isEmpty = require('lodash/isEmpty')
-export const isNull = require('lodash/isNull')
-export const isFunction = require('lodash/isFunction')
 export const cloneDeep = require('lodash/cloneDeep')
-export const isUndefined = require('lodash/isUndefined')
-export const pickBy = require('lodash/pickBy')
-export const isBoolean = require('lodash/isBoolean')
-export const pick = require('lodash/pick')
 export const isEqual = require('lodash/isEqual')
 export const xorWith = require('lodash/xorWith')
 export const uniqueId = require('lodash/uniqueId')
-export const orderBy = require('lodash/orderBy')
+
+export const lodash = {
+    isEmpty: isEmpty,
+    cloneDeep: cloneDeep,
+    isEqual: isEqual,
+    xorWith: xorWith,
+    uniqueId: uniqueId,
+}
+
+export function isNull(v) {
+    return v === null
+}
+
+export function isUndefined(v) {
+    return v === undefined
+}
+
+export function isFunction(v) {
+    return typeof v === 'function'
+}
 
 export function getCookie(name) {
     let value = '; ' + document.cookie
@@ -140,6 +153,9 @@ export function formatValue(value, formatType) {
     switch (formatType) {
         case 'DATE_RFC2822':
             format = DATE_RFC2822
+            break
+        case 'MM.DD.YYYY HH:mm:ss':
+            format = formatType
             break
         default:
             format = default_format
@@ -416,19 +432,16 @@ Object.defineProperties(Vue.prototype, {
                 toBaseMiliOrReverse,
                 toBitsOrBytes,
 
-                // lodash
-                isEmpty,
                 isNull,
                 isFunction,
-                cloneDeep,
                 isUndefined,
-                pickBy,
-                pick,
-                isBoolean,
-                isEqual,
-                xorWith,
-                uniqueId,
-                orderBy,
+                // lodash
+                // isEmpty,
+                // cloneDeep,
+                // isEqual,
+                // xorWith,
+                // uniqueId,
+                lodash,
             }
         },
     },

@@ -82,7 +82,7 @@
         >
             <v-sheet style="border-radius: 10px;overflow:auto;" class="pa-4" max-width="300">
                 <fragment v-for="(value, name) in parameterTooltip.item" :key="name">
-                    <span v-if="parameterInfo.includes(name)" class="d-block body-2">
+                    <span v-if="name !== 'id'" class="d-block body-2">
                         <span class="mr-1 font-weight-medium text-capitalize">
                             {{ $t(name) }}:
                         </span>
@@ -196,23 +196,21 @@ export default {
             portValue: null,
             socketValue: null,
 
-            // info will be shown in tooltip
-            parameterInfo: ['type', 'description', 'unit', 'default_value'],
             parameterTooltip: {
                 item: null,
             },
             // this is needed when using custom activator in v-tooltip.
-            componentId: this.$help.uniqueId('component_tooltip_'),
+            componentId: this.$help.lodash.uniqueId('component_tooltip_'),
         }
     },
     computed: {
         parametersTableRow: function() {
-            const parameters = this.$help.cloneDeep(this.parameters)
+            const parameters = this.$help.lodash.cloneDeep(this.parameters)
             const keepPrimitiveValue = true
             let level = 0
             let tableRow = this.$help.objToArrOfObj(parameters, keepPrimitiveValue, level)
 
-            let moduleParameters = this.$help.cloneDeep(this.moduleParameters)
+            let moduleParameters = this.$help.lodash.cloneDeep(this.moduleParameters)
 
             let arr = []
 
@@ -240,11 +238,18 @@ export default {
          * by v-tooltip component to show parameter info
          */
         showCellTooltip({ e, item }) {
-            if (e.type === 'mouseenter')
+            if (e.type === 'mouseenter') {
+                const { id, type, description, unit, default_value } = item
                 this.parameterTooltip = {
-                    item: item,
+                    item: {
+                        id,
+                        type,
+                        description,
+                        unit,
+                        default_value,
+                    },
                 }
-            else
+            } else
                 this.parameterTooltip = {
                     item: null,
                 }
@@ -278,7 +283,7 @@ export default {
             const { id: resourceParamId, value: resourceParamValue } = resourceParam
             const moduleParam = moduleParameters.find(param => param.name === resourceParamId)
 
-            const newParam = this.$help.cloneDeep(resourceParam)
+            const newParam = this.$help.lodash.cloneDeep(resourceParam)
 
             if (moduleParam) {
                 const { type, description, default_value, unit, enum_values } = moduleParam
@@ -316,7 +321,7 @@ export default {
          * validation in parameter-input
          */
         handleItemChange(newItem, changed) {
-            let clone = this.$help.cloneDeep(this.changedParametersArr)
+            let clone = this.$help.lodash.cloneDeep(this.changedParametersArr)
 
             let targetIndex = clone.findIndex(o => {
                 return newItem.nodeId !== undefined

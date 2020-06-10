@@ -12,10 +12,8 @@
  */
 import Vue from 'vue'
 import VueMoment from 'vue-moment'
-export const moment = require('moment')
-const momentDurationFormatSetup = require('moment-duration-format')
-momentDurationFormatSetup(moment)
+import momentDurationFormatSetup from 'moment-duration-format'
 
-Vue.use(VueMoment, {
-    moment,
-})
+Vue.use(VueMoment)
+
+momentDurationFormatSetup(Vue.moment)

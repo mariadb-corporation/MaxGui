@@ -56,14 +56,14 @@ export default {
             if (self.resourceModules.length) {
                 const {
                     attributes: { parameters = [] },
-                } = self.$help.cloneDeep(self.resourceModules[0]) // always 0
+                } = self.$help.lodash.cloneDeep(self.resourceModules[0]) // always 0
 
                 return parameters.filter(item => item.name !== 'type')
             }
             return []
         },
         servicesList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allServices)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allServices)
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
                 delete obj.attributes
@@ -75,7 +75,7 @@ export default {
         },
 
         monitorsList: function() {
-            let cloneArr = this.$help.cloneDeep(this.allMonitors)
+            let cloneArr = this.$help.lodash.cloneDeep(this.allMonitors)
             for (let i = 0; i < cloneArr.length; ++i) {
                 let obj = cloneArr[i]
                 delete obj.attributes
@@ -96,10 +96,10 @@ export default {
             const monitors = this.$refs.monitorsRelationship.getSelectedItems()
             const services = this.$refs.servicesRelationship.getSelectedItems()
 
-            if (!this.$help.isEmpty(monitors)) {
+            if (!this.$help.lodash.isEmpty(monitors)) {
                 obj.relationships.monitors = { data: monitors }
             }
-            if (!this.$help.isEmpty(services)) {
+            if (!this.$help.lodash.isEmpty(services)) {
                 obj.relationships.services = { data: services }
             }
 

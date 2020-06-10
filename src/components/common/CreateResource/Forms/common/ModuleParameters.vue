@@ -84,7 +84,7 @@ export default {
             if (self.selectedModule) {
                 const {
                     attributes: { parameters = [] },
-                } = self.$help.cloneDeep(self.selectedModule)
+                } = self.$help.lodash.cloneDeep(self.selectedModule)
                 return parameters
             }
             return []

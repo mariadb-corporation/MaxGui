@@ -141,7 +141,7 @@ export default {
             let serversRelationship = []
             for (let i = 0; i < ori.length; ++i) {
                 if (ori[i].id !== self.targetItem.id) {
-                    let cloneO = self.$help.cloneDeep(ori[i])
+                    let cloneO = self.$help.lodash.cloneDeep(ori[i])
                     delete cloneO.state
                     serversRelationship.push(cloneO)
                 }
@@ -159,7 +159,7 @@ export default {
             for (let i = 0; i < data.length; ++i) {
                 let server = data[i]
                 // only allow to add unmonitored servers
-                self.$help.isEmpty(server.relationships) &&
+                self.$help.lodash.isEmpty(server.relationships) &&
                     availableEntities.push({
                         id: server.id,
                         type: server.type,
@@ -185,7 +185,7 @@ export default {
             let merge = [...ori, ...self.targetItem]
             let serversRelationship = []
             for (let i = 0; i < merge.length; ++i) {
-                let cloneO = self.$help.cloneDeep(merge[i])
+                let cloneO = self.$help.lodash.cloneDeep(merge[i])
                 delete cloneO.state
                 serversRelationship.push(cloneO)
             }
