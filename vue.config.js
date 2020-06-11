@@ -48,9 +48,9 @@ module.exports = {
     },
 
     configureWebpack: {
-        /* performance: {
+        performance: {
             hints: false,
-        }, */
+        },
         optimization: {
             splitChunks: {
                 chunks: 'all',
