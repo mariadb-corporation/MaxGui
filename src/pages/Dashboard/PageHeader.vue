@@ -114,7 +114,8 @@
  * Public License.
  */
 import { mapGetters } from 'vuex'
-import Worker from 'worker-loader!utils/worker.js'
+import workerTimer from 'worker-loader!utils/workerTimer.js'
+
 export default {
     name: 'page-title',
 
@@ -168,7 +169,7 @@ export default {
     },
 
     beforeDestroy() {
-        this.worker && this.worker.terminate()
+        this.workerTimer && this.workerTimer.terminate()
     },
 
     methods: {
@@ -183,9 +184,9 @@ export default {
 
         workerInit() {
             let self = this
-            self.worker = new Worker()
-            self.worker.postMessage(self.workerList)
-            self.worker.onmessage = () => {
+            self.workerTimer = new workerTimer()
+            self.workerTimer.postMessage(self.workerList)
+            self.workerTimer.onmessage = () => {
                 self.updateUpTime()
             }
         },
