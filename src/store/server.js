@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { dynamicColors, strReplaceAt, isFunction, capitalizeFirstLetter } from 'utils/helpers'
 
 export default {
@@ -38,13 +37,13 @@ export default {
     },
     actions: {
         async fetchAllServers({ commit }) {
-            let res = await Vue.axios.get(`/servers`)
+            let res = await this.Vue.axios.get(`/servers`)
             // reverse array, latest will be last
             let sorted = res.data.data.reverse()
             await commit('setServers', sorted)
         },
         async fetchServerById({ commit, state }, id) {
-            let res = await Vue.axios.get(`/servers/${id}`, {
+            let res = await this.Vue.axios.get(`/servers/${id}`, {
                 auth: state.credentials,
             })
             commit('setCurrentServer', res.data.data)
@@ -72,7 +71,7 @@ export default {
                     relationships: payload.relationships,
                 },
             }
-            let res = await Vue.axios.post(`/servers/`, body)
+            let res = await this.Vue.axios.post(`/servers/`, body)
             let message = [`Server ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
@@ -102,7 +101,7 @@ export default {
                     attributes: { parameters: payload.parameters },
                 },
             }
-            let res = await Vue.axios.patch(`/servers/${payload.id}`, body)
+            let res = await this.Vue.axios.patch(`/servers/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -129,9 +128,12 @@ export default {
             let res
             let message
 
-            res = await Vue.axios.patch(`/servers/${payload.id}/relationships/${payload.type}`, {
-                data: payload.type === 'services' ? payload.services : payload.monitors,
-            })
+            res = await this.Vue.axios.patch(
+                `/servers/${payload.id}/relationships/${payload.type}`,
+                {
+                    data: payload.type === 'services' ? payload.services : payload.monitors,
+                }
+            )
 
             message = [
                 `${capitalizeFirstLetter(payload.type)} relationships of ${payload.id} is updated`,
@@ -155,7 +157,7 @@ export default {
          * @param {String} id id of the server
          */
         async destroyServer({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/servers/${id}`)
+            let res = await this.Vue.axios.delete(`/servers/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServers')
@@ -184,12 +186,12 @@ export default {
                     {
                         let url = `/servers/${id}/set?state=${state}`
                         if (state === 'maintenance' && forceClosing) url = url.concat('&force=yes')
-                        res = await Vue.axios.put(url)
+                        res = await this.Vue.axios.put(url)
                         message = [`Server ${id} is set to ${state}`]
                     }
                     break
                 case 'clear':
-                    res = await Vue.axios.put(`/servers/${id}/clear?state=${state}`)
+                    res = await this.Vue.axios.put(`/servers/${id}/clear?state=${state}`)
                     message = [`State ${state} of server ${id} is cleared`]
                     break
             }

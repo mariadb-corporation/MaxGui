@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { isFunction } from 'utils/helpers'
 
 export default {
@@ -28,7 +27,7 @@ export default {
     },
     actions: {
         async fetchAllListeners({ commit }) {
-            let res = await Vue.axios.get(`/listeners`)
+            let res = await this.Vue.axios.get(`/listeners`)
             await commit('setAllListeners', res.data.data)
         },
 
@@ -51,7 +50,7 @@ export default {
                 },
             }
 
-            let res = await Vue.axios.post(`/listeners`, body)
+            let res = await this.Vue.axios.post(`/listeners`, body)
             let message = [`Listener ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
@@ -74,7 +73,7 @@ export default {
          * be done via the services resource.
          */
         async destroyListener({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/listeners/${id}`)
+            let res = await this.Vue.axios.delete(`/listeners/${id}`)
             if (res.status === 204) {
                 await dispatch('fetchAllListeners')
                 await commit(

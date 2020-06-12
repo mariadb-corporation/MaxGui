@@ -121,7 +121,6 @@
  * Public License.
  */
 import { mapState, mapMutations } from 'vuex'
-import axios from 'axios'
 
 export default {
     name: 'login',
@@ -186,14 +185,13 @@ export default {
             this.isLoading = true
             let self = this
             try {
-                const login = axios.create()
+                /*   const login = axios.create() */
                 /*  use login axios instance, instead of showing global interceptor, show error in catch
                     max-age param will be 8 hours if rememberMe is true, otherwise, along as user close the browser
                     it will be expired
                 */
                 let url = '/auth?persist=yes'
-
-                await login.get(`${url}${self.rememberMe ? '&max-age=28800' : ''}`, {
+                await this.loginAxios.get(`${url}${self.rememberMe ? '&max-age=28800' : ''}`, {
                     auth: self.credential,
                 })
 

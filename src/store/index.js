@@ -24,7 +24,12 @@ import { APP_CONFIG } from 'utils/constants'
 import Logger from 'utils/logging'
 const logger = new Logger('main')
 
+const axiosPlugin = store => {
+    store.Vue = Vue
+}
+
 export default new Vuex.Store({
+    plugins: [axiosPlugin],
     state: {
         config: APP_CONFIG,
         message: {
@@ -66,7 +71,7 @@ export default new Vuex.Store({
     },
     actions: {
         async checkingForUpdate({ commit }) {
-            const res = await Vue.axios.get(`/`)
+            const res = await this.Vue.axios.get(`/`)
             logger.info('Checking for update')
             const resDoc = new DOMParser().parseFromString(res.data, 'text/html')
             const newCommitId = resDoc.getElementsByName('commitId')[0].content

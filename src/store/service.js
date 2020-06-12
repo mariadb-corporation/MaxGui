@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { dynamicColors, strReplaceAt, isFunction, capitalizeFirstLetter } from 'utils/helpers'
 
 export default {
@@ -43,7 +42,7 @@ export default {
     },
     actions: {
         async fetchServiceById({ commit, state }, id) {
-            let res = await Vue.axios.get(`/services/${id}`, {
+            let res = await this.Vue.axios.get(`/services/${id}`, {
                 auth: state.credentials,
             })
             await commit('setCurrentService', res.data.data)
@@ -78,11 +77,11 @@ export default {
             }
         },
         async fetchAllServices({ commit }) {
-            let res = await Vue.axios.get(`/services`)
+            let res = await this.Vue.axios.get(`/services`)
             await commit('setServices', res.data.data)
         },
         async fetchServiceConnections({ commit }, id) {
-            let res = await Vue.axios.get(
+            let res = await this.Vue.axios.get(
                 `/services/${id}?fields[services]=connections,total_connections`
             )
             let { attributes: { connections, total_connections } = {} } = res.data.data
@@ -115,7 +114,7 @@ export default {
                     relationships: payload.relationships,
                 },
             }
-            let res = await Vue.axios.post(`/services/`, body)
+            let res = await this.Vue.axios.post(`/services/`, body)
 
             // response ok
             if (res.status === 204) {
@@ -145,7 +144,7 @@ export default {
                     attributes: { parameters: payload.parameters },
                 },
             }
-            let res = await Vue.axios.patch(`/services/${payload.id}`, body)
+            let res = await this.Vue.axios.patch(`/services/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -172,9 +171,12 @@ export default {
             let res
             let message
 
-            res = await Vue.axios.patch(`/services/${payload.id}/relationships/${payload.type}`, {
-                data: payload.type === 'servers' ? payload.servers : payload.filters,
-            })
+            res = await this.Vue.axios.patch(
+                `/services/${payload.id}/relationships/${payload.type}`,
+                {
+                    data: payload.type === 'servers' ? payload.servers : payload.filters,
+                }
+            )
             message = [
                 `${capitalizeFirstLetter(payload.type)} relationships of ${payload.id} is updated`,
             ]
@@ -196,7 +198,7 @@ export default {
          * @param {String} id id of the service
          */
         async destroyService({ dispatch, commit }, id) {
-            let res = await Vue.axios.delete(`/services/${id}`)
+            let res = await this.Vue.axios.delete(`/services/${id}`)
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServices')
@@ -215,7 +217,7 @@ export default {
          * @param {String} mode Mode to start or stop service
          */
         async stopOrStartService({ commit }, { id, mode, callback }) {
-            let res = await Vue.axios.put(`/services/${id}/${mode}`)
+            let res = await this.Vue.axios.put(`/services/${id}/${mode}`)
             let message
             switch (mode) {
                 case 'start':

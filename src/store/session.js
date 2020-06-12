@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
@@ -38,7 +37,7 @@ export default {
     },
     actions: {
         async fetchAllSessions({ commit }) {
-            let res = await Vue.axios.get(`/sessions`)
+            let res = await this.Vue.axios.get(`/sessions`)
 
             await commit('setSessions', res.data.data)
         },
@@ -71,7 +70,7 @@ export default {
 
         //-------------------- sessions filter by relationships serviceId
         async fetchSessionsFilterByServiceId({ commit }, id) {
-            let res = await Vue.axios.get(
+            let res = await this.Vue.axios.get(
                 `/sessions?filter=/relationships/services/data/0/id="${id}"`
             )
             await commit('setSessionsByService', res.data.data)

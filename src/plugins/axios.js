@@ -11,15 +11,14 @@
  * Public License.
  */
 import Vue from 'vue'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+import ax from 'axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
 
 const location = window.location
 // allow cookies to be sent (cors handling)
 
-let apiClient = axios.create({
+let apiClient = ax.create({
     baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -27,7 +26,6 @@ let apiClient = axios.create({
         'Cache-Control': 'no-cache',
     },
 })
-
 apiClient.interceptors.response.use(
     response => {
         return response
@@ -58,4 +56,28 @@ apiClient.interceptors.response.use(
     }
 )
 
-Vue.use(VueAxios, apiClient)
+const loginAxios = ax.create({
+    baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+    },
+})
+
+Vue.axios = apiClient
+Vue.loginAxios = loginAxios
+
+Object.defineProperties(Vue.prototype, {
+    axios: {
+        get() {
+            return apiClient
+        },
+    },
+
+    loginAxios: {
+        get() {
+            return loginAxios
+        },
+    },
+})

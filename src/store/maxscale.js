@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { dynamicColors, strReplaceAt, isFunction } from 'utils/helpers'
 
 export default {
@@ -44,23 +43,23 @@ export default {
     },
     actions: {
         async fetchMaxScaleParameters({ commit }) {
-            let res = await Vue.axios.get(`/maxscale?fields[maxscale]=parameters`)
+            let res = await this.Vue.axios.get(`/maxscale?fields[maxscale]=parameters`)
             await commit('setMaxScaleParameters', res.data.data.attributes.parameters)
         },
 
         async fetchMaxScaleOverviewInfo({ commit }) {
-            let res = await Vue.axios.get(
+            let res = await this.Vue.axios.get(
                 `/maxscale?fields[maxscale]=version,commit,started_at,activated_at,uptime`
             )
             await commit('setMaxScaleOverviewInfo', res.data.data.attributes)
         },
         async fetchAllModules({ commit }) {
-            let res = await Vue.axios.get(`/maxscale/modules`)
+            let res = await this.Vue.axios.get(`/maxscale/modules`)
             await commit('setAllModules', res.data.data)
         },
         // ---------------------------- last two second threads--------------------------
         async fetchThreads({ commit }) {
-            let res = await Vue.axios.get(`/maxscale/threads?fields[threads]=stats`)
+            let res = await this.Vue.axios.get(`/maxscale/threads?fields[threads]=stats`)
             commit('setThreads', res.data.data)
         },
 
@@ -107,7 +106,7 @@ export default {
                     attributes: { parameters: payload.parameters },
                 },
             }
-            let res = await Vue.axios.patch(`/maxscale`, body)
+            let res = await this.Vue.axios.patch(`/maxscale`, body)
             // response ok
             if (res.status === 204) {
                 await commit(

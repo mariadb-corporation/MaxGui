@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
 import { isFunction } from 'utils/helpers'
 
 export default {
@@ -32,11 +31,11 @@ export default {
     },
     actions: {
         async fetchAllMonitors({ commit }) {
-            let res = await Vue.axios.get(`/monitors`)
+            let res = await this.Vue.axios.get(`/monitors`)
             await commit('setAllMonitors', res.data.data)
         },
         async fetchMonitorById({ commit }, id) {
-            let res = await Vue.axios.get(`/monitors/${id}`)
+            let res = await this.Vue.axios.get(`/monitors/${id}`)
             await commit('setCurrentMonitor', res.data.data)
         },
 
@@ -61,7 +60,7 @@ export default {
                     relationships: payload.relationships,
                 },
             }
-            let res = await Vue.axios.post(`/monitors/`, body)
+            let res = await this.Vue.axios.post(`/monitors/`, body)
             let message = [`Monitor ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
@@ -92,7 +91,7 @@ export default {
                     attributes: { parameters: payload.parameters },
                 },
             }
-            let res = await Vue.axios.patch(`/monitors/${payload.id}`, body)
+            let res = await this.Vue.axios.patch(`/monitors/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
                 await commit(
@@ -116,17 +115,17 @@ export default {
                 case 'destroy':
                     /*  Destroy a created monitor. 
                     The monitor must not have relationships to any servers in order to be destroyed. */
-                    res = await Vue.axios.delete(`/monitors/${id}`)
+                    res = await this.Vue.axios.delete(`/monitors/${id}`)
                     message = [`Monitor ${id} is destroyed`]
                     break
                 case 'stop':
                     //Stops a started monitor.
-                    res = await Vue.axios.put(`/monitors/${id}/stop`)
+                    res = await this.Vue.axios.put(`/monitors/${id}/stop`)
                     message = [`Monitor ${id} is stopped`]
                     break
                 case 'start':
                     //Starts a stopped monitor.
-                    res = await Vue.axios.put(`/monitors/${id}/start`)
+                    res = await this.Vue.axios.put(`/monitors/${id}/start`)
                     message = [`Monitor ${id} is started`]
                     break
             }
@@ -155,7 +154,7 @@ export default {
             let res
             let message
 
-            res = await Vue.axios.patch(`/monitors/${payload.id}/relationships/servers`, {
+            res = await this.Vue.axios.patch(`/monitors/${payload.id}/relationships/servers`, {
                 data: payload.servers,
             })
             message = [`Servers relationships of ${payload.id} is updated`]
