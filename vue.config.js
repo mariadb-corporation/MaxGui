@@ -51,13 +51,24 @@ module.exports = {
         performance: {
             hints: false,
         },
+
         optimization: {
             splitChunks: {
                 chunks: 'all',
                 maxSize: 250000,
+                cacheGroups: {
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name(module) {
+                            const packageName = module.context.match(
+                                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                            )[1]
+                            return `npm.${packageName.replace('@', '')}`
+                        },
+                    },
+                },
             },
         },
-
         resolve: {
             modules: [path.resolve('./src'), path.resolve('./node_modules')],
         },

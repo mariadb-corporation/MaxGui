@@ -67,7 +67,7 @@ const loginAxios = ax.create({
 
 Vue.axios = apiClient
 Vue.loginAxios = loginAxios
-
+// immutable axios instances
 Object.defineProperties(Vue.prototype, {
     axios: {
         get() {
