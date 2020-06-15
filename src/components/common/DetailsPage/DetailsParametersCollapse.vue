@@ -212,13 +212,17 @@ export default {
 
             let moduleParameters = this.$help.lodash.cloneDeep(this.moduleParameters)
 
-            let arr = []
-
             for (let o = 0; o < tableRow.length; ++o) {
                 const resourceParam = tableRow[o]
-                this.assignParamsTypeInfo(arr, resourceParam, moduleParameters)
+                if (resourceParam.leaf === false) {
+                    for (let i = 0; i < resourceParam.children.length; ++i) {
+                        const childParam = resourceParam.children[i]
+                        this.assignParamsTypeInfo(childParam, moduleParameters)
+                    }
+                }
+                this.assignParamsTypeInfo(resourceParam, moduleParameters)
             }
-            return arr
+            return tableRow
         },
 
         shouldDisableSaveBtn: function() {
@@ -278,40 +282,36 @@ export default {
         },
 
         /**
-         * @param {Array} arr Array to be pushed to.
          * @param {Object} resourceParam table object {id:'', value:''}
          * @param {Array} moduleParameters Module parameters object {id:'', value:'', type:'', unit:'',...}
+         * @return {Object} mutated resourceParam
          */
-        assignParamsTypeInfo(arr, resourceParam, moduleParameters) {
+        assignParamsTypeInfo(resourceParam, moduleParameters) {
             const { id: resourceParamId, value: resourceParamValue } = resourceParam
             const moduleParam = moduleParameters.find(param => param.name === resourceParamId)
-
-            const newParam = this.$help.lodash.cloneDeep(resourceParam)
 
             if (moduleParam) {
                 const { type, description, default_value, unit, enum_values } = moduleParam
 
                 // assign
-                type !== undefined && (newParam.type = type)
-                description !== undefined && (newParam.description = description)
-                unit !== undefined && (newParam.unit = unit)
-                default_value !== undefined && (newParam.default_value = default_value)
+                type !== undefined && (resourceParam.type = type)
+                description !== undefined && (resourceParam.description = description)
+                unit !== undefined && (resourceParam.unit = unit)
+                default_value !== undefined && (resourceParam.default_value = default_value)
 
                 const hasModifiable = 'modifiable' in moduleParam
                 if (hasModifiable && !moduleParam.modifiable) {
-                    newParam['disabled'] = true
-                } else if (!hasModifiable) newParam['disabled'] = false
+                    resourceParam['disabled'] = true
+                } else if (!hasModifiable) resourceParam['disabled'] = false
 
-                if (newParam.type === 'duration' && unit) {
-                    newParam.value = `${newParam.value}${unit}`
-                } else if (newParam.type === 'enum' || newParam.type === 'enum_mask') {
-                    newParam['enum_values'] = enum_values
+                if (resourceParam.type === 'duration' && unit) {
+                    resourceParam.value = `${resourceParam.value}${unit}`
+                } else if (resourceParam.type === 'enum' || resourceParam.type === 'enum_mask') {
+                    resourceParam['enum_values'] = enum_values
                 }
             } else {
-                newParam['disabled'] = true
+                resourceParam['disabled'] = true
             }
-
-            arr.push(newParam)
 
             this.assignPortSocketDependencyValues(resourceParamId, resourceParamValue)
         },

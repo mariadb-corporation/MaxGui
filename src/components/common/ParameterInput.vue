@@ -2,27 +2,8 @@
     <fragment>
         <!-- if targetItem has expanded property, meaning it has child object, so no need to render input -->
         <fragment v-if="'expanded' in targetItem" />
-        <!-- Hanlde edge case with log_throttling parameter in maxscale, 
-        the value is an object but doesn't contain type information-->
-
-        <v-text-field
-            v-else-if="targetItem.nodeParent && targetItem.nodeParent.id === 'log_throttling'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim.number="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.number"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @keypress="preventNonNumericalVal($event)"
-            @input="handleChange"
-        />
 
         <!-- Handle edge case with port, address, socket custom rules-->
-
         <v-text-field
             v-else-if="!isListener && targetItem.id === 'address'"
             :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
