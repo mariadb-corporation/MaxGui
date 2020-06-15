@@ -17,7 +17,9 @@
                         {{ $t('uptime') }}
                         {{
                             [uptime, 'seconds']
-                                | duration('format', 'Y [years] M [months] D [days] hh:mm:ss')
+                                | duration('format', 'Y [years] M [months] D [days] h:mm:ss', {
+                                    stopTrim: 'h mm',
+                                })
                         }}
                     </span>
 
