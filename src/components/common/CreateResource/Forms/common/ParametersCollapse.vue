@@ -167,7 +167,12 @@ export default {
                         defaultValue = paramObj.default_value === 'true'
                         break
                     default:
-                        defaultValue = paramObj.default_value || null
+                        /* this ensure 0 default_value could be assigned,
+                        undefined default_value property will fallback to null to make the input visibled
+                        */
+                        defaultValue = this.$help.isUndefined(paramObj.default_value)
+                            ? null
+                            : paramObj.default_value
                 }
 
                 paramObj['value'] = defaultValue
