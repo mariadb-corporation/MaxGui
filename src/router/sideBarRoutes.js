@@ -12,7 +12,7 @@
  */
 // Sidebar components
 import Dashboard from 'pages/Dashboard'
-// import Reports from 'pages/Reports'
+
 const Settings = () => import(/* webpackChunkName: "sidebar-routes-settings" */ 'pages/Settings')
 import tabRoutes from './tabRoutes'
 
@@ -31,18 +31,6 @@ export default [
         name: 'dashboards',
         children: tabRoutes,
     },
-
-    // {
-    //     path: '/reports',
-    //     component: Reports,
-    //     meta: {
-    //         requiresAuth: true,
-    //         layout: 'app-layout',
-    //         size: 22,
-    //         icon: '$vuetify.icons.reports',
-    //     },
-    //     name: 'reports',
-    // },
 
     {
         path: '/settings',

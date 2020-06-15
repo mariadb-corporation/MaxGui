@@ -19,7 +19,6 @@ import IconSpriteSheet from './IconSpriteSheet'
 import OutlinedOverviewCard from './OutlinedOverviewCard'
 import Collapse from './Collapse'
 
-import ParameterInput from './ParameterInput'
 import LineChart from './LineChart.vue'
 import GlobalSearch from './GlobalSearch'
 import CreateResource from './CreateResource'
@@ -27,6 +26,7 @@ import CreateResource from './CreateResource'
 import DetailsParametersCollapse from './DetailsPage/DetailsParametersCollapse'
 import DetailsPageTitle from './DetailsPage/DetailsPageTitle'
 import DetailsIconGroupWrapper from './DetailsPage/DetailsIconGroupWrapper'
+import Parameters from './Parameters'
 
 export default {
     'page-wrapper': PageWrapper,
@@ -39,7 +39,7 @@ export default {
     'icon-sprite-sheet': IconSpriteSheet,
     'outlined-overview-card': OutlinedOverviewCard,
     collapse: Collapse,
-    'parameter-input': ParameterInput,
+    ...Parameters,
     'line-chart': LineChart,
     'details-parameters-collapse': DetailsParametersCollapse,
     'details-page-title': DetailsPageTitle,

@@ -20,6 +20,7 @@ const ServiceDetail = () =>
 const MonitorDetail = () =>
     import(/* webpackChunkName: "service-details-page" */ 'pages/Monitors/MonitorDetail')
 const NotFound404 = () => import(/* webpackChunkName: "not-found-page" */ 'pages/NotFound404')
+
 export const routes = [
     {
         path: '/',

@@ -219,7 +219,6 @@ export default {
         addressValue: { type: String },
         parentForm: { type: Object },
         isListener: { type: Boolean, default: false },
-        isFixedWidth: { type: Boolean, default: false },
     },
     data() {
         return {
@@ -561,4 +560,7 @@ export default {
         }
     }
 }
+/* ::v-deep .v-list-item__content {
+    overflow: unset;
+} */
 </style>
