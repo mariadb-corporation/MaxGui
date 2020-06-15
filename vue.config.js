@@ -14,6 +14,7 @@
 const path = require('path')
 const fs = require('fs')
 const { gitDescribeSync } = require('git-describe')
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
 
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
@@ -48,6 +49,14 @@ module.exports = {
     },
 
     configureWebpack: {
+        plugins: [
+            // To strip all locales except “en”, and ...
+            // (“en” is built into Moment and can’t be removed)
+            new MomentLocalesPlugin({
+                localesToKeep: [], //e.g. 'ru', 'vi'
+            }),
+        ],
+
         performance: {
             hints: false,
         },
