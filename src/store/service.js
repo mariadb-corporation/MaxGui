@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { dynamicColors, strReplaceAt, isFunction, capitalizeFirstLetter } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -54,14 +53,18 @@ export default {
         genDataSetSchema({ commit, state }) {
             const { currentService } = state
             if (currentService) {
-                let lineColors = dynamicColors(0)
+                let lineColors = this.Vue.prototype.$help.dynamicColors(0)
                 let indexOfOpacity = lineColors.lastIndexOf(')') - 1
                 let dataset = [
                     {
                         label: `Current connections`,
                         type: 'line',
                         // background of the line
-                        backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.2'),
+                        backgroundColor: this.Vue.prototype.$help.strReplaceAt(
+                            lineColors,
+                            indexOfOpacity,
+                            '0.2'
+                        ),
                         borderColor: lineColors,
                         borderWidth: 1,
                         lineTension: 0,
@@ -126,7 +129,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(payload.callback)) await payload.callback()
+                if (this.Vue.prototype.$help.isFunction(payload.callback)) await payload.callback()
             }
         },
         //-----------------------------------------------Service parameter update---------------------------------
@@ -155,7 +158,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(payload.callback)) await payload.callback()
+                if (this.Vue.prototype.$help.isFunction(payload.callback)) await payload.callback()
             }
         },
         //-----------------------------------------------Service relationship update---------------------------------
@@ -178,7 +181,9 @@ export default {
                 }
             )
             message = [
-                `${capitalizeFirstLetter(payload.type)} relationships of ${payload.id} is updated`,
+                `${this.Vue.prototype.$help.capitalizeFirstLetter(payload.type)} relationships of ${
+                    payload.id
+                } is updated`,
             ]
 
             // response ok
@@ -191,7 +196,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(payload.callback)) await payload.callback()
+                if (this.Vue.prototype.$help.isFunction(payload.callback)) await payload.callback()
             }
         },
         /**
@@ -237,7 +242,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(callback)) await callback()
+                if (this.Vue.prototype.$help.isFunction(callback)) await callback()
             }
         },
     },

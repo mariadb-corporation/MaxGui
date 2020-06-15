@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { dynamicColors, strReplaceAt } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -45,7 +44,7 @@ export default {
         genDataSetSchema({ commit, state }) {
             const { allSessions } = state
 
-            let lineColors = dynamicColors(0)
+            let lineColors = this.Vue.prototype.$help.dynamicColors(0)
 
             let indexOfOpacity = lineColors.lastIndexOf(')') - 1
             let dataset = [
@@ -53,7 +52,11 @@ export default {
                     label: `Total sessions`,
                     type: 'line',
                     // background of the line
-                    backgroundColor: strReplaceAt(lineColors, indexOfOpacity, '0.1'),
+                    backgroundColor: this.Vue.prototype.$help.strReplaceAt(
+                        lineColors,
+                        indexOfOpacity,
+                        '0.1'
+                    ),
                     borderColor: lineColors, //theme.palette.primary.main, // line color
                     borderWidth: 1,
                     lineTension: 0,

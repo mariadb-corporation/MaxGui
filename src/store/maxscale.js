@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { dynamicColors, strReplaceAt, isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -70,14 +69,18 @@ export default {
                 let lineColors = []
                 //threads.length
                 for (let i = 0; i < threads.length; ++i) {
-                    lineColors.push(dynamicColors(i))
+                    lineColors.push(this.Vue.prototype.$help.dynamicColors(i))
                     let indexOfOpacity = lineColors[i].lastIndexOf(')') - 1
                     let obj = {
                         label: `THREAD ID - ${threads[i].id}`,
                         id: `THREAD ID - ${threads[i].id}`,
                         type: 'line',
                         // background of the line
-                        backgroundColor: strReplaceAt(lineColors[i], indexOfOpacity, '0.1'),
+                        backgroundColor: this.Vue.prototype.$help.strReplaceAt(
+                            lineColors[i],
+                            indexOfOpacity,
+                            '0.1'
+                        ),
                         borderColor: lineColors[i], //theme.palette.primary.main, // line color
                         borderWidth: 1,
                         lineTension: 0,
@@ -117,7 +120,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(payload.callback)) await payload.callback()
+                if (this.Vue.prototype.$help.isFunction(payload.callback)) await payload.callback()
             }
         },
     },

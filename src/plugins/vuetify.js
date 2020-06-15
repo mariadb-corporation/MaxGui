@@ -11,6 +11,8 @@
  * Public License.
  */
 import Vue from 'vue'
+// Fonts
+import 'styles/fontIcons/index.scss'
 import Vuetify from 'vuetify/lib'
 import icons from 'icons'
 import i18n from 'plugins/i18n'
@@ -33,11 +35,6 @@ export default new Vuetify({
                 info: '#1c9dd6',
                 anchor: '#2d9cdb',
             },
-            // dark: {
-            //     primary: '#121212',
-            //     secondary: '#1E1E1E',
-            //     accent: '#0b718c',
-            // },
         },
     },
     lang: {

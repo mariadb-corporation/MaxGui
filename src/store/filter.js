@@ -10,7 +10,6 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import { isFunction } from 'utils/helpers'
 
 export default {
     namespaced: true,
@@ -61,7 +60,7 @@ export default {
                     },
                     { root: true }
                 )
-                if (isFunction(payload.callback)) await payload.callback()
+                if (this.Vue.prototype.$help.isFunction(payload.callback)) await payload.callback()
             }
         },
         /**

@@ -32,8 +32,6 @@ import AppLayout from 'layouts/AppLayout'
 import NoLayout from 'layouts/NoLayout'
 import Overlay from './components/overlay/Index'
 import { mapState, mapMutations } from 'vuex'
-import Logger from 'utils/logging'
-const logger = new Logger('main')
 
 export default {
     store,
@@ -48,6 +46,9 @@ export default {
         updateExists: function() {
             return this.isUpdateAvailable
         },
+        logger: function() {
+            return this.$store.Vue.Logger('main')
+        },
     },
 
     mounted() {
@@ -58,8 +59,8 @@ export default {
     },
 
     async created() {
-        logger.info(this.$store.state.config.asciiLogo)
-        logger.info(`Loaded Version: ${process.env.VUE_APP_VERSION}`)
+        this.logger.info(this.$store.state.config.asciiLogo)
+        this.logger.info(`Loaded Version: ${process.env.VUE_APP_VERSION}`)
     },
 
     methods: {
@@ -67,12 +68,8 @@ export default {
         confirmUpdate() {
             this.setUpdateAvailable(false)
             window.location.reload()
-            logger.info('App is updated')
+            this.logger.info('App is updated')
         },
     },
 }
 </script>
-
-<style lang="scss">
-@import 'styles/main.scss';
-</style>

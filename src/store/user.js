@@ -11,7 +11,6 @@
  * Public License.
  */
 import { OVERLAY_LOGOUT } from 'store/overlayTypes'
-import { delay } from 'utils/helpers'
 import router from 'router'
 
 export default {
@@ -73,7 +72,7 @@ export default {
                 )
             }
 
-            await delay(1500).then(() => {
+            await this.Vue.prototype.$help.delay(1500).then(() => {
                 return commit('hideOverlay', null, { root: true }), router.push('/login')
             })
         },

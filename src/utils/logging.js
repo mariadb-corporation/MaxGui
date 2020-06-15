@@ -15,13 +15,11 @@ import { isNull, isUndefined } from 'utils/helpers'
 const traceCaller = require('utils/traceCaller')
 
 const defCaller = { file: 'n/a', lineNumber: 'n/a' }
-
-class Logger {
-    constructor(name) {
-        if (isNull(name) || isUndefined(name))
-            throw new Error('You must provide name when creating new logger instance.')
-
-        this.info = (...args) => {
+const Logger = name => {
+    if (isNull(name) || isUndefined(name))
+        throw new Error('You must provide name when creating new logger instance.')
+    return {
+        info: (...args) => {
             const caller = traceCaller(2) || defCaller
             const style = 'color: white; background-color: green;'
 
@@ -32,9 +30,8 @@ class Logger {
                 `[${caller.file}:${caller.lineNumber}]`,
                 ...args
             )
-        }
-
-        this.warn = (...args) => {
+        },
+        warn: (...args) => {
             const caller = traceCaller(2) || defCaller
             const style = 'color: black; background-color: yellow;'
 
@@ -45,9 +42,8 @@ class Logger {
                 `[${caller.file}:${caller.lineNumber}]`,
                 ...args
             )
-        }
-
-        this.error = (...args) => {
+        },
+        error: (...args) => {
             const caller = traceCaller(2) || defCaller
             const style = 'color: white; background-color: red;'
 
@@ -58,7 +54,7 @@ class Logger {
                 `[${caller.file}:${caller.lineNumber}]`,
                 ...args
             )
-        }
+        },
     }
 }
 

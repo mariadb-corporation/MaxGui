@@ -15,11 +15,10 @@ import ax from 'axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
 
-const location = window.location
 // allow cookies to be sent (cors handling)
 
 let apiClient = ax.create({
-    baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
+    baseURL: '/',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json',
@@ -57,7 +56,7 @@ apiClient.interceptors.response.use(
 )
 
 const loginAxios = ax.create({
-    baseURL: process.env.NODE_ENV === 'production' ? `${location.origin}` : '/',
+    baseURL: '/',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json',

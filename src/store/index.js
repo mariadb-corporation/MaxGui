@@ -21,15 +21,13 @@ import filter from './filter'
 import session from './session'
 import listener from './listener'
 import { APP_CONFIG } from 'utils/constants'
-import Logger from 'utils/logging'
-const logger = new Logger('main')
 
-const axiosPlugin = store => {
+const plugins = store => {
     store.Vue = Vue
 }
 
 export default new Vuex.Store({
-    plugins: [axiosPlugin],
+    plugins: [plugins],
     state: {
         config: APP_CONFIG,
         message: {
@@ -71,6 +69,7 @@ export default new Vuex.Store({
     },
     actions: {
         async checkingForUpdate({ commit }) {
+            const logger = this.Vue.Logger('index-store')
             const res = await this.Vue.axios.get(`/`)
             logger.info('Checking for update')
             const resDoc = new DOMParser().parseFromString(res.data, 'text/html')

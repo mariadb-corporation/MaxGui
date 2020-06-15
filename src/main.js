@@ -14,14 +14,20 @@ import Vue from 'vue'
 import 'utils/helpers'
 import 'plugins/vuex'
 import 'plugins/axios'
-import 'plugins/fragment'
 import 'plugins/moment'
-import 'plugins/portalVue'
 import i18n from 'plugins/i18n'
+import 'styles/main.scss'
 import vuetify from 'plugins/vuetify'
 import App from './App.vue'
 import router from 'router'
 import commonComponents from 'components/common'
+import Logger from 'utils/logging'
+import PortalVue from 'portal-vue'
+import { Plugin as fragment } from 'vue-fragment'
+
+Vue.use(fragment)
+Vue.use(PortalVue)
+Vue.Logger = Logger
 
 Object.keys(commonComponents).forEach(name => {
     Vue.component(name, commonComponents[name])

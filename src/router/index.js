@@ -15,7 +15,6 @@ import Router from 'vue-router'
 import { routes } from './routes'
 import { OVERLAY_LOADING } from 'store/overlayTypes'
 import store from 'store'
-import { delay, getCookie } from 'utils/helpers'
 
 Vue.use(Router)
 
@@ -29,7 +28,8 @@ let router = new Router({
 })
 router.beforeEach(async (to, from, next) => {
     // Check if user is logged in
-    const token_body = getCookie('token_body')
+
+    const token_body = Vue.prototype.$help.getCookie('token_body')
     const user = JSON.parse(localStorage.getItem('user'))
     const isLoggedIn = user ? user.isLoggedIn : null
 
@@ -37,7 +37,7 @@ router.beforeEach(async (to, from, next) => {
         if (token_body && isLoggedIn) {
             if (from.path === '/login') {
                 store.commit('showOverlay', OVERLAY_LOADING)
-                await delay(1500).then(() => {
+                await Vue.prototype.$help.delay(1500).then(() => {
                     return store.commit('hideOverlay'), next()
                 })
             } else {
@@ -47,7 +47,7 @@ router.beforeEach(async (to, from, next) => {
             if (from.path === '/') {
                 store.commit('showOverlay', OVERLAY_LOADING)
 
-                await delay(600).then(() => {
+                await Vue.prototype.$help.delay(600).then(() => {
                     return store.commit('hideOverlay')
                 })
             }
