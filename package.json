@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "The graphical user interface for MaxScale's admin tool ",
     "author": "MariaDB Corporation Ab",
+    "license": "SEE LICENSE IN ./LICENSE.TXT",
     "scripts": {
         "serve": "vue-cli-service serve --mode development",
         "build": "vue-cli-service build",
