@@ -11,8 +11,6 @@
  * Public License.
  */
 import Vue from 'vue'
-// Fonts
-import 'styles/fontIcons/index.scss'
 import Vuetify from 'vuetify/lib'
 import icons from 'icons'
 import i18n from 'plugins/i18n'
