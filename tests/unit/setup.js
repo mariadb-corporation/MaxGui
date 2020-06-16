@@ -17,6 +17,9 @@ import Vuetify from 'vuetify'
 import '@/plugins/vuetify'
 import VueI18n from 'vue-i18n'
 import i18n from '@/plugins/i18n'
+/* import Vuex from 'vuex'
+import store from 'store'
+Vue.use(Vuex) */
 Vue.use(Vuetify)
 
 // Required for Vuetify (Create div with a data-app attribute)
@@ -24,9 +27,9 @@ const app = document.createElement('div')
 app.setAttribute('data-app', 'true')
 document.body.appendChild(app)
 
-global.requestAnimationFrame = () => {
-    return null
-}
+global.requestAnimationFrame = () => null
+global.cancelAnimationFrame = () => null
+/* global.localStorage = window.localStorage */
 
 function doMount(isShallow, component, options) {
     if (isShallow) {
@@ -52,10 +55,10 @@ export default options => {
 
     return doMount(options.shallow, options.component, {
         localVue,
+        /*  store, */
         vuetify,
         i18n,
         propsData: options.props,
-        attachToDocument: true,
-        sync: false,
+        attachTo: '#app',
     })
 }

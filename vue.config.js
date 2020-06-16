@@ -14,14 +14,12 @@
 const path = require('path')
 const fs = require('fs')
 const { gitDescribeSync } = require('git-describe')
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
 
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
 
-let devServer = {}
-if (process.env.NODE_ENV === 'development') {
-    devServer = {
+module.exports = {
+    devServer: {
         https: {
             key: fs.readFileSync('./.certs/localhost+1-key.pem'),
             cert: fs.readFileSync('./.certs/localhost+1.pem'),
@@ -31,38 +29,31 @@ if (process.env.NODE_ENV === 'development') {
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
-        public: 'https://localhost:8000/',
         proxy: {
             '^/': {
                 changeOrigin: true,
                 target: process.env.VUE_APP_API,
             },
         },
-    }
-}
-
-module.exports = {
+    },
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
         types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
         config.module.rule('js').exclude.add(/\.worker\.js$/)
-    },
 
-    configureWebpack: {
-        plugins: [
-            // To strip all locales except “en”, and ...
-            // (“en” is built into Moment and can’t be removed)
-            new MomentLocalesPlugin({
-                localesToKeep: [], //e.g. 'ru', 'vi'
-            }),
-        ],
+        config.when(process.env.NODE_ENV === 'development', config => {
+            // devtool
+            config.merge({
+                devtool: 'source-map',
+            })
+        })
 
-        performance: {
-            hints: false,
-        },
-
-        optimization: {
-            splitChunks: {
+        config.when(process.env.NODE_ENV === 'production', config => {
+            /* 
+            optimization in production mode only as unit testing is broken when
+            splitChunks is configured
+            */
+            config.optimization.splitChunks({
                 chunks: 'all',
                 maxSize: 250000,
                 cacheGroups: {
@@ -76,31 +67,35 @@ module.exports = {
                         },
                     },
                 },
+            })
+            config.performance.hints(false)
+        })
+
+        config.module
+            .rule('worker-loader')
+            .test(/\.worker\.js$/)
+            .use('worker-loader')
+            .loader('worker-loader')
+            .options({
+                inline: true,
+                fallback: false,
+                name: '[name]:[hash:8].js',
+            })
+            .end()
+
+        config.resolve.modules.add(path.resolve('./src'), path.resolve('./node_modules'))
+
+        /*  
+            To strip all locales except “en”, and ...
+            (“en” is built into Moment and can’t be removed) 
+        */
+        config.plugin('MomentLocalesPlugin').use(require('moment-locales-webpack-plugin'), [
+            {
+                localesToKeep: [], //e.g. 'ru', 'vi'
             },
-        },
-        resolve: {
-            modules: [path.resolve('./src'), path.resolve('./node_modules')],
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.worker\.js$/,
-                    loader: 'worker-loader',
-                    options: {
-                        inline: true,
-                        fallback: false,
-                        name: '[name]:[hash:8].js',
-                    },
-                },
-            ],
-        },
-        devServer: devServer,
-        devtool: process.env.NODE_ENV === 'development' ? 'source-map' : 'none',
+        ])
     },
 
-    // css: {
-    //     extract: false, //set it to be true to include css in the head tag
-    // },
     transpileDependencies: ['vuetify'],
 
     outputDir: `${process.env.buildPath}/gui`,

@@ -123,7 +123,7 @@ export default {
             this.$refs.form.resetValidation()
             this.onCancel && this.onCancel()
             // unit event testing
-            this.$emit('cancelClick', false)
+            this.$emit('cancel-click', false)
         },
         close() {
             this.onClose && this.onClose()

@@ -23,25 +23,77 @@ describe('BaseDialog.vue', () => {
             component: BaseDialog,
             props: {
                 value: true,
+                title: 'dialog title',
+                onClose: () => console.log('onClose is triggered'),
+                onCancel: () => console.log('onCancel is triggered'),
+                onSave: () => console.log('onSave is triggered'),
             },
         })
     })
 
-    it('Renders as Vue instance.', () => {
-        expect(wrapper.isVueInstance()).to.equal(true)
+    it('Component passed required props types', () => {
+        expect(wrapper.props().value).to.be.true
+        expect(wrapper.props().title).to.have.string('dialog title')
+        expect(wrapper.props().onClose).to.be.a('function')
+        expect(wrapper.props().onCancel).to.be.a('function')
+        expect(wrapper.props().onSave).to.be.a('function')
+    })
+    it('Component passed optionals props types', () => {
+        expect(wrapper.props().minBodyWidth).to.be.a('string')
+        expect(wrapper.props().dynamicWidth).to.be.a('boolean')
+        expect(wrapper.props().scrollable).to.be.a('boolean')
+
+        expect(wrapper.props().cancelText).to.be.a('string')
+        expect(wrapper.props().saveText).to.be.a('string')
+        expect(wrapper.props().disabledSaveBtn).to.be.a('boolean')
+        expect(wrapper.props().forceAccept).to.be.a('boolean')
     })
 
-    it('closes when buttons are pressed', () => {
-        const closeButton = wrapper.find('.close')
-        const cancelButton = wrapper.find('.cancel')
-        let eventFired = 0
+    it('dialog closes when cancel button is pressed', () => {
+        //wrapper.props.value is set to be true already when initialize the component
+        expect(wrapper.vm.computeShowDialog).to.be.true
 
-        wrapper.vm.$on('cancelClick', () => {
+        const btn = wrapper.find('.cancel')
+        let eventFired = 0
+        wrapper.vm.$on('cancel-click', () => {
             eventFired++
         })
-
-        closeButton.trigger('click')
-        cancelButton.trigger('click')
-        expect(eventFired).to.equal(2)
+        btn.trigger('click')
+        /* 
+            The visibility of base-dialog is controlled by parent component.
+            This set props value to be false, computeShowDialog should re-run
+            to close the dialog
+        */
+        wrapper.setProps({ value: false })
+        expect(eventFired).to.equal(1)
+        expect(wrapper.vm.computeShowDialog).to.be.false
     })
+
+    it('dialog closes when close button is pressed', () => {
+        //wrapper.props.value is set to be true already when initialize the component
+        expect(wrapper.vm.computeShowDialog).to.be.true
+        const btn = wrapper.find('.close')
+        btn.trigger('click')
+        /* 
+            The visibility of base-dialog is controlled by parent component.
+            This set props value to be false, computeShowDialog should re-run
+            to close the dialog
+        */
+        wrapper.setProps({ value: false })
+        expect(wrapper.vm.computeShowDialog).to.be.false
+    })
+
+    /* it('dialog closes when save button is pressed', () => {
+        //wrapper.props.value is set to be true already when initialize the component
+        expect(wrapper.vm.computeShowDialog).to.be.true
+        const btn = wrapper.find('.save')
+        btn.trigger('click')
+        
+            // The visibility of base-dialog is controlled by parent component.
+            // This set props value to be false, computeShowDialog should re-run
+            // to close the dialog
+       
+        wrapper.setProps({ value: false })
+        expect(wrapper.vm.computeShowDialog).to.be.false
+    }) */
 })
