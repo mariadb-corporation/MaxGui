@@ -37,17 +37,16 @@ router.beforeEach(async (to, from, next) => {
         if (token_body && isLoggedIn) {
             if (from.path === '/login') {
                 store.commit('showOverlay', OVERLAY_LOADING)
-                await delay(1500).then(() => store.commit('hideOverlay'), next())
+                await delay(1500).then(() => store.commit('hideOverlay'))
+                next()
             } else {
                 next()
             }
         } else {
             if (from.path === '/') {
                 store.commit('showOverlay', OVERLAY_LOADING)
-
                 await delay(600).then(() => store.commit('hideOverlay'))
             }
-
             next({
                 path: '/login',
                 query: { redirect: to.path },

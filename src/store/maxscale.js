@@ -43,18 +43,18 @@ export default {
     actions: {
         async fetchMaxScaleParameters({ commit }) {
             let res = await this.Vue.axios.get(`/maxscale?fields[maxscale]=parameters`)
-            await commit('setMaxScaleParameters', res.data.data.attributes.parameters)
+            commit('setMaxScaleParameters', res.data.data.attributes.parameters)
         },
 
         async fetchMaxScaleOverviewInfo({ commit }) {
             let res = await this.Vue.axios.get(
                 `/maxscale?fields[maxscale]=version,commit,started_at,activated_at,uptime`
             )
-            await commit('setMaxScaleOverviewInfo', res.data.data.attributes)
+            commit('setMaxScaleOverviewInfo', res.data.data.attributes)
         },
         async fetchAllModules({ commit }) {
             let res = await this.Vue.axios.get(`/maxscale/modules`)
-            await commit('setAllModules', res.data.data)
+            commit('setAllModules', res.data.data)
         },
         // ---------------------------- last two second threads--------------------------
         async fetchThreads({ commit }) {
@@ -112,7 +112,7 @@ export default {
             let res = await this.Vue.axios.patch(`/maxscale`, body)
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`MaxScale parameters is updated`],

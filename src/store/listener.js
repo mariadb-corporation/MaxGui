@@ -27,7 +27,7 @@ export default {
     actions: {
         async fetchAllListeners({ commit }) {
             let res = await this.Vue.axios.get(`/listeners`)
-            await commit('setAllListeners', res.data.data)
+            commit('setAllListeners', res.data.data)
         },
 
         /**
@@ -53,7 +53,7 @@ export default {
             let message = [`Listener ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -75,7 +75,7 @@ export default {
             let res = await this.Vue.axios.delete(`/listeners/${id}`)
             if (res.status === 204) {
                 await dispatch('fetchAllListeners')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Listeners ${id} is destroyed`],

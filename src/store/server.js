@@ -39,7 +39,7 @@ export default {
             let res = await this.Vue.axios.get(`/servers`)
             // reverse array, latest will be last
             let sorted = res.data.data.reverse()
-            await commit('setServers', sorted)
+            commit('setServers', sorted)
         },
         async fetchServerById({ commit, state }, id) {
             let res = await this.Vue.axios.get(`/servers/${id}`, {
@@ -74,7 +74,7 @@ export default {
             let message = [`Server ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -103,7 +103,7 @@ export default {
             let res = await this.Vue.axios.patch(`/servers/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Parameters of ${payload.id} is updated`],
@@ -142,7 +142,7 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -162,7 +162,7 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServers')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Server ${id} is deleted`],
@@ -198,7 +198,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit('showMessage', { text: message, type: 'success' }, { root: true })
+                commit('showMessage', { text: message, type: 'success' }, { root: true })
                 if (this.Vue.prototype.$help.isFunction(callback)) await callback()
             }
         },

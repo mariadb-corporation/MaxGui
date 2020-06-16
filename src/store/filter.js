@@ -27,7 +27,7 @@ export default {
     actions: {
         async fetchAllFilters({ commit }) {
             let res = await this.Vue.axios.get(`/filters`)
-            await commit('setAllFilters', res.data.data)
+            commit('setAllFilters', res.data.data)
         },
 
         /**
@@ -52,7 +52,7 @@ export default {
             let message = [`Filter ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -74,7 +74,7 @@ export default {
             let res = await this.Vue.axios.delete(`/filters/${id}`)
             if (res.status === 204) {
                 await dispatch('fetchAllFilters')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Filter ${id} is destroyed`],

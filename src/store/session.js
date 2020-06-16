@@ -38,7 +38,7 @@ export default {
         async fetchAllSessions({ commit }) {
             let res = await this.Vue.axios.get(`/sessions`)
 
-            await commit('setSessions', res.data.data)
+            commit('setSessions', res.data.data)
         },
         // this function should be called after fetchAllSessions has been fetched
         genDataSetSchema({ commit, state }) {
@@ -76,7 +76,7 @@ export default {
             let res = await this.Vue.axios.get(
                 `/sessions?filter=/relationships/services/data/0/id="${id}"`
             )
-            await commit('setSessionsByService', res.data.data)
+            commit('setSessionsByService', res.data.data)
         },
     },
     getters: {

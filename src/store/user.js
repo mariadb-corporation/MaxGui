@@ -53,7 +53,7 @@ export default {
     actions: {
         async logout({ commit, rootState }) {
             commit('logout')
-            await commit('showOverlay', OVERLAY_LOGOUT, { root: true })
+            commit('showOverlay', OVERLAY_LOGOUT, { root: true })
             const user = JSON.parse(localStorage.getItem('user'))
             if (user) {
                 localStorage.removeItem('user')
@@ -62,7 +62,7 @@ export default {
             this.Vue.prototype.$help.deleteCookie('token_body')
             // hide snackbar message if it is on
             if (rootState.message.status) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: rootState.message.text,
@@ -136,7 +136,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -155,7 +155,7 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllNetworkUsers')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Network user ${id} is deleted`],
@@ -185,7 +185,7 @@ export default {
             })
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`UNIX account ${id} is enabled`],
@@ -204,7 +204,7 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllUNIXAccounts')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`UNIX account ${id} is disabled`],

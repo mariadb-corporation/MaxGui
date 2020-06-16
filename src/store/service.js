@@ -44,8 +44,8 @@ export default {
             let res = await this.Vue.axios.get(`/services/${id}`, {
                 auth: state.credentials,
             })
-            await commit('setCurrentService', res.data.data)
-            await commit('setConnectionInfo', {
+            commit('setCurrentService', res.data.data)
+            commit('setConnectionInfo', {
                 total_connections: res.data.data.attributes.total_connections,
                 connections: res.data.data.attributes.connections,
             })
@@ -81,14 +81,14 @@ export default {
         },
         async fetchAllServices({ commit }) {
             let res = await this.Vue.axios.get(`/services`)
-            await commit('setServices', res.data.data)
+            commit('setServices', res.data.data)
         },
         async fetchServiceConnections({ commit }, id) {
             let res = await this.Vue.axios.get(
                 `/services/${id}?fields[services]=connections,total_connections`
             )
             let { attributes: { connections, total_connections } = {} } = res.data.data
-            await commit('setConnectionInfo', {
+            commit('setConnectionInfo', {
                 total_connections: total_connections,
                 connections: connections,
             })
@@ -121,7 +121,7 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Service ${payload.id} is created`],
@@ -150,7 +150,7 @@ export default {
             let res = await this.Vue.axios.patch(`/services/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Parameters of ${payload.id} is updated`],
@@ -188,7 +188,7 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -207,7 +207,7 @@ export default {
             // response ok
             if (res.status === 204) {
                 await dispatch('fetchAllServices')
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Service ${id} is deleted`],
@@ -234,7 +234,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,

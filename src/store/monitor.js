@@ -31,11 +31,11 @@ export default {
     actions: {
         async fetchAllMonitors({ commit }) {
             let res = await this.Vue.axios.get(`/monitors`)
-            await commit('setAllMonitors', res.data.data)
+            commit('setAllMonitors', res.data.data)
         },
         async fetchMonitorById({ commit }, id) {
             let res = await this.Vue.axios.get(`/monitors/${id}`)
-            await commit('setCurrentMonitor', res.data.data)
+            commit('setCurrentMonitor', res.data.data)
         },
 
         /**
@@ -63,7 +63,7 @@ export default {
             let message = [`Monitor ${payload.id} is created`]
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -93,7 +93,7 @@ export default {
             let res = await this.Vue.axios.patch(`/monitors/${payload.id}`, body)
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: [`Monitor ${payload.id} is updated`],
@@ -130,7 +130,7 @@ export default {
             }
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
@@ -160,7 +160,7 @@ export default {
 
             // response ok
             if (res.status === 204) {
-                await commit(
+                commit(
                     'showMessage',
                     {
                         text: message,
