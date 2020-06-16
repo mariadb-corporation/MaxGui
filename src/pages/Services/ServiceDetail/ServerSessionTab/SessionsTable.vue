@@ -16,11 +16,11 @@
                     :noDataText="$t('noEntity', { entityName: $tc('sessions', 2) })"
                     :loading="loading"
                 >
-                    <template v-slot:user="{ data: { item: { user } } }">
+                    <!-- <template v-slot:user="{ data: { item: { user } } }">
                         <router-link :key="user" :to="`/users/${user}`" class="no-underline">
                             <span> {{ user }} </span>
                         </router-link>
-                    </template>
+                    </template> -->
                     <template v-slot:connected="{ data: { item: { connected } } }">
                         <span> {{ $help.formatValue(connected) }} </span>
                     </template>

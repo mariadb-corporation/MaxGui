@@ -48,6 +48,10 @@ export function getCookie(name) {
             .shift()
 }
 
+export function deleteCookie(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+}
+
 export function range(start, end) {
     if (isNaN(start) || isNaN(end)) return
     return Math.floor(Math.random() * (end - start + 1)) + start
@@ -411,6 +415,7 @@ Object.defineProperties(Vue.prototype, {
         get() {
             return {
                 getCookie,
+                deleteCookie,
                 range,
                 serviceStateIcon,
                 serverStateIcon,

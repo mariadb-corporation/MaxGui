@@ -90,9 +90,9 @@ export default {
                 plugins: {
                     streaming: {
                         duration: 20000,
-                        refresh: 1000, // onRefresh callback will be called every 5000 ms
+                        refresh: 10000, // onRefresh callback will be called every 5000 ms
                         // delay of 5000 ms, so upcoming values are known before plotting a line
-                        delay: 5000,
+                        delay: 10000,
                         onRefresh: this.updateThreadsChart,
                     },
                 },

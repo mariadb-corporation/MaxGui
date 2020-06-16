@@ -59,6 +59,7 @@ export default {
                 localStorage.removeItem('user')
             }
             commit('setUser', {})
+            this.Vue.prototype.$help.deleteCookie('token_body')
             // hide snackbar message if it is on
             if (rootState.message.status) {
                 await commit(
