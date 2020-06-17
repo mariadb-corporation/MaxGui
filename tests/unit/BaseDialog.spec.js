@@ -18,27 +18,28 @@ describe('BaseDialog.vue', () => {
     let wrapper
 
     beforeEach(() => {
+        localStorage.clear()
         wrapper = mount({
             shallow: false,
             component: BaseDialog,
             props: {
                 value: true,
                 title: 'dialog title',
-                onClose: () => console.log('onClose is triggered'),
-                onCancel: () => console.log('onCancel is triggered'),
-                onSave: () => console.log('onSave is triggered'),
+                onClose: () => console.log('onClose cb is triggered'),
+                onCancel: () => console.log('onCancel cb is triggered'),
+                onSave: () => console.log('onSave is cb triggered'),
             },
         })
     })
 
-    it('Component passed required props types', () => {
+    it('Component passed correct required props types', () => {
         expect(wrapper.props().value).to.be.true
         expect(wrapper.props().title).to.have.string('dialog title')
         expect(wrapper.props().onClose).to.be.a('function')
         expect(wrapper.props().onCancel).to.be.a('function')
         expect(wrapper.props().onSave).to.be.a('function')
     })
-    it('Component passed optionals props types', () => {
+    it('Component passed correct optionals props types ', () => {
         expect(wrapper.props().minBodyWidth).to.be.a('string')
         expect(wrapper.props().dynamicWidth).to.be.a('boolean')
         expect(wrapper.props().scrollable).to.be.a('boolean')
@@ -48,52 +49,49 @@ describe('BaseDialog.vue', () => {
         expect(wrapper.props().disabledSaveBtn).to.be.a('boolean')
         expect(wrapper.props().forceAccept).to.be.a('boolean')
     })
-
-    it('dialog closes when cancel button is pressed', () => {
+    it('dialog closes when cancel button or close button is pressed', () => {
+        //case: cancel btn
         //wrapper.props.value is set to be true already when initialize the component
         expect(wrapper.vm.computeShowDialog).to.be.true
 
-        const btn = wrapper.find('.cancel')
+        const cancelBtn = wrapper.find('.cancel')
         let eventFired = 0
+
         wrapper.vm.$on('cancel-click', () => {
             eventFired++
         })
-        btn.trigger('click')
+        cancelBtn.trigger('click')
+
         /* 
             The visibility of base-dialog is controlled by parent component.
             This set props value to be false, computeShowDialog should re-run
             to close the dialog
         */
         wrapper.setProps({ value: false })
+
         expect(eventFired).to.equal(1)
         expect(wrapper.vm.computeShowDialog).to.be.false
-    })
 
-    it('dialog closes when close button is pressed', () => {
-        //wrapper.props.value is set to be true already when initialize the component
+        //case: close btn
+        wrapper.setProps({ value: true })
         expect(wrapper.vm.computeShowDialog).to.be.true
-        const btn = wrapper.find('.close')
-        btn.trigger('click')
-        /* 
-            The visibility of base-dialog is controlled by parent component.
-            This set props value to be false, computeShowDialog should re-run
-            to close the dialog
-        */
+        const closeBtn = wrapper.find('.close')
+        closeBtn.trigger('click')
         wrapper.setProps({ value: false })
         expect(wrapper.vm.computeShowDialog).to.be.false
     })
 
-    /* it('dialog closes when save button is pressed', () => {
+    it('dialog closes when save button is pressed', () => {
         //wrapper.props.value is set to be true already when initialize the component
         expect(wrapper.vm.computeShowDialog).to.be.true
         const btn = wrapper.find('.save')
         btn.trigger('click')
-        
-            // The visibility of base-dialog is controlled by parent component.
-            // This set props value to be false, computeShowDialog should re-run
-            // to close the dialog
-       
+
+        // The visibility of base-dialog is controlled by parent component.
+        // This set props value to be false, computeShowDialog should re-run
+        // to close the dialog
+
         wrapper.setProps({ value: false })
         expect(wrapper.vm.computeShowDialog).to.be.false
-    }) */
+    })
 })
