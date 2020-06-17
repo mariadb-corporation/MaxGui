@@ -2,7 +2,7 @@
     <v-col class="py-0 ma-0" cols="8">
         <collapse
             :toggleOnClick="() => (showSessions = !showSessions)"
-            :toggleVal="showSessions"
+            :isContentVisible="showSessions"
             :title="`${$tc('currentSessions', 2)}`"
             :titleInfo="sessionsTableRow.length"
         >

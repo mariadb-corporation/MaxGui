@@ -14,7 +14,7 @@
             <div class="d-flex align-center" :class="titleWrapperClass">
                 <v-btn icon class="arrow-toggle" @click="toggleOnClick">
                     <v-icon
-                        :class="[!toggleVal ? 'arrow-down' : 'arrow-up']"
+                        :class="[!isContentVisible ? 'arrow-down' : 'arrow-up']"
                         size="32"
                         color="#013646"
                     >
@@ -61,7 +61,7 @@
             </v-btn>
         </div>
         <v-expand-transition>
-            <div v-show="toggleVal">
+            <div v-show="isContentVisible">
                 <slot name="content"></slot>
             </div>
         </v-expand-transition>
@@ -90,7 +90,7 @@ export default {
         titleWrapperClass: String,
         // props for the toggle
         toggleOnClick: { type: Function, required: true },
-        toggleVal: { type: Boolean, required: true },
+        isContentVisible: { type: Boolean, required: true },
         // props for the Title
         title: { type: String, required: true },
         titleInfo: [String, Number], // option
@@ -111,7 +111,7 @@ export default {
         onAddClick: {
             handler(value) {
                 if (value && typeof this.addBtnText === 'undefined') {
-                    console.error("property 'addBtnText' is required. ")
+                    console.error("component props 'addBtnText' is required. ")
                 }
             },
             immediate: true,

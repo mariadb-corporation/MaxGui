@@ -3,7 +3,7 @@
         <v-col cols="6">
             <collapse
                 :toggleOnClick="() => (showServers = !showServers)"
-                :toggleVal="showServers"
+                :isContentVisible="showServers"
                 :title="`${$tc('servers', 2)}`"
                 :titleInfo="serverStateTableRow.length"
                 :onAddClick="() => onAdd('servers')"

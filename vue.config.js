@@ -20,6 +20,7 @@ process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
 
 module.exports = {
     devServer: {
+        host: 'localhost',
         https: {
             key: fs.readFileSync('./.certs/localhost+1-key.pem'),
             cert: fs.readFileSync('./.certs/localhost+1.pem'),

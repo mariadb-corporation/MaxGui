@@ -10,34 +10,24 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-import Vue from 'vue'
+
 import { expect } from 'chai'
 import mount from './setup'
 import BaseDialog from '@/components/common/BaseDialog.vue'
 
 describe('BaseDialog.vue', () => {
     let wrapper
-    let show = true
     beforeEach(() => {
         localStorage.clear()
         wrapper = mount({
             shallow: false,
             component: BaseDialog,
             props: {
-                value: show,
+                value: true,
                 title: 'dialog title',
-                onCancel: () => {
-                    show = !wrapper.props().value
-                    wrapper.setProps({ value: show })
-                },
-                onClose: () => {
-                    show = !wrapper.props().value
-                    wrapper.setProps({ value: show })
-                },
-                onSave: () => {
-                    show = !wrapper.props().value
-                    wrapper.setProps({ value: show })
-                },
+                onCancel: () => wrapper.setProps({ value: false }),
+                onClose: () => wrapper.setProps({ value: false }),
+                onSave: () => wrapper.setProps({ value: false }),
             },
         })
     })
@@ -45,31 +35,26 @@ describe('BaseDialog.vue', () => {
     it('dialog closes when cancel button or close button is pressed', () => {
         //----------------case: cancel btn
         expect(wrapper.vm.computeShowDialog).to.be.true
-        const cancelBtn = wrapper.find('.cancel')
-        cancelBtn.trigger('click')
+        wrapper.find('.cancel').trigger('click')
         expect(wrapper.vm.computeShowDialog).to.be.false
 
         //---------------case: close btn
-        show = true
         // make dialog open again
-        wrapper.setProps({ value: show })
+        wrapper.setProps({ value: true })
         expect(wrapper.vm.computeShowDialog).to.be.true
-
-        const closeBtn = wrapper.find('.close')
-
-        closeBtn.trigger('click')
+        wrapper.find('.close').trigger('click')
         expect(wrapper.vm.computeShowDialog).to.be.false
     })
 
     it('dialog closes when save button is pressed (async)', async () => {
-        show = true
         // make dialog open again
-        wrapper.setProps({ value: show })
+        wrapper.setProps({ value: true })
         expect(wrapper.vm.computeShowDialog).to.be.true
-        await Vue.nextTick()
-        const saveBtn = wrapper.find('.save')
-        saveBtn.trigger('click')
-        await Vue.nextTick()
+
+        await wrapper.vm.$nextTick()
+        wrapper.find('.save').trigger('click')
+
+        await wrapper.vm.$nextTick()
         expect(wrapper.vm.computeShowDialog).to.be.false
     })
 })

@@ -2,7 +2,7 @@
     <fragment>
         <collapse
             :toggleOnClick="() => (showParameters = !showParameters)"
-            :toggleVal="showParameters"
+            :isContentVisible="showParameters"
             :title="`${$tc('parameters', 2)}`"
             :editing="editableCell"
             :onEdit="() => (editableCell = true)"

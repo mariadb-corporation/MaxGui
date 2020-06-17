@@ -4,7 +4,7 @@
             wrapperClass="mt-4 d-inline-flex flex-column"
             titleWrapperClass="mx-n9"
             :toggleOnClick="() => (showParameters = !showParameters)"
-            :toggleVal="showParameters"
+            :isContentVisible="showParameters"
             :title="`${$tc('parameters', 2)}`"
         >
             <template v-slot:content>

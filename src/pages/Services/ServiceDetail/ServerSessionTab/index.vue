@@ -6,7 +6,7 @@
                 <v-col cols="12" class="pa-0 ma-0">
                     <collapse
                         :toggleOnClick="() => (showServers = !showServers)"
-                        :toggleVal="showServers"
+                        :isContentVisible="showServers"
                         :title="`${$tc('servers', 2)}`"
                         :titleInfo="serverStateTableRow.length"
                         :onAddClick="() => onAdd('servers')"
@@ -56,7 +56,7 @@
                 <v-col cols="12" class="pa-0 mt-4">
                     <collapse
                         :toggleOnClick="() => (showFilter = !showFilter)"
-                        :toggleVal="showFilter"
+                        :isContentVisible="showFilter"
                         :title="`${$tc('filters', 2)}`"
                         :titleInfo="filtersLinked.length"
                         :onAddClick="() => onAdd('filters')"

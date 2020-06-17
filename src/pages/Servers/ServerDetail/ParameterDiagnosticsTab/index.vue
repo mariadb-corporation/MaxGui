@@ -16,7 +16,7 @@
         <v-col class="py-0 my-0" cols="6">
             <collapse
                 :toggleOnClick="() => (showMonitorDiagnostics = !showMonitorDiagnostics)"
-                :toggleVal="showMonitorDiagnostics"
+                :isContentVisible="showMonitorDiagnostics"
                 :title="`${$t('monitorDiagnostics')}`"
             >
                 <template v-slot:content>

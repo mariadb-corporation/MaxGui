@@ -3,7 +3,7 @@
         wrapperClass="mt-4"
         titleWrapperClass="mx-n9"
         :toggleOnClick="() => (showContent = !showContent)"
-        :toggleVal="showContent"
+        :isContentVisible="showContent"
         :title="`${$tc(relationshipsType, multiple ? 2 : 1)}`"
     >
         <template v-slot:content>

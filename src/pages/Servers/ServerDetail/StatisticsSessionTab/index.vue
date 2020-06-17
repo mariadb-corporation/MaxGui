@@ -6,7 +6,7 @@
                 <v-col cols="12" class="pa-0 ma-0">
                     <collapse
                         :toggleOnClick="() => (showStatistics = !showStatistics)"
-                        :toggleVal="showStatistics"
+                        :isContentVisible="showStatistics"
                         :title="`${$tc('statistics', 2)}`"
                     >
                         <template v-slot:content>
@@ -23,7 +23,7 @@
                 <v-col cols="12" class="pa-0 mt-4">
                     <collapse
                         :toggleOnClick="() => (showServices = !showServices)"
-                        :toggleVal="showServices"
+                        :isContentVisible="showServices"
                         :title="`${$tc('services', 2)}`"
                         :titleInfo="serviceTableRow.length"
                         :onAddClick="() => onAdd('services')"
