@@ -28,7 +28,12 @@
                     </span>
                 </p>
                 <v-fade-transition>
-                    <v-btn v-if="showEditBtn || editing" icon class="arrow-toggle" @click="onEdit">
+                    <v-btn
+                        v-if="showEditBtn || isEditing"
+                        icon
+                        class="arrow-toggle"
+                        @click="onEdit"
+                    >
                         <v-icon color="primary" size="18">
                             $vuetify.icons.edit
                         </v-icon>
@@ -38,12 +43,12 @@
             <v-spacer />
             <v-fade-transition>
                 <v-btn
-                    v-if="editing"
+                    v-if="isEditing"
                     color="primary"
                     rounded
                     small
                     class="text-capitalize"
-                    @click="doneEditing"
+                    @click="doneEditingCb"
                 >
                     {{ $t('doneEditing') }}
                 </v-btn>
@@ -81,7 +86,7 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
-/* eslint-disable no-console */
+
 export default {
     /* SLOTS available for collapse */
     // name="content"
@@ -94,28 +99,18 @@ export default {
         // props for the Title
         title: { type: String, required: true },
         titleInfo: [String, Number], // option
-        // optional props for the + Add ... button
+        // optional props for the + Add ... button ( peer required props)
         onAddClick: Function,
         addBtnText: String,
-        // props for editing
-        onEdit: Function, // if this props is added, mouse event will be triggered on hover
-        editing: Boolean,
-        doneEditing: Function,
+        // edit button feat (peer required props)
+        onEdit: Function, // if this props is added, adding mouseenter event to handle show edit btn
+        isEditing: Boolean, // show done editing btn and keep edit btn visible
+        doneEditingCb: Function, // call back function triggering when click done editing btn
     },
     data() {
         return {
             showEditBtn: false,
         }
-    },
-    watch: {
-        onAddClick: {
-            handler(value) {
-                if (value && typeof this.addBtnText === 'undefined') {
-                    console.error("component props 'addBtnText' is required. ")
-                }
-            },
-            immediate: true,
-        },
     },
 }
 </script>

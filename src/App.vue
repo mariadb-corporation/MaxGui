@@ -9,7 +9,7 @@
             :onSave="confirmUpdate"
             :title="`${$t('newUpdateAvailable')}`"
             saveText="update"
-            forceAccept
+            isForceAccept
         />
     </v-app>
 </template>

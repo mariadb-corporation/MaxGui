@@ -6,7 +6,7 @@
         :onClose="closeModal"
         :onSave="handleSave"
         :title="`${$t('createANew')}...`"
-        dynamicWidth
+        isDynamicWidth
     >
         <template v-slot:body>
             <fragment v-if="selectedResource">

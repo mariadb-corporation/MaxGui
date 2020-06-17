@@ -6,7 +6,7 @@
         :onClose="onClose"
         :title="title"
         :saveText="mode"
-        :disabledSaveBtn="disabledSaveBtn"
+        :isSaveDisabled="isSaveDisabled"
     >
         <template v-slot:body>
             <fragment>
@@ -22,7 +22,7 @@
                     :defaultItems="defaultItems"
                     :multiple="multiple"
                     :showPlaceHolder="false"
-                    @is-equal="disabledSaveBtn = $event"
+                    @is-equal="isSaveDisabled = $event"
                     @get-selected-items="handleGetSelectedItems"
                 />
             </fragment>
@@ -66,7 +66,7 @@ export default {
         return {
             show: false,
             selectedItems: [],
-            disabledSaveBtn: true,
+            isSaveDisabled: true,
         }
     },
     computed: {
@@ -87,7 +87,7 @@ export default {
                 this.$emit('onOpen')
             } else {
                 this.selectedItems.length && (this.selectedItems = [])
-                !this.disabledSaveBtn && (this.disabledSaveBtn = true)
+                !this.isSaveDisabled && (this.isSaveDisabled = true)
             }
         },
     },

@@ -43,7 +43,10 @@ describe('Collapse.vue', () => {
     })
 
     it('Display edit button when hover', () => {
-        wrapper.setProps({ onEdit: () => console.log('onEdit cb') })
+        // edit button is rendered only when onEdit props is passed with a function
+        wrapper.setProps({
+            onEdit: () => wrapper.vm.$store.Vue.Logger('Collapse').info('onEdit cb'),
+        })
         wrapper.vm.$nextTick(() => {
             wrapper.find('.collapse-wrapper').trigger('mouseenter')
             expect(wrapper.vm.$data.showEditBtn).to.be.true

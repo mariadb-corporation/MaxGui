@@ -13,11 +13,17 @@
 import Vue from 'vue'
 import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
 import 'utils/helpers'
-
+import Logger from 'utils/logging'
 import vuetify from '@/plugins/vuetify'
 import i18n from '@/plugins/i18n'
 import '@/plugins/vuex'
 import store from 'store'
+import PortalVue from 'portal-vue'
+import { Plugin as fragment } from 'vue-fragment'
+
+Vue.use(fragment)
+Vue.use(PortalVue)
+Vue.Logger = Logger
 
 function doMount(isShallow, component, options) {
     if (isShallow) {

@@ -4,9 +4,9 @@
             :toggleOnClick="() => (showParameters = !showParameters)"
             :isContentVisible="showParameters"
             :title="`${$tc('parameters', 2)}`"
-            :editing="editableCell"
+            :isEditing="editableCell"
             :onEdit="() => (editableCell = true)"
-            :doneEditing="() => (showConfirmDialog = true)"
+            :doneEditingCb="() => (showConfirmDialog = true)"
         >
             <template v-slot:content>
                 <v-form ref="form" v-model="isValid">
@@ -64,7 +64,7 @@
             :onSave="acceptEdit"
             :title="`${$t('implementChanges')}`"
             saveText="thatsRight"
-            :disabledSaveBtn="shouldDisableSaveBtn"
+            :isSaveDisabled="shouldDisableSaveBtn"
         >
             <template v-slot:body>
                 <span class="d-block mb-4">

@@ -11,13 +11,13 @@
         <v-card
             class="v-card-custom"
             :min-width="minBodyWidth"
-            :max-width="dynamicWidth ? 'unset' : minBodyWidth"
+            :max-width="isDynamicWidth ? 'unset' : minBodyWidth"
         >
             <v-card-title class="v-card-title_padding">
                 <h3 class="font-weight-light color text-deep-ocean">
                     {{ title }}
                 </h3>
-                <v-btn v-if="!forceAccept" class="close" icon @click="close">
+                <v-btn v-if="!isForceAccept" class="close" icon @click="close">
                     <v-icon size="20" color="#424F62"> $vuetify.icons.close</v-icon>
                 </v-btn>
             </v-card-title>
@@ -30,7 +30,7 @@
                 <v-spacer></v-spacer>
                 <slot :cancel="cancel" :save="save" name="actions">
                     <v-btn
-                        v-if="!forceAccept"
+                        v-if="!isForceAccept"
                         small
                         height="36"
                         color="primary"
@@ -49,7 +49,7 @@
                         class="save font-weight-medium px-7 text-capitalize"
                         rounded
                         depressed
-                        :disabled="disabledSaveBtn || !isFormValid"
+                        :disabled="isSaveDisabled || !isFormValid"
                         @click="save"
                     >
                         {{ $t(saveText) }}
@@ -80,9 +80,10 @@ export default {
     name: 'base-dialog',
     props: {
         minBodyWidth: { type: String, default: '466px' },
-        dynamicWidth: { type: Boolean, default: false },
+        isDynamicWidth: { type: Boolean, default: false },
         scrollable: { type: Boolean, default: true },
         title: { type: String, required: true },
+        // passed when using v-model
         value: { type: Boolean, required: true },
         /* These functions are requires since the computeShowDialog depends on the value props.
         The open/close of the dialog completely controlled by the parent component.
@@ -94,12 +95,13 @@ export default {
         cancelText: { type: String, default: 'cancel' },
         saveText: { type: String, default: 'save' },
         // manually control btn disabled
-        disabledSaveBtn: { type: Boolean, default: false },
-        forceAccept: { type: Boolean, default: false },
+        isSaveDisabled: { type: Boolean, default: false },
+        // if isForceAccept===true, cancel and close btn won't be rendered
+        isForceAccept: { type: Boolean, default: false },
     },
     data() {
         return {
-            show: false,
+            isOpen: false,
             isFormValid: true,
         }
     },
@@ -109,9 +111,9 @@ export default {
             get() {
                 return this.value
             },
-            // set the value to show property in data
+            // set the value to isOpen property in data
             set(value) {
-                this.show = value
+                this.isOpen = value
             },
         },
     },
@@ -122,8 +124,6 @@ export default {
             this.$refs.form.reset()
             this.$refs.form.resetValidation()
             this.onCancel && this.onCancel()
-            // unit event testing
-            this.$emit('cancel-click', false)
         },
         close() {
             this.onClose && this.onClose()
@@ -135,7 +135,6 @@ export default {
 
             if (!self.isFormValid) {
                 let invalidEles = document.getElementsByClassName('v-messages__message')
-                //TODO: check crossbrowser scrollIntoView API.
                 return invalidEles[0].scrollIntoView({
                     behavior: 'smooth',
                     block: 'center',
