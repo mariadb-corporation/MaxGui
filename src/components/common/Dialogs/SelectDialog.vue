@@ -9,23 +9,21 @@
         :isSaveDisabled="isSaveDisabled"
     >
         <template v-slot:body>
-            <fragment>
-                <p>
-                    {{ $tc('specify', multiple ? 2 : 1) }}
+            <p>
+                {{ $tc('specify', multiple ? 2 : 1) }}
 
-                    {{ $tc(entityName, multiple ? 2 : 1) }}
-                </p>
+                {{ $tc(entityName, multiple ? 2 : 1) }}
+            </p>
 
-                <select-dropdown
-                    :entityName="entityName"
-                    :items="itemsList"
-                    :defaultItems="defaultItems"
-                    :multiple="multiple"
-                    :showPlaceHolder="false"
-                    @is-equal="isSaveDisabled = $event"
-                    @get-selected-items="handleGetSelectedItems"
-                />
-            </fragment>
+            <select-dropdown
+                :entityName="entityName"
+                :items="itemsList"
+                :defaultItems="defaultItems"
+                :multiple="multiple"
+                :showPlaceHolder="false"
+                @is-equal="isSaveDisabled = $event"
+                @get-selected-items="handleGetSelectedItems"
+            />
         </template>
     </base-dialog>
 </template>

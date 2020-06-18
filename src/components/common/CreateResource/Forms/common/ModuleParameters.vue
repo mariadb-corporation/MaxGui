@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <label class="text-capitalize label color text-small-text d-block">
             {{ $tc(moduleName, 1) }}
         </label>
@@ -29,7 +29,7 @@
             :isTree="isTree"
             :parentForm="parentForm"
         />
-    </fragment>
+    </div>
 </template>
 
 <script>

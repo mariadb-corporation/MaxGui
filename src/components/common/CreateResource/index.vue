@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <v-btn
             :disabled="handleShowCreateBtn"
             width="160"
@@ -14,7 +14,7 @@
             + {{ $t('createNew') }}
         </v-btn>
         <forms v-model="createDialog" :closeModal="() => (createDialog = false)" />
-    </fragment>
+    </div>
 </template>
 
 <script>

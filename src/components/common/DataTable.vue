@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <v-data-table
             v-sortable-table
             :headers="headers"
@@ -75,16 +75,15 @@
                         @mouseleave="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
                         @mouseenter="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
                     >
-                        <fragment v-if="draggable">
-                            <v-icon
-                                v-show="showDragIcon(rowIndex, cellIndex)"
-                                :class="{ 'drag-handle move': draggable }"
-                                class="color text-field-text"
-                                size="16"
-                            >
-                                drag_handle
-                            </v-icon>
-                        </fragment>
+                        <v-icon
+                            v-if="draggable"
+                            v-show="showDragIcon(rowIndex, cellIndex)"
+                            :class="{ 'drag-handle move': draggable }"
+                            class="color text-field-text"
+                            size="16"
+                        >
+                            drag_handle
+                        </v-icon>
 
                         <div
                             :ref="`itemWrapperAtRow${rowIndex}Cell${cellIndex}`"
@@ -160,7 +159,7 @@
                 </span>
             </v-sheet>
         </v-menu>
-    </fragment>
+    </div>
 </template>
 
 <script>

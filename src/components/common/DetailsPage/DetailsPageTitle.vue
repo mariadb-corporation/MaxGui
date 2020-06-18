@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <portal to="page-header">
             <div class="d-flex align-center">
                 <v-btn class="ml-n4" icon @click="$router.go(-1)">
@@ -36,7 +36,8 @@
         <portal to="create-resource">
             <create-resource />
         </portal>
-    </fragment>
+        <slot name="append"></slot>
+    </div>
 </template>
 
 <style lang="scss" scoped>

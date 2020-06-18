@@ -8,17 +8,15 @@
         :saveText="type"
     >
         <template v-slot:body>
-            <fragment>
-                <p v-if="!$help.isNull(item)">
-                    <span>
-                        {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
-                    </span>
-                </p>
-                <small>
-                    {{ smallInfo }}
-                </small>
-                <slot name="body-append"></slot>
-            </fragment>
+            <p v-if="!$help.isNull(item)">
+                <span>
+                    {{ $t(`confirmations.${type}`, { targetId: item.id }) }}
+                </span>
+            </p>
+            <small>
+                {{ smallInfo }}
+            </small>
+            <slot name="body-append"></slot>
         </template>
     </base-dialog>
 </template>

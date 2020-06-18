@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <app-header />
         <navigation />
         <snackbars />
@@ -36,7 +36,7 @@
                 </a>
             </span>
         </v-footer>
-    </fragment>
+    </div>
 </template>
 
 <script>

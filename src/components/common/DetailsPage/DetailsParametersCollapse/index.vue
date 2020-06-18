@@ -1,104 +1,101 @@
 <template>
-    <fragment>
-        <collapse
-            :toggleOnClick="() => (showParameters = !showParameters)"
-            :isContentVisible="showParameters"
-            :title="`${$tc('parameters', 2)}`"
-            :isEditing="editableCell"
-            :onEdit="() => (editableCell = true)"
-            :doneEditingCb="() => (showConfirmDialog = true)"
-        >
-            <template v-slot:content>
-                <v-form ref="form" v-model="isValid">
-                    <data-table
-                        :headers="variableValueTableHeaders"
-                        :data="parametersTableRow"
-                        tdBorderLeft
-                        showAll
-                        :editableCell="editableCell"
-                        :search="searchKeyWord"
-                        :loading="loading"
-                        keepPrimitiveValue
-                        :isTree="isTree"
-                        @cell-mouseenter="showCellTooltip"
-                    >
-                        <template v-slot:header-append-id>
-                            <span class="ml-1 color text-field-text">
-                                ({{ parametersTableRow.length }})
-                            </span>
-                        </template>
-
-                        <template v-slot:id="{ data: { item } }">
-                            <parameter-tooltip-activator :item="item" :componentId="componentId" />
-                        </template>
-
-                        <template v-if="editableCell" v-slot:value="{ data: { item } }">
-                            <parameter-input-container
-                                :item="item"
-                                :requiredParams="requiredParams"
-                                :parentForm="$refs.form"
-                                :usePortOrSocket="usePortOrSocket"
-                                :changedParametersArr="changedParametersArr"
-                                :assignPortSocketDependencyValues="assignPortSocketDependencyValues"
-                                :portValue="portValue"
-                                :socketValue="socketValue"
-                                :addressValue="addressValue"
-                                @handle-change="changedParametersArr = $event"
-                            />
-                        </template>
-                    </data-table>
-                </v-form>
-            </template>
-        </collapse>
-
-        <parameter-tooltip
-            v-if="parameterTooltip.item"
-            :parameterTooltip="parameterTooltip"
-            :activator="`#param-${parameterTooltip.item.id}_${componentId}`"
-        />
-
-        <base-dialog
-            v-model="showConfirmDialog"
-            :onCancel="cancelEdit"
-            :onClose="closeConfirmDialog"
-            :onSave="acceptEdit"
-            :title="`${$t('implementChanges')}`"
-            saveText="thatsRight"
-            :isSaveDisabled="shouldDisableSaveBtn"
-        >
-            <template v-slot:body>
-                <span class="d-block mb-4">
-                    {{
-                        $tc(
-                            'changeTheFollowingParameter',
-                            changedParametersArr.length > 1 ? 2 : 1,
-                            {
-                                quantity: changedParametersArr.length,
-                            }
-                        )
-                    }}
-                </span>
-
-                <div
-                    v-for="(item, i) in changedParametersArr"
-                    :key="i"
-                    class="d-block"
-                    :class="[item.nodeParent !== null && changedParamsInfo(i, item) && 'mt-2']"
+    <collapse
+        :toggleOnClick="() => (showParameters = !showParameters)"
+        :isContentVisible="showParameters"
+        :title="`${$tc('parameters', 2)}`"
+        :isEditing="editableCell"
+        :onEdit="() => (editableCell = true)"
+        :doneEditingCb="() => (showConfirmDialog = true)"
+    >
+        <template v-slot:content>
+            <v-form ref="form" v-model="isValid">
+                <data-table
+                    :headers="variableValueTableHeaders"
+                    :data="parametersTableRow"
+                    tdBorderLeft
+                    showAll
+                    :editableCell="editableCell"
+                    :search="searchKeyWord"
+                    :loading="loading"
+                    keepPrimitiveValue
+                    :isTree="isTree"
+                    @cell-mouseenter="showCellTooltip"
                 >
-                    <div v-if="item.nodeParent !== null">
-                        <div class="font-weight-bold">
-                            {{ changedParamsInfo(i, item) }}
+                    <template v-slot:header-append-id>
+                        <span class="ml-1 color text-field-text">
+                            ({{ parametersTableRow.length }})
+                        </span>
+                    </template>
+
+                    <template v-slot:id="{ data: { item } }">
+                        <parameter-tooltip-activator :item="item" :componentId="componentId" />
+                    </template>
+
+                    <template v-if="editableCell" v-slot:value="{ data: { item } }">
+                        <parameter-input-container
+                            :item="item"
+                            :requiredParams="requiredParams"
+                            :parentForm="$refs.form"
+                            :usePortOrSocket="usePortOrSocket"
+                            :changedParametersArr="changedParametersArr"
+                            :assignPortSocketDependencyValues="assignPortSocketDependencyValues"
+                            :portValue="portValue"
+                            :socketValue="socketValue"
+                            :addressValue="addressValue"
+                            @handle-change="changedParametersArr = $event"
+                        />
+                    </template>
+                </data-table>
+            </v-form>
+            <parameter-tooltip
+                v-if="parameterTooltip.item"
+                :parameterTooltip="parameterTooltip"
+                :activator="`#param-${parameterTooltip.item.id}_${componentId}`"
+            />
+
+            <base-dialog
+                v-model="showConfirmDialog"
+                :onCancel="cancelEdit"
+                :onClose="closeConfirmDialog"
+                :onSave="acceptEdit"
+                :title="`${$t('implementChanges')}`"
+                saveText="thatsRight"
+                :isSaveDisabled="shouldDisableSaveBtn"
+            >
+                <template v-slot:body>
+                    <span class="d-block mb-4">
+                        {{
+                            $tc(
+                                'changeTheFollowingParameter',
+                                changedParametersArr.length > 1 ? 2 : 1,
+                                {
+                                    quantity: changedParametersArr.length,
+                                }
+                            )
+                        }}
+                    </span>
+
+                    <div
+                        v-for="(item, i) in changedParametersArr"
+                        :key="i"
+                        class="d-block"
+                        :class="[item.nodeParent !== null && changedParamsInfo(i, item) && 'mt-2']"
+                    >
+                        <div v-if="item.nodeParent !== null">
+                            <div class="font-weight-bold">
+                                {{ changedParamsInfo(i, item) }}
+                            </div>
+                            <p class="d-block mb-1">{{ item.id }}: {{ item.value }}</p>
                         </div>
-                        <p class="d-block mb-1">{{ item.id }}: {{ item.value }}</p>
+                        <p v-else class="d-block mt-2 ">
+                            <span class="font-weight-bold">{{ item.id }}:</span
+                            ><span> {{ item.value }}</span>
+                        </p>
                     </div>
-                    <p v-else class="d-block mt-2 ">
-                        <span class="font-weight-bold">{{ item.id }}:</span
-                        ><span> {{ item.value }}</span>
-                    </p>
-                </div>
-            </template>
-        </base-dialog>
-    </fragment>
+                </template>
+            </base-dialog>
+        </template>
+    </collapse>
 </template>
 
 <script>

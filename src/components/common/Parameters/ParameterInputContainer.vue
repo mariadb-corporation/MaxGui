@@ -1,31 +1,29 @@
 <template>
-    <fragment>
-        <!-- rendered if usePortOrSocket -->
-        <parameter-input
-            v-if="handleShowSpecialInputs(item.id)"
-            :parentForm="parentForm"
-            :item="item"
-            :portValue="portValue"
-            :socketValue="socketValue"
-            :addressValue="addressValue"
-            :isListener="isListener"
-            :createMode="createMode"
-            @on-input-change="handleItemChange"
-        />
-        <parameter-input
-            v-else-if="requiredParams.includes(item.id)"
-            :item="item"
-            required
-            :createMode="createMode"
-            @on-input-change="handleItemChange"
-        />
-        <parameter-input
-            v-else
-            :item="item"
-            :createMode="createMode"
-            @on-input-change="handleItemChange"
-        />
-    </fragment>
+    <!-- rendered if usePortOrSocket -->
+    <parameter-input
+        v-if="handleShowSpecialInputs(item.id)"
+        :parentForm="parentForm"
+        :item="item"
+        :portValue="portValue"
+        :socketValue="socketValue"
+        :addressValue="addressValue"
+        :isListener="isListener"
+        :createMode="createMode"
+        @on-input-change="handleItemChange"
+    />
+    <parameter-input
+        v-else-if="requiredParams.includes(item.id)"
+        :item="item"
+        required
+        :createMode="createMode"
+        @on-input-change="handleItemChange"
+    />
+    <parameter-input
+        v-else
+        :item="item"
+        :createMode="createMode"
+        @on-input-change="handleItemChange"
+    />
 </template>
 
 <script>

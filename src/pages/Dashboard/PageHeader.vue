@@ -1,97 +1,92 @@
 <template>
-    <fragment>
+    <div>
         <portal to="page-header">
-            <transition :key="pageTitle" name="fade" mode="out-in">
-                <fragment>
-                    <h4
-                        style="margin-bottom: 0px; line-height: normal;"
-                        class="color text-navigation text-navigation display-1 text-capitalize"
-                    >
-                        {{ pageTitle }}
-                    </h4>
+            <h4
+                style="margin-bottom: 0px; line-height: normal;"
+                class="color text-navigation text-navigation display-1 text-capitalize"
+            >
+                {{ pageTitle }}
+            </h4>
 
-                    <span
+            <span
+                style="position:relative;top:-15px"
+                class="field-text-info color text-field-text text-capitalize"
+            >
+                {{ $t('uptime') }}
+                {{
+                    [uptime, 'seconds']
+                        | duration('format', 'Y [years] M [months] D [days] h:mm:ss', {
+                            stopTrim: 'h mm',
+                        })
+                }}
+            </span>
+
+            <v-menu
+                transition="slide-y-transition"
+                :close-on-content-click="false"
+                open-on-hover
+                offset-y
+                nudge-left="20"
+                content-class="v-menu--with-arrow v-menu--with-arrow--top-left shadow-drop"
+            >
+                <template v-slot:activator="{ on }">
+                    <v-icon
+                        class="material-icons-outlined pointer"
                         style="position:relative;top:-15px"
-                        class="field-text-info color text-field-text text-capitalize"
+                        size="16"
+                        color="#9DB4BB"
+                        v-on="on"
                     >
-                        {{ $t('uptime') }}
-                        {{
-                            [uptime, 'seconds']
-                                | duration('format', 'Y [years] M [months] D [days] h:mm:ss', {
-                                    stopTrim: 'h mm',
-                                })
-                        }}
+                        info
+                    </v-icon>
+                </template>
+
+                <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
+                    <span class="d-block mb-1 body-2 font-weight-bold text-capitalize">
+                        {{ $t('aboutMaxScale') }}
                     </span>
-
-                    <v-menu
-                        transition="slide-y-transition"
-                        :close-on-content-click="false"
-                        open-on-hover
-                        offset-y
-                        nudge-left="20"
-                        content-class="v-menu--with-arrow v-menu--with-arrow--top-left shadow-drop"
-                    >
-                        <template v-slot:activator="{ on }">
-                            <v-icon
-                                class="material-icons-outlined pointer"
-                                style="position:relative;top:-15px"
-                                size="16"
-                                color="#9DB4BB"
-                                v-on="on"
-                            >
-                                info
-                            </v-icon>
-                        </template>
-
-                        <v-sheet style="border-radius: 10px;" class="px-6 py-6" max-width="320px">
-                            <span class="d-block mb-1 body-2 font-weight-bold text-capitalize">
-                                {{ $t('aboutMaxScale') }}
+                    <div v-for="(value, name) in getMaxScaleInfo" :key="name">
+                        <span class="d-flex body-2">
+                            <span class="text-capitalize" style="width:35%">
+                                {{ name.split('_').join(' ') }}
                             </span>
-                            <div v-for="(value, name) in getMaxScaleInfo" :key="name">
-                                <span class="d-flex body-2">
-                                    <span class="text-capitalize" style="width:35%">
-                                        {{ name.split('_').join(' ') }}
-                                    </span>
-                                    <v-tooltip
-                                        v-if="name === 'commit'"
-                                        :key="copyState"
-                                        transition="slide-y-reverse-transition"
-                                        top
-                                        content-class="shadow-drop color text-navigation py-1 px-4"
-                                    >
-                                        <template v-slot:activator="{ on }">
-                                            <div
-                                                style="width:65%;"
-                                                class="pointer d-inline-block text-truncate"
-                                                @dblclick="copyToClipboard()"
-                                                v-on="on"
-                                            >
-                                                {{ value }}
-                                            </div>
-                                        </template>
-                                        <span>
-                                            {{ copyState }}
-                                        </span>
-                                    </v-tooltip>
+                            <v-tooltip
+                                v-if="name === 'commit'"
+                                :key="copyState"
+                                transition="slide-y-reverse-transition"
+                                top
+                                content-class="shadow-drop color text-navigation py-1 px-4"
+                            >
+                                <template v-slot:activator="{ on }">
                                     <div
-                                        v-else-if="
-                                            value &&
-                                                (name === 'started_at' || name === 'activated_at')
-                                        "
                                         style="width:65%;"
-                                        class="d-inline-block "
+                                        class="pointer d-inline-block text-truncate"
+                                        @dblclick="copyToClipboard()"
+                                        v-on="on"
                                     >
-                                        {{ $help.formatValue(value, 'MM.DD.YYYY HH:mm:ss') }}
-                                    </div>
-                                    <div v-else style="width:65%;" class="d-inline-block ">
                                         {{ value }}
                                     </div>
+                                </template>
+                                <span>
+                                    {{ copyState }}
                                 </span>
+                            </v-tooltip>
+                            <div
+                                v-else-if="
+                                    value && (name === 'started_at' || name === 'activated_at')
+                                "
+                                style="width:65%;"
+                                class="d-inline-block "
+                            >
+                                {{ $help.formatValue(value, 'MM.DD.YYYY HH:mm:ss') }}
                             </div>
-                        </v-sheet>
-                    </v-menu>
-                </fragment>
-            </transition>
+                            <div v-else style="width:65%;" class="d-inline-block ">
+                                {{ value }}
+                            </div>
+                        </span>
+                    </div>
+                </v-sheet>
+            </v-menu>
         </portal>
         <portal to="page-search">
             <global-search />
@@ -99,7 +94,7 @@
         <portal to="create-resource">
             <create-resource />
         </portal>
-    </fragment>
+    </div>
 </template>
 
 <script>

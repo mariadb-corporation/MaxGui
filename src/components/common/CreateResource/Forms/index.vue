@@ -8,82 +8,78 @@
         :title="`${$t('createANew')}...`"
         isDynamicWidth
     >
-        <template v-slot:body>
-            <fragment v-if="selectedResource">
-                <v-select
-                    id="resource-select"
-                    v-model="selectedResource"
-                    :items="resourcesList"
-                    name="resourceName"
-                    outlined
-                    dense
-                    class="std mariadb-select-input error--text__bottom"
-                    :menu-props="{
-                        contentClass: 'mariadb-select-v-menu',
-                        bottom: true,
-                        offsetY: true,
-                    }"
-                    hide-details
-                    :rules="[v => !!v || $t('errors.requiredInput', { inputName: 'This field' })]"
+        <template v-if="selectedResource" v-slot:body>
+            <v-select
+                id="resource-select"
+                v-model="selectedResource"
+                :items="resourcesList"
+                name="resourceName"
+                outlined
+                dense
+                class="std mariadb-select-input error--text__bottom"
+                :menu-props="{
+                    contentClass: 'mariadb-select-v-menu',
+                    bottom: true,
+                    offsetY: true,
+                }"
+                hide-details
+                :rules="[v => !!v || $t('errors.requiredInput', { inputName: 'This field' })]"
+                required
+                @input="handleResourceSelected"
+            />
+            <v-divider class="divider" />
+            <div class="mb-0">
+                <label class="label color text-small-text d-block">
+                    {{ $t('resourceLabelName', { resourceName: selectedResource }) }}
+                </label>
+                <v-text-field
+                    id="id"
+                    v-model="resourceId"
+                    :rules="rules.resourceId"
+                    name="id"
                     required
-                    @input="handleResourceSelected"
+                    class="std error--text__bottom"
+                    dense
+                    outlined
+                    :placeholder="$t('nameYour', { resourceName: selectedResource.toLowerCase() })"
                 />
-                <v-divider class="divider" />
-                <div class="mb-0">
-                    <label class="label color text-small-text d-block">
-                        {{ $t('resourceLabelName', { resourceName: selectedResource }) }}
-                    </label>
-                    <v-text-field
-                        id="id"
-                        v-model="resourceId"
-                        :rules="rules.resourceId"
-                        name="id"
-                        required
-                        class="std error--text__bottom"
-                        dense
-                        outlined
-                        :placeholder="
-                            $t('nameYour', { resourceName: selectedResource.toLowerCase() })
-                        "
-                    />
-                </div>
+            </div>
 
-                <div v-if="selectedResource === 'Service'" class="mb-0">
-                    <service-form-input
-                        ref="serviceForm"
-                        :resourceModules="resourceModules"
-                        :allServers="allServers"
-                        :allFilters="allFilters"
-                    />
-                </div>
-                <div v-else-if="selectedResource === 'Monitor'" class="mb-0">
-                    <monitor-form-input
-                        ref="monitorForm"
-                        :resourceModules="resourceModules"
-                        :allServers="allServers"
-                    />
-                </div>
-                <div v-else-if="selectedResource === 'Filter'" class="mb-0">
-                    <filter-form-input ref="filterForm" :resourceModules="resourceModules" />
-                </div>
-                <div v-else-if="selectedResource === 'Listener'" class="mb-0">
-                    <listener-form-input
-                        ref="listenerForm"
-                        :parentForm="$refs.baseDialog.$refs.form || {}"
-                        :resourceModules="resourceModules"
-                        :allServices="allServices"
-                    />
-                </div>
-                <div v-else-if="selectedResource === 'Server'" class="mb-0">
-                    <server-form-input
-                        ref="serverForm"
-                        :allServices="allServices"
-                        :allMonitors="allMonitors"
-                        :resourceModules="resourceModules"
-                        :parentForm="$refs.baseDialog.$refs.form || {}"
-                    />
-                </div>
-            </fragment>
+            <div v-if="selectedResource === 'Service'" class="mb-0">
+                <service-form-input
+                    ref="serviceForm"
+                    :resourceModules="resourceModules"
+                    :allServers="allServers"
+                    :allFilters="allFilters"
+                />
+            </div>
+            <div v-else-if="selectedResource === 'Monitor'" class="mb-0">
+                <monitor-form-input
+                    ref="monitorForm"
+                    :resourceModules="resourceModules"
+                    :allServers="allServers"
+                />
+            </div>
+            <div v-else-if="selectedResource === 'Filter'" class="mb-0">
+                <filter-form-input ref="filterForm" :resourceModules="resourceModules" />
+            </div>
+            <div v-else-if="selectedResource === 'Listener'" class="mb-0">
+                <listener-form-input
+                    ref="listenerForm"
+                    :parentForm="$refs.baseDialog.$refs.form || {}"
+                    :resourceModules="resourceModules"
+                    :allServices="allServices"
+                />
+            </div>
+            <div v-else-if="selectedResource === 'Server'" class="mb-0">
+                <server-form-input
+                    ref="serverForm"
+                    :allServices="allServices"
+                    :allMonitors="allMonitors"
+                    :resourceModules="resourceModules"
+                    :parentForm="$refs.baseDialog.$refs.form || {}"
+                />
+            </div>
         </template>
     </base-dialog>
 </template>

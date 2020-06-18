@@ -1,18 +1,14 @@
 <template>
-    <fragment>
-        <span
-            v-if="
-                'type' in item || 'description' in item || 'unit' in item || 'default_value' in item
-            "
-            :id="`param-${item.id}_${componentId}`"
-            class="pointer"
-        >
-            {{ item.id }}
-        </span>
-        <span v-else>
-            {{ item.id }}
-        </span>
-    </fragment>
+    <span
+        v-if="'type' in item || 'description' in item || 'unit' in item || 'default_value' in item"
+        :id="`param-${item.id}_${componentId}`"
+        class="pointer"
+    >
+        {{ item.id }}
+    </span>
+    <span v-else>
+        {{ item.id }}
+    </span>
 </template>
 
 <script>

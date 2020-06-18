@@ -1,57 +1,55 @@
 <template>
-    <fragment>
-        <collapse
-            wrapperClass="mt-4 d-inline-flex flex-column"
-            titleWrapperClass="mx-n9"
-            :toggleOnClick="() => (showParameters = !showParameters)"
-            :isContentVisible="showParameters"
-            :title="`${$tc('parameters', 2)}`"
-        >
-            <template v-slot:content>
-                <data-table
-                    :headers="variableValueTableHeaders"
-                    :data="parametersTableRow"
-                    showAll
-                    editableCell
-                    keepPrimitiveValue
-                    :isTree="isTree"
-                    @cell-mouseenter="showCellTooltip"
-                >
-                    <template v-slot:header-append-id>
-                        <span class="ml-1 color text-field-text">
-                            ({{ parametersTableRow.length }})
-                        </span>
-                    </template>
+    <collapse
+        wrapperClass="mt-4 d-inline-flex flex-column"
+        titleWrapperClass="mx-n9"
+        :toggleOnClick="() => (showParameters = !showParameters)"
+        :isContentVisible="showParameters"
+        :title="`${$tc('parameters', 2)}`"
+    >
+        <template v-slot:content>
+            <data-table
+                :headers="variableValueTableHeaders"
+                :data="parametersTableRow"
+                showAll
+                editableCell
+                keepPrimitiveValue
+                :isTree="isTree"
+                @cell-mouseenter="showCellTooltip"
+            >
+                <template v-slot:header-append-id>
+                    <span class="ml-1 color text-field-text">
+                        ({{ parametersTableRow.length }})
+                    </span>
+                </template>
 
-                    <template v-slot:id="{ data: { item } }">
-                        <parameter-tooltip-activator :item="item" :componentId="componentId" />
-                    </template>
+                <template v-slot:id="{ data: { item } }">
+                    <parameter-tooltip-activator :item="item" :componentId="componentId" />
+                </template>
 
-                    <template v-slot:value="{ data: { item } }">
-                        <parameter-input-container
-                            :item="item"
-                            :requiredParams="requiredParams"
-                            :parentForm="parentForm"
-                            :usePortOrSocket="usePortOrSocket"
-                            :changedParametersArr="changedParametersArr"
-                            :assignPortSocketDependencyValues="assignPortSocketDependencyValues"
-                            :portValue="portValue"
-                            :socketValue="socketValue"
-                            :addressValue="addressValue"
-                            :isListener="isListener"
-                            createMode
-                            @handle-change="changedParametersArr = $event"
-                        />
-                    </template>
-                </data-table>
-            </template>
-        </collapse>
-        <parameter-tooltip
-            v-if="parameterTooltip.item"
-            :parameterTooltip="parameterTooltip"
-            :activator="`#param-${parameterTooltip.item.id}_${componentId}`"
-        />
-    </fragment>
+                <template v-slot:value="{ data: { item } }">
+                    <parameter-input-container
+                        :item="item"
+                        :requiredParams="requiredParams"
+                        :parentForm="parentForm"
+                        :usePortOrSocket="usePortOrSocket"
+                        :changedParametersArr="changedParametersArr"
+                        :assignPortSocketDependencyValues="assignPortSocketDependencyValues"
+                        :portValue="portValue"
+                        :socketValue="socketValue"
+                        :addressValue="addressValue"
+                        :isListener="isListener"
+                        createMode
+                        @handle-change="changedParametersArr = $event"
+                    />
+                </template>
+            </data-table>
+            <parameter-tooltip
+                v-if="parameterTooltip.item"
+                :parameterTooltip="parameterTooltip"
+                :activator="`#param-${parameterTooltip.item.id}_${componentId}`"
+            />
+        </template>
+    </collapse>
 </template>
 
 <script>

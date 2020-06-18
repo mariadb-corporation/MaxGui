@@ -17,7 +17,7 @@
                 >
                     {{ name.replace('_', ' ') }}
                 </span>
-                <fragment v-if="name === 'monitor'">
+                <template v-if="name === 'monitor'">
                     <router-link
                         v-if="value !== 'undefined'"
                         :key="index"
@@ -33,12 +33,12 @@
                             </v-icon>
                         </v-btn>
                     </div>
-                </fragment>
+                </template>
                 <span
                     v-else-if="name === 'state'"
                     class="detail-overview__card__value text-no-wrap body-2"
                 >
-                    <fragment v-if="value.indexOf(',') > 0">
+                    <template v-if="value.indexOf(',') > 0">
                         <span class="color font-weight-bold" :class="[serverStateClass]">
                             {{ value.slice(0, value.indexOf(',')) }}
                         </span>
@@ -46,19 +46,19 @@
                         <span class="color font-weight-bold" :class="[serverStateClass]">
                             {{ value.slice(value.indexOf(',') + 1) }}
                         </span>
-                    </fragment>
+                    </template>
                     <span v-else class="color font-weight-bold" :class="[serverStateClass]">
                         {{ value }}
                     </span>
                 </span>
                 <span v-else class="detail-overview__card__value text-no-wrap body-2">
-                    <fragment v-if="value !== 'undefined'">
+                    <template v-if="value !== 'undefined'">
                         {{
                             name === 'triggered_at' && value !== 'undefined'
                                 ? $help.formatValue(value, 'DATE_RFC2822')
                                 : value
                         }}
-                    </fragment>
+                    </template>
                 </span>
             </template>
         </outlined-overview-card>

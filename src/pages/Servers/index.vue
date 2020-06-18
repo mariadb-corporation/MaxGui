@@ -60,11 +60,9 @@
         </template>
 
         <template v-slot:serviceIds="{ data: { item: { serviceIds } } }">
-            <fragment v-if="typeof serviceIds === 'string'">
-                <span>{{ serviceIds }} </span>
-            </fragment>
+            <span v-if="typeof serviceIds === 'string'">{{ serviceIds }} </span>
 
-            <fragment v-else-if="serviceIds.length < 2">
+            <template v-else-if="serviceIds.length < 2">
                 <template v-for="serviceId in serviceIds">
                     <router-link
                         :key="serviceId"
@@ -74,38 +72,37 @@
                         <span>{{ serviceId }} </span>
                     </router-link>
                 </template>
-            </fragment>
+            </template>
 
-            <fragment v-else>
-                <v-menu
-                    offset-x
-                    transition="slide-x-transition"
-                    :close-on-content-click="false"
-                    open-on-hover
-                    nudge-right="20"
-                    nudge-top="12.5"
-                    content-class="shadow-drop"
-                >
-                    <template v-slot:activator="{ on }">
-                        <span class="pointer color text-links" v-on="on">
-                            {{ serviceIds.length }}
-                            {{ $tc('services', 2).toLowerCase() }}
-                        </span>
+            <v-menu
+                v-else
+                offset-x
+                transition="slide-x-transition"
+                :close-on-content-click="false"
+                open-on-hover
+                nudge-right="20"
+                nudge-top="12.5"
+                content-class="shadow-drop"
+            >
+                <template v-slot:activator="{ on }">
+                    <span class="pointer color text-links" v-on="on">
+                        {{ serviceIds.length }}
+                        {{ $tc('services', 2).toLowerCase() }}
+                    </span>
+                </template>
+
+                <v-sheet style="border-radius: 10px;" class="pa-4">
+                    <template v-for="serviceId in serviceIds">
+                        <router-link
+                            :key="serviceId"
+                            :to="`/dashboard/services/${serviceId}`"
+                            class="body-2 d-block no-underline"
+                        >
+                            <span>{{ serviceId }} </span>
+                        </router-link>
                     </template>
-
-                    <v-sheet style="border-radius: 10px;" class="pa-4">
-                        <template v-for="serviceId in serviceIds">
-                            <router-link
-                                :key="serviceId"
-                                :to="`/dashboard/services/${serviceId}`"
-                                class="body-2 d-block no-underline"
-                            >
-                                <span>{{ serviceId }} </span>
-                            </router-link>
-                        </template>
-                    </v-sheet>
-                </v-menu>
-            </fragment>
+                </v-sheet>
+            </v-menu>
         </template>
     </data-table>
 </template>

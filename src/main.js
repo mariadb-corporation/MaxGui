@@ -23,9 +23,7 @@ import router from 'router'
 import commonComponents from 'components/common'
 import Logger from 'utils/logging'
 import PortalVue from 'portal-vue'
-import { Plugin as fragment } from 'vue-fragment'
 
-Vue.use(fragment)
 Vue.use(PortalVue)
 Vue.Logger = Logger
 

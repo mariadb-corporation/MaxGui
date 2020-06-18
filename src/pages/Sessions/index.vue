@@ -12,15 +12,13 @@
             </router-link>
         </template> -->
         <template v-slot:serviceIds="{ data: { item: { serviceIds } } }">
-            <fragment v-if="typeof serviceIds === 'string'">
-                <span>{{ serviceIds }}</span>
-            </fragment>
+            <span v-if="typeof serviceIds === 'string'">{{ serviceIds }}</span>
 
             <!--
                 https://github.com/mariadb-corporation/MaxScale/blob/develop/Documentation/REST-API/Resources-Session.md
                 Each session is created on a service, so even serviceIds is an array, it always has one element
             -->
-            <fragment v-else>
+            <template v-else>
                 <template v-for="serviceId in serviceIds">
                     <router-link
                         :key="serviceId"
@@ -30,7 +28,7 @@
                         <span>{{ serviceId }} </span>
                     </router-link>
                 </template>
-            </fragment>
+            </template>
         </template>
         <template v-slot:connected="{ data: { item: { connected } } }">
             <span> {{ $help.formatValue(connected) }} </span>

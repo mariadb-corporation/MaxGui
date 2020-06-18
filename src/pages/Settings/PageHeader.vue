@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <portal to="page-header">
             <div class="d-flex align-center">
                 <div class="d-inline-flex align-center">
@@ -15,7 +15,7 @@
         <portal to="page-search">
             <global-search />
         </portal>
-    </fragment>
+    </div>
 </template>
 
 <script>

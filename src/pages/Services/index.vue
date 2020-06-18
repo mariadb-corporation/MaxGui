@@ -21,11 +21,9 @@
             <span class="ml-1 color text-field-text"> ({{ allLinkedServers }}) </span>
         </template>
         <template v-slot:serverIds="{ data: { item: { serverIds }, i } }">
-            <fragment v-if="typeof serverIds === 'string'">
-                <span>{{ serverIds }} </span>
-            </fragment>
+            <span v-if="typeof serverIds === 'string'">{{ serverIds }} </span>
 
-            <fragment v-else-if="serverIds.length < 3">
+            <template v-else-if="serverIds.length < 3">
                 <template v-for="(serverId, i) in serverIds">
                     <router-link
                         :key="serverId"
@@ -35,38 +33,38 @@
                         <span> {{ serverId }}{{ i !== serverIds.length - 1 ? ', ' : '' }} </span>
                     </router-link>
                 </template>
-            </fragment>
-            <fragment v-else>
-                <v-menu
-                    :key="i"
-                    offset-x
-                    transition="slide-x-transition"
-                    :close-on-content-click="false"
-                    open-on-hover
-                    nudge-right="20"
-                    nudge-top="12.5"
-                    content-class="shadow-drop"
-                >
-                    <template v-slot:activator="{ on }">
-                        <span class="pointer color text-links" v-on="on">
-                            {{ serverIds.length }}
-                            {{ $tc('servers', 2).toLowerCase() }}
-                        </span>
-                    </template>
+            </template>
 
-                    <v-sheet style="border-radius: 10px;" class="pa-4">
-                        <template v-for="serverId in serverIds">
-                            <router-link
-                                :key="serverId"
-                                :to="`/dashboard/servers/${serverId}`"
-                                class="body-2 d-block no-underline"
-                            >
-                                <span>{{ serverId }} </span>
-                            </router-link>
-                        </template>
-                    </v-sheet>
-                </v-menu>
-            </fragment>
+            <v-menu
+                v-else
+                :key="i"
+                offset-x
+                transition="slide-x-transition"
+                :close-on-content-click="false"
+                open-on-hover
+                nudge-right="20"
+                nudge-top="12.5"
+                content-class="shadow-drop"
+            >
+                <template v-slot:activator="{ on }">
+                    <span class="pointer color text-links" v-on="on">
+                        {{ serverIds.length }}
+                        {{ $tc('servers', 2).toLowerCase() }}
+                    </span>
+                </template>
+
+                <v-sheet style="border-radius: 10px;" class="pa-4">
+                    <template v-for="serverId in serverIds">
+                        <router-link
+                            :key="serverId"
+                            :to="`/dashboard/servers/${serverId}`"
+                            class="body-2 d-block no-underline"
+                        >
+                            <span>{{ serverId }} </span>
+                        </router-link>
+                    </template>
+                </v-sheet>
+            </v-menu>
         </template>
     </data-table>
 </template>

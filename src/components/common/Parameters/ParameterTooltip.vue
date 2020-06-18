@@ -7,12 +7,12 @@
         max-width="300"
     >
         <v-sheet style="border-radius: 10px;overflow:auto;" class="pa-4" max-width="300">
-            <fragment v-for="(value, name) in parameterTooltip.item" :key="name">
-                <span v-if="name !== 'id'" class="d-block body-2">
+            <template v-for="(value, name) in parameterTooltip.item">
+                <span v-if="name !== 'id'" :key="name" class="d-block body-2">
                     <span class="mr-1 font-weight-medium text-capitalize"> {{ $t(name) }}: </span>
                     <span> {{ value }}</span>
                 </span>
-            </fragment>
+            </template>
         </v-sheet>
     </v-tooltip>
 </template>

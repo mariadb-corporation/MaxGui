@@ -1,192 +1,185 @@
 <template>
-    <fragment>
-        <!-- if targetItem has expanded property, meaning it has child object, so no need to render input -->
-        <fragment v-if="'expanded' in targetItem" />
+    <!-- if targetItem has expanded property, meaning it has child object, so no need to render input -->
+    <span v-if="'expanded' in targetItem" />
 
-        <!-- Handle edge case with port, address, socket custom rules-->
-        <v-text-field
-            v-else-if="!isListener && targetItem.id === 'address'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.requiredAddress"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @input="handleChange"
-        />
+    <!-- Handle edge case with port, address, socket custom rules-->
+    <v-text-field
+        v-else-if="!isListener && targetItem.id === 'address'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        single-line
+        outlined
+        dense
+        :rules="rules.requiredAddress"
+        :disabled="targetItem.disabled"
+        autocomplete="off"
+        @input="handleChange"
+    />
 
-        <v-text-field
-            v-else-if="targetItem.id === 'socket'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.requiredFieldEither"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @input="handleChange"
-        />
+    <v-text-field
+        v-else-if="targetItem.id === 'socket'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        single-line
+        outlined
+        dense
+        :rules="rules.requiredFieldEither"
+        :disabled="targetItem.disabled"
+        autocomplete="off"
+        @input="handleChange"
+    />
 
-        <v-text-field
-            v-else-if="targetItem.id === 'port'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim.number="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.requiredFieldEither"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @keypress="preventNonNumericalVal($event)"
-            @input="handleChange"
-        />
+    <v-text-field
+        v-else-if="targetItem.id === 'port'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim.number="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        single-line
+        outlined
+        dense
+        :rules="rules.requiredFieldEither"
+        :disabled="targetItem.disabled"
+        autocomplete="off"
+        @keypress="preventNonNumericalVal($event)"
+        @input="handleChange"
+    />
 
-        <!-- bool parameter type -->
-        <v-select
-            v-else-if="targetItem.type === 'bool'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model="targetItem.value"
-            :name="targetItem.id"
-            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
-            :items="[true, false]"
-            outlined
-            dense
-            :disabled="targetItem.disabled"
-            @change="handleChange"
-        />
+    <!-- bool parameter type -->
+    <v-select
+        v-else-if="targetItem.type === 'bool'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model="targetItem.value"
+        :name="targetItem.id"
+        class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+        :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
+        :items="[true, false]"
+        outlined
+        dense
+        :disabled="targetItem.disabled"
+        @change="handleChange"
+    />
 
-        <!-- enum_mask parameter type -->
-        <v-select
-            v-else-if="targetItem.type === 'enum_mask'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model="targetItem.value"
-            :name="targetItem.id"
-            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
-            :items="targetItem.enum_values"
-            outlined
-            dense
-            multiple
-            :disabled="targetItem.disabled"
-            @change="handleChange"
-        >
-            <template v-slot:selection="{ item, index }">
-                <span v-if="index === 0" class="v-select__selection v-select__selection--comma">
-                    {{ item }}
-                </span>
-                <span
-                    v-if="index === 1"
-                    class="v-select__selection v-select__selection--comma color caption text-field-text "
-                >
-                    (+{{ targetItem.value.length - 1 }} {{ $t('others') }}))
-                </span>
-            </template>
-        </v-select>
-
-        <!-- enum parameter type -->
-        <v-select
-            v-else-if="targetItem.type === 'enum'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model="targetItem.value"
-            :name="targetItem.id"
-            class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
-            :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
-            :items="targetItem.enum_values"
-            outlined
-            dense
-            :disabled="targetItem.disabled"
-            @change="handleChange"
-        />
-
-        <!-- count or int parameter or duration type -->
-        <v-text-field
-            v-else-if="
-                targetItem.type === 'count' ||
-                    targetItem.type === 'int' ||
-                    targetItem.type === 'duration' ||
-                    targetItem.type === 'size'
-            "
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim.number="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.number"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @keypress="
-                targetItem.type === 'int'
-                    ? preventNonInteger($event)
-                    : preventNonNumericalVal($event)
-            "
-            @input="handleChange"
-        >
-            <!-- duration parameter type -->
-            <template
-                v-if="targetItem.type === 'duration' || targetItem.type === 'size'"
-                v-slot:append
+    <!-- enum_mask parameter type -->
+    <v-select
+        v-else-if="targetItem.type === 'enum_mask'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model="targetItem.value"
+        :name="targetItem.id"
+        class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+        :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
+        :items="targetItem.enum_values"
+        outlined
+        dense
+        multiple
+        :disabled="targetItem.disabled"
+        @change="handleChange"
+    >
+        <template v-slot:selection="{ item, index }">
+            <span v-if="index === 0" class="v-select__selection v-select__selection--comma">
+                {{ item }}
+            </span>
+            <span
+                v-if="index === 1"
+                class="v-select__selection v-select__selection--comma color caption text-field-text "
             >
-                <v-select
-                    v-model="chosenSuffix"
-                    :name="targetItem.id"
-                    class="suffix-select mariadb-select-input"
-                    :menu-props="{
-                        contentClass: 'mariadb-select-v-menu',
-                        bottom: true,
-                        offsetY: true,
-                    }"
-                    :clearable="targetItem.type === 'size'"
-                    :items="targetItem.type === 'duration' ? durationSuffixes : sizeSuffixes"
-                    outlined
-                    dense
-                />
-            </template>
-        </v-text-field>
+                (+{{ targetItem.value.length - 1 }} {{ $t('others') }}))
+            </span>
+        </template>
+    </v-select>
 
-        <!-- password string parameter type -->
-        <v-text-field
-            v-else-if="targetItem.type === 'password string'"
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            outlined
-            dense
-            type="password"
-            :rules="rules.required"
-            autocomplete="new-password"
-            :disabled="targetItem.disabled"
-            @input="handleChange"
-        />
+    <!-- enum parameter type -->
+    <v-select
+        v-else-if="targetItem.type === 'enum'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model="targetItem.value"
+        :name="targetItem.id"
+        class="std mariadb-select-input error--text__bottom error--text__bottom--no-margin"
+        :menu-props="{ contentClass: 'mariadb-select-v-menu', bottom: true, offsetY: true }"
+        :items="targetItem.enum_values"
+        outlined
+        dense
+        :disabled="targetItem.disabled"
+        @change="handleChange"
+    />
 
-        <!--others parameter types -->
-        <v-text-field
-            v-else
-            :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
-            v-model.trim="targetItem.value"
-            :name="targetItem.id"
-            class="std error--text__bottom error--text__bottom--no-margin"
-            single-line
-            outlined
-            dense
-            :rules="rules.required"
-            :disabled="targetItem.disabled"
-            autocomplete="off"
-            @input="handleChange"
-        />
-    </fragment>
+    <!-- count or int parameter or duration type -->
+    <v-text-field
+        v-else-if="
+            targetItem.type === 'count' ||
+                targetItem.type === 'int' ||
+                targetItem.type === 'duration' ||
+                targetItem.type === 'size'
+        "
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim.number="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        single-line
+        outlined
+        dense
+        :rules="rules.number"
+        :disabled="targetItem.disabled"
+        autocomplete="off"
+        @keypress="
+            targetItem.type === 'int' ? preventNonInteger($event) : preventNonNumericalVal($event)
+        "
+        @input="handleChange"
+    >
+        <!-- duration parameter type -->
+        <template v-if="targetItem.type === 'duration' || targetItem.type === 'size'" v-slot:append>
+            <v-select
+                v-model="chosenSuffix"
+                :name="targetItem.id"
+                class="suffix-select mariadb-select-input"
+                :menu-props="{
+                    contentClass: 'mariadb-select-v-menu',
+                    bottom: true,
+                    offsetY: true,
+                }"
+                :clearable="targetItem.type === 'size'"
+                :items="targetItem.type === 'duration' ? durationSuffixes : sizeSuffixes"
+                outlined
+                dense
+            />
+        </template>
+    </v-text-field>
+
+    <!-- password string parameter type -->
+    <v-text-field
+        v-else-if="targetItem.type === 'password string'"
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        outlined
+        dense
+        type="password"
+        :rules="rules.required"
+        autocomplete="new-password"
+        :disabled="targetItem.disabled"
+        @input="handleChange"
+    />
+
+    <!--others parameter types -->
+    <v-text-field
+        v-else
+        :id="`${targetItem.id}-${targetItem.nodeId}` || targetItem.id"
+        v-model.trim="targetItem.value"
+        :name="targetItem.id"
+        class="std error--text__bottom error--text__bottom--no-margin"
+        single-line
+        outlined
+        dense
+        :rules="rules.required"
+        :disabled="targetItem.disabled"
+        autocomplete="off"
+        @input="handleChange"
+    />
 </template>
 <script>
 /*

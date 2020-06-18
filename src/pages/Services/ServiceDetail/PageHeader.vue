@@ -1,90 +1,90 @@
 <template>
-    <fragment>
-        <details-page-title>
-            <template v-slot:setting-menu>
-                <details-icon-group-wrapper multiIcons>
-                    <template v-slot:body>
-                        <v-tooltip
-                            bottom
-                            transition="slide-y-transition"
-                            content-class="shadow-drop color text-navigation py-1 px-4"
-                        >
-                            <template v-slot:activator="{ on }">
-                                <v-btn
-                                    text
-                                    :disabled="currentService.attributes.state === 'Stopped'"
-                                    v-on="on"
-                                    @click="handleStop"
-                                >
-                                    <v-icon size="22" color="primary">
-                                        $vuetify.icons.stopped
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                            <span>{{ $t('stop') }} {{ $tc('services', 1) }} </span>
-                        </v-tooltip>
-                        <v-tooltip
-                            bottom
-                            transition="slide-y-transition"
-                            content-class="shadow-drop color text-navigation py-1 px-4"
-                        >
-                            <template v-slot:activator="{ on }">
-                                <v-btn
-                                    text
-                                    :disabled="currentService.attributes.state === 'Started'"
-                                    v-on="on"
-                                    @click="handleStart"
-                                >
-                                    <v-icon size="22" color="primary">
-                                        $vuetify.icons.running
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                            <span>{{ $t('start') }} {{ $tc('services', 1) }} </span>
-                        </v-tooltip>
-                    </template>
-                </details-icon-group-wrapper>
-                <details-icon-group-wrapper>
-                    <template v-slot:body>
-                        <v-tooltip
-                            bottom
-                            transition="slide-y-transition"
-                            content-class="shadow-drop color text-navigation py-1 px-4"
-                        >
-                            <template v-slot:activator="{ on }">
-                                <v-btn text v-on="on" @click="handleDelete">
-                                    <v-icon size="18" color="error">
-                                        $vuetify.icons.delete
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                            <span>{{ $t('destroy') }} {{ $tc('services', 1) }} </span>
-                        </v-tooltip>
-                    </template>
-                </details-icon-group-wrapper>
-            </template>
-        </details-page-title>
-        <confirm-dialog
-            v-model="showConfirmDialog"
-            :title="dialogTitle"
-            :type="dialogType"
-            :smallInfo="smallInfo ? $t(`info.${smallInfo}`) : ''"
-            :item="currentService"
-            :onSave="confirmSave"
-            :onClose="() => (showConfirmDialog = false)"
-            :onCancel="() => (showConfirmDialog = false)"
-        />
-        <icon-sprite-sheet
-            size="13"
-            class="status-icon mr-1"
-            :frame="$help.serviceStateIcon(currentService.attributes.state)"
-        >
-            status
-        </icon-sprite-sheet>
-        <span class="color text-navigation body-2">
-            {{ currentService.attributes.state }}
-        </span>
-    </fragment>
+    <details-page-title>
+        <template v-slot:setting-menu>
+            <details-icon-group-wrapper multiIcons>
+                <template v-slot:body>
+                    <v-tooltip
+                        bottom
+                        transition="slide-y-transition"
+                        content-class="shadow-drop color text-navigation py-1 px-4"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                text
+                                :disabled="currentService.attributes.state === 'Stopped'"
+                                v-on="on"
+                                @click="handleStop"
+                            >
+                                <v-icon size="22" color="primary">
+                                    $vuetify.icons.stopped
+                                </v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ $t('stop') }} {{ $tc('services', 1) }} </span>
+                    </v-tooltip>
+                    <v-tooltip
+                        bottom
+                        transition="slide-y-transition"
+                        content-class="shadow-drop color text-navigation py-1 px-4"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                text
+                                :disabled="currentService.attributes.state === 'Started'"
+                                v-on="on"
+                                @click="handleStart"
+                            >
+                                <v-icon size="22" color="primary">
+                                    $vuetify.icons.running
+                                </v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ $t('start') }} {{ $tc('services', 1) }} </span>
+                    </v-tooltip>
+                </template>
+            </details-icon-group-wrapper>
+            <details-icon-group-wrapper>
+                <template v-slot:body>
+                    <v-tooltip
+                        bottom
+                        transition="slide-y-transition"
+                        content-class="shadow-drop color text-navigation py-1 px-4"
+                    >
+                        <template v-slot:activator="{ on }">
+                            <v-btn text v-on="on" @click="handleDelete">
+                                <v-icon size="18" color="error">
+                                    $vuetify.icons.delete
+                                </v-icon>
+                            </v-btn>
+                        </template>
+                        <span>{{ $t('destroy') }} {{ $tc('services', 1) }} </span>
+                    </v-tooltip>
+                </template>
+            </details-icon-group-wrapper>
+        </template>
+        <template v-slot:append>
+            <confirm-dialog
+                v-model="showConfirmDialog"
+                :title="dialogTitle"
+                :type="dialogType"
+                :smallInfo="smallInfo ? $t(`info.${smallInfo}`) : ''"
+                :item="currentService"
+                :onSave="confirmSave"
+                :onClose="() => (showConfirmDialog = false)"
+                :onCancel="() => (showConfirmDialog = false)"
+            />
+            <icon-sprite-sheet
+                size="13"
+                class="status-icon mr-1"
+                :frame="$help.serviceStateIcon(currentService.attributes.state)"
+            >
+                status
+            </icon-sprite-sheet>
+            <span class="color text-navigation body-2">
+                {{ currentService.attributes.state }}
+            </span>
+        </template>
+    </details-page-title>
 </template>
 
 <script>

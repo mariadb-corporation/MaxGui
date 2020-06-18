@@ -21,14 +21,10 @@ import vuetify from '@/plugins/vuetify'
 import store from 'store'
 import Logger from 'utils/logging'
 import PortalVue from 'portal-vue'
-import { Plugin as fragment } from 'vue-fragment'
+
 import Router from 'vue-router'
 import { routes } from '@/router/routes'
-
-Vue.use(fragment)
-Vue.use(PortalVue)
-Vue.Logger = Logger
-
+import commonComponents from 'components/common'
 function doMount(isShallow, component, options) {
     if (isShallow) {
         /*
@@ -46,8 +42,12 @@ Vue.config.silent = true
 
 export default options => {
     const localVue = createLocalVue()
-
+    localVue.Logger = Logger
+    localVue.use(PortalVue)
     localVue.use(Router)
+    Object.keys(commonComponents).forEach(name => {
+        localVue.component(name, commonComponents[name])
+    })
 
     return doMount(options.shallow, options.component, {
         localVue,

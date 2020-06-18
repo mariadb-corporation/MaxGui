@@ -1,79 +1,75 @@
 <template>
-    <fragment>
-        <v-col cols="6">
-            <collapse
-                :toggleOnClick="() => (showServers = !showServers)"
-                :isContentVisible="showServers"
-                :title="`${$tc('servers', 2)}`"
-                :titleInfo="serverStateTableRow.length"
-                :onAddClick="() => onAdd('servers')"
-                :addBtnText="`${$t('addEntity', { entityName: $tc('servers', 1) })}`"
-            >
-                <template v-slot:content>
-                    <data-table
-                        :headers="serversTableHeader"
-                        :data="serverStateTableRow"
-                        :noDataText="$t('noEntity', { entityName: $tc('servers', 2) })"
-                        sortBy="id"
-                        :loading="loading"
-                        :search="searchKeyWord"
-                        showActionsOnHover
-                    >
-                        <template v-slot:id="{ data: { item: { id } } }">
-                            <router-link
-                                :key="id"
-                                :to="`/dashboard/servers/${id}`"
-                                class="no-underline"
-                            >
-                                <span> {{ id }} </span>
-                            </router-link>
-                        </template>
-                        <template v-slot:state="{ data: { item: { state } } }">
-                            <icon-sprite-sheet
-                                size="13"
-                                class="status-icon"
-                                :frame="$help.serverStateIcon(state)"
-                            >
-                                status
-                            </icon-sprite-sheet>
-                        </template>
-                        <template v-slot:actions="{ data: { item } }">
-                            <v-btn icon @click="onDelete('servers', item)">
-                                <v-icon size="20" color="error">
-                                    $vuetify.icons.unlink
-                                </v-icon>
-                            </v-btn>
-                        </template>
-                    </data-table>
-                </template>
-            </collapse>
-        </v-col>
+    <v-col cols="6">
+        <collapse
+            :toggleOnClick="() => (showServers = !showServers)"
+            :isContentVisible="showServers"
+            :title="`${$tc('servers', 2)}`"
+            :titleInfo="serverStateTableRow.length"
+            :onAddClick="() => onAdd('servers')"
+            :addBtnText="`${$t('addEntity', { entityName: $tc('servers', 1) })}`"
+        >
+            <template v-slot:content>
+                <data-table
+                    :headers="serversTableHeader"
+                    :data="serverStateTableRow"
+                    :noDataText="$t('noEntity', { entityName: $tc('servers', 2) })"
+                    sortBy="id"
+                    :loading="loading"
+                    :search="searchKeyWord"
+                    showActionsOnHover
+                >
+                    <template v-slot:id="{ data: { item: { id } } }">
+                        <router-link
+                            :key="id"
+                            :to="`/dashboard/servers/${id}`"
+                            class="no-underline"
+                        >
+                            <span> {{ id }} </span>
+                        </router-link>
+                    </template>
+                    <template v-slot:state="{ data: { item: { state } } }">
+                        <icon-sprite-sheet
+                            size="13"
+                            class="status-icon"
+                            :frame="$help.serverStateIcon(state)"
+                        >
+                            status
+                        </icon-sprite-sheet>
+                    </template>
+                    <template v-slot:actions="{ data: { item } }">
+                        <v-btn icon @click="onDelete('servers', item)">
+                            <v-icon size="20" color="error">
+                                $vuetify.icons.unlink
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                </data-table>
+                <confirm-dialog
+                    v-model="showDeleteDialog"
+                    :title="dialogTitle"
+                    :type="deleteDialogType"
+                    :item="Array.isArray(targetItem) ? {} : targetItem"
+                    :onSave="() => confirmDelete()"
+                    :onClose="() => (showDeleteDialog = false)"
+                    :onCancel="() => (showDeleteDialog = false)"
+                />
 
-        <!-- Avaiable dialog for both SERVERS/FILTERS Tables -->
-        <confirm-dialog
-            v-model="showDeleteDialog"
-            :title="dialogTitle"
-            :type="deleteDialogType"
-            :item="Array.isArray(targetItem) ? {} : targetItem"
-            :onSave="() => confirmDelete()"
-            :onClose="() => (showDeleteDialog = false)"
-            :onCancel="() => (showDeleteDialog = false)"
-        />
-
-        <select-dialog
-            v-model="showSelectDialog"
-            :title="dialogTitle"
-            mode="add"
-            multiple
-            :entityName="targetSelectItemType"
-            :onClose="() => (showSelectDialog = false)"
-            :onCancel="() => (showSelectDialog = false)"
-            :handleSave="confirmAdd"
-            :itemsList="itemsList"
-            @selected-items="targetItem = $event"
-            @onOpen="getAllEntities"
-        />
-    </fragment>
+                <select-dialog
+                    v-model="showSelectDialog"
+                    :title="dialogTitle"
+                    mode="add"
+                    multiple
+                    :entityName="targetSelectItemType"
+                    :onClose="() => (showSelectDialog = false)"
+                    :onCancel="() => (showSelectDialog = false)"
+                    :handleSave="confirmAdd"
+                    :itemsList="itemsList"
+                    @selected-items="targetItem = $event"
+                    @onOpen="getAllEntities"
+                />
+            </template>
+        </collapse>
+    </v-col>
 </template>
 
 <script>
