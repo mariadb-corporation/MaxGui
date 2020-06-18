@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="fill-height">
         <app-header />
         <navigation />
         <snackbars />
-        <v-content>
+        <v-content class="fill-height">
             <div class="fill-height py-6 px-10">
                 <transition name="fade" mode="out-in">
                     <router-view v-if="$route.meta.requiresAuth" />
@@ -11,12 +11,10 @@
             </div>
         </v-content>
         <v-footer
-            class="pl-2 d-flex justify-center color border-top-reflection"
-            color="white"
+            class="pl-2 d-flex color bg-background justify-center color border-top-reflection"
             padless
             app
             height="40"
-            absolute
             inset
         >
             <span class="footer-text color text-code-color align-center text-truncate">
