@@ -3,6 +3,7 @@
         id="search"
         v-model.trim="search"
         class="search-restyle mr-4"
+        :class="`route-${$route.name}`"
         name="search"
         height="39"
         outlined

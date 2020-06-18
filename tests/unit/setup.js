@@ -13,13 +13,17 @@
 import Vue from 'vue'
 import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
 import 'utils/helpers'
-import Logger from 'utils/logging'
-import vuetify from '@/plugins/vuetify'
-import i18n from '@/plugins/i18n'
 import '@/plugins/vuex'
+import '@/plugins/axios'
+import 'plugins/moment'
+import i18n from '@/plugins/i18n'
+import vuetify from '@/plugins/vuetify'
 import store from 'store'
+import Logger from 'utils/logging'
 import PortalVue from 'portal-vue'
 import { Plugin as fragment } from 'vue-fragment'
+import Router from 'vue-router'
+import { routes } from '@/router/routes'
 
 Vue.use(fragment)
 Vue.use(PortalVue)
@@ -27,6 +31,11 @@ Vue.Logger = Logger
 
 function doMount(isShallow, component, options) {
     if (isShallow) {
+        /*
+            ignoring child components, if component has 
+            child components as vuetify component, use
+            mount
+        */
         return shallowMount(component, options)
     } else {
         return mount(component, options)
@@ -38,12 +47,16 @@ Vue.config.silent = true
 export default options => {
     const localVue = createLocalVue()
 
+    localVue.use(Router)
+
     return doMount(options.shallow, options.component, {
         localVue,
         store,
+        router,
         vuetify,
         i18n,
         propsData: options.props,
         attachTo: '#app',
     })
 }
+export const router = new Router({ routes: routes })
