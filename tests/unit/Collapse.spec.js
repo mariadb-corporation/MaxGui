@@ -35,8 +35,8 @@ describe('Collapse.vue', () => {
         })
     })
 
-    it('Component collapses when toggleOnClick is called', () => {
-        // this triggers toggleOnClick cb which is handle in parent component
+    it('Component collapses when toggle arrow is clicked', () => {
+        // this calls toggleOnClick cb which is handled in parent component
         wrapper.find('.arrow-toggle').trigger('click')
         // component is collapsed when isContentVisible === false
         expect(wrapper.props().isContentVisible).to.be.false
@@ -50,6 +50,43 @@ describe('Collapse.vue', () => {
         wrapper.vm.$nextTick(() => {
             wrapper.find('.collapse-wrapper').trigger('mouseenter')
             expect(wrapper.vm.$data.showEditBtn).to.be.true
+        })
+    })
+
+    it(`Display "add" button if onAddClick props is passed,
+    after onAddClick callback is called, eventFired should equal 1
+    `, () => {
+        let eventFired = 0
+        // edit button is rendered only when onEdit props is passed with a function
+        wrapper.setProps({
+            onAddClick: () => {
+                eventFired++
+            },
+        })
+        wrapper.vm.$nextTick(() => {
+            wrapper.find('.add-btn').trigger('click')
+            expect(eventFired).to.equal(1)
+        })
+    })
+
+    it(`Display "Done Editing" button if isEditing props is true,
+    after doneEditingCb is called, value of isEditing props should be false,
+    eventFired should equal 1
+    `, () => {
+        let eventFired = 0
+        // edit button is rendered only when onEdit props is passed with a function
+        wrapper.setProps({
+            isEditing: true,
+            doneEditingCb: () => {
+                eventFired++
+
+                wrapper.setProps({ isEditing: false })
+            },
+        })
+        wrapper.vm.$nextTick(() => {
+            wrapper.find('.don-editing-btn').trigger('click')
+            expect(eventFired).to.equal(1)
+            expect(wrapper.props().isEditing).to.be.false
         })
     })
 })

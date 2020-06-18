@@ -47,7 +47,7 @@
                     color="primary"
                     rounded
                     small
-                    class="text-capitalize"
+                    class="don-editing-btn text-capitalize"
                     @click="doneEditingCb"
                 >
                     {{ $t('doneEditing') }}
@@ -59,7 +59,7 @@
                 color="primary"
                 text
                 x-small
-                class="text-capitalize"
+                class="add-btn text-capitalize"
                 @click="onAddClick"
             >
                 + {{ addBtnText }}
@@ -101,7 +101,7 @@ export default {
         titleInfo: [String, Number], // option
         // optional props for the + Add ... button ( peer required props)
         onAddClick: Function,
-        addBtnText: String,
+        addBtnText: { type: String, default: '+ Add' },
         // edit button feat (peer required props)
         onEdit: Function, // if this props is added, adding mouseenter event to handle show edit btn
         isEditing: Boolean, // show done editing btn and keep edit btn visible
