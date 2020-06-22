@@ -23,30 +23,18 @@
         >
             <!----------------------------------------------------TABLE HEAD------------------------------------------>
             <template v-slot:header="{ props: { headers } }">
-                <thead class="v-data-table-header">
-                    <tr>
-                        <th
-                            v-for="(header, i) in headers"
-                            :key="i"
-                            :width="header.width"
-                            :style="{ padding: header.padding }"
-                            :class="thClasses(header)"
-                            @click="header.sortable !== false ? changeSort(header.value) : null"
-                        >
-                            <div class="d-inline-flex justify-center align-center">
-                                <span v-if="header.text !== 'Action'">{{ header.text }}</span>
-                                <slot :name="`header-append-${header.value}`"> </slot>
-                                <v-icon
-                                    v-if="header.sortable !== false"
-                                    size="14"
-                                    class="ml-3 v-data-table-header__icon"
-                                >
-                                    $vuetify.icons.arrowDown
-                                </v-icon>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
+                <table-header
+                    :headers="headers"
+                    :sortDesc="pagination.sortDesc.length ? pagination.sortDesc[0] : false"
+                    :sortBy="pagination.sortBy.length ? pagination.sortBy[0] : ''"
+                    :isTree="isTree"
+                    :hasValidChild="hasValidChild"
+                    @change-sort="changeSort"
+                >
+                    <template v-for="header in headers" :slot="`header-append-${header.value}`">
+                        <slot :name="`header-append-${header.value}`"></slot>
+                    </template>
+                </table-header>
             </template>
 
             <!----------------------------------------------------TABLE ROW------------------------------------------->
@@ -189,8 +177,13 @@ _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
 _slot :name="`header-append-${header.value}`"
 */
+import TableHeader from './TableHeader'
+
 export default {
     name: 'data-table',
+    components: {
+        TableHeader,
+    },
     directives: {
         sortableTable: {
             bind(el, binding, vnode) {
@@ -307,16 +300,6 @@ export default {
 
     methods: {
         //---------------------------------Internal styles and class bindings-------------------------------------------
-        thClasses(header) {
-            return [
-                header.align && `text-${header.align}`,
-                header.sortable !== false && 'pointer sortable',
-                this.pagination.sortDesc[0] ? 'desc' : 'asc',
-                header.value === this.pagination.sortBy[0] && 'active',
-                header.text === 'Action' && 'px-0',
-                this.isTree && this.hasValidChild ? 'py-0 px-12' : 'py-0 px-6',
-            ]
-        },
 
         trClasses(rowIndex) {
             return {
