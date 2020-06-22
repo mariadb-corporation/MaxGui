@@ -53,75 +53,41 @@
                             : null
                     "
                 >
-                    <td
+                    <table-cell
                         v-for="(header, cellIndex) in headers"
                         :key="cellIndex"
                         :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
-                        :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
-                        :class="tdClasses(header, item, cellIndex)"
-                        :style="isTree && hasValidChild && cellLevelPadding(item, cellIndex)"
-                        @mouseleave="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
-                        @mouseenter="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
+                        :cellIndex="cellIndex"
+                        :colsHasRowSpan="colsHasRowSpan"
+                        :item="item"
+                        :header="header"
+                        :headers="headers"
+                        :rowIndex="rowIndex"
+                        :hasOrderNumber="hasOrderNumber"
+                        :editableCell="editableCell"
+                        :tdBorderLeft="tdBorderLeft"
+                        :draggable="draggable"
+                        :showDragIcon="showDragIcon(rowIndex, cellIndex)"
+                        :indexOfHoveredRow="indexOfHoveredRow"
+                        :isTree="isTree"
+                        :hasValidChild="hasValidChild"
+                        :componentId="componentId"
+                        @cell-mouseenter="cellMouseEnter($event)"
+                        @get-truncated-info="truncatedMenu = $event"
+                        @toggle-child="toggleChild($event)"
                     >
-                        <v-icon
-                            v-if="draggable"
-                            v-show="showDragIcon(rowIndex, cellIndex)"
-                            :class="{ 'drag-handle move': draggable }"
-                            class="color text-field-text"
-                            size="16"
-                        >
-                            drag_handle
-                        </v-icon>
-
-                        <div
-                            :ref="`itemWrapperAtRow${rowIndex}Cell${cellIndex}`"
-                            :style="itemWrapperAlign(header)"
-                            :class="itemWrapperClasses(header, item, cellIndex)"
-                        >
-                            <!-- Display toggle button at the first column-->
-                            <v-btn
-                                v-if="cellIndex === 0 && item.children && item.children.length"
-                                width="32"
-                                height="32"
-                                class="arrow-toggle mr-1"
-                                icon
-                                @click="toggleChild(item, rowIndex)"
+                        <template :slot="header.value">
+                            <slot
+                                :name="header.value"
+                                :data="{ item, header, cellIndex, rowIndex }"
                             >
-                                <v-icon
-                                    :class="[item.expanded === true ? 'arrow-down' : 'arrow-up']"
-                                    size="24"
-                                    color="#013646"
-                                >
-                                    $expand
-                                </v-icon>
-                            </v-btn>
-
-                            <!-- no content for the corresponding header, usually this is an error -->
-                            <span v-if="$help.isUndefined(item[header.value])"></span>
-                            <span
-                                v-else
-                                :id="
-                                    `truncatedText_atRow${rowIndex}_atCell${cellIndex}_${componentId}`
-                                "
-                                :ref="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
-                            >
-                                <slot
-                                    :name="header.value"
-                                    :data="{ item, header, cellIndex, rowIndex }"
-                                >
-                                    {{ getValue(item, header) }}
-                                </slot>
-                            </span>
-
-                            <!-- Actions slot -->
-                            <div
-                                v-if="renderActionsSlot(rowIndex, cellIndex)"
-                                class="action-slot-wrapper"
-                            >
-                                <slot :data="{ item }" name="actions" />
-                            </div>
-                        </div>
-                    </td>
+                                {{ getValue(item, header) }}
+                            </slot>
+                        </template>
+                        <template slot="actions">
+                            <slot name="actions" :data="{ item }" />
+                        </template>
+                    </table-cell>
                 </tr>
             </template>
         </v-data-table>
@@ -178,11 +144,13 @@ _slot  name="actions" :data="{ item }"
 _slot :name="`header-append-${header.value}`"
 */
 import TableHeader from './TableHeader'
+import TableCell from './TableCell'
 
 export default {
     name: 'data-table',
     components: {
         TableHeader,
+        TableCell,
     },
     directives: {
         sortableTable: {
@@ -312,54 +280,8 @@ export default {
             }
         },
 
-        tdClasses(header, item, cellIndex) {
-            return [
-                // for showing index number columns from item
-                this.hasOrderNumber &&
-                    cellIndex === 0 &&
-                    'overline px-2 color border-right-table-border text-field-text',
-                // for rowspan feature
-                item.hidden && cellIndex < this.colsHasRowSpan && 'hide',
-                this.colsHasRowSpan &&
-                    (cellIndex < this.colsHasRowSpan
-                        ? `${item.groupId}-rowspan`
-                        : `${item.groupId}-cell`),
-                // for editable feature
-                this.editableCell && header.editableCol && 'v-data-table__editable-cell',
-                // for action slots
-                header.value === 'action' && 'pr-3',
-                // for tree view feature
-                item.expanded && 'font-weight-bold',
-                // for styling and common class
-                header.value,
-                header.align && `text-${header.align}`,
-                this.tdBorderLeft || cellIndex === this.colsHasRowSpan
-                    ? 'color border-left-table-border'
-                    : '',
-                item.level > 0 || header.cellTruncated ? 'text-truncate cell-truncate' : '',
-                this.draggable && 'relative',
-            ]
-        },
-
-        itemWrapperClasses(header, item, cellIndex) {
-            return [
-                item.level > 0 || header.cellTruncated ? 'text-truncate' : '',
-                'relative',
-                (item.level > 0 || header.cellTruncated) &&
-                    this.truncatedMenu.index === cellIndex &&
-                    'pointer',
-            ]
-        },
-
-        itemWrapperAlign(header) {
-            // make centering cell more accurate that ommit the width of the sort arrow from the header
-            let marginRight = header.align && header.sortable !== false ? 26 : ''
-            return {
-                marginRight: `${marginRight}px`,
-            }
-        },
         //---------------------------------Table events----------------------------------------------------------------
-        cellMouseEnter(e, item, rowIndex, cellIndex, header) {
+        cellMouseEnter({ e, item, rowIndex, cellIndex, header }) {
             this.$emit('cell-mouseenter', {
                 e,
                 item,
@@ -367,9 +289,7 @@ export default {
                 cellIndex,
                 header,
             })
-            if (item.level > 0 || header.cellTruncated) {
-                this.showTruncatedMenu(item, rowIndex, cellIndex, header)
-            }
+
             if (this.colsHasRowSpan) {
                 this.setRowspanBg(e, item, rowIndex, cellIndex)
             }
@@ -498,43 +418,22 @@ export default {
                 case 'cell':
                     {
                         let elements = this.$refs.rowGroup.filter(ele =>
-                            ele.attributes.class.value.includes(`${groupId}-rowspan`)
+                            ele.$el.attributes.class.value.includes(`${groupId}-rowspan`)
                         )
-                        elements.forEach(ele => (ele.style.backgroundColor = bg))
+                        elements.forEach(ele => (ele.$el.style.backgroundColor = bg))
                     }
                     break
                 case 'rowgroup':
                     {
                         let elements = this.$refs.cell.filter(ele =>
-                            ele.attributes.class.value.includes(`${groupId}-cell`)
+                            ele.$el.attributes.class.value.includes(`${groupId}-cell`)
                         )
-                        elements.forEach(ele => (ele.style.backgroundColor = bg))
+                        elements.forEach(ele => (ele.$el.style.backgroundColor = bg))
                     }
                     break
             }
         },
 
-        /**
-         * @param {Object} item object
-         * This function shows truncated text in v-menu
-         */
-        showTruncatedMenu(item, rowIndex, cellIndex, header) {
-            // auto truncated text feature
-            const wrapper = this.$refs[`itemWrapperAtRow${rowIndex}Cell${cellIndex}`][0]
-            const text = this.$refs[`truncatedTextAtRow${rowIndex}Cell${cellIndex}`][0]
-
-            if (wrapper && text && wrapper.offsetWidth < text.offsetWidth) {
-                // const wrapperClientRect = wrapper.getBoundingClientRect()
-                this.truncatedMenu.index = cellIndex
-                this.truncatedMenu.x = text.offsetWidth - wrapper.offsetWidth
-                this.truncatedMenu.rowIndex = rowIndex
-                this.truncatedMenu.cellIndex = cellIndex
-                this.truncatedMenu.item = item
-                this.truncatedMenu.header = header
-            } else {
-                this.truncatedMenu.index = null
-            }
-        },
         //---------------------------------For displaying actions btn/icon on table row---------------------------------
         /**
          * @param {Number} index index of current hovered row
@@ -566,15 +465,6 @@ export default {
                     self.indexOfHoveredRow = null
                     break
             }
-        },
-
-        // render actions slot at indexOfHoveredRow
-        renderActionsSlot(rowIndex, cellIndex) {
-            return (
-                this.indexOfHoveredRow === rowIndex &&
-                // show at last columns
-                cellIndex === this.headers.length - 1
-            )
         },
 
         // show drag handle icon at indexOfHoveredRow and show at last columns
@@ -661,32 +551,14 @@ export default {
                 self.nodeActiveIds.splice(self.nodeActiveIds.indexOf(node.nodeId), 1)
             }
         },
-
-        cellLevelPadding(item, cellIndex) {
-            const basePl = 8
-            let levelPl = 30 * item.level
-            !item.leaf ? (levelPl += 0) : (levelPl += 40)
-            return `padding: 0px 48px 0px ${cellIndex === 0 ? basePl + levelPl : '48'}px`
-        },
     },
 }
 </script>
 <style lang="scss" scoped>
-.toggle-icon {
-    color: inherit;
-    position: absolute;
-    right: 21px;
-}
 .draggable-row:hover {
     background: transparent !important;
 }
 
-.drag-handle {
-    position: absolute;
-
-    top: 10px;
-    transform: translate(-50%, -50%);
-}
 .sortable-chosen:hover {
     background: #f2fcff !important;
     .drag-handle {
@@ -696,14 +568,5 @@ export default {
 .sortable-ghost {
     background: #f2fcff !important;
     opacity: 0.6;
-}
-.action-slot-wrapper {
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translate(0%, -50%);
-}
-.cell-truncate {
-    max-width: 1px;
 }
 </style>

@@ -15,6 +15,7 @@
         <template v-slot:header-append-serviceIds>
             <span class="ml-1 color text-field-text"> ({{ allLinkedServices }}) </span>
         </template>
+
         <template v-slot:groupId="{ data: { item: { groupId } } }">
             <router-link
                 v-if="groupId !== $t('not', { action: 'monitored' })"
