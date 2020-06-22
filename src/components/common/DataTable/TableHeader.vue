@@ -62,7 +62,7 @@ export default {
         thClasses(header) {
             return [
                 header.align && `text-${header.align}`,
-                header.sortable !== false && 'pointer sortable',
+                header.sortable !== false ? 'pointer sortable' : 'not-sortable',
                 this.sortDesc ? 'desc' : 'asc',
                 header.value === this.sortBy && 'active',
                 header.text === 'Action' && 'px-0',
