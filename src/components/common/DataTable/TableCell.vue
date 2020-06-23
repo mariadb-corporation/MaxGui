@@ -3,8 +3,8 @@
         :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
         :class="tdClasses(header, item, cellIndex)"
         :style="isTree && hasValidChild && cellLevelPadding(item, cellIndex)"
-        @mouseleave="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
-        @mouseenter="e => cellMouseEnter(e, item, rowIndex, cellIndex, header)"
+        @mouseleave="e => cellHover(e, item, rowIndex, cellIndex, header)"
+        @mouseenter="e => cellHover(e, item, rowIndex, cellIndex, header)"
     >
         <v-icon
             v-if="draggable"
@@ -80,7 +80,6 @@ export default {
     name: 'table-cell',
     props: {
         cellIndex: { type: Number, required: true },
-        colsHasRowSpan: { type: Number },
         item: { type: Object, required: true },
         header: { type: Object, required: true },
         headers: { type: Array, required: true },
@@ -88,13 +87,16 @@ export default {
         hasOrderNumber: { type: Boolean, required: true },
         editableCell: { type: Boolean, required: true },
         tdBorderLeft: { type: Boolean, required: true },
+        // For displaying draggable icon
         draggable: { type: Boolean, required: true },
         showDragIcon: { type: Boolean, required: true },
-
+        // For displaying action column slot
         indexOfHoveredRow: {
             type: Number,
         },
-        // tree view
+        // For displaying rowspan table
+        colsHasRowSpan: { type: Number },
+        // for tree view
         isTree: { type: Boolean, required: true },
         hasValidChild: { type: Boolean, required: true },
         // for external v-menu activator
@@ -172,8 +174,8 @@ export default {
         },
 
         //---------------------------------Cell events----------------------------------------------------------------
-        cellMouseEnter(e, item, rowIndex, cellIndex, header) {
-            this.$emit('cell-mouseenter', {
+        cellHover(e, item, rowIndex, cellIndex, header) {
+            this.$emit('cell-hover', {
                 e,
                 item,
                 rowIndex,

@@ -19,7 +19,7 @@
                     :loading="loading"
                     keepPrimitiveValue
                     :isTree="isTree"
-                    @cell-mouseenter="showCellTooltip"
+                    @cell-hover="showCellTooltip"
                 >
                     <template v-slot:header-append-id>
                         <span class="ml-1 color text-field-text">

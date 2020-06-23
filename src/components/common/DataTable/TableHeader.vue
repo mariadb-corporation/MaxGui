@@ -55,6 +55,7 @@ export default {
         headers: { type: Array, required: true },
         sortBy: { type: String, required: true },
         sortDesc: { type: Boolean, required: true },
+        // For display tree view
         isTree: { type: Boolean, required: true },
         hasValidChild: { type: Boolean, required: true },
     },

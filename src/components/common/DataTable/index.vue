@@ -72,7 +72,7 @@
                         :isTree="isTree"
                         :hasValidChild="hasValidChild"
                         :componentId="componentId"
-                        @cell-mouseenter="cellMouseEnter($event)"
+                        @cell-hover="cellHover($event)"
                         @get-truncated-info="truncatedMenu = $event"
                         @toggle-child="toggleChild($event)"
                     >
@@ -281,8 +281,8 @@ export default {
         },
 
         //---------------------------------Table events----------------------------------------------------------------
-        cellMouseEnter({ e, item, rowIndex, cellIndex, header }) {
-            this.$emit('cell-mouseenter', {
+        cellHover({ e, item, rowIndex, cellIndex, header }) {
+            this.$emit('cell-hover', {
                 e,
                 item,
                 rowIndex,
