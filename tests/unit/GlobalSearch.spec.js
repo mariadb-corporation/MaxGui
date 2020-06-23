@@ -32,7 +32,7 @@ describe('GlobalSearch.vue', () => {
         wrapper.vm.$router.push('/')
     })
     it(`$data.search as well as $store.getters.searchKeyWord is 
-        updated correctly and cleared when route changes`, async () => {
+      updated correctly and cleared when route changes`, async () => {
         // searching for 'row_server_1'
         wrapper.setData({ search: 'row_server_1' })
         wrapper.vm.$nextTick(() => {

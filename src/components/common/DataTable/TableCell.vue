@@ -3,8 +3,8 @@
         :rowspan="cellIndex < colsHasRowSpan ? item.rowspan : null"
         :class="tdClasses(header, item, cellIndex)"
         :style="isTree && hasValidChild && cellLevelPadding(item, cellIndex)"
-        @mouseleave="e => cellHover(e, item, rowIndex, cellIndex, header)"
         @mouseenter="e => cellHover(e, item, rowIndex, cellIndex, header)"
+        @mouseleave="e => cellHover(e, item, rowIndex, cellIndex, header)"
     >
         <v-icon
             v-if="draggable"
@@ -82,7 +82,7 @@ export default {
         cellIndex: { type: Number, required: true },
         item: { type: Object, required: true },
         header: { type: Object, required: true },
-        headers: { type: Array, required: true },
+        columnsLength: { type: Number, required: true },
         rowIndex: { type: Number, required: true },
         hasOrderNumber: { type: Boolean, required: true },
         editableCell: { type: Boolean, required: true },
@@ -169,7 +169,7 @@ export default {
             return (
                 this.indexOfHoveredRow === rowIndex &&
                 // show at last columns
-                cellIndex === this.headers.length - 1
+                cellIndex === this.columnsLength
             )
         },
 

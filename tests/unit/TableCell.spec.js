@@ -29,28 +29,10 @@ describe('TableCell.vue', () => {
             props: {
                 cellIndex: 0,
                 item: {
-                    id: 'row_server_1',
-                    serverAddress: '127.0.0.1',
-                    serverPort: 4001,
-                    serverConnections: 0,
-                    serverState: 'Master, Running',
-                    serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
-                    gtid: '0-1000-9',
-                    groupId: 'Monitor',
-                    monitorState: 'Running',
+                    id: 'RWS-Router',
                 },
-                header: { text: `Monitor`, value: 'groupId' },
-                headers: [
-                    { text: `Monitor`, value: 'groupId' },
-                    { text: 'State', value: 'monitorState' },
-                    { text: 'Servers', value: 'id' },
-                    { text: 'Address', value: 'serverAddress' },
-                    { text: 'Port', value: 'serverPort' },
-                    { text: 'Connections', value: 'serverConnections' },
-                    { text: 'State', value: 'serverState' },
-                    { text: 'GTID', value: 'gtid' },
-                    { text: 'Services', value: 'serviceIds' },
-                ],
+                header: { text: 'Service', value: 'id' },
+
                 rowIndex: 0,
                 hasOrderNumber: false,
                 editableCell: false,
@@ -71,10 +53,36 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it(`Testing rowspan feature: component assigned accurate
-        td rowspan attribute value`, () => {
-        let rowspanData = [
-            {
+    it('cell-hover and get-truncated-info events are emitted when cell is hovered', () => {
+        const td = wrapper.findAll('td')
+        expect(td.length).to.equal(1)
+        wrapper.setProps({
+            item: {
+                value: 'Longggggggggggggggggggggggggggggg text',
+            },
+            header: { text: 'Value', value: 'value', cellTruncated: true },
+        })
+        let eventFired = 0
+        wrapper.vm.$nextTick(() => {
+            td.at(0).trigger('mouseenter')
+        })
+        wrapper.vm.$on('cell-hover', () => {
+            eventFired++
+            wrapper.vm.$on('get-truncated-info', () => {
+                eventFired++
+            })
+        })
+        wrapper.vm.$nextTick(() => {
+            expect(eventFired).to.equal(2)
+        })
+    })
+
+    it('Testing rowspan feature: component assigned accurate td rowspan attribute value', () => {
+        wrapper.setProps({
+            cellIndex: 0, // rendering the first cell (aka groupId)
+            header: { text: `Monitor`, value: 'groupId' }, // rendering the first cell (aka groupId)
+            colsHasRowSpan: 1,
+            item: {
                 groupId: 'Monitor',
                 rowspan: 2,
                 hidden: true,
@@ -87,25 +95,6 @@ describe('TableCell.vue', () => {
                 serverState: 'Slave, Running',
                 serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
             },
-            {
-                groupId: 'Monitor',
-                rowspan: 2,
-                hidden: false,
-                id: 'row_server_1',
-                serverAddress: '127.0.0.1',
-                serverPort: 4001,
-                serverConnections: 0,
-                serverState: 'Master, Running',
-                serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
-                gtid: '0-1000-9',
-                monitorState: 'Running',
-            },
-        ]
-        // rendering the first cell (aka groupId)
-        wrapper.setProps({
-            cellIndex: 0,
-            colsHasRowSpan: 1,
-            item: rowspanData[0],
         })
         wrapper.vm.$nextTick(() => {
             const td = wrapper.findAll('td')

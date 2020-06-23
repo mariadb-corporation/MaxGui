@@ -54,8 +54,7 @@ describe('Collapse.vue', () => {
     })
 
     it(`Display "add" button if onAddClick props is passed,
-    after onAddClick callback is called, eventFired should equal 1
-    `, () => {
+      after onAddClick callback is called, eventFired should equal 1`, () => {
         let eventFired = 0
         // edit button is rendered only when onEdit props is passed with a function
         wrapper.setProps({
@@ -70,8 +69,8 @@ describe('Collapse.vue', () => {
     })
 
     it(`Display "Done Editing" button if isEditing props is true,
-    after doneEditingCb is called, value of isEditing props should be false,
-    eventFired should equal 1
+      after doneEditingCb is called, value of isEditing props should be false,
+      eventFired should equal 1
     `, () => {
         let eventFired = 0
         // edit button is rendered only when onEdit props is passed with a function

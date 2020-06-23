@@ -61,7 +61,7 @@
                         :colsHasRowSpan="colsHasRowSpan"
                         :item="item"
                         :header="header"
-                        :headers="headers"
+                        :columnsLength="headers.length - 1"
                         :rowIndex="rowIndex"
                         :hasOrderNumber="hasOrderNumber"
                         :editableCell="editableCell"
@@ -232,6 +232,7 @@ export default {
                     Object.keys(obj).forEach(key => (obj[key] = self.$help.handleValue(obj[key])))
                 }
             }
+
             return result
         },
 
