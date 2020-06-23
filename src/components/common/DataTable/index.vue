@@ -117,7 +117,6 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
 /*
  * Copyright (c) 2020 MariaDB Corporation Ab
  *
@@ -143,6 +142,7 @@ _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
 _slot :name="`header-append-${header.value}`"
 */
+import Sortable from 'sortablejs'
 import TableHeader from './TableHeader'
 import TableCell from './TableCell'
 
