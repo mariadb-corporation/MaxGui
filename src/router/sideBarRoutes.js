@@ -19,7 +19,7 @@ import tabRoutes from './tabRoutes'
 export default [
     // Sidebar Routes
     {
-        path: '/dashboard/',
+        path: '/dashboard/servers/',
         component: Dashboard,
         meta: {
             requiresAuth: true,
