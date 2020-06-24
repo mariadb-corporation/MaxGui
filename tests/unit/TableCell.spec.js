@@ -28,12 +28,14 @@ describe('TableCell.vue', () => {
             component: TableCell,
             props: {
                 cellIndex: 0,
+                rowIndex: 0,
+                indexOfLastColumn: 0,
                 item: {
                     id: 'RWS-Router',
                 },
-                indexOfLastColumn: 0,
+
                 header: { text: 'Service', value: 'id' },
-                rowIndex: 0,
+
                 hasOrderNumber: false,
                 editableCell: false,
                 tdBorderLeft: false,
@@ -77,8 +79,48 @@ describe('TableCell.vue', () => {
         })
     })
 
+    it(`toggle button is automatically displayed correctly and "toggle-child" event
+       is emitted when toggle button is clicked`, () => {
+        wrapper.setProps({
+            cellIndex: 0,
+            indexOfHoveredRow: 0,
+            item: {
+                id: 'log_throttling',
+                value: '',
+                nodeId: 1,
+                parentId: 0,
+                level: 0,
+                nodeParent: null,
+                leaf: false,
+                children: [
+                    {
+                        id: 'count',
+                        value: 0,
+                        nodeId: 2,
+                        parentId: 1,
+                        level: 1,
+                        leaf: true,
+                    },
+                ],
+            },
+            header: { text: 'Variable', value: 'id' },
+        })
+        let eventFired = 0
+        wrapper.vm.$on('toggle-child', () => {
+            eventFired++
+        })
+
+        wrapper.vm.$nextTick(() => {
+            let toggleBtn = wrapper.find('.arrow-toggle')
+            expect(toggleBtn.exists()).to.be.true
+            toggleBtn.trigger('click')
+            expect(eventFired).to.equal(1)
+        })
+    })
+
     it('"actions" slot is rendered at the last column when hover at table row', () => {
         wrapper.setProps({
+            indexOfLastColumn: 0,
             indexOfHoveredRow: 0,
             cellIndex: 0,
             item: {
