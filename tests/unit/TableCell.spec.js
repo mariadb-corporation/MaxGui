@@ -31,8 +31,8 @@ describe('TableCell.vue', () => {
                 item: {
                     id: 'RWS-Router',
                 },
+                indexOfLastColumn: 0,
                 header: { text: 'Service', value: 'id' },
-
                 rowIndex: 0,
                 hasOrderNumber: false,
                 editableCell: false,
@@ -74,6 +74,20 @@ describe('TableCell.vue', () => {
         })
         wrapper.vm.$nextTick(() => {
             expect(eventFired).to.equal(2)
+        })
+    })
+
+    it('"actions" slot is rendered at the last column when hover at table row', () => {
+        wrapper.setProps({
+            indexOfHoveredRow: 0,
+            cellIndex: 0,
+            item: {
+                action: 'text',
+            },
+            header: { text: '', value: 'action', sortable: false },
+        })
+        wrapper.vm.$nextTick(() => {
+            expect(wrapper.find('.action-slot-wrapper').exists()).to.be.true
         })
     })
 

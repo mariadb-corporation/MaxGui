@@ -61,7 +61,7 @@
                         :colsHasRowSpan="colsHasRowSpan"
                         :item="item"
                         :header="header"
-                        :columnsLength="headers.length - 1"
+                        :indexOfLastColumn="headers.length - 1"
                         :rowIndex="rowIndex"
                         :hasOrderNumber="hasOrderNumber"
                         :editableCell="editableCell"

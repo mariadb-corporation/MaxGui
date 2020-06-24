@@ -75,6 +75,9 @@
 SLOTS available for this component:
 _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
+Emits:
+$emit('get-truncated-info',truncatedMenu:Object)
+$emmit('cell-hover', { e, item, rowIndex, cellIndex, header })
 */
 export default {
     name: 'table-cell',
@@ -82,7 +85,7 @@ export default {
         cellIndex: { type: Number, required: true },
         item: { type: Object, required: true },
         header: { type: Object, required: true },
-        columnsLength: { type: Number, required: true },
+        indexOfLastColumn: { type: Number, required: true },
         rowIndex: { type: Number, required: true },
         hasOrderNumber: { type: Boolean, required: true },
         editableCell: { type: Boolean, required: true },
@@ -90,17 +93,17 @@ export default {
         // For displaying draggable icon
         draggable: { type: Boolean, required: true },
         showDragIcon: { type: Boolean, required: true },
+        // for tree view
+        isTree: { type: Boolean, required: true },
+        hasValidChild: { type: Boolean, required: true },
+        // for external v-menu activator
+        componentId: { type: String, required: true },
         // For displaying action column slot
         indexOfHoveredRow: {
             type: Number,
         },
         // For displaying rowspan table
         colsHasRowSpan: { type: Number },
-        // for tree view
-        isTree: { type: Boolean, required: true },
-        hasValidChild: { type: Boolean, required: true },
-        // for external v-menu activator
-        componentId: { type: String, required: true },
     },
     data() {
         return {
@@ -169,7 +172,7 @@ export default {
             return (
                 this.indexOfHoveredRow === rowIndex &&
                 // show at last columns
-                cellIndex === this.columnsLength
+                cellIndex === this.indexOfLastColumn
             )
         },
 
