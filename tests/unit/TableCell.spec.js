@@ -79,7 +79,33 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it(`toggle button is automatically displayed correctly and "toggle-child" event
+    it(`drag icon is rendered when draggable props is true and 
+      it will be shown at the last column at hovered row`, () => {
+        wrapper.setProps({
+            draggable: true,
+            /*  indexOfHoveredRow === rowIndex &&
+                cellIndex === indexOfLastColumn
+                will show drag icon
+            */
+            indexOfLastColumn: 0,
+            indexOfHoveredRow: 0,
+            cellIndex: 0,
+            item: {
+                action: '',
+            },
+            header: { text: '', value: 'action', sortable: false },
+        })
+
+        wrapper.vm.$nextTick(() => {
+            const dragHandle = wrapper.find('.drag-handle')
+            // drag icon is rendered
+            expect(dragHandle.exists()).to.be.true
+            // drag icon is shown at hovered row
+            expect(dragHandle.attributes().style).to.not.include('display: none')
+        })
+    })
+
+    it(`toggle button is displayed automatically and "toggle-child" event
        is emitted when toggle button is clicked`, () => {
         wrapper.setProps({
             cellIndex: 0,

@@ -69,11 +69,11 @@
                                 :sortDesc="false"
                                 :noDataText="$t('noEntity', { entityName: $tc('filters', 2) })"
                                 draggable
-                                :dragReorder="filterDragReorder"
                                 :loading="loading"
                                 showActionsOnHover
                                 :search="searchKeyWord"
                                 hasOrderNumber
+                                @on-drag-end="filterDragReorder"
                             >
                                 <!-- <template v-slot:id="{ data: { item: { id } } }">
                                     <router-link

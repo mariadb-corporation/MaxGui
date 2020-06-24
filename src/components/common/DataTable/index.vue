@@ -19,7 +19,7 @@
             :no-data-text="noDataText"
             :custom-sort="customSort"
             @current-items="getCurrentItems"
-            @drag-reorder="dragReorder"
+            @on-drag-end="$emit('on-drag-end', $event)"
         >
             <!----------------------------------------------------TABLE HEAD------------------------------------------>
             <template v-slot:header="{ props: { headers } }">
@@ -39,56 +39,51 @@
 
             <!----------------------------------------------------TABLE ROW------------------------------------------->
             <template v-slot:item="{ item, index: rowIndex }">
-                <!-- A key need to be set when table row is draggable -->
-                <tr
+                <table-row
                     :key="item.nodeId || item.id"
-                    ref="tableRow"
-                    :class="trClasses(rowIndex)"
-                    v-on="
-                        draggable || showActionsOnHover
-                            ? {
-                                  mouseenter: e => onRowHover(e, rowIndex),
-                                  mouseleave: e => onRowHover(e, rowIndex),
-                              }
-                            : null
-                    "
+                    :rowIndex="rowIndex"
+                    :editableCell="editableCell"
+                    :draggable="draggable"
+                    :showActionsOnHover="showActionsOnHover"
+                    :pageItemsLength="currentPageItems.length - 1,"
                 >
-                    <table-cell
-                        v-for="(header, cellIndex) in headers"
-                        :key="cellIndex"
-                        :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
-                        :cellIndex="cellIndex"
-                        :colsHasRowSpan="colsHasRowSpan"
-                        :item="item"
-                        :header="header"
-                        :indexOfLastColumn="headers.length - 1"
-                        :rowIndex="rowIndex"
-                        :hasOrderNumber="hasOrderNumber"
-                        :editableCell="editableCell"
-                        :tdBorderLeft="tdBorderLeft"
-                        :draggable="draggable"
-                        :showDragIcon="showDragIcon(rowIndex, cellIndex)"
-                        :indexOfHoveredRow="indexOfHoveredRow"
-                        :isTree="isTree"
-                        :hasValidChild="hasValidChild"
-                        :componentId="componentId"
-                        @cell-hover="cellHover($event)"
-                        @get-truncated-info="truncatedMenu = $event"
-                        @toggle-child="toggleChild($event)"
-                    >
-                        <template :slot="header.value">
-                            <slot
-                                :name="header.value"
-                                :data="{ item, header, cellIndex, rowIndex }"
-                            >
-                                {{ getValue(item, header) }}
-                            </slot>
-                        </template>
-                        <template slot="actions">
-                            <slot name="actions" :data="{ item }" />
-                        </template>
-                    </table-cell>
-                </tr>
+                    <template v-slot:cell="{ data: { indexOfHoveredRow } }">
+                        <table-cell
+                            v-for="(header, cellIndex) in headers"
+                            :key="cellIndex"
+                            :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
+                            :cellIndex="cellIndex"
+                            :colsHasRowSpan="colsHasRowSpan"
+                            :item="item"
+                            :header="header"
+                            :indexOfLastColumn="headers.length - 1"
+                            :rowIndex="rowIndex"
+                            :hasOrderNumber="hasOrderNumber"
+                            :editableCell="editableCell"
+                            :tdBorderLeft="tdBorderLeft"
+                            :draggable="draggable"
+                            :indexOfHoveredRow="indexOfHoveredRow"
+                            :isTree="isTree"
+                            :hasValidChild="hasValidChild"
+                            :componentId="componentId"
+                            @cell-hover="cellHover($event)"
+                            @get-truncated-info="truncatedMenu = $event"
+                            @toggle-child="toggleChild($event)"
+                        >
+                            <template :slot="header.value">
+                                <slot
+                                    :name="header.value"
+                                    :data="{ item, header, cellIndex, rowIndex }"
+                                >
+                                    {{ getValue(item, header) }}
+                                </slot>
+                            </template>
+                            <template slot="actions">
+                                <slot name="actions" :data="{ item }" />
+                            </template>
+                        </table-cell>
+                    </template>
+                </table-row>
             </template>
         </v-data-table>
         <v-menu
@@ -145,11 +140,13 @@ _slot :name="`header-append-${header.value}`"
 import Sortable from 'sortablejs'
 import TableHeader from './TableHeader'
 import TableCell from './TableCell'
+import TableRow from './TableRow'
 
 export default {
     name: 'data-table',
     components: {
         TableHeader,
+        TableRow,
         TableCell,
     },
     directives: {
@@ -160,7 +157,7 @@ export default {
                     draggable: '.draggable-row',
                     animation: 200,
                     onEnd: function(event) {
-                        vnode.child.$emit('drag-reorder', event)
+                        vnode.child.$emit('on-drag-end', event)
                     },
                 }
                 Sortable.create(el.getElementsByTagName('tbody')[0], options)
@@ -188,7 +185,6 @@ export default {
         keepPrimitiveValue: { type: Boolean, default: false },
         // For draggable feature
         draggable: { type: Boolean, default: false },
-        dragReorder: { type: Function, default: () => null },
         /*
         enable hasOrderNumber to display item index column, however,
         item needs to have its own index property because using table row index will not work properly
@@ -205,10 +201,7 @@ export default {
         return {
             //common
             pagination: {},
-            // use when draggable or showActionsOnHover is enabled
-            indexOfHoveredRow: null,
-            //draggable
-            showDragEntity: false,
+
             //For truncated cell
             truncatedMenu: { index: null, x: 0, y: 16.5 },
             //For nested data, display dropdown table row
@@ -253,13 +246,7 @@ export default {
             },
             deep: true,
         },
-        loading: function(newVal) {
-            if (newVal) {
-                // // when table is loading , dont show drag icon or actions slot
-                this.draggable && (this.showDragEntity = false)
-                this.indexOfHoveredRow = null
-            }
-        },
+
         editableCell: function(val) {
             if (val && this.isTree && this.hasValidChild) {
                 this.toggleAllNodesChildren()
@@ -268,19 +255,6 @@ export default {
     },
 
     methods: {
-        //---------------------------------Internal styles and class bindings-------------------------------------------
-
-        trClasses(rowIndex) {
-            return {
-                // for styling and common class
-                'last-row': rowIndex === this.currentPageItems.length - 1,
-                // for editable feature
-                'v-data-table__editable-cell-mode': this.editableCell,
-                // for row draggble feature
-                'draggable-row': this.draggable,
-            }
-        },
-
         //---------------------------------Table events----------------------------------------------------------------
         cellHover({ e, item, rowIndex, cellIndex, header }) {
             this.$emit('cell-hover', {
@@ -433,48 +407,6 @@ export default {
                     }
                     break
             }
-        },
-
-        //---------------------------------For displaying actions btn/icon on table row---------------------------------
-        /**
-         * @param {Number} index index of current hovered row
-         * This function helps to display either drag icon or actions slot at index of hovered row.
-         */
-        onRowHover(e, index) {
-            const { type } = e
-            let self = this
-            switch (type) {
-                case 'mouseenter':
-                    {
-                        // positioning the drag handle to the center of the table row
-                        if (self.draggable) {
-                            let tableRowWidth = self.$refs.tableRow.clientWidth
-                            let dragHandle = document.getElementsByClassName('drag-handle')
-                            let center = `calc(100% - ${tableRowWidth / 2}px)`
-                            if (dragHandle.length && dragHandle[0].style.left !== center) {
-                                for (let i = 0; i < dragHandle.length; ++i) {
-                                    dragHandle[i].style.left = center
-                                }
-                            }
-                            self.showDragEntity = true
-                        }
-                        self.indexOfHoveredRow = index
-                    }
-                    break
-                case 'mouseleave':
-                    self.draggable && (self.showDragEntity = false)
-                    self.indexOfHoveredRow = null
-                    break
-            }
-        },
-
-        // show drag handle icon at indexOfHoveredRow and show at last columns
-        showDragIcon(rowIndex, cellIndex) {
-            return (
-                this.showDragEntity &&
-                this.indexOfHoveredRow === rowIndex &&
-                cellIndex === this.headers.length - 1
-            )
         },
 
         //---------------------------------For nested data, displaying dropdown table row-------------------------------

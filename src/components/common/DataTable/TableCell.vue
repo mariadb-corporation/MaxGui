@@ -8,7 +8,7 @@
     >
         <v-icon
             v-if="draggable"
-            v-show="showDragIcon"
+            v-show="showDragIcon(rowIndex, cellIndex)"
             :class="{ 'drag-handle move': draggable }"
             class="color text-field-text"
             size="16"
@@ -17,7 +17,7 @@
         </v-icon>
 
         <div
-            :ref="`itemWrapperCell${cellIndex}`"
+            ref="itemWrapperCell"
             :style="itemWrapperAlign(header)"
             :class="itemWrapperClasses(header, item, cellIndex)"
         >
@@ -44,7 +44,7 @@
             <span
                 v-else
                 :id="`truncatedText_atRow${rowIndex}_atCell${cellIndex}_${componentId}`"
-                :ref="`truncatedTextAtRow${rowIndex}Cell${cellIndex}`"
+                ref="truncatedTextAtRow"
             >
                 <slot :name="header.value" :data="{ item, header, cellIndex, rowIndex }" />
             </span>
@@ -92,7 +92,6 @@ export default {
         tdBorderLeft: { type: Boolean, required: true },
         // For displaying draggable icon
         draggable: { type: Boolean, required: true },
-        showDragIcon: { type: Boolean, required: true },
         // for tree view
         isTree: { type: Boolean, required: true },
         hasValidChild: { type: Boolean, required: true },
@@ -176,6 +175,11 @@ export default {
             )
         },
 
+        // show drag handle icon at indexOfHoveredRow and show at last columns
+        showDragIcon(rowIndex, cellIndex) {
+            return this.indexOfHoveredRow === rowIndex && cellIndex === this.indexOfLastColumn
+        },
+
         //---------------------------------Cell events----------------------------------------------------------------
         cellHover(e, item, rowIndex, cellIndex, header) {
             this.$emit('cell-hover', {
@@ -196,8 +200,8 @@ export default {
          */
         showTruncatedMenu(item, rowIndex, cellIndex, header) {
             // auto truncated text feature
-            const wrapper = this.$refs[`itemWrapperCell${cellIndex}`]
-            const text = this.$refs[`truncatedTextAtRow${rowIndex}Cell${cellIndex}`]
+            const wrapper = this.$refs.itemWrapperCell
+            const text = this.$refs.truncatedTextAtRow
 
             if (wrapper && text && wrapper.offsetWidth < text.offsetWidth) {
                 // const wrapperClientRect = wrapper.getBoundingClientRect()
