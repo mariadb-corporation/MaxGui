@@ -28,7 +28,11 @@
  * of this software will be governed by version 2 or later of the General
  * Public License.
  */
+/*
+SLOTS available for this component:
+_slot name="cell" :data="{  indexOfHoveredRow: indexOfHoveredRow }"
 
+*/
 export default {
     name: 'table-row',
 

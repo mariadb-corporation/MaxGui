@@ -70,6 +70,7 @@ describe('TableCell.vue', () => {
         })
         wrapper.vm.$on('cell-hover', () => {
             eventFired++
+            // item.level > 0 || header.cellTruncated will emit get-truncated-info
             wrapper.vm.$on('get-truncated-info', () => {
                 eventFired++
             })
@@ -80,7 +81,7 @@ describe('TableCell.vue', () => {
     })
 
     it(`drag icon is rendered when draggable props is true and 
-      it will be shown at the last column at hovered row`, () => {
+      will be shown at the last column at hovered row`, () => {
         wrapper.setProps({
             draggable: true,
             /*  indexOfHoveredRow === rowIndex &&
@@ -105,8 +106,8 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it(`toggle button is displayed automatically and "toggle-child" event
-       is emitted when toggle button is clicked`, () => {
+    it(`toggle button is displayed automatically at the first column and emitted "toggle-child" 
+      event when toggle button is clicked`, () => {
         wrapper.setProps({
             cellIndex: 0,
             indexOfHoveredRow: 0,

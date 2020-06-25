@@ -126,16 +126,23 @@
  */
 
 /*
-This component accepts
+This component accepts:
 _headers props as array of objects, each object must has text:String, value:Any and
-may has sortable:Boolean, editableCol:Boolean, align: String, cellTruncated: Boolean, width: String, padding; String
+may has sortable: true || false, editableCol: true || false, align: "center || left || rigth",
+cellTruncated: true || false, width: String, padding: String
 
-_data props as array of objects, each object must has either item.nodeId:Number || item.id:Any or both
+_data props as array of objects, each object must has either item.nodeId:Number || item.id:Any, if both presents
+nodeId will be used
 
 SLOTS available for this component:
 _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
 _slot :name="`header-append-${header.value}`"
+
+Emits:
+$emit('on-drag-end', event:Object)
+$emit('pagination', val:Object)
+$emit('cell-hover', { e, item, rowIndex, cellIndex, header })
 */
 import Sortable from 'sortablejs'
 import TableHeader from './TableHeader'
@@ -194,7 +201,7 @@ export default {
         showActionsOnHover: { type: Boolean, default: false },
         // rowspan feature, data array must contains objects having groupId property.
         colsHasRowSpan: { type: Number },
-        // if data has child object or array, enable this props
+        // if data has child object or array, enable this props in adanvce
         isTree: { type: Boolean, default: false },
     },
     data() {

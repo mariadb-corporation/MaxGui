@@ -44,10 +44,11 @@ This component accepts
 _headers props as array of objects, each object must has text:String, value:Any and
 may has sortable:Boolean, editableCol:Boolean, align: String, cellTruncated: Boolean, width: String, padding; String
 
-_data props as array of objects, each object must has either item.nodeId:Number || item.id:Any or both
-
 SLOTS available for this component:
 _slot :name="`header-append-${header.value}`"
+
+Emits:
+$emit('change-sort', header.value)
 */
 export default {
     name: 'table-header',

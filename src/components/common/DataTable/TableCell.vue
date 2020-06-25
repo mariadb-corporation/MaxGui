@@ -75,9 +75,11 @@
 SLOTS available for this component:
 _slot :name="header.value" // slot aka item
 _slot  name="actions" :data="{ item }"
+
 Emits:
-$emit('get-truncated-info',truncatedMenu:Object)
-$emmit('cell-hover', { e, item, rowIndex, cellIndex, header })
+$emit('get-truncated-info', truncatedMenu:Object)
+$emit('cell-hover', { e, item, rowIndex, cellIndex, header })
+$emit('toggle-child', item:Object)
 */
 export default {
     name: 'table-cell',
@@ -151,7 +153,7 @@ export default {
         },
 
         itemWrapperAlign(header) {
-            // make centering cell more accurate that ommit the width of the sort arrow from the header
+            // make centering cell more accurate by ignore the width of the sort arrow from the header
             let marginRight = header.align && header.sortable !== false ? 26 : ''
             return {
                 marginRight: `${marginRight}px`,

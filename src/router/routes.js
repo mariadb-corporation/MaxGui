@@ -24,11 +24,11 @@ const NotFound404 = () => import(/* webpackChunkName: "not-found-page" */ 'pages
 export const routes = [
     {
         path: '/',
-        redirect: '/dashboard/servers/',
+        redirect: '/dashboard/servers',
     },
     {
         path: '/dashboard',
-        redirect: '/dashboard/servers/',
+        redirect: '/dashboard/servers',
     },
     {
         path: '*',
