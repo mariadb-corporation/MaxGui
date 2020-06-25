@@ -73,13 +73,13 @@
 
 /*
 SLOTS available for this component:
-_slot :name="header.value" // slot aka item
-_slot  name="actions" :data="{ item }"
+- slot :name="header.value" // slot aka item
+- slot  name="actions" :data="{ item }"
 
 Emits:
-$emit('get-truncated-info', truncatedMenu:Object)
-$emit('cell-hover', { e, item, rowIndex, cellIndex, header })
-$emit('toggle-child', item:Object)
+- $emit('get-truncated-info', truncatedMenu:Object)
+- $emit('cell-hover', { e, item, rowIndex, cellIndex, header })
+- $emit('toggle-child', item:Object)
 */
 export default {
     name: 'table-cell',

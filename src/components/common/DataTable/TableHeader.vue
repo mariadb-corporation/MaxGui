@@ -41,14 +41,15 @@
 
 /*
 This component accepts
-_headers props as array of objects, each object must has text:String, value:Any and
-may has sortable:Boolean, editableCol:Boolean, align: String, cellTruncated: Boolean, width: String, padding; String
+- headers props as array of objects, each object must has text:String, value:Any and
+  may has sortable: true || false, editableCol: true || false, align: "center || left || right",
+  cellTruncated: true || false, width: String, padding: String
 
 SLOTS available for this component:
-_slot :name="`header-append-${header.value}`"
+- slot :name="`header-append-${header.value}`"
 
 Emits:
-$emit('change-sort', header.value)
+- $emit('change-sort', header.value)
 */
 export default {
     name: 'table-header',

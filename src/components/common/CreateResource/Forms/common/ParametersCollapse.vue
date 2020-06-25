@@ -72,11 +72,11 @@ module parameters. All default_values will be returned as string regardless of t
 The component is meant to be used for creating resource
 
 PROPS:
-_requiredParams: accepts array of string , it simply enables required attribute in parameter-input dynamically
-_usePortOrSocket: accepts boolean , if true, get portValue, addressValue, and socketValue, 
-passing them to parameter-input for handling special input field when editting server or listener. 
-If editing listener, addressValue will be null
-_isListener: accepts boolean , if true, address won't be required
+- requiredParams: accepts array of string , it simply enables required attribute in parameter-input dynamically
+- usePortOrSocket: accepts boolean , if true, get portValue, addressValue, and socketValue, 
+  passing them to parameter-input for handling special input field when editting server or listener. 
+  If editing listener, addressValue will be null
+- isListener: accepts boolean , if true, address won't be required
 */
 export default {
     name: 'parameters-collapse',

@@ -127,22 +127,23 @@
 
 /*
 This component accepts:
-_headers props as array of objects, each object must has text:String, value:Any and
-may has sortable: true || false, editableCol: true || false, align: "center || left || rigth",
-cellTruncated: true || false, width: String, padding: String
+- headers props as array of objects, each object must has text:String, value:Any and
+  may has sortable: true || false, editableCol: true || false, align: "center || left || right",
+  cellTruncated: true || false, width: String, padding: String
 
-_data props as array of objects, each object must has either item.nodeId:Number || item.id:Any, if both presents
-nodeId will be used
+- data props as array of objects, each object must has either item.nodeId:Number || item.id:Any, 
+  if both presents
+  nodeId will be used
 
 SLOTS available for this component:
-_slot :name="header.value" // slot aka item
-_slot  name="actions" :data="{ item }"
-_slot :name="`header-append-${header.value}`"
+- slot :name="header.value" // slot aka item
+- slot  name="actions" :data="{ item }"
+- slot :name="`header-append-${header.value}`"
 
 Emits:
-$emit('on-drag-end', event:Object)
-$emit('pagination', val:Object)
-$emit('cell-hover', { e, item, rowIndex, cellIndex, header })
+- $emit('on-drag-end', event:Object)
+- $emit('pagination', val:Object)
+- $emit('cell-hover', { e, item, rowIndex, cellIndex, header })
 */
 import Sortable from 'sortablejs'
 import TableHeader from './TableHeader'

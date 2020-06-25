@@ -31,6 +31,11 @@
  * Public License.
  */
 
+/*
+PROPS:
+- parameterTooltip: Object info of a parameter
+- activator: parameter input object
+*/
 export default {
     name: 'parameter-tooltip',
     props: {

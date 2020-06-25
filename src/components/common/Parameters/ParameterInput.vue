@@ -196,10 +196,10 @@
  */
 
 /*
-_createMode: In creation mode, it will not trigger parent form validate on first render
-_portValue,_socketValue,_addressValue and _parentForm is passed if target resource is being
-created or updated. If target resource is listener, _addressValue will be null.
-_isListener: accepts boolean , if true, address won't be required
+- createMode: In creation mode, it will not trigger parent form validate on first render
+- portValue,_socketValue,_addressValue and _parentForm is passed if target resource is being
+  created or updated. If target resource is listener, _addressValue will be null.
+- isListener: accepts boolean , if true, address won't be required
 */
 export default {
     name: 'parameter-input',

@@ -30,7 +30,7 @@
  */
 /*
 SLOTS available for this component:
-_slot name="cell" :data="{  indexOfHoveredRow: indexOfHoveredRow }"
+- slot name="cell" :data="{  indexOfHoveredRow: indexOfHoveredRow }"
 
 */
 export default {
