@@ -45,7 +45,7 @@
                     :editableCell="editableCell"
                     :draggable="draggable"
                     :showActionsOnHover="showActionsOnHover"
-                    :pageItemsLength="currentPageItems.length - 1,"
+                    :lastPageItemIndex="currentPageItems.length - 1,"
                 >
                     <template v-slot:cell="{ data: { indexOfHoveredRow } }">
                         <table-cell

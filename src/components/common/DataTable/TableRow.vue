@@ -41,7 +41,7 @@ export default {
         editableCell: { type: Boolean, required: true },
         draggable: { type: Boolean, required: true },
         showActionsOnHover: { type: Boolean, required: true },
-        pageItemsLength: { type: Number, required: true },
+        lastPageItemIndex: { type: Number, required: true },
     },
     data() {
         return {
@@ -56,7 +56,7 @@ export default {
         trClasses(rowIndex) {
             return {
                 // for styling and common class
-                'last-row': rowIndex === this.pageItemsLength,
+                'last-row': rowIndex === this.lastPageItemIndex,
                 // for editable feature
                 'v-data-table__editable-cell-mode': this.editableCell,
                 // for row draggble feature
@@ -70,6 +70,7 @@ export default {
             switch (type) {
                 case 'mouseenter':
                     {
+                        self.indexOfHoveredRow = index
                         // positioning the drag handle to the center of the table row
                         if (self.draggable) {
                             let tableRowWidth = self.$refs.tableRow.clientWidth
@@ -83,7 +84,6 @@ export default {
                                 }
                             }
                         }
-                        self.indexOfHoveredRow = index
                     }
                     break
                 case 'mouseleave':
