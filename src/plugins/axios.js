@@ -15,7 +15,8 @@ import ax from 'axios'
 import store from 'store'
 import { getErrorsArr } from '@/utils/helpers'
 
-// allow cookies to be sent (cors handling)
+const CancelToken = ax.CancelToken
+const source = CancelToken.source()
 
 let apiClient = ax.create({
     baseURL: '/',
@@ -25,14 +26,25 @@ let apiClient = ax.create({
         'Cache-Control': 'no-cache',
     },
 })
+
+apiClient.interceptors.request.use(
+    function(config) {
+        config.cancelToken = source.token
+        return config
+    },
+    function(error) {
+        return Promise.reject(error)
+    }
+)
+
 apiClient.interceptors.response.use(
     response => {
         return response
     },
-    error => {
+    async error => {
         if (error.response.status === 401) {
-            store.dispatch('user/logout')
-            return Promise.reject(error)
+            await store.dispatch('user/logout')
+            throw new ax.Cancel('Operation canceled as it catches 401')
         } else {
             store.commit('showMessage', {
                 text: getErrorsArr(error),
@@ -60,6 +72,7 @@ const loginAxios = ax.create({
 
 Vue.axios = apiClient
 Vue.loginAxios = loginAxios
+
 // immutable axios instances
 Object.defineProperties(Vue.prototype, {
     axios: {

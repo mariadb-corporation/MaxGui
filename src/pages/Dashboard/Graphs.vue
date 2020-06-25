@@ -32,7 +32,7 @@
                             ref="connectionsChart"
                             :styles="{ height: '70px', position: 'relative' }"
                             :chart-data="serversConnectionsChartData"
-                            :options="mainChartOptions"
+                            :options="chartOptionsWithOutCallBack"
                         />
                     </v-sheet>
                 </template>
@@ -51,7 +51,7 @@
                             ref="threadsChart"
                             :styles="{ height: '70px', position: 'relative' }"
                             :chart-data="threadsChartData"
-                            :options="threadChartOptions"
+                            :options="mainChartOptions"
                             :yAxesTicks="{ max: 100, min: 0 }"
                         />
                     </v-sheet>
@@ -86,17 +86,6 @@ export default {
     },
     data() {
         return {
-            threadChartOptions: {
-                plugins: {
-                    streaming: {
-                        duration: 20000,
-                        refresh: 10000, // onRefresh callback will be called every 5000 ms
-                        // delay of 5000 ms, so upcoming values are known before plotting a line
-                        delay: 10000,
-                        onRefresh: this.updateThreadsChart,
-                    },
-                },
-            },
             chartOptionsWithOutCallBack: {
                 plugins: {
                     streaming: {
@@ -116,11 +105,10 @@ export default {
                         /*  delay of 10000 ms, so upcoming values are known before plotting a line
                             delay value can be larger but not smaller than refresh value to
                             remain realtime streaming data.
-                            this onRefresh callback will be called every 
+                            this onRefresh callback will be called every
                             10000 ms to update connections and sessions chart
                         */
-
-                        onRefresh: this.updateSessionsConnectionsChart,
+                        onRefresh: this.updateChart,
                     },
                 },
             },
@@ -140,36 +128,18 @@ export default {
 
     methods: {
         //----------------------- Graphs update
-        async updateThreadsChart(chart) {
-            let self = this
-            await self.fetchThreads()
 
-            await self.threads.forEach((thread, i) => {
-                if (self.$help.isUndefined(chart.data.datasets[i])) {
-                    self.genThreadsDatasetsSchema()
-                } else {
-                    chart.data.datasets[i].data.push({
-                        x: Date.now(),
-                        y: thread.attributes.stats.load.last_second,
-                    })
-                }
-            })
-            chart.update({
-                preservation: true,
-            })
-        },
-
-        async updateSessionsConnectionsChart() {
+        async updateChart() {
             let self = this
-            const { sessionsChart, connectionsChart } = self.$refs
-            if (sessionsChart && connectionsChart) {
+            const { sessionsChart, connectionsChart, threadsChart } = self.$refs
+            if (sessionsChart && connectionsChart && threadsChart) {
                 //  LOOP polling
                 await Promise.all([
                     self.fetchAllServers(),
                     self.fetchAllSessions(),
                     self.fetchAllServices(),
+                    self.fetchThreads(),
                 ])
-
                 const time = Date.now()
                 //-------------------- update connections chart
 
@@ -210,10 +180,6 @@ export default {
                     }
                 })
 
-                connectionsChart.$data._chart.update({
-                    preservation: true,
-                })
-
                 // ------------------------- update sessions chart
 
                 sessionsChart.chartData.datasets.forEach(function(dataset) {
@@ -222,7 +188,27 @@ export default {
                         y: self.allSessions.length,
                     })
                 })
+
+                //-------------------- update threads chart
+                await self.threads.forEach((thread, i) => {
+                    if (self.$help.isUndefined(threadsChart.chartData.datasets[i])) {
+                        self.genThreadsDatasetsSchema()
+                    } else {
+                        threadsChart.chartData.datasets[i].data.push({
+                            x: Date.now(),
+                            y: thread.attributes.stats.load.last_second,
+                        })
+                    }
+                })
+
                 sessionsChart.$data._chart.update({
+                    preservation: true,
+                })
+                threadsChart.$data._chart.update({
+                    preservation: true,
+                })
+
+                connectionsChart.$data._chart.update({
                     preservation: true,
                 })
             }

@@ -21,9 +21,11 @@ import filter from './filter'
 import session from './session'
 import listener from './listener'
 import { APP_CONFIG } from 'utils/constants'
+import router from 'router'
 
 const plugins = store => {
     store.Vue = Vue
+    store.router = router
 }
 
 export default new Vuex.Store({
