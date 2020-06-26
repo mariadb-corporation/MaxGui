@@ -191,11 +191,11 @@ export default {
                     if (linkedMonitors.length) {
                         // The linkedMonitors is always an array with one element -> get monitor at index 0
                         let monitorLinked = this.allMonitorsMap.get(linkedMonitors[0].id)
-
-                        totalMonitors.push(monitorLinked)
-
-                        row.groupId = monitorLinked.id // aka monitorId
-                        row.monitorState = `${monitorLinked.attributes.state}`
+                        if (!this.$help.lodash.isEmpty(monitorLinked)) {
+                            totalMonitors.push(monitorLinked)
+                            row.groupId = monitorLinked.id // aka monitorId
+                            row.monitorState = `${monitorLinked.attributes.state}`
+                        }
                     } else {
                         row.groupId = this.$t('not', { action: 'monitored' })
                         row.monitorState = ''

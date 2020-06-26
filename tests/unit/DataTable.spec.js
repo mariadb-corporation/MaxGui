@@ -11,7 +11,7 @@
  * Public License.
  */
 
-/* import { expect } from 'chai' */
+import { expect } from 'chai'
 
 import mount from './setup'
 import DataTable from '@/components/common/DataTable'
@@ -37,52 +37,50 @@ describe('DataTable.vue', () => {
                    - cellTruncated is a condition to emit 'get-truncated-info' event in table-cell
                 */
                 headers: [
-                    { text: 'Service', value: 'id' },
-                    { text: 'Status', value: 'state', align: 'center' },
-                    { text: 'Router', value: 'router' },
-                    { text: 'Current Sessions', value: 'connections' },
-                    { text: 'Total Sessions', value: 'total_connections' },
-                    { text: 'Servers', value: 'serverIds' },
+                    { text: 'Variable', value: 'id' },
+                    { text: 'Value', value: 'value' },
                 ],
                 data: [
                     {
-                        id: 'RCR-Writer',
-                        state: 'Started',
-                        router: 'readconnroute',
-                        connections: 0,
-                        total_connections: 0,
-                        serverIds: ['row_server_1', 'row_server_2'],
+                        id: 'Item 0',
+                        value: null,
                     },
                     {
-                        id: 'RCR-Router',
-                        state: 'Started',
-                        router: 'readconnroute',
-                        connections: 0,
-                        total_connections: 0,
-                        serverIds: ['row_server_1', 'row_server_2'],
+                        id: 'Item 1',
+                        value: undefined,
                     },
                     {
-                        id: 'RWS-Router',
-                        state: 'Started',
-                        router: 'readwritesplit',
-                        connections: 0,
-                        total_connections: 0,
-                        serverIds: ['row_server_1', 'row_server_2'],
+                        id: 'Item 2',
+                        value: 'value of item 2',
                     },
                 ],
             },
         })
     })
 
-    it('Table is rendered normally with required array data, header props', () => {
-        console.log('wrapper', wrapper)
-        /*  const tr = wrapper.findAll('tr')
-        expect(tr.length).to.equal(1)
+    it(`component processes data as expected when keepPrimitiveValue 
+      props is true or false`, () => {
+        /* 
+            by default keepPrimitiveValue is set to false which means 
+            null, undefined become a string i.e. 'null', 'undefined' respectively.
+            This allows null or undefined value to be shown on the table and can be searched using global-search
+            component
+        */
+        expect(wrapper.vm.$props.keepPrimitiveValue).to.equal(false)
+        let processedData = wrapper.vm.processingData
 
+        expect(processedData[0].value).to.equal('null')
+        expect(processedData[1].value).to.equal('undefined')
+        expect(processedData[0].value).to.be.a('string')
+        expect(processedData[1].value).to.be.a('string')
+
+        // this keep original value
         wrapper.setProps({
-            showActionsOnHover: true,
-            rowIndex: 2,
-            lastPageItemIndex: 2,
-        }) */
+            keepPrimitiveValue: true,
+        })
+        expect(wrapper.vm.$props.keepPrimitiveValue).to.equal(true)
+        let oriData = wrapper.vm.processingData
+        expect(oriData[0].value).to.be.a('null')
+        expect(oriData[1].value).to.be.an('undefined')
     })
 })
