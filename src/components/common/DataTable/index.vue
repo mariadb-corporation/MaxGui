@@ -297,8 +297,9 @@ export default {
                 let hashArr = {} // O(n log n)
 
                 for (let i = 0; i < items.length; ++i) {
-                    if (hashArr[items[i].parentId] == undefined) hashArr[items[i].parentId] = []
-                    hashArr[items[i].parentId].push(items[i])
+                    if (hashArr[items[i].parentNodeId] == undefined)
+                        hashArr[items[i].parentNodeId] = []
+                    hashArr[items[i].parentNodeId].push(items[i])
                 }
 
                 result = this.hierarchySort(hashArr, 0, sortBy, isDesc, [])

@@ -79,9 +79,11 @@
                         v-for="(item, i) in changedParametersArr"
                         :key="i"
                         class="d-block"
-                        :class="[item.nodeParent !== null && changedParamsInfo(i, item) && 'mt-2']"
+                        :class="[
+                            item.parentNodeInfo !== null && changedParamsInfo(i, item) && 'mt-2',
+                        ]"
                     >
-                        <div v-if="item.nodeParent !== null">
+                        <div v-if="item.parentNodeInfo !== null">
                             <div class="font-weight-bold">
                                 {{ changedParamsInfo(i, item) }}
                             </div>
@@ -190,6 +192,7 @@ export default {
                 }
                 this.assignParamsTypeInfo(resourceParam, moduleParameters)
             }
+
             return tableRow
         },
 
@@ -289,9 +292,9 @@ export default {
         // ------------------------- Parameters editing Confirm methods
         changedParamsInfo(i, item) {
             const arr = this.changedParametersArr
-            const { nodeParent: { id = null } = null } = item
+            const { parentNodeInfo: { id = null } = null } = item
             if (i > 0) {
-                const prevNodeParent = arr[i - 1].nodeParent || null
+                const prevNodeParent = arr[i - 1].parentNodeInfo || null
                 const prevNodeParentId = prevNodeParent && prevNodeParent.id
                 if (prevNodeParentId !== id) return id
             } else if (i === 0) {

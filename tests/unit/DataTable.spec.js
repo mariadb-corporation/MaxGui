@@ -58,7 +58,7 @@ describe('DataTable.vue', () => {
         })
     })
 
-    it(`component processes data as expected when keepPrimitiveValue 
+    it(`Normal table: component processes data as expected when keepPrimitiveValue 
       props is true or false`, () => {
         /* 
             by default keepPrimitiveValue is set to false which means 

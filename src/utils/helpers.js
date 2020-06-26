@@ -173,9 +173,9 @@ export function formatValue(value, formatType) {
         [
             {
                 nodeId: Number,
-                parentId: Number,
+                parentNodeId: Number,
                 level: Number,
-                nodeParent: Object,
+                parentNodeInfo: { [keyName]: key, originalValue: value },
                 keyName: String,
                 keyValue: targetObj[key],
                 originalValue: targetObj[key],
@@ -184,8 +184,8 @@ export function formatValue(value, formatType) {
  * @param {Object} obj Object to be converted to array
  * @param {Boolean} keepPrimitiveValue keepPrimitiveValue to whether call handleValue function or not
  * @param {Number} level depth level for nested object
- * @param {Object} nodeParent parent node, usually it's null in the first level (0)
- * @param {Number} parentId nodeId of parentNode
+ * @param {Object} parentNodeInfo parent node info contains id and original value, it's null in the first level (0)
+ * @param {Number} parentNodeId nodeId of parentNode
  * @param {String} keyName keyName
  * @param {String} keyValue keyValue
  * @return {Array} an array of objects
@@ -195,8 +195,8 @@ export function objToArrOfObj(
     obj,
     keepPrimitiveValue,
     level,
-    nodeParent = null,
-    parentId = 0,
+    parentNodeInfo = null,
+    parentNodeId = 0,
     keyName = 'id',
     keyValue = 'value'
 ) {
@@ -210,9 +210,9 @@ export function objToArrOfObj(
 
             let node = {
                 nodeId: ++nodeId,
-                parentId: parentId,
+                parentNodeId: parentNodeId,
                 level: level,
-                nodeParent: nodeParent,
+                parentNodeInfo: parentNodeInfo,
                 [keyName]: key,
                 [keyValue]: value,
                 originalValue: value,
@@ -221,13 +221,28 @@ export function objToArrOfObj(
             const isValidArray = value !== null && Array.isArray(value) && value.length > 0
             const isValidObj = value !== null && typeof value === 'object' && !Array.isArray(value)
             const hasChild = isValidArray || isValidObj
+
             if (hasChild) {
                 node[keyValue] = ''
                 //  only object has child value will have expanded property
                 node.expanded = false
-                node.children = isValidObj
-                    ? objToArrOfObj(value, keepPrimitiveValue, level + 1, node, node.nodeId)
-                    : objToArrOfObj({ ...value }, keepPrimitiveValue, level + 1, node, node.nodeId)
+                if (isValidObj) {
+                    node.children = objToArrOfObj(
+                        value,
+                        keepPrimitiveValue,
+                        level + 1,
+                        { [keyName]: key, originalValue: value },
+                        node.nodeId
+                    )
+                } else {
+                    node.children = objToArrOfObj(
+                        { ...value },
+                        keepPrimitiveValue,
+                        level + 1,
+                        { [keyName]: key, originalValue: value },
+                        node.nodeId
+                    )
+                }
             }
 
             node.leaf = !hasChild
@@ -255,9 +270,9 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
         for (let i = 0; i < targetArr.length; ++i) {
             let node = targetArr[i]
             if (!isEmpty(node)) {
-                if ('nodeParent' in node && node.nodeParent !== null) {
-                    const originalObjValue = node.nodeParent.originalValue
-                    const originalObjId = node.nodeParent.id
+                if ('parentNodeInfo' in node && node.parentNodeInfo !== null) {
+                    const originalObjValue = node.parentNodeInfo.originalValue
+                    const originalObjId = node.parentNodeInfo.id
                     const objValueKeys = cloneDeep(Object.keys(objValue)).sort()
                     const originalObjValueKeys = cloneDeep(Object.keys(originalObjValue)).sort()
 
@@ -271,7 +286,7 @@ export function arrOfObjToObj(a, keyName = 'id', keyValue = 'value') {
 
                     objValue[node[keyName]] = node[keyValue] //set new value to key
 
-                    resultObj[node.nodeParent.id] = objValue
+                    resultObj[node.parentNodeInfo.id] = objValue
                 }
                 /* the value needs to be handled, convert from 'null' or '' to 
                 the actual null object */
