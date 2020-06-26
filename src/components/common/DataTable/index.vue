@@ -68,7 +68,7 @@
                             :componentId="componentId"
                             @cell-hover="cellHover($event)"
                             @get-truncated-info="truncatedMenu = $event"
-                            @toggle-child="toggleChild($event)"
+                            @toggle-node="toggleNode($event)"
                         >
                             <template :slot="header.value">
                                 <slot
@@ -132,8 +132,7 @@ This component accepts:
   cellTruncated: true || false, width: String, padding: String
 
 - data props as array of objects, each object must has either item.nodeId:Number || item.id:Any, 
-  if both presents
-  nodeId will be used
+  if both presents nodeId will be used
 
 SLOTS available for this component:
 - slot :name="header.value" // slot aka item
@@ -222,7 +221,7 @@ export default {
         }
     },
     computed: {
-        // first processing data from data props
+        // first processing data from data props to whether keepPrimitiveValue or not
         processingData: function() {
             const self = this
             let result = self.data
@@ -257,7 +256,7 @@ export default {
 
         editableCell: function(val) {
             if (val && this.isTree && this.hasValidChild) {
-                this.toggleAllNodesChildren()
+                this.expandAllNodes(this.tableRows)
             }
         },
     },
@@ -429,7 +428,7 @@ export default {
             let self = this
             arr.forEach(function(o) {
                 if (o.children && o.children.length > 0) {
-                    self.hasValidChild = true
+                    !self.hasValidChild && (self.hasValidChild = true)
                     newArr.push(o)
                     for (let i = 0; i < nodeActiveIds.length; ++i) {
                         if (o.nodeId === nodeActiveIds[i]) {
@@ -445,57 +444,51 @@ export default {
             })
         },
 
-        toggleChild(node) {
+        toggleNode(node) {
             const self = this
-            // show node's children
+            // expand node's children
             if (node.leaf === false && node.expanded === false && node.children.length > 0) {
                 self.nodeActiveIds.push(node.nodeId)
                 self.levelRecursive(node.children, [], self.nodeActiveIds, true)
             } else {
                 // collapse node's children
-                this.collapseNodeChildren(node)
+                const isExpand = false
+                this.toggleNodeChildren(node, isExpand)
             }
         },
 
-        toggleAllNodesChildren(nodes) {
-            let treeNodes = nodes || this.tableRows
+        /**
+         * @param {Object} node an object node
+         * @param {Boolean} isExpand if it is true, it will expand the node
+         * otherwise it collapse the node.
+         */
+        toggleNodeChildren(node, isExpand) {
+            const self = this
+            if (node.expanded === !isExpand && node.children.length > 0) {
+                self.$set(node, 'expanded', isExpand)
+                node.children.forEach(o => {
+                    self.toggleNodeChildren(o, isExpand)
+                })
+                isExpand
+                    ? self.nodeActiveIds.push(node.nodeId)
+                    : self.nodeActiveIds.splice(self.nodeActiveIds.indexOf(node.nodeId), 1)
+            }
+        },
+
+        /**
+         * @param {Array} treeNodes treeNodes array processed by objToArrOfObj helper method
+         */
+        expandAllNodes(treeNodes) {
+            const isExpand = true
             for (let i = 0; i < treeNodes.length; ++i) {
                 let node = treeNodes[i]
-                this.toggleNodeChildren(node)
-            }
-        },
-
-        toggleNodeChildren(node) {
-            const self = this
-            if (node.expanded === false && node.children.length > 0) {
-                self.$set(node, 'expanded', true)
-                node.children.forEach(o => {
-                    self.toggleNodeChildren(o)
-                })
-                self.nodeActiveIds.push(node.nodeId)
-            }
-        },
-
-        collapseAllNodesChildren() {
-            for (let i = 0; i < this.tableRows.length; ++i) {
-                let node = this.tableRows[i]
-                this.collapseNodeChildren(node)
-            }
-        },
-
-        collapseNodeChildren(node) {
-            const self = this
-            if (node.expanded === true && node.children.length > 0) {
-                self.$set(node, 'expanded', false)
-                node.children.forEach(o => {
-                    self.collapseNodeChildren(o)
-                })
-                self.nodeActiveIds.splice(self.nodeActiveIds.indexOf(node.nodeId), 1)
+                this.toggleNodeChildren(node, isExpand)
             }
         },
     },
 }
 </script>
+
 <style lang="scss" scoped>
 .draggable-row:hover {
     background: transparent !important;

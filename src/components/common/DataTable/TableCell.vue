@@ -28,7 +28,7 @@
                 height="32"
                 class="arrow-toggle mr-1"
                 icon
-                @click="$emit('toggle-child', item)"
+                @click="$emit('toggle-node', item)"
             >
                 <v-icon
                     :class="[item.expanded === true ? 'arrow-up' : 'arrow-down']"
@@ -79,7 +79,7 @@ SLOTS available for this component:
 Emits:
 - $emit('get-truncated-info', truncatedMenu:Object)
 - $emit('cell-hover', { e, item, rowIndex, cellIndex, header })
-- $emit('toggle-child', item:Object)
+- $emit('toggle-node', item:Object)
 */
 export default {
     name: 'table-cell',

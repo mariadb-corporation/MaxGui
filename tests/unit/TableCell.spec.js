@@ -106,7 +106,7 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it(`toggle button is displayed automatically at the first column and emitted "toggle-child" 
+    it(`toggle button is displayed automatically at the first column and emitted "toggle-node" 
       event when toggle button is clicked`, () => {
         wrapper.setProps({
             cellIndex: 0,
@@ -133,7 +133,7 @@ describe('TableCell.vue', () => {
             header: { text: 'Variable', value: 'id' },
         })
         let eventFired = 0
-        wrapper.vm.$on('toggle-child', () => {
+        wrapper.vm.$on('toggle-node', () => {
             eventFired++
         })
 
