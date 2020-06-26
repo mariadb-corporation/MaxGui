@@ -12,8 +12,8 @@
  */
 
 import { expect } from 'chai'
-import mount from './setup'
-import BaseDialog from '@/components/common/BaseDialog.vue'
+import mount from '@tests/unit/setup'
+import BaseDialog from '@/components/common/BaseDialog'
 
 describe('BaseDialog.vue', () => {
     let wrapper

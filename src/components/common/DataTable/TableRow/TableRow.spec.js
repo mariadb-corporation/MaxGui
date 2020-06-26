@@ -12,8 +12,7 @@
  */
 
 import { expect } from 'chai'
-
-import mount from './setup'
+import mount from '@tests/unit/setup'
 import TableRow from '@/components/common/DataTable/TableRow'
 
 describe('TableRow.vue', () => {

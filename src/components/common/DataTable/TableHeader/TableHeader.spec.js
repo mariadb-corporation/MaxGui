@@ -12,8 +12,7 @@
  */
 
 import { expect } from 'chai'
-
-import mount from './setup'
+import mount from '@tests/unit/setup'
 import TableHeader from '@/components/common/DataTable/TableHeader'
 
 describe('TableHeader.vue', () => {

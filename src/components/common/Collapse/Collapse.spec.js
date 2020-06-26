@@ -11,8 +11,8 @@
  * Public License.
  */
 import { expect } from 'chai'
-import mount from './setup'
-import Collapse from '@/components/common/Collapse.vue'
+import mount from '@tests/unit/setup'
+import Collapse from '@/components/common/Collapse'
 
 describe('Collapse.vue', () => {
     let wrapper

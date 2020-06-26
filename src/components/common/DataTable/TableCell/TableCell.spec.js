@@ -12,8 +12,7 @@
  */
 
 import { expect } from 'chai'
-
-import mount from './setup'
+import mount from '@tests/unit/setup'
 import TableCell from '@/components/common/DataTable/TableCell'
 
 describe('TableCell.vue', () => {

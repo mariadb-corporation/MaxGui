@@ -41,7 +41,7 @@ module.exports = {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
         types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
         config.module.rule('js').exclude.add(/\.worker\.js$/)
-
+        config.resolve.alias.set('@tests', path.resolve(__dirname, 'tests'))
         config.when(process.env.NODE_ENV === 'development', config => {
             // devtool
             config.merge({

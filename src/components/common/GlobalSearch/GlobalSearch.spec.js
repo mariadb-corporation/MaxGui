@@ -12,9 +12,8 @@
  */
 
 import { expect } from 'chai'
-
-import mount from './setup'
-import GlobalSearch from '@/components/common/GlobalSearch.vue'
+import mount from '@tests/unit/setup'
+import GlobalSearch from '@/components/common/GlobalSearch'
 
 describe('GlobalSearch.vue', () => {
     let wrapper
