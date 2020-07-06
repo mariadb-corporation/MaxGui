@@ -45,7 +45,7 @@
                     :editableCell="editableCell"
                     :draggable="draggable"
                     :showActionsOnHover="showActionsOnHover"
-                    :lastPageItemIndex="currentPageItems.length - 1,"
+                    :lastPageItemIndex="lastPageItemIndex"
                 >
                     <template v-slot:cell="{ data: { indexOfHoveredRow } }">
                         <table-cell
@@ -219,7 +219,7 @@ export default {
             hasValidChild: false,
             nodeActiveIds: [],
             //rowspan feature
-            currentPageItems: null,
+            lastPageItemIndex: null,
             // this is needed when using custom activator in v-menu.
             componentId: this.$help.lodash.uniqueId('component_v-menu_'),
         }
@@ -281,7 +281,7 @@ export default {
             }
         },
 
-        //---------------------------------Table helper functions and features------------------------------------------
+        //---------------------------------Table helper functions ------------------------------------------
         getValue(item, header) {
             // data type shouldn't be handled here as it will break the filter result
             // use helper function to handle value before passing the data to table
@@ -289,13 +289,13 @@ export default {
             return this.$help.isFunction(header.format) ? header.format(value) : `${value}`
         },
 
-        //---------------------------------Table sorting ---------------------------------------------------------------
+        //--------------------------------- @private Table sorting ---------------------------------------------------
         // Currently support sorting one column at a time
         customSort(items, sortBy, isDesc) {
             let result = items
             const self = this
 
-            // if isTree, create a hash arrray for hierarchySort
+            // if isTree, create a hash array for hierarchySort
             if (sortBy.length && this.isTree) {
                 let hashArr = {} // O(n log n)
 
@@ -349,10 +349,12 @@ export default {
             }
         },
 
-        //---------------------------------methods for Rowspan feature--------------------------------------------------
+        //--------------------------------- @private methods for Rowspan feature----------------------------------------
         getCurrentItems(items) {
+            // This ensure rowspan table feature works
             this.colsHasRowSpan && items.length && this.processingRowspanTable(items, 'mutate')
-            this.currentPageItems = items
+            // for styling purpose
+            this.lastPageItemIndex = items.length - 1
         },
 
         /**
@@ -367,7 +369,7 @@ export default {
         },
 
         /**
-         * @param {Array} target Array of objects
+         * @param {Array} target Array of objects,
          * @return {Array} Always return new array
          * This function group all items have same groupdID and assign correct value for hidden and rowspan properties.
          */
@@ -416,7 +418,7 @@ export default {
             }
         },
 
-        //---------------------------------For nested data, displaying dropdown table row-------------------------------
+        //--------------------------------- @private methods: For nested data, displaying dropdown table row-----------
         /**
          * @param {Array} arr root array
          * @param {Array} newArr result array
