@@ -17,7 +17,6 @@ import DataTable from '@/components/common/DataTable'
 
 describe('DataTable.vue', () => {
     let wrapper
-
     // mockup parent value passing to Collapse
 
     beforeEach(() => {
@@ -27,13 +26,13 @@ describe('DataTable.vue', () => {
             component: DataTable,
             props: {
                 /* 
-                    object in headers may have these properties sortable: 
-                    true || false, editableCol: true || false, align: "center || left || right",
-                    cellTruncated: true || false, width: String, padding: String
-
-                   - editableCol, align is mainly used for styling purpose which is applied in table-cell.
-                   - sortable is used for disable sorting on table, by default it's always true.
-                   - cellTruncated is a condition to emit 'get-truncated-info' event in table-cell
+                    object in headers may have these properties: 
+                    sortable(true || false), editableCol (true || false), align ("center || left || right"),
+                    cellTruncated (true || false), width (String), padding (String)
+                   
+                    - editableCol, align is mainly used for styling purpose which is applied in table-cell.
+                    - sortable is used for disable sorting on table, by default it's always true.
+                    - cellTruncated is a condition to emit 'get-truncated-info' event in table-cell
                 */
                 headers: [
                     { text: 'Variable', value: 'id' },
@@ -84,7 +83,8 @@ describe('DataTable.vue', () => {
     })
 
     it(`Tree data table: component processes data as expected when isTree 
-      props is true. data passed to component must be preliminary processed using 
+      props is true. Also testing the collapse and expansion of node.
+      Note: data passed to component must be preliminary processed using 
       objToArrOfObj helper method`, () => {
         // check default value isTree, should be false
         expect(wrapper.vm.$props.isTree).to.equal(false)
@@ -159,6 +159,92 @@ describe('DataTable.vue', () => {
                     expect(wrapper.vm.tableRows[i].id).to.equal(allNodeIds[i])
                 }
             })
+        })
+    })
+
+    it(`Rowspan data table, if a cell or a rowspan cell (rowspanCell) is hovered, 
+       automatically set background color of cells have same groupId to #fafcfc.
+       It should also emit cell-hover event and pass data correctly `, () => {
+        wrapper.setProps({
+            colsHasRowSpan: 2,
+            headers: [
+                { text: `Monitor`, value: 'groupId' },
+                { text: 'State', value: 'monitorState' },
+                { text: 'Servers', value: 'id' },
+                { text: 'Address', value: 'serverAddress' },
+                { text: 'Port', value: 'serverPort' },
+                { text: 'Connections', value: 'serverConnections' },
+                { text: 'State', value: 'serverState' },
+                { text: 'GTID', value: 'gtid' },
+                { text: 'Services', value: 'serviceIds' },
+            ],
+            data: [
+                {
+                    id: 'row_server_2',
+                    serverAddress: '127.0.0.1',
+                    serverPort: 4002,
+                    serverConnections: 0,
+                    serverState: 'Slave, Running',
+                    serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
+                    gtid: '0-1000-9',
+                    groupId: 'Monitor', // will be assigned rowspan 2 via handleDisplayRowspan
+                    monitorState: 'Running', //rowspan 2
+                },
+                {
+                    id: 'row_server_1',
+                    serverAddress: '127.0.0.1',
+                    serverPort: 4001,
+                    serverConnections: 0,
+                    serverState: 'Master, Running',
+                    serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
+                    gtid: '0-1000-9',
+                    groupId: 'Monitor', // will be assigned rowspan 2 via handleDisplayRowspan
+                    monitorState: 'Running', //rowspan 2
+                },
+                {
+                    id: 'row_server_3',
+                    serverAddress: '127.0.0.1',
+                    serverPort: 4003,
+                    serverConnections: 0,
+                    serverState: 'Down',
+                    serviceIds: 'No services',
+                    gtid: null,
+                    groupId: 'monitor-test', // will be assigned rowspan 1 via handleDisplayRowspan
+                    monitorState: 'Running', //rowspan 1
+                },
+            ],
+        })
+        // add cb for cell-hover event
+        let eventFired = 0
+        wrapper.vm.$on('cell-hover', ({ item }) => {
+            eventFired++
+            expect(item.groupId).to.equal('Monitor')
+        })
+
+        wrapper.vm.$nextTick(() => {
+            // get all table-cell components with ref = MonitorRowspanCell
+            const rowspanCells = wrapper.findAllComponents({ ref: 'MonitorRowspanCell' })
+            expect(rowspanCells.length).to.equal(4)
+            /* 
+            trigger mouseenter at cell 0 having header as groupId and value equal to 'Monitor'
+            cell-hover event should be emitted, setRowspanBg is called when
+            colsHasRowSpan > 0
+        */
+            rowspanCells.at(0).trigger('mouseenter')
+        })
+
+        // after hovering 'Monitor' cell, cb and cell-hover event have been triggered
+        wrapper.vm.$nextTick(() => {
+            // cell-hover event is emitted correctly
+            expect(eventFired).to.equal(1)
+            // testing for setRowspanBg method
+            const normalCell = wrapper.findAllComponents({ ref: 'MonitorCell' })
+            expect(normalCell.length).to.equal(14) // 7 columns with 2 rows have same groupId
+            for (let i = 0; i < normalCell.length; ++i) {
+                expect(normalCell.at(i).vm.$el.style['_values']['background-color']).to.equal(
+                    'rgb(250, 252, 252)'
+                )
+            }
         })
     })
 })

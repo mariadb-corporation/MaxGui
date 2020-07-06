@@ -123,7 +123,7 @@ export default {
                 item.hidden && cellIndex < this.colsHasRowSpan && 'hide',
                 this.colsHasRowSpan &&
                     (cellIndex < this.colsHasRowSpan
-                        ? `${item.groupId}-rowspan`
+                        ? `${item.groupId}-rowspan-cell`
                         : `${item.groupId}-cell`),
                 // for editable feature
                 this.editableCell && header.editableCol && 'v-data-table__editable-cell',

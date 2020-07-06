@@ -159,7 +159,7 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it('Testing rowspan feature: component assigned accurate td rowspan attribute value', () => {
+    it('Cell rowspan feature: component assigned accurate td rowspan attribute value', () => {
         wrapper.setProps({
             cellIndex: 0, // rendering the first cell (aka groupId)
             header: { text: `Monitor`, value: 'groupId' }, // rendering the first cell (aka groupId)

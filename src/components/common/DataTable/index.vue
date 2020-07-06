@@ -51,7 +51,11 @@
                         <table-cell
                             v-for="(header, cellIndex) in headers"
                             :key="cellIndex"
-                            :ref="cellIndex < colsHasRowSpan ? 'rowGroup' : 'cell'"
+                            :ref="
+                                cellIndex < colsHasRowSpan
+                                    ? `${item.groupId}RowspanCell`
+                                    : `${item.groupId}Cell`
+                            "
                             :cellIndex="cellIndex"
                             :colsHasRowSpan="colsHasRowSpan"
                             :item="item"
@@ -388,30 +392,25 @@ export default {
         /**
          * @param {Object} e event object
          * @param {Object} item object
-         * This function group all items have same groupdID and assign
-         * correct value for hidden and rowspan properties.
-         * If truncated text is activated, this function shows truncated text in v-menu
+         * This function set background color to rows when a cell or a row is hovered
+         * This function is used when rowspan feature is enabled
          */
         setRowspanBg(e, item, rowIndex, cellIndex) {
-            const target = cellIndex < this.colsHasRowSpan ? 'rowgroup' : 'cell'
+            const target = cellIndex < this.colsHasRowSpan ? 'rowspanCell' : 'cell'
             const { groupId } = item
             // Make associated td elements to have the same hover effect
             let bg = e.type === 'mouseenter' ? '#fafcfc' : ''
             switch (target) {
                 case 'cell':
                     {
-                        let elements = this.$refs.rowGroup.filter(ele =>
-                            ele.$el.attributes.class.value.includes(`${groupId}-rowspan`)
-                        )
-                        elements.forEach(ele => (ele.$el.style.backgroundColor = bg))
+                        let cellComponents = this.$refs[`${groupId}RowspanCell`]
+                        cellComponents.forEach(ele => (ele.$el.style.backgroundColor = bg))
                     }
                     break
-                case 'rowgroup':
+                case 'rowspanCell':
                     {
-                        let elements = this.$refs.cell.filter(ele =>
-                            ele.$el.attributes.class.value.includes(`${groupId}-cell`)
-                        )
-                        elements.forEach(ele => (ele.$el.style.backgroundColor = bg))
+                        let cellComponents = this.$refs[`${groupId}Cell`]
+                        cellComponents.forEach(ele => (ele.$el.style.backgroundColor = bg))
                     }
                     break
             }
