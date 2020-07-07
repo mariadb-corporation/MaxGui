@@ -49,15 +49,13 @@ describe('TableHeader.vue', () => {
         expect(wrapper.findAll('.sortable').length).to.equal(9)
     })
 
-    it('Last column has not-sortable class and other columns have sortable class', () => {
+    it('Last column has not-sortable class and other columns have sortable class', async () => {
         let newHeaders = wrapper.vm.$help.lodash.cloneDeep(headers)
         newHeaders[newHeaders.length - 1].sortable = false
-        wrapper.setProps({
+        await wrapper.setProps({
             headers: newHeaders,
         })
-        wrapper.vm.$nextTick(() => {
-            expect(wrapper.findAll('.sortable').length).to.equal(8)
-            expect(wrapper.findAll('.not-sortable').length).to.equal(1)
-        })
+        expect(wrapper.findAll('.sortable').length).to.equal(8)
+        expect(wrapper.findAll('.not-sortable').length).to.equal(1)
     })
 })

@@ -35,52 +35,46 @@ describe('TableRow.vue', () => {
         })
     })
 
-    it(`component returns accurate value of indexOfHoveredRow to cell slot when 
-      draggable or showActionsOnHover is true`, () => {
+    it(`Component returns accurate value of indexOfHoveredRow to cell slot when 
+      draggable or showActionsOnHover is true`, async () => {
         const tr = wrapper.findAll('tr')
         expect(tr.length).to.equal(1)
 
-        wrapper.setProps({
+        await wrapper.setProps({
             showActionsOnHover: true,
             rowIndex: 2,
             lastPageItemIndex: 2,
         })
 
-        wrapper.vm.$nextTick(() => {
-            // check when showActionsOnHover is true
-            tr.trigger('mouseenter')
-            expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(2)
-            tr.trigger('mouseleave')
-            expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
+        // check when showActionsOnHover is true
+        tr.trigger('mouseenter')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(2)
+        tr.trigger('mouseleave')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
 
-            // check when showActionsOnHover is false , draggable is true
-            wrapper.setProps({
-                showActionsOnHover: false,
-                draggable: true,
-                rowIndex: 1,
-                lastPageItemIndex: 1,
-            })
-
-            wrapper.vm.$nextTick(() => {
-                tr.trigger('mouseenter')
-                expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(1)
-                tr.trigger('mouseleave')
-                expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
-
-                // check when both showActionsOnHover and draggable  are true
-                wrapper.setProps({
-                    showActionsOnHover: true,
-                    draggable: true,
-                    rowIndex: 10,
-                    lastPageItemIndex: 10,
-                })
-                wrapper.vm.$nextTick(() => {
-                    tr.trigger('mouseenter')
-                    expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(10)
-                    tr.trigger('mouseleave')
-                    expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
-                })
-            })
+        // when showActionsOnHover = false; draggable = true
+        await wrapper.setProps({
+            showActionsOnHover: false,
+            draggable: true,
+            rowIndex: 1,
+            lastPageItemIndex: 1,
         })
+
+        await tr.trigger('mouseenter')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(1)
+        await tr.trigger('mouseleave')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
+
+        // check when both showActionsOnHover and draggable  are true
+        await wrapper.setProps({
+            showActionsOnHover: true,
+            draggable: true,
+            rowIndex: 10,
+            lastPageItemIndex: 10,
+        })
+        await tr.trigger('mouseenter')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(10)
+        await tr.trigger('mouseleave')
+        expect(wrapper.vm.$data.indexOfHoveredRow).to.equal(null)
     })
 })

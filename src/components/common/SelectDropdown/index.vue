@@ -25,7 +25,6 @@
             })
         "
         :rules="rules.requiredField"
-        :required="required"
         :hide-details="!required"
         @change="onChange"
     >

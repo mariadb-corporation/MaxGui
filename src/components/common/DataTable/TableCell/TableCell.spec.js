@@ -54,34 +54,31 @@ describe('TableCell.vue', () => {
         })
     })
 
-    it('cell-hover and get-truncated-info events are emitted when cell is hovered', () => {
+    it('cell-hover and get-truncated-info events are emitted when cell is hovered', async () => {
         const td = wrapper.findAll('td')
         expect(td.length).to.equal(1)
-        wrapper.setProps({
+        await wrapper.setProps({
             item: {
                 value: 'Longggggggggggggggggggggggggggggg text',
             },
             header: { text: 'Value', value: 'value', cellTruncated: true },
         })
         let eventFired = 0
-        wrapper.vm.$nextTick(() => {
-            td.at(0).trigger('mouseenter')
-        })
         wrapper.vm.$on('cell-hover', () => {
             eventFired++
-            // item.level > 0 || header.cellTruncated will emit get-truncated-info
-            wrapper.vm.$on('get-truncated-info', () => {
-                eventFired++
-            })
         })
-        wrapper.vm.$nextTick(() => {
-            expect(eventFired).to.equal(2)
+        // item.level > 0 || header.cellTruncated will emit get-truncated-info
+        wrapper.vm.$on('get-truncated-info', () => {
+            eventFired++
         })
+        td.at(0).trigger('mouseenter')
+
+        expect(eventFired).to.equal(2)
     })
 
-    it(`drag icon is rendered when draggable props is true and 
-      will be shown at the last column at hovered row`, () => {
-        wrapper.setProps({
+    it(`When draggable props is true, drag icon will be rendered and 
+      shown at the last column at hovered row`, async () => {
+        await wrapper.setProps({
             draggable: true,
             /*  indexOfHoveredRow === rowIndex &&
                 cellIndex === indexOfLastColumn
@@ -96,18 +93,16 @@ describe('TableCell.vue', () => {
             header: { text: '', value: 'action', sortable: false },
         })
 
-        wrapper.vm.$nextTick(() => {
-            const dragHandle = wrapper.find('.drag-handle')
-            // drag icon is rendered
-            expect(dragHandle.exists()).to.be.true
-            // drag icon is shown at hovered row
-            expect(dragHandle.attributes().style).to.not.include('display: none')
-        })
+        const dragHandle = wrapper.find('.drag-handle')
+        // drag icon is rendered
+        expect(dragHandle.exists()).to.be.true
+        // drag icon is shown at hovered row
+        expect(dragHandle.attributes().style).to.not.include('display: none')
     })
 
-    it(`toggle button is displayed automatically at the first column and emitted "toggle-node" 
-      event when toggle button is clicked`, () => {
-        wrapper.setProps({
+    it(`When toggle button is clicked, toggle button will be displayed at the first column 
+      and emitted "toggle-node" event `, async () => {
+        await wrapper.setProps({
             cellIndex: 0,
             indexOfHoveredRow: 0,
             item: {
@@ -136,16 +131,14 @@ describe('TableCell.vue', () => {
             eventFired++
         })
 
-        wrapper.vm.$nextTick(() => {
-            let toggleBtn = wrapper.find('.arrow-toggle')
-            expect(toggleBtn.exists()).to.be.true
-            toggleBtn.trigger('click')
-            expect(eventFired).to.equal(1)
-        })
+        let toggleBtn = wrapper.find('.arrow-toggle')
+        expect(toggleBtn.exists()).to.be.true
+        toggleBtn.trigger('click')
+        expect(eventFired).to.equal(1)
     })
 
-    it('"actions" slot is rendered at the last column when hover at table row', () => {
-        wrapper.setProps({
+    it('When hover at a table row, "actions" slot is rendered at the last column ', async () => {
+        await wrapper.setProps({
             indexOfLastColumn: 0,
             indexOfHoveredRow: 0,
             cellIndex: 0,
@@ -154,13 +147,12 @@ describe('TableCell.vue', () => {
             },
             header: { text: '', value: 'action', sortable: false },
         })
-        wrapper.vm.$nextTick(() => {
-            expect(wrapper.find('.action-slot-wrapper').exists()).to.be.true
-        })
+        expect(wrapper.find('.action-slot-wrapper').exists()).to.be.true
     })
 
-    it('Cell rowspan feature: component assigned accurate td rowspan attribute value', () => {
-        wrapper.setProps({
+    it(`Cell rowspan feature:
+      - component assigned accurate td rowspan attribute value`, async () => {
+        await wrapper.setProps({
             cellIndex: 0, // rendering the first cell (aka groupId)
             header: { text: `Monitor`, value: 'groupId' }, // rendering the first cell (aka groupId)
             colsHasRowSpan: 1,
@@ -178,10 +170,8 @@ describe('TableCell.vue', () => {
                 serviceIds: ['RCR-Router', 'RCR-Writer', 'RWS-Router'],
             },
         })
-        wrapper.vm.$nextTick(() => {
-            const td = wrapper.findAll('td')
-            expect(td.length).to.equal(1)
-            expect(td.at(0).attributes().rowspan).to.equal('2')
-        })
+        const td = wrapper.findAll('td')
+        expect(td.length).to.equal(1)
+        expect(td.at(0).attributes().rowspan).to.equal('2')
     })
 })

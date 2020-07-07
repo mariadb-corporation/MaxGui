@@ -56,8 +56,9 @@ describe('DataTable.vue', () => {
         })
     })
 
-    it(`Normal table: component processes data as expected when keepPrimitiveValue 
-      props is true or false`, () => {
+    it(`Normal table: 
+      - Component processes data as expected when keepPrimitiveValue 
+        props is true or false`, async () => {
         /* 
             by default keepPrimitiveValue is set to false which means 
             null, undefined become a string i.e. 'null', 'undefined' respectively.
@@ -73,7 +74,7 @@ describe('DataTable.vue', () => {
         expect(processedData[1].value).to.be.a('string')
 
         // this keep original value
-        wrapper.setProps({
+        await wrapper.setProps({
             keepPrimitiveValue: true,
         })
         expect(wrapper.vm.$props.keepPrimitiveValue).to.equal(true)
@@ -82,12 +83,15 @@ describe('DataTable.vue', () => {
         expect(oriData[1].value).to.be.an('undefined')
     })
 
-    it(`Tree data table: component processes data as expected when isTree 
-      props is true. Also testing the collapse and expansion of node.
-      Note: data passed to component must be preliminary processed using 
-      objToArrOfObj helper method`, () => {
+    it(`Tree data table: 
+      - Component processes data as expected when isTree props is true. 
+      - The collapse and expansion of node works as expected
+        Note: data passed to component must be preliminary processed using 
+        objToArrOfObj helper method`, async () => {
         // check default value isTree, should be false
         expect(wrapper.vm.$props.isTree).to.equal(false)
+
+        /* ---------------  mockup processing data from parent component  --------------- */
         const objParameter = {
             root_node: {
                 node_child: { grand_child: { great_grand_child: 'great_grand_child' } },
@@ -99,73 +103,70 @@ describe('DataTable.vue', () => {
         const keepPrimitiveValue = true
         let tableRow = wrapper.vm.$help.objToArrOfObj(objParameter, keepPrimitiveValue, level)
 
-        wrapper.setProps({
+        await wrapper.setProps({
             isTree: true,
             data: tableRow,
         })
 
-        wrapper.vm.$nextTick(() => {
-            /* ---------------  initial render should not expand all node except in editableCell mode --------------- */
+        /* ---------------  initial render should not expand all node except in editableCell mode --------------- */
 
-            expect(wrapper.vm.$data.hasValidChild).to.equal(true)
-            expect(wrapper.vm.tableRows.length).to.equal(1)
-            expect(wrapper.vm.tableRows[0].expanded).to.equal(false) // root_node is collapsed
-            expect(wrapper.vm.tableRows[0].id).to.equal('root_node') //  only root_node
+        expect(wrapper.vm.$data.hasValidChild).to.equal(true)
+        expect(wrapper.vm.tableRows.length).to.equal(1)
+        expect(wrapper.vm.tableRows[0].expanded).to.equal(false) // root_node is collapsed
+        expect(wrapper.vm.tableRows[0].id).to.equal('root_node') //  only root_node
 
-            /* ---------------  expand root_node ------------------------ */
+        /* ---------------  expand root_node ------------------------ */
 
-            wrapper.vm.toggleNode(wrapper.vm.tableRows[0]) //expand
-            expect(wrapper.vm.tableRows[0].expanded).to.equal(true) // root_node is expanded
-            expect(wrapper.vm.tableRows.length).to.equal(3)
-            // tableRows should now includes tree levels i.e. 0 and 1
-            let nodeIds_level_1 = ['root_node', 'node_child', 'node_child_1']
-            for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
-                expect(wrapper.vm.tableRows[i].id).to.equal(nodeIds_level_1[i])
-            }
+        wrapper.vm.toggleNode(wrapper.vm.tableRows[0]) //expand
+        expect(wrapper.vm.tableRows[0].expanded).to.equal(true) // root_node is expanded
+        expect(wrapper.vm.tableRows.length).to.equal(3)
+        // tableRows should now includes tree levels i.e. 0 and 1
+        let nodeIds_level_1 = ['root_node', 'node_child', 'node_child_1']
+        for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
+            expect(wrapper.vm.tableRows[i].id).to.equal(nodeIds_level_1[i])
+        }
 
-            /* ---------------  expand node_child ------------------------ */
+        /* ---------------  expand node_child ------------------------ */
 
-            wrapper.vm.toggleNode(wrapper.vm.tableRows[1]) //expand node_child
-            expect(wrapper.vm.tableRows[1].expanded).to.equal(true) // node_child is expanded
-            // tableRows should now includes tree levels i.e. 0, 1 and 2
-            let nodeIds_level_2 = ['root_node', 'node_child', 'grand_child', 'node_child_1']
-            for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
-                expect(wrapper.vm.tableRows[i].id).to.equal(nodeIds_level_2[i])
-            }
+        wrapper.vm.toggleNode(wrapper.vm.tableRows[1]) //expand node_child
+        expect(wrapper.vm.tableRows[1].expanded).to.equal(true) // node_child is expanded
+        // tableRows should now includes tree levels i.e. 0, 1 and 2
+        let nodeIds_level_2 = ['root_node', 'node_child', 'grand_child', 'node_child_1']
+        for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
+            expect(wrapper.vm.tableRows[i].id).to.equal(nodeIds_level_2[i])
+        }
 
-            /* ---------------  Collapse root_node and its child ------------------------ */
+        /* ---------------  Collapse root_node and its child ------------------------ */
 
-            wrapper.vm.toggleNode(wrapper.vm.tableRows[0]) // collapse
-            expect(wrapper.vm.tableRows[0].expanded).to.equal(false) // root_node is collapsed
-            expect(wrapper.vm.tableRows.length).to.equal(1)
-            expect(wrapper.vm.tableRows[0].id).to.equal('root_node') // only root_node
+        wrapper.vm.toggleNode(wrapper.vm.tableRows[0]) // collapse
+        expect(wrapper.vm.tableRows[0].expanded).to.equal(false) // root_node is collapsed
+        expect(wrapper.vm.tableRows.length).to.equal(1)
+        expect(wrapper.vm.tableRows[0].id).to.equal('root_node') // only root_node
 
-            /* ---------------  expand all nodes------------------------ */
-
-            wrapper.setProps({
-                editableCell: true, // expand all nodes ( expandAllNodes function will be called)
-            })
-            wrapper.vm.$nextTick(() => {
-                expect(wrapper.vm.tableRows.length).to.equal(5)
-                // tableRows should now includes all tree levels i.e. 0, 1, 2 and 3
-                let allNodeIds = [
-                    'root_node',
-                    'node_child',
-                    'grand_child',
-                    'great_grand_child',
-                    'node_child_1',
-                ]
-                for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
-                    expect(wrapper.vm.tableRows[i].id).to.equal(allNodeIds[i])
-                }
-            })
+        /* ---------------  expand all nodes------------------------ */
+        await wrapper.setProps({
+            editableCell: true, // expand all nodes ( expandAllNodes function will be called)
         })
+        expect(wrapper.vm.tableRows.length).to.equal(5)
+        // tableRows should now includes all tree levels i.e. 0, 1, 2 and 3
+        let allNodeIds = [
+            'root_node',
+            'node_child',
+            'grand_child',
+            'great_grand_child',
+            'node_child_1',
+        ]
+        for (let i = 0; i < wrapper.vm.tableRows.length; ++i) {
+            expect(wrapper.vm.tableRows[i].id).to.equal(allNodeIds[i])
+        }
     })
 
-    it(`Rowspan data table, if a cell or a rowspan cell (rowspanCell) is hovered, 
-       automatically set background color of cells have same groupId to #fafcfc.
-       It should also emit cell-hover event and pass data correctly `, () => {
-        wrapper.setProps({
+    it(`Rowspan data table:
+      - If a cell or a rowspan cell (rowspanCell) is hovered, 
+        automatically set background color of cells have same groupId to #fafcfc.
+      - When hovering, component emits cell-hover event and  passes data to that 
+        event correctly `, async () => {
+        await wrapper.setProps({
             colsHasRowSpan: 2,
             headers: [
                 { text: `Monitor`, value: 'groupId' },
@@ -221,30 +222,28 @@ describe('DataTable.vue', () => {
             expect(item.groupId).to.equal('Monitor')
         })
 
-        wrapper.vm.$nextTick(() => {
-            // get all table-cell components with ref = MonitorRowspanCell
-            const rowspanCells = wrapper.findAllComponents({ ref: 'MonitorRowspanCell' })
-            expect(rowspanCells.length).to.equal(4)
-            /* 
-            trigger mouseenter at cell 0 having header as groupId and value equal to 'Monitor'
-            cell-hover event should be emitted, setRowspanBg is called when
-            colsHasRowSpan > 0
-        */
-            rowspanCells.at(0).trigger('mouseenter')
-        })
+        // get all table-cell components with ref = MonitorRowspanCell
+        const rowspanCells = wrapper.findAllComponents({ ref: 'MonitorRowspanCell' })
+        expect(rowspanCells.length).to.equal(4)
+        /* 
+        trigger mouseenter at cell 0 having header as groupId and value equal to 'Monitor'
+        cell-hover event should be emitted, setRowspanBg is called when
+        colsHasRowSpan > 0
+    */
 
-        // after hovering 'Monitor' cell, cb and cell-hover event have been triggered
-        wrapper.vm.$nextTick(() => {
-            // cell-hover event is emitted correctly
-            expect(eventFired).to.equal(1)
-            // testing for setRowspanBg method
-            const normalCell = wrapper.findAllComponents({ ref: 'MonitorCell' })
-            expect(normalCell.length).to.equal(14) // 7 columns with 2 rows have same groupId
-            for (let i = 0; i < normalCell.length; ++i) {
-                expect(normalCell.at(i).vm.$el.style['_values']['background-color']).to.equal(
-                    'rgb(250, 252, 252)'
-                )
-            }
-        })
+        await rowspanCells.at(0).trigger('mouseenter')
+
+        /*  after hovering 'Monitor' cell, cb and cell-hover event have been triggered 
+            cell-hover event is emitted correctly
+        */
+        expect(eventFired).to.equal(1)
+        // testing for setRowspanBg method
+        const normalCell = wrapper.findAllComponents({ ref: 'MonitorCell' })
+        expect(normalCell.length).to.equal(14) // 7 columns with 2 rows have same groupId
+        for (let i = 0; i < normalCell.length; ++i) {
+            expect(normalCell.at(i).vm.$el.style['_values']['background-color']).to.equal(
+                'rgb(250, 252, 252)'
+            )
+        }
     })
 })
