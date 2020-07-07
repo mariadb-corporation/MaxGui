@@ -378,7 +378,11 @@ export default {
         validateResourceId(val) {
             if (!val) {
                 return this.$t('errors.requiredInput', { inputName: 'id' })
-            } else if (this.validateInfo.idArr.length && this.validateInfo.idArr.includes(val)) {
+            } else if (
+                'idArr' in this.validateInfo &&
+                this.validateInfo.idArr.length &&
+                this.validateInfo.idArr.includes(val)
+            ) {
                 return this.$t('errors.duplicatedValue', { inputValue: val })
             }
             return true
