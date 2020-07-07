@@ -16,8 +16,11 @@ const fs = require('fs')
 const { gitDescribeSync } = require('git-describe')
 
 process.env.VUE_APP_VERSION = require('./package.json').version
-process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
-
+try {
+    process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
+} catch (e) {
+    process.env.VUE_APP_GIT_COMMIT = 'UNKNOWN'
+}
 module.exports = {
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
