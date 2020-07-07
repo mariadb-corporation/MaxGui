@@ -19,24 +19,6 @@ process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_GIT_COMMIT = gitDescribeSync().hash
 
 module.exports = {
-    devServer: {
-        host: 'localhost',
-        https: {
-            key: fs.readFileSync('./.certs/localhost+1-key.pem'),
-            cert: fs.readFileSync('./.certs/localhost+1.pem'),
-        },
-        progress: false,
-        port: 8000,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-        proxy: {
-            '^/': {
-                changeOrigin: true,
-                target: process.env.VUE_APP_API,
-            },
-        },
-    },
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
         types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
@@ -46,6 +28,24 @@ module.exports = {
             // devtool
             config.merge({
                 devtool: 'source-map',
+                devServer: {
+                    https: {
+                        key: fs.readFileSync('./.certs/localhost+1-key.pem'),
+                        cert: fs.readFileSync('./.certs/localhost+1.pem'),
+                    },
+                    progress: false,
+                    port: 8000,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                    public: 'https://localhost:8000/',
+                    proxy: {
+                        '^/': {
+                            changeOrigin: true,
+                            target: process.env.VUE_APP_API,
+                        },
+                    },
+                },
             })
         })
 
