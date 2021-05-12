@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "axios": "^0.19.2",
-        "chart.js": "2.8.0",
+        "chart.js": "2.9.4",
         "chartjs-plugin-streaming": "1.8.0",
         "core-js": "^3.6.4",
         "lodash": "^4.17.15",
